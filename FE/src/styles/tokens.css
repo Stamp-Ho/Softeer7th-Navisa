@@ -1,0 +1,91 @@
+:root {
+  /* ===================== */
+  /* Font Family */
+  /* ===================== */
+  --font-pretendard: "Pretendard", system-ui, sans-serif;
+
+  /* ===================== */
+  /* Font Size */
+  /* ===================== */
+  --text-headline-l: 32px;
+  --text-headline-m: 28px;
+  --text-headline-s: 24px;
+  --text-title-l: 22px;
+  --text-title-m: 20px;
+  --text-title-s: 18px;
+  --text-caption-l: 13px;
+  --text-caption-m: 12px;
+  --text-caption-s: 11px;
+  --text-body-l: 16px;
+  --text-body-m: 15px;
+  --text-body-s: 14px;
+
+  /* ===================== */
+  /* Line Height */
+  /* ===================== */
+  --leading-headline: 1.4;
+
+  /* ===================== */
+  /* Letter Spacing */
+  /* ===================== */
+  --tracking-tight: -0.03em;
+
+  /* ===================== */
+  /* Green */
+  /* ===================== */
+  --green-50: #e6f9f9;
+  --green-100: #b0edeb;
+  --green-200: #8ae4e2;
+  --green-300: #54d7d5;
+  --green-400: #33d0cd;
+  --green-500: #00c4c0;
+  --green-600: #00b2af;
+  --green-700: #008b88;
+  --green-800: #006c6a;
+  --green-900: #005251;
+
+  /* ===================== */
+  /* Violet */
+  /* ===================== */
+  --violet-25: #f4f3ff;
+  --violet-50-transfer: rgba(218, 214, 255, 0.4);
+  --violet-50: #dad6ff;
+  --violet-100: #c5bdff;
+  --violet-200: #a699ff;
+  --violet-300: #8d7eed;
+  --violet-400: #6958de;
+  --violet-500: #4132a9;
+  --violet-600: #3b2e9a;
+  --violet-700: #2e2478;
+  --violet-800: #241c5d;
+  --violet-900: #1b1547;
+
+  /* ===================== */
+  /* Gray */
+  /* ===================== */
+  --gray-0: #ffffff;
+  --gray-30: #f9f9fa;
+  --gray-50: #f5f6f7;
+  --gray-100: #eeeff1;
+  --gray-150: #dcdee1;
+  --gray-200: #cbcdd2;
+  --gray-300: #b1b5bc;
+  --gray-400: #8e949e;
+  --gray-500: #787f8b;
+  --gray-600: #565f6e;
+  --gray-700: #4e5664;
+  --gray-800: #2f343d;
+  --gray-900: #24282e;
+  --gray-1000: #23242f;
+
+  /* ===================== */
+  /* Status */
+  /* ===================== */
+  --status-warning: #f32929;
+  --status-success: #00d539;
+
+  /* ===================== */
+  /* Radius */
+  /* ===================== */
+  --radius-sm: 8px;
+}
