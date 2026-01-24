@@ -1,0 +1,14 @@
+# BE
+.gradle
+.idea
+out
+build
+
+# Secret
+.env
+**.pem
+
+# --- OS System Files ---
+.DS_Store
+Thumbs.db
+Desktop.ini
