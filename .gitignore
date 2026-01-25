@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# nektos/act용 로컬 시크릿
+.secrets
