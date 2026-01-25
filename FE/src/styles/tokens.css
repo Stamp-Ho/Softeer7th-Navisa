@@ -1,12 +1,8 @@
 :root {
-  /* ===================== */
-  /* Font Family */
-  /* ===================== */
+  /* ---------- Font Family ---------- */
   --font-pretendard: "Pretendard", system-ui, sans-serif;
 
-  /* ===================== */
-  /* Font Size */
-  /* ===================== */
+  /* ---------- Font Size ---------- */
   --text-headline-l: 32px;
   --text-headline-m: 28px;
   --text-headline-s: 24px;
@@ -20,19 +16,13 @@
   --text-body-m: 15px;
   --text-body-s: 14px;
 
-  /* ===================== */
-  /* Line Height */
-  /* ===================== */
+  /* ---------- Line Height ---------- */
   --leading-headline: 1.4;
 
-  /* ===================== */
-  /* Letter Spacing */
-  /* ===================== */
+  /* ---------- Letter Spacing ---------- */
   --tracking-tight: -0.03em;
 
-  /* ===================== */
-  /* Green */
-  /* ===================== */
+  /* ---------- Green ---------- */
   --green-50: #e6f9f9;
   --green-100: #b0edeb;
   --green-200: #8ae4e2;
@@ -44,11 +34,9 @@
   --green-800: #006c6a;
   --green-900: #005251;
 
-  /* ===================== */
-  /* Violet */
-  /* ===================== */
+  /* ---------- Violet ---------- */
   --violet-25: #f4f3ff;
-  --violet-50-transfer: rgba(218, 214, 255, 0.4);
+  --violet-50-transpar: rgba(218, 214, 255, 0.4);
   --violet-50: #dad6ff;
   --violet-100: #c5bdff;
   --violet-200: #a699ff;
@@ -60,9 +48,7 @@
   --violet-800: #241c5d;
   --violet-900: #1b1547;
 
-  /* ===================== */
-  /* Gray */
-  /* ===================== */
+  /* ---------- Gray ---------- */
   --gray-0: #ffffff;
   --gray-30: #f9f9fa;
   --gray-50: #f5f6f7;
@@ -78,14 +64,60 @@
   --gray-900: #24282e;
   --gray-1000: #23242f;
 
-  /* ===================== */
-  /* Status */
-  /* ===================== */
+  /* ---------- Status ---------- */
   --status-warning: #f32929;
   --status-success: #00d539;
 
-  /* ===================== */
-  /* Radius */
-  /* ===================== */
-  --radius-sm: 8px;
+  /* ---------- Radius ---------- */
+  --radius-100: 2px;
+  --radius-200: 4px;
+  --radius-250: 6px;
+  --radius-300: 8px;
+  --radius-600: 16px;
+  --radius-400: 10px;
+  --radius-500: 12px;
+  --radius-700: 20px;
+
+  /* ---------- Spacing ---------- */
+  --spacing-0: 0px;
+  --spacing-100: 2px;
+  --spacing-200: 4px;
+  --spacing-300: 8px;
+  --spacing-400: 12px;
+  --spacing-500: 16px;
+  --spacing-600: 20px;
+  --spacing-700: 24px;
+  --spacing-800: 28px;
+  --spacing-900: 32px;
+  --spacing-1000: 36px;
+  --spacing-1100: 40px;
+  --spacing-1150: 52px;
+  --spacing-1200: 60px;
+  --spacing-1300: 72px;
+
+  /* ---------- Background ---------- */
+  --background-default: var(--gray-0);
+  --background-sub: var(--gray-50);
+
+  /* ---------- Border ---------- */
+  --border-heavy: var(--gray-300);
+  --border-light: var(--gray-100);
+  --border-normal: var(--gray-200);
+
+  /* ---------- Primary ---------- */
+  --primary: var(--violet-500);
+  --primary-disabled: var(--violet-200);
+  --primary-hover: var(--violet-600);
+  --primary-pressed: var(--violet-700);
+
+  /* ---------- Secondary ---------- */
+  --secondary: var(--green-500);
+  --secondary-disabled: var(--green-200);
+  --secondary-hover: var(--green-700);
+  --secondary-pressed: var(--green-800);
+
+  /* ---------- Text Color ---------- */
+  --text-base: var(--gray-800);
+  --text-inverse: var(--gray-100);
+  --text-sub: var(--gray-300);
 }

@@ -49,7 +49,7 @@
 
   /* ---------- Violet ---------- */
   --color-violet-25: var(--violet-25);
-  --color-violet-50-transfer: var(--violet-50-transfer);
+  --color-violet-50-transpar: var(--violet-50-transpar);
   --color-violet-50: var(--violet-50);
   --color-violet-100: var(--violet-100);
   --color-violet-200: var(--violet-200);
@@ -82,7 +82,67 @@
   --color-status-success: var(--status-success);
 
   /* ---------- Radius ---------- */
-  --radius-sm: var(--radius-sm);
+  --radius-radius-100: var(--radius-100);
+  --radius-radius-200: var(--radius-200);
+  --radius-radius-250: var(--radius-250);
+  --radius-radius-300: var(--radius-300);
+  --radius-radius-400: var(--radius-400);
+  --radius-radius-500: var(--radius-500);
+  --radius-radius-600: var(--radius-600);
+  --radius-radius-700: var(--radius-700);
+
+  /* ---------- Spacing ---------- */
+  --spacing-spacing-0: var(--spacing-0);
+  --spacing-spacing-100: var(--spacing-100);
+  --spacing-spacing-200: var(--spacing-200);
+  --spacing-spacing-300: var(--spacing-300);
+  --spacing-spacing-400: var(--spacing-400);
+  --spacing-spacing-500: var(--spacing-500);
+  --spacing-spacing-600: var(--spacing-600);
+  --spacing-spacing-700: var(--spacing-700);
+  --spacing-spacing-800: var(--spacing-800);
+  --spacing-spacing-900: var(--spacing-900);
+  --spacing-spacing-1000: var(--spacing-1000);
+  --spacing-spacing-1100: var(--spacing-1100);
+  --spacing-spacing-1150: var(--spacing-1150);
+  --spacing-spacing-1200: var(--spacing-1200);
+  --spacing-spacing-1300: var(--spacing-1300);
+
+  /* ---------- Button ---------- */
+  --color-button-primary-bg: var(--primary);
+  --color-button-primary-bg-disabled: var(--primary-disabled);
+  --color-button-primary-bg-hover: var(--primary-hover);
+  --color-button-primary-bg-pressed: var(--primary-pressed);
+  --color-button-secondary-bg: var(--secondary);
+  --color-button-secondary-bg-disabled: var(--secondary-disabled);
+  --color-button-secondary-bg-hover: var(--secondary-hover);
+  --color-button-secondary-bg-pressed: var(--secondary-pressed);
+
+  /* ---------- Primary ---------- */
+  --color-primary: var(--violet-500);
+  --color-primary-disabled: var(--violet-200);
+  --color-primary-hover: var(--violet-600);
+  --color-primary-pressed: var(--violet-700);
+
+  /* ---------- Secondary ---------- */
+  --color-secondary: var(--green-500);
+  --color-secondary-disabled: var(--green-200);
+  --color-secondary-hover: var(--green-700);
+  --color-secondary-pressed: var(--green-800);
+
+  /* ---------- Border ---------- */
+  --color-border-heavy: var(--gray-300);
+  --color-border-light: var(--gray-100);
+  --color-border-normal: var(--gray-200);
+
+  /* ---------- Background ---------- */
+  --color-background-sub: var(--gray-50);
+  --color-background-default: var(--gray-0);
+
+  /* ---------- Text Color ---------- */
+  --color-text-base: var(--gray-800);
+  --color-text-inverse: var(--gray-100);
+  --color-text-sub: var(--gray-300);
 }
 
 @layer utilities {
