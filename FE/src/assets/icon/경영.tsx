@@ -89,8 +89,8 @@ const 경영 = () => {
             y2="89.8243"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0.343539" stop-color="#7360FF" />
-            <stop offset="1" stop-color="#4FBCCF" />
+            <stop offset="0.343539" stopColor="#7360FF" />
+            <stop offset="1" stopColor="#4FBCCF" />
           </linearGradient>
           <linearGradient
             id="paint1_linear"
@@ -100,8 +100,8 @@ const 경영 = () => {
             y2="83.2059"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0.343539" stop-color="#7360FF" />
-            <stop offset="1" stop-color="#4FBCCF" />
+            <stop offset="0.343539" stopColor="#7360FF" />
+            <stop offset="1" stopColor="#4FBCCF" />
           </linearGradient>
         </defs>
       </svg>

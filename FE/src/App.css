@@ -1,8 +1,15 @@
 #root {
-  max-width: 1920px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  min-width: 1720px;
+  width: full;
+}
+
+.div {
+  display: flex;
   align-items: center;
 }

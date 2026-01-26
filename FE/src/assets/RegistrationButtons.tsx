@@ -1,12 +1,13 @@
 import { useState } from "react";
 
-export const ForeignerButton = ({ isActive = false }) => {
+export const ForeignerButton = ({ isActive = false, onClick = () => {} }) => {
   const [isHovered, setIsHovered] = useState(false);
   const bgColor = isActive || isHovered ? "#E6F9F9" : "#F5F6F7";
   const mainColor = isActive || isHovered ? "#54D7D5" : "#CBCDD2";
   return (
     <svg
       className="cursor-pointer"
+      onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       width="180"
@@ -28,7 +29,7 @@ export const ForeignerButton = ({ isActive = false }) => {
   );
 };
 
-export const AgentButton = ({ isActive = false }) => {
+export const AgentButton = ({ isActive = false, onClick = () => {} }) => {
   const [isHovered, setIsHovered] = useState(false);
   const bgColor = isActive || isHovered ? "#F4F3FF" : "#F5F6F7";
   const mainColor = isActive || isHovered ? "#A699FF" : "#CBCDD2";
@@ -36,6 +37,7 @@ export const AgentButton = ({ isActive = false }) => {
   return (
     <svg
       className="cursor-pointer"
+      onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       width="180"
@@ -184,7 +186,7 @@ export const AgentButton = ({ isActive = false }) => {
         r="31.8252"
         fill={mainColor}
         stroke={innerPathColor}
-        stroke-width="3.53614"
+        strokeWidth="3.53614"
       />
       <path
         d="M95.7117 103.032C95.1233 103.032 94.5575 102.987 94.0143 102.896C93.4712 102.821 92.9884 102.647 92.5659 102.376C92.1586 102.104 91.8266 101.712 91.5702 101.199C91.3288 100.686 91.2081 99.9994 91.2081 99.1394C91.2081 98.3096 91.3288 97.6307 91.5702 97.1026C91.8116 96.5746 92.1359 96.1672 92.5433 95.8805C92.9658 95.5788 93.4486 95.3751 93.9917 95.2695C94.5349 95.1639 95.1082 95.1111 95.7117 95.1111H104.425C105.028 95.1111 105.602 95.1639 106.145 95.2695C106.688 95.3751 107.163 95.5788 107.57 95.8805C107.993 96.1672 108.325 96.5746 108.566 97.1026C108.808 97.6307 108.928 98.3096 108.928 99.1394C108.928 99.9994 108.8 100.686 108.544 101.199C108.302 101.712 107.97 102.104 107.548 102.376C107.14 102.647 106.665 102.821 106.122 102.896C105.579 102.987 105.013 103.032 104.425 103.032H95.7117ZM91.0723 81.9849H102.705V84.2933H99.3101L102.637 93.7532H100.012L96.8432 84.7007L93.7428 93.7532H91.1175L94.4443 84.2933H91.0723V81.9849ZM104.923 100.724C105.481 100.724 105.85 100.565 106.032 100.248C106.228 99.9466 106.326 99.5694 106.326 99.1168C106.326 98.6189 106.22 98.2116 106.009 97.8947C105.813 97.5779 105.451 97.4195 104.923 97.4195H95.1912C94.6631 97.4195 94.301 97.5779 94.1049 97.8947C93.9087 98.2116 93.8107 98.6189 93.8107 99.1168C93.8107 99.5694 93.9012 99.9466 94.0822 100.248C94.2633 100.565 94.6329 100.724 95.1912 100.724H104.923ZM102.343 86.7149H106.19V81.9849H108.815V93.7532H106.19V89.0233H102.343V86.7149Z"
