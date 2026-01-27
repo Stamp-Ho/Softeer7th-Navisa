@@ -12,3 +12,9 @@ spring:
 
   config:
     import: optional:file:.env[.properties]
+
+google:
+  gemini:
+    api:
+      base-url: https://generativelanguage.googleapis.com/v1beta/models/
+      key: ${GEMINI_API_KEY}
