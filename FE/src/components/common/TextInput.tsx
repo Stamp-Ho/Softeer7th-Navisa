@@ -2,7 +2,7 @@ const TextInput = ({
   className = "",
   placeholder = "",
   value = "",
-  setValue = (a: string) => {},
+  setValue = (_a: string) => {},
   type = "text",
 }) => {
   return (

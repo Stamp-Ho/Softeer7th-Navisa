@@ -349,7 +349,6 @@ const dummyData = [
   },
 ];
 const SearchAgent = () => {
-  const [isAtStart, setIsAtStart] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null); // 마지막 빈 div를 위한 ref
 
@@ -379,27 +378,16 @@ const SearchAgent = () => {
     return () => observer.disconnect();
   }, []);
   // 3. 상태에 따른 마스크 스타일 결정
-  const getMaskStyle = () => {
-    const base = "transition-all duration-500 ";
-    if (isAtStart)
-      return (
-        base +
-        `mask-[linear-gradient(to_bottom,black_80%,transparent_100%)]
-        [-webkit-mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]`
-      );
-    return (
-      base +
-      `mask-[linear-gradient(to_bottom,transparent_0%,black_10%,black_80%,transparent_100%)]
-      [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_80%,transparent_100%)]`
-    );
-  };
+  const getMaskStyle = `transition-all duration-500 mask-[linear-gradient(to_bottom,transparent_0%,black_10%,black_80%,transparent_100%)]
+                        [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_80%,transparent_100%)]`;
+
   return (
     <>
       <SearchAgentFilter />
       <div>
         <div
           ref={scrollRef}
-          className={`grid grid-cols-3 mt-9 gap-4 overflow-auto scrollbar-hide ${getMaskStyle()}`}
+          className={`grid grid-cols-3 mt-9 gap-4 overflow-auto scrollbar-hide ${getMaskStyle}`}
           style={{ height: "calc(100vh - 340px)" }}
         >
           {dummyData.slice(0, 18 * tempNumber).map((agent, index) => (

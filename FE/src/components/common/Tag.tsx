@@ -7,7 +7,6 @@ const Tag = ({
   as: Component = "div",
   children,
   type = "default",
-  ...props
 }: TagProps) => {
   let style =
     "flex flex-row justify-center items-center h-[25px] rounded-[20px] w-fit px-2 caption-l-medium ";

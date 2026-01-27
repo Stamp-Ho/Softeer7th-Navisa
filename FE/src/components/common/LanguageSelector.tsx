@@ -1,6 +1,6 @@
 import { useState } from "react";
 import FlagIcon from "../../assets/FlagIcon";
-import { IcArrows, IcArrowUp } from "../../assets/icon/StratisUi";
+import { IcArrows } from "../../assets/icon/StratisUi";
 
 const LanguageSelector = () => {
   const [isOpen, setIsOpen] = useState(false);

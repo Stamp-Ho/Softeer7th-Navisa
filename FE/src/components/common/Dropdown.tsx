@@ -7,7 +7,7 @@ const DropDown = ({
   category = [{ name: "", items: [] }],
   dropdownOptions = [""],
   onInitClicked = () => {},
-  onOptionClicked = (a: number) => {},
+  onOptionClicked = (_a: number) => {},
   onApply = () => {},
 }) => {
   const style = type === "left" ? "left-0" : type === "right" ? "right-0" : "";

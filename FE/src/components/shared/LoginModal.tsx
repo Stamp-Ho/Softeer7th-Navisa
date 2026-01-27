@@ -7,7 +7,7 @@ import TextInput from "../common/TextInput";
 
 const LoginModal = ({
   onClose = () => {},
-  setAuthMode = (a: number) => {},
+  setAuthMode = (_a: number) => {},
 }) => {
   const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
   const [id, setId] = useState<string>("");

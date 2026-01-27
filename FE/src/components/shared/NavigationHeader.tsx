@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import NavisaLogo from "../../assets/NavisaLogo";
 import LanguageSelector from "../common/LanguageSelector";
 import { IcFile, IcMessage, IcUserProfile } from "../../assets/icon/StratisUi";
@@ -15,7 +15,7 @@ const NavigationHeader = () => {
     currentPath === "/" ||
     PathNamesWithBackground.some((path) => currentPath.startsWith(path));
 
-  const [isAgent, setIsAgent] = useState<boolean>(false);
+  const [isAgent, _setIsAgent] = useState<boolean>(false);
 
   const [authMode, setAuthMode] = useState<number>(0); // 0:none, 1:log in, 2:sign in
   const [isAuthed, setIsAuthed] = useState<boolean>(false);
