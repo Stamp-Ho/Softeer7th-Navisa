@@ -3,6 +3,7 @@ import "./App.css";
 import HomePage from "./pages/Landing/HomePage";
 import ProfileOfClient from "./pages/Profile/client/ProfileOfClient";
 import NavigationHeader from "./components/shared/NavigationHeader";
+import SearchAgent from "./pages/Search/SearchAgent";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <NavigationHeader />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/search/agent" element={<SearchAgent />} />
         <Route path="/profile/client/:clientId" element={<ProfileOfClient />} />
       </Routes>
     </div>

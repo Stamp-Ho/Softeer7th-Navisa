@@ -34,7 +34,7 @@ const AgentCard = ({ hasAnimation = true, className = "" }) => {
         </div>
         <div className="flex-col flex gap-1">
           <a className="flex flex-row items-center gap-1.5 caption-m-medium">
-            <IcLocation /> 사무실 위치
+            <IcLocation size={14} /> 사무실 위치
           </a>
           <a className="text-text-base body-m-medium">{agent.address}</a>
         </div>

@@ -32,23 +32,22 @@ const SuggestedAgents = () => {
   // 3. 상태에 따른 마스크 스타일 결정
   const getMaskStyle = () => {
     const base = "transition-all duration-500 ";
-    const gradientPercent = 90;
     if (isAtStart)
       return (
         base +
-        `mask-[linear-gradient(to_right,black_${gradientPercent}%,transparent_100%)]
-        [-webkit-mask-image:linear-gradient(to_right,black_${gradientPercent}%,transparent_100%)]`
+        `mask-[linear-gradient(to_right,black_90%,transparent_100%)]
+        [-webkit-mask-image:linear-gradient(to_right,black_90%,transparent_100%)]`
       );
     if (isAtEnd)
       return (
         base +
-        `mask-[linear-gradient(to_left,black_${gradientPercent}%,transparent_100%)]
-        [-webkit-mask-image:linear-gradient(to_left,black_${gradientPercent}%,transparent_100%)]`
+        `mask-[linear-gradient(to_left,black_90%,transparent_100%)]
+        [-webkit-mask-image:linear-gradient(to_left,black_90%,transparent_100%)]`
       );
     return (
       base +
-      `mask-[linear-gradient(to_right,transparent_0%,black_${100 - gradientPercent}%,black_${gradientPercent}%,transparent_100%)]
-      [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_${100 - gradientPercent}%,black_${gradientPercent}%,transparent_100%)]`
+      `mask-[linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]
+      [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]`
     );
   };
 
@@ -79,7 +78,7 @@ const SuggestedAgents = () => {
         {loading && <LoadingBar isCompleted={!showLoadingBar} />}
         <ol
           className={`${loading ? "pl-500" : ""}
-            transition-all duration-${flyTime}
+            transition-all duration-1000
             flex flex-row gap-5 w-fit items-center justify-start h-104`}
         >
           {Array.from({ length: 12 }).map((_, idx) => (

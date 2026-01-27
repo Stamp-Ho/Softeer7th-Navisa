@@ -4,22 +4,30 @@ import LanguageSelector from "../common/LanguageSelector";
 import { IcFile, IcMessage, IcUserProfile } from "../../assets/icon/StratisUi";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
+import { useLocation, useNavigate } from "react-router-dom";
 
+const PathNamesWithBackground = ["/profile"];
 const NavigationHeader = () => {
-  const [atWhiteBg, setAtWhiteBg] = useState<boolean>(false);
-  const [currentTab, setCurrentTab] = useState<string>("home");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentPath = location.pathname;
+  const isSpecialBackground =
+    currentPath === "/" ||
+    PathNamesWithBackground.some((path) => currentPath.startsWith(path));
+
+  const [isAgent, setIsAgent] = useState<boolean>(false);
 
   const [authMode, setAuthMode] = useState<number>(0); // 0:none, 1:log in, 2:sign in
   const [isAuthed, setIsAuthed] = useState<boolean>(false);
 
-  const homeTabStyle = !atWhiteBg
+  const homeTabStyle = isSpecialBackground
     ? "text-gray-0"
-    : currentTab === "home"
+    : currentPath === "/"
       ? "text-text-base"
       : "text-text-sub";
-  const searchTabStyle = !atWhiteBg
+  const searchTabStyle = isSpecialBackground
     ? "text-gray-0"
-    : currentTab === "search"
+    : currentPath.startsWith("/search")
       ? "text-text-base"
       : "text-text-sub";
 
@@ -33,10 +41,24 @@ const NavigationHeader = () => {
         <></>
       )}
       <div className="flex flex-row items-center gap-32">
-        <NavisaLogo />
-        <div className="flex flex-row items-center title-s-bold gap-18">
-          <button className={`cursor-pointer ${homeTabStyle}`}>홈</button>
-          <button className={`cursor-pointer ${searchTabStyle}`}>
+        <NavisaLogo whiteMode={isSpecialBackground} />
+        <div className={`flex flex-row items-center title-s-bold gap-18`}>
+          <button
+            className={`cursor-pointer ${homeTabStyle}`}
+            onClick={() => {
+              navigate("/", { replace: false });
+            }}
+          >
+            홈
+          </button>
+          <button
+            className={`cursor-pointer ${searchTabStyle}`}
+            onClick={() => {
+              navigate(isAgent ? "/search/client" : "/search/agent", {
+                replace: false,
+              });
+            }}
+          >
             행정사 탐색
           </button>
         </div>

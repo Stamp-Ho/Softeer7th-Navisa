@@ -1,6 +1,6 @@
 import { useState } from "react";
 import FlagIcon from "../../assets/FlagIcon";
-import { IcArrowDown, IcArrowUp } from "../../assets/icon/StratisUi";
+import { IcArrows, IcArrowUp } from "../../assets/icon/StratisUi";
 
 const LanguageSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +12,9 @@ const LanguageSelector = () => {
         onClick={() => setIsOpen(!isOpen)}
       >
         <FlagIcon nationIndex={25} className={flagStyle} />
-        {isOpen ? <IcArrowUp /> : <IcArrowDown />}
+        <div className={`transition-transform ${isOpen ? "rotate-180" : ""}`}>
+          <IcArrows />
+        </div>
       </div>
       {isOpen && (
         <>

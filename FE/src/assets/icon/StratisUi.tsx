@@ -16,6 +16,28 @@ export const IcX = () => {
     </svg>
   );
 };
+export const IcJob = ({ isActive = false }) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4 19.037C4 15.6941 6.79286 12.9841 12.5 12.9841C18.2071 12.9841 21 15.6941 21 19.037C21 19.5689 20.612 20 20.1333 20H4.86667C4.38802 20 4 19.5689 4 19.037Z"
+        stroke={isActive ? "var(--primary)" : "#2F343D"}
+        stroke-width="1.5"
+      />
+      <path
+        d="M15.6875 6.1875C15.6875 7.94791 14.2604 9.375 12.5 9.375C10.7396 9.375 9.3125 7.94791 9.3125 6.1875C9.3125 4.42709 10.7396 3 12.5 3C14.2604 3 15.6875 4.42709 15.6875 6.1875Z"
+        stroke={isActive ? "var(--primary)" : "#2F343D"}
+        stroke-width="1.5"
+      />
+    </svg>
+  );
+};
 export const IcCheck = ({ activated = false }) => {
   return (
     <svg
@@ -55,7 +77,7 @@ export const IcCheckBroken = ({ activated = false }) => {
   );
 };
 
-export const IcArrowDown = () => {
+export const IcArrows = ({ stroke = "#2F343D" }) => {
   return (
     <svg
       width="24"
@@ -66,7 +88,7 @@ export const IcArrowDown = () => {
     >
       <path
         d="M7 10L12.0008 14.58L17 10"
-        stroke="#2F343D"
+        stroke={stroke}
         strokeWidth="1.34"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -75,21 +97,21 @@ export const IcArrowDown = () => {
   );
 };
 
-export const IcArrowUp = () => {
+export const IcArrowUp = ({ size = 24 }) => {
   return (
     <svg
-      width="24"
-      height="24"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M7 14.5834L12.0008 10L17 14.5834"
-        stroke="#2F343D"
-        strokeWidth="1.34"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        d="M5 10.6667L12 4M12 4L19 10.6667M12 4V20"
+        stroke="black"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       />
     </svg>
   );
@@ -112,26 +134,26 @@ export const IcGraduation = ({ size = 24 }) => {
   );
 };
 
-export const IcLocation = () => {
+export const IcLocation = ({ isActive = false, size = 24 }) => {
   return (
     <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M6.71464 12.3666C6.71464 12.3666 11.0973 8.47097 11.0973 5.54923C11.0973 3.12879 9.13509 1.16663 6.71464 1.16663C4.29419 1.16663 2.33203 3.12879 2.33203 5.54923C2.33203 8.47097 6.71464 12.3666 6.71464 12.3666Z"
-        stroke="#2F343D"
-        strokeWidth="0.875"
-        strokeLinecap="round"
+        d="M11.513 21.2C11.513 21.2 19.0261 14.5217 19.0261 9.51304C19.0261 5.3637 15.6624 2 11.513 2C7.3637 2 4 5.3637 4 9.51304C4 14.5217 11.513 21.2 11.513 21.2Z"
+        stroke={isActive ? "var(--primary)" : "#2F343D"}
+        stroke-width="1.5"
+        stroke-linecap="round"
       />
       <path
-        d="M8.11482 5.36671C8.11482 6.13991 7.48802 6.76672 6.71482 6.76672C5.94162 6.76672 5.31482 6.13991 5.31482 5.36671C5.31482 4.59352 5.94162 3.96671 6.71482 3.96671C7.48802 3.96671 8.11482 4.59352 8.11482 5.36671Z"
-        stroke="#2F343D"
-        strokeWidth="0.875"
-        strokeLinecap="round"
+        d="M13.9134 9.20015C13.9134 10.5256 12.8388 11.6002 11.5134 11.6002C10.1879 11.6002 9.11335 10.5256 9.11335 9.20015C9.11335 7.87467 10.1879 6.80015 11.5134 6.80015C12.8388 6.80015 13.9134 7.87467 13.9134 9.20015Z"
+        stroke={isActive ? "var(--primary)" : "#2F343D"}
+        stroke-width="1.5"
+        stroke-linecap="round"
       />
     </svg>
   );
@@ -199,7 +221,26 @@ export const IcUserProfile = () => {
   );
 };
 
-export const IcLanguage = () => {
+export const IcRotate = () => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M19.1288 14.5C18.1109 17.6939 15.1954 20 11.7576 20C7.47318 20 4 16.4183 4 12C4 7.58172 7.47318 4 11.7576 4C14.629 4 17.136 5.60879 18.4773 8M16.1212 9H20V5"
+        stroke="#2F343D"
+        stroke-width="1.24"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
+export const IcLanguage = ({ isActive = false, size = 24 }) => {
   return (
     <svg
       width="24"
@@ -210,7 +251,7 @@ export const IcLanguage = () => {
     >
       <path
         d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3M12 21C9.82538 21 8.0625 16.9706 8.0625 12C8.0625 7.02944 9.82538 3 12 3M12 21C14.1746 21 15.9375 16.9706 15.9375 12C15.9375 7.02944 14.1746 3 12 3M4.125 9.75H19.875M4.21948 14.8124H19.9695"
-        stroke="#2F343D"
+        stroke={isActive ? "var(--primary)" : "#2F343D"}
         strokeWidth="1.24135"
         strokeLinecap="round"
       />
