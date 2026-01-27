@@ -1,6 +1,6 @@
 package com.navisa.be.common.dto.response;
 
-import com.navisa.be.common.domain.enums.ResponseStatus;
+import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.exception.BaseException;
 import com.navisa.be.common.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;

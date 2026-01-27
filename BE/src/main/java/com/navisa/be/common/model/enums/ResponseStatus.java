@@ -1,4 +1,4 @@
-package com.navisa.be.common.domain.enums;
+package com.navisa.be.common.model.enums;
 
 public enum ResponseStatus {
     /**
@@ -28,7 +28,6 @@ public enum ResponseStatus {
         this.message = message;
     }
 
-    // 직접 작성한 Getter (JaCoCo가 인식하기 좋습니다)
     public boolean isSuccess() {
         return isSuccess;
     }

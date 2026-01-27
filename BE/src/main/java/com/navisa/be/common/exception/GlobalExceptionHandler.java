@@ -1,6 +1,6 @@
 package com.navisa.be.common.exception;
 
-import com.navisa.be.common.domain.enums.ResponseStatus;
+import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.dto.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;

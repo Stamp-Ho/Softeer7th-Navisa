@@ -1,6 +1,6 @@
 package com.navisa.be.common.exception;
 
-import com.navisa.be.common.domain.enums.ResponseStatus;
+import com.navisa.be.common.model.enums.ResponseStatus;
 
 public class BaseException extends RuntimeException {
     public final ResponseStatus status;
