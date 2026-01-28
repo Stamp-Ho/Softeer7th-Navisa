@@ -4,35 +4,40 @@ public enum ResponseStatus {
     /**
      * 성공 관련
      */
-    SUCCESS(true, 200, "요청에 성공하였습니다."),
-    PAGING_SUCCESS(true, 200, "조회 성공"),
+    SUCCESS(200, "요청에 성공하였습니다."),
+    PAGING_SUCCESS(200, "조회 성공"),
+    GOOGLE_LOGIN_SUCCESS(200, "구글 로그인 성공"),
+    SIGNUP_SUCCESS(200, "회원가입 성공"),
+    REISSUE_SUCCESS(200, "토큰 재발급 성공"),
+    LOGIN_SUCCESS(200, "로그인 성공"),
+    LOGOUT_SUCCESS(200, "로그아웃 성공 및 토큰 무효화 완료"),
 
     /**
      * 클라이언트 에러 (400번대)
      */
-    BAD_REQUEST(false, 400, "잘못된 요청입니다."),
-    INVALID_USER(false, 400, "존재하지 않는 유저 정보입니다."),
+    BAD_REQUEST(400, "잘못된 요청입니다."),
+    INVALID_USER(400, "존재하지 않는 유저 정보입니다."),
+    INVALID_PASSWORD(400, "비밀번호가 일치하지 않습니다."),
+    GOOGLE_AUTH_ERROR(401, "구글 인증 서버와의 통신에 실패했습니다."),
+    INVALID_TOKEN(401, "유효하지 않은 토큰입니다."),
+    USER_INVALID(401, "해당하는 사용자가 존재하지 않습니다."),
+    ALREADY_EXIST_USER(409, "이미 가입된 이메일입니다."),
+    DUPLICATE_LOGIN_TYPE(409, "다른 로그인 방식(소셜 등)으로 이미 가입된 계정입니다."),
+    INVALID_INITIAL_USER_TYPE(400, "가입 시 유효하지 않은 유저 타입입니다."),
 
     /**
      * 서버 에러 (500번대)
      */
-    SERVER_ERROR(false, 500, "서버와의 연결에 실패하였습니다."),
+    SERVER_ERROR(500, "서버와의 연결에 실패하였습니다."),
+    NOT_FOUND_TEXT_EMBEDDING_RESULT(598, "Text Embedding API를 호출한 결과에 임베딩 결과가 없습니다."),
+    CANNOT_GENERATE_TEXT_EMBEDDING_RESULT(599, "Text Embedding API 호출에 실패했습니다.");
 
-    NOT_FOUND_TEXT_EMBEDDING_RESULT(false, 598, "Text Embedding API를 호출한 결과에 임베딩 결과가 없습니다."),
-    CANNOT_GENERATE_TEXT_EMBEDDING_RESULT(false, 599, "Text Embedding API 호출에 실패했습니다.");
-
-    private final boolean isSuccess;
     private final int code;
     private final String message;
 
-    ResponseStatus(boolean isSuccess, int code, String message) {
-        this.isSuccess = isSuccess;
+    ResponseStatus(int code, String message) {
         this.code = code;
         this.message = message;
-    }
-
-    public boolean isSuccess() {
-        return isSuccess;
     }
 
     public int getCode() {

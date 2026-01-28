@@ -1,23 +1,19 @@
 spring:
   config:
     activate:
-      on-profile: remote
+      on-profile: local
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    url: jdbc:postgresql://localhost:${POSTGRES_PORT}/${POSTGRES_DB}
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
 
-  data:
-    redis:
-      host: 10.0.138.33
-      port: 6379
-
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update  # 개발 편의를 위해 update (테이블 자동 변경)
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+        use_sql_comments: true

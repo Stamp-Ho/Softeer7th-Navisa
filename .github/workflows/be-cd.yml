@@ -52,49 +52,53 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_PRIVATE_KEY }}
           script: |
-             cd ~/navisa-dev
-             
-             # ==========================================
-             # [Part 1] Spring Boot Docker 배포
-             # ==========================================
-             echo "Loading Docker image..."
-             docker load -i navisa-spring-app.tar
-             
-             if [ "$(docker ps -aq -f name=navisa-spring-app)" ]; then
-                 echo "Stopping existing container..."
-                 docker stop navisa-spring-app
-                 docker rm navisa-spring-app
-             fi
-             
-             docker image prune -f
-             
-             echo "Starting new container..."
-             docker run -d \
-               --name navisa-spring-app \
-               -p 8080:8080 \
-               -e SPRING_PROFILES_ACTIVE=remote \
-               -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
-               -e POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
-               -e POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
-               -e POSTGRES_USERNAME=${{ secrets.POSTGRES_USERNAME }} \
-               -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-               navisa-spring-app
-               
-             rm navisa-spring-app.tar
-
-             # ==========================================
-             # [Part 2] Nginx 설정 배포 및 적용
-             # ==========================================
-             echo "Updating Nginx configuration..."
-             sudo cp ~/navisa-dev/docs/infra/nginx.conf /etc/nginx/sites-available/api.navisa.site
-             sudo nginx -t
-             
-             # 검사 결과($?)가 성공(0)이면 재시작
-             if [ $? -eq 0 ]; then
-                 sudo systemctl reload nginx
-                 echo "Nginx reloaded successfully."
-             else
-                 echo "❌ Nginx configuration test failed! Not reloading."
-                 # 배포 실패로 처리하려면 아래 exit 1 주석 해제
-                 # exit 1
-             fi
+            cd ~/navisa-dev
+            
+            # ==========================================
+            # [Part 1] Spring Boot Docker 배포
+            # ==========================================
+            echo "Loading Docker image..."
+            docker load -i navisa-spring-app.tar
+            
+            if [ "$(docker ps -aq -f name=navisa-spring-app)" ]; then
+                echo "Stopping existing container..."
+                docker stop navisa-spring-app
+                docker rm navisa-spring-app
+            fi
+            
+            docker image prune -f
+            
+            echo "Starting new container..."
+            docker run -d \
+              --name navisa-spring-app \
+              -p 8080:8080 \
+              -e SPRING_PROFILES_ACTIVE=remote \
+              -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+              -e POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+              -e POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
+              -e POSTGRES_USERNAME=${{ secrets.POSTGRES_USERNAME }} \
+              -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }} \
+              -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
+              -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
+              navisa-spring-app
+            
+            rm navisa-spring-app.tar
+            
+            # ==========================================
+            # [Part 2] Nginx 설정 배포 및 적용
+            # ==========================================
+            echo "Updating Nginx configuration..."
+            sudo cp ~/navisa-dev/docs/infra/nginx.conf /etc/nginx/sites-available/api.navisa.site
+            sudo nginx -t
+            
+            # 검사 결과($?)가 성공(0)이면 재시작
+            if [ $? -eq 0 ]; then
+                sudo systemctl reload nginx
+                echo "Nginx reloaded successfully."
+            else
+                echo "❌ Nginx configuration test failed! Not reloading."
+                # 배포 실패로 처리하려면 아래 exit 1 주석 해제
+                # exit 1
+            fi

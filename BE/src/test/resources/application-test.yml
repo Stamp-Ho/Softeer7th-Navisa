@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test # IntegrationTestSupport에서 동적으로 덮어씌워짐
+    driver-class-name: org.postgresql.Driver
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+jwt:
+  secret: "this-is-a-test-secret-key-that-must-be-longer-than-48-bytes-for-hs384"
+google:
+  gemini:
+    api:
+      key: "dummy-test-key"
+      base-url: "http://localhost:8080"
+  oauth:
+      client-id: ${GOOGLE_OAUTH_CLIENT_ID:dummy-test-client-id}
