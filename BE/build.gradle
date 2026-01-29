@@ -26,41 +26,44 @@ repositories {
 }
 
 dependencies {
-
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    // Database & Vector Search
     runtimeOnly 'org.postgresql:postgresql'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.pgvector:pgvector:0.1.6'
+    implementation 'org.hibernate.orm:hibernate-vector:6.6.1.Final'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    testImplementation 'com.h2database:h2'
 
+    // Utilities & API Documentation
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3'
     implementation 'me.paulschwarz:spring-dotenv:5.1.0'
 
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 
+    // Testcontainers
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
-
-    implementation 'com.pgvector:pgvector:0.1.6'
-
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
-    testImplementation 'com.h2database:h2'
-
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-
     implementation 'org.mindrot:jbcrypt:0.4'
-
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 }
 

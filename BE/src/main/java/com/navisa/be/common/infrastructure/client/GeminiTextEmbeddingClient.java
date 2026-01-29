@@ -28,13 +28,14 @@ public class GeminiTextEmbeddingClient implements TextEmbeddingClient {
 
     @Autowired
     public GeminiTextEmbeddingClient(WebClient.Builder webClientBuilder,
-                                     @Value("${google.gemini.api.base-url}") String baseUrl) {
+            @Value("${google.gemini.api.base-url}") String baseUrl) {
+
         this.webClient = webClientBuilder
                 .baseUrl(baseUrl)
                 .clientConnector(new ReactorClientHttpConnector(
                         HttpClient.create()
-                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000) // 연결 2초
-                                .responseTimeout(Duration.ofSeconds(2))             // 응답 2초
+                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000)
+                                .responseTimeout(Duration.ofSeconds(2))
                 ))
                 .build();
     }
@@ -42,7 +43,7 @@ public class GeminiTextEmbeddingClient implements TextEmbeddingClient {
     /**
      * DTO를 사용하여 응답을 처리하도록 개선된 로직
      */
-    public List<Double> embedText(String text, GeminiEmbeddingRequestType taskType) {
+    public float[] embedText(String text, GeminiEmbeddingRequestType taskType) {
         String uri = MODEL_ID + ":embedContent";
 
         Map<String, Object> body = Map.of(

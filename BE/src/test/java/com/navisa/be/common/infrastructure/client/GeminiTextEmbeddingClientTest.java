@@ -12,7 +12,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -64,14 +63,14 @@ class GeminiTextEmbeddingClientTest {
                 .addHeader("Content-Type", "application/json"));
 
         // when
-        List<Double> result = geminiClient.embedText("test text", GeminiEmbeddingRequestType.DOCUMENT);
+        float[] result = geminiClient.embedText("test text", GeminiEmbeddingRequestType.DOCUMENT);
 
         // then
         assertThat(result).isNotNull();
         assertThat(result).hasSize(3);
-        assertThat(result.get(0)).isEqualTo(0.123);
-        assertThat(result.get(1)).isEqualTo(0.456);
-        assertThat(result.get(2)).isEqualTo(0.789);
+        assertThat(result[0]).isEqualTo(0.123f);
+        assertThat(result[1]).isEqualTo(0.456f);
+        assertThat(result[2]).isEqualTo(0.789f);
     }
 
     @Test
@@ -93,12 +92,12 @@ class GeminiTextEmbeddingClientTest {
                 .addHeader("Content-Type", "application/json"));
 
         // when
-        List<Double> result = geminiClient.embedText("search query", GeminiEmbeddingRequestType.QUERY);
+        float[] result = geminiClient.embedText("search query", GeminiEmbeddingRequestType.QUERY);
 
         // then
         assertThat(result).isNotNull();
         assertThat(result).hasSize(3);
-        assertThat(result.get(0)).isEqualTo(0.987);
+        assertThat(result[0]).isEqualTo(0.987f);
     }
 
     @Test
@@ -112,6 +111,23 @@ class GeminiTextEmbeddingClientTest {
                 .isInstanceOf(BaseException.class)
                 .extracting("status")
                 .isEqualTo(ResponseStatus.CANNOT_GENERATE_TEXT_EMBEDDING_RESULT);
+    }
+
+    @Test
+    @DisplayName("실패: 응답값에 임베딩 벡터가 없는 경우 BaseException(NOT_FOUND_TEXT_EMBEDDING_RESULT)을 던진다")
+    void embedText_NotFoundResult() {
+        // given: 유효하지만 벡터값이 없는 응답
+        String mockResponseJson = "{}";
+
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(mockResponseJson)
+                .addHeader("Content-Type", "application/json"));
+
+        // when & then
+        assertThatThrownBy(() -> geminiClient.embedText("test text", GeminiEmbeddingRequestType.DOCUMENT))
+                .isInstanceOf(BaseException.class)
+                .extracting("status")
+                .isEqualTo(ResponseStatus.NOT_FOUND_TEXT_EMBEDDING_RESULT);
     }
 
 }

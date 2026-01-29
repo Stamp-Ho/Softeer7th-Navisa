@@ -184,7 +184,7 @@ class AuthServiceTest {
     void login_fail_invalid_password() {
         String email = "user@navisa.com";
         // BCrypt로 암호화된 비밀번호를 가진 유저 모킹
-        String hashedPw = org.mindrot.jbcrypt.BCrypt.hashpw("correct-password", org.mindrot.jbcrypt.BCrypt.gensalt());
+        String hashedPw = BCrypt.hashpw("correct-password", BCrypt.gensalt());
         User user = new User(email, hashedPw, UserType.UNVALID_AGENT, LoginType.EMAIL, true);
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));

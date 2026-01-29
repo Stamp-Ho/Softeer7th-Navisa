@@ -11,6 +11,8 @@ public enum ResponseStatus {
     REISSUE_SUCCESS(200, "토큰 재발급 성공"),
     LOGIN_SUCCESS(200, "로그인 성공"),
     LOGOUT_SUCCESS(200, "로그아웃 성공 및 토큰 무효화 완료"),
+    CREATED_FOREIGNER_PROFILE(201, "외국인 프로필 생성에 성공했습니다."),
+    UPDATED_FOREIGNER_PROFILE(204, "외국인 프로필 수정(재등록)에 성공했습니다."),
 
     /**
      * 클라이언트 에러 (400번대)
@@ -24,11 +26,15 @@ public enum ResponseStatus {
     ALREADY_EXIST_USER(409, "이미 가입된 이메일입니다."),
     DUPLICATE_LOGIN_TYPE(409, "다른 로그인 방식(소셜 등)으로 이미 가입된 계정입니다."),
     INVALID_INITIAL_USER_TYPE(400, "가입 시 유효하지 않은 유저 타입입니다."),
+    INVALID_FOREIGNER(400, "존재하지 않는 외국인 프로필 정보입니다."),
+    INVALID_NATIONALITY(400, "잘못된 Nationality id 정보입니다."),
+    INVALID_LANGUAGE(400, "잘못된 Language id 정보입니다."),
 
     /**
      * 서버 에러 (500번대)
      */
     SERVER_ERROR(500, "서버와의 연결에 실패하였습니다."),
+    SIMILARITY_CALCULATE_FAIL(540, "vector의 코사인 유사도 계산을 실패했습니다."),
     NOT_FOUND_TEXT_EMBEDDING_RESULT(598, "Text Embedding API를 호출한 결과에 임베딩 결과가 없습니다."),
     CANNOT_GENERATE_TEXT_EMBEDDING_RESULT(599, "Text Embedding API 호출에 실패했습니다.");
 
