@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-@Table(name = "foreigner_education")
 @Entity
+@Table(name = "foreigner_education")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

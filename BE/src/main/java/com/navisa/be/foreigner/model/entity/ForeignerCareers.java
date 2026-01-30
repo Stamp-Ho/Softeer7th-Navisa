@@ -12,8 +12,8 @@ import com.navisa.be.common.model.entity.BaseEntity;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Table(name = "foreigner_careers")
 @Entity
+@Table(name = "foreigner_careers")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

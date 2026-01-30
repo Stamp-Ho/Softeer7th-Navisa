@@ -8,18 +8,18 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "agent_specialized_job_code")
 @Entity
+@Table(name = "agent_specialized_job_code")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgentSpecializedJobCode extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "agent_specialized_job_code_id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "agent_id")
+    @JoinColumn(name = "agent_id", nullable = false)
     private AgentProfile agentProfile;
 
     @ManyToOne

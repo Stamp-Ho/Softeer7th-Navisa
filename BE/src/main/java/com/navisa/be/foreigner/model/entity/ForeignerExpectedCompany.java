@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Table(name = "foreigner_expected_company")
 @Entity
+@Table(name = "foreigner_expected_company")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

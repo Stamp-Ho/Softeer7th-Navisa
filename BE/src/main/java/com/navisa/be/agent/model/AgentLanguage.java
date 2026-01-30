@@ -4,15 +4,18 @@ import com.navisa.be.common.model.entity.BaseEntity;
 import com.navisa.be.common.model.entity.Language;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "agent_language")
 @Entity
+@Table(name = "agent_language")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgentLanguage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "agent_language_id")
     private Long id;
 
     @ManyToOne

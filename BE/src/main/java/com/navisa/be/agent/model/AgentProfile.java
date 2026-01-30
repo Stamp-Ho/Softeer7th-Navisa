@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Getter
-@Table(name = "agent_profile")
 @Entity
+@Table(name = "agent_profile")
+@Getter
 public class AgentProfile extends BaseEntity {
 
     @Id
