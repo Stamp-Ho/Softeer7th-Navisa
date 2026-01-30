@@ -139,6 +139,9 @@
   --color-background-sub: var(--gray-50);
   --color-background-default: var(--gray-0);
 
+  /* ---------- Green Message ------- */
+  --color-green-bright: var(--green-bright);
+  --color-green-vivid: var(--green-700);
   /* ---------- Text Color ---------- */
   --color-text-base: var(--gray-800);
   --color-text-inverse: var(--gray-100);
@@ -151,6 +154,22 @@
       display: none;
     }
     scrollbar-width: none;
+  }
+  .scrolltrack-hide {
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar {
+      width: 8px; /* 세로 스크롤바 두께 */
+      height: 6px; /* 가로 스크롤바 두께 */
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #cbcdd2;
+      border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #a0a2a7;
+    }
   }
   .banner-title {
     font-family: Pretendard;
@@ -554,5 +573,24 @@
     line-height: var(--leading-headline);
     font-weight: 400;
     letter-spacing: var(--tracking-tight);
+  }
+}
+@layer base {
+  /* 1. 기본 입력창 스타일 초기화 및 커스텀 */
+  input[type="time"] {
+  }
+
+  /* 2. 크롬/사파리에서 시계 아이콘 커스텀 (제거하거나 변경) */
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    @apply cursor-pointer p-1 rounded-md transition-colors;
+    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(190deg)
+      brightness(95%) contrast(80%);
+    /* 아이콘을 아예 숨기고 싶다면: display: none; */
+  }
+
+  /* 3. 스핀 버튼(위아래 화살표) 제거 (디자인 깔끔하게) */
+  input[type="time"]::-webkit-inner-spin-button,
+  input[type="time"]::-webkit-clear-button {
+    display: none;
   }
 }

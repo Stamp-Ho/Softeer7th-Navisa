@@ -7,8 +7,8 @@ const TextInput = ({
 }) => {
   return (
     <input
-      className={`w-full px-spacing-600 py-spacing-600 bg-gray-50 rounded-radius-400
-        body-l-medium  focus:outline-gray-300 focus:outline-2
+      className={`w-full px-spacing-600 bg-gray-50 rounded-radius-400
+        body-l-medium focus:outline-gray-300 focus:outline-2 h-15
         placeholder:text-text-sub ${className}`}
       placeholder={placeholder}
       value={value}

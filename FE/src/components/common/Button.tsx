@@ -1,5 +1,6 @@
 import type React from "react";
 
+type buttonType = "lightGray" | "primary" | "grayLine";
 const Button = ({
   type = "lightGray",
   size = "medium",
@@ -37,7 +38,7 @@ const Button = ({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`cursor-pointer ${className} ${buttonStyle} ${buttonSize}`}
+      className={`cursor-pointer ${buttonStyle} ${buttonSize} ${className} `}
     >
       {children}
     </button>

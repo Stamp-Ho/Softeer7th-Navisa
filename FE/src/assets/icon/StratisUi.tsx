@@ -16,6 +16,37 @@ export const IcX = () => {
     </svg>
   );
 };
+export const IcDot = ({ size = 24 }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="2.5" fill="var(--gray-400)" />
+    </svg>
+  );
+};
+export const IcDash = ({ size = 24 }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M19.2 12L4.8 12"
+        stroke="black"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>
+  );
+};
 export const IcJob = ({ isActive = false }) => {
   return (
     <svg
@@ -219,6 +250,26 @@ export const IcMessage = () => {
   );
 };
 
+export const IcPlus = () => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 5L12 19M19 12L5 12"
+        stroke="#4132A9"
+        stroke-width="1.34"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
+
 export const IcUserProfile = () => {
   return (
     <div>
@@ -256,6 +307,36 @@ export const IcRotate = () => {
         stroke-width="1.24"
         stroke-linecap="round"
         stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
+
+export const IcMessageBox = ({ size = 24 }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M6.6767 21.5984L11.6854 16.5897H19.1984C20.5239 16.5897 21.5984 15.5152 21.5984 14.1897V4.79844C21.5984 3.47295 20.5239 2.39844 19.1984 2.39844H4.79844C3.47295 2.39844 2.39844 3.47296 2.39844 4.79844V14.1897C2.39844 15.5152 3.47296 16.5897 4.79844 16.5897H6.6767V21.5984Z"
+        fill="#008B88"
+      />
+      <path
+        d="M14.3984 11.9984L11.9984 9.59844M11.9984 9.59844L9.59844 7.19844M11.9984 9.59844L9.59844 11.9984M11.9984 9.59844L14.3984 7.19844M11.6854 16.5897L6.6767 21.5984V16.5897H4.79844C3.47296 16.5897 2.39844 15.5152 2.39844 14.1897V4.79844C2.39844 3.47296 3.47295 2.39844 4.79844 2.39844H19.1984C20.5239 2.39844 21.5984 3.47295 21.5984 4.79844V14.1897C21.5984 15.5152 20.5239 16.5897 19.1984 16.5897H11.6854Z"
+        stroke="#008B88"
+        stroke-width="1.24"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M8.57031 9.69205L10.4378 11.5595C10.5717 11.6934 10.7887 11.6934 10.9226 11.5595L15.4275 7.05469"
+        stroke="white"
+        stroke-width="1.43143"
+        stroke-linecap="round"
       />
     </svg>
   );

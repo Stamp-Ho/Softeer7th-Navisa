@@ -117,6 +117,10 @@
   --secondary-hover: var(--green-700);
   --secondary-pressed: var(--green-800);
 
+  /* ---------- Green Message ------- */
+  --green-bright: rgba(230, 249, 249, 0.8);
+  --green-vivid: var(--green-700);
+
   /* ---------- Text Color ---------- */
   --text-base: var(--gray-800);
   --text-inverse: var(--gray-100);

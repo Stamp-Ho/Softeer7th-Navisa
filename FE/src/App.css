@@ -6,7 +6,9 @@
   align-items: center;
   overflow-x: hidden;
   min-width: 1720px;
-  width: full;
+  width: 100%;
+  color: var(--text-base);
+  user-select: none;
 }
 
 .div {
