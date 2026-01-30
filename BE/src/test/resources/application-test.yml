@@ -23,4 +23,9 @@ google:
       key: "dummy-test-key"
       base-url: "http://localhost:8080"
   oauth:
-      client-id: ${GOOGLE_OAUTH_CLIENT_ID:dummy-test-client-id}
+    client-id: ${GOOGLE_OAUTH_CLIENT_ID:dummy-test-client-id}
+
+aws:
+  region: ap-northeast-2
+  s3:
+    bucket: test-bucket

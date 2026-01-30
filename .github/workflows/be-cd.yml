@@ -79,9 +79,11 @@ jobs:
               -e POSTGRES_USERNAME=${{ secrets.POSTGRES_USERNAME }} \
               -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
               -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }} \
+              -e GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} \
+              -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
               -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
               -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
+              -e AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }} \
               navisa-spring-app
             
             rm navisa-spring-app.tar

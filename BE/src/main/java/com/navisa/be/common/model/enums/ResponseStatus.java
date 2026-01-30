@@ -29,12 +29,15 @@ public enum ResponseStatus {
     INVALID_FOREIGNER(400, "존재하지 않는 외국인 프로필 정보입니다."),
     INVALID_NATIONALITY(400, "잘못된 Nationality id 정보입니다."),
     INVALID_LANGUAGE(400, "잘못된 Language id 정보입니다."),
+    STORAGE_UNSUPPORTED_CONTENT_TYPE(400, "지원하지 않는 파일 타입입니다"),
+    STORAGE_UNSUPPORTED_USAGE(400, "지원되지 않는 용도의 요청입니다"),
 
     /**
      * 서버 에러 (500번대)
      */
     SERVER_ERROR(500, "서버와의 연결에 실패하였습니다."),
     SIMILARITY_CALCULATE_FAIL(540, "vector의 코사인 유사도 계산을 실패했습니다."),
+    PRESIGNED_URL_GEN_FAILED(597, "업로드 URL 생성에 실패했습니다"),
     NOT_FOUND_TEXT_EMBEDDING_RESULT(598, "Text Embedding API를 호출한 결과에 임베딩 결과가 없습니다."),
     CANNOT_GENERATE_TEXT_EMBEDDING_RESULT(599, "Text Embedding API 호출에 실패했습니다.");
 

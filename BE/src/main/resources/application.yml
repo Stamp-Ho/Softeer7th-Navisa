@@ -27,3 +27,8 @@ google:
 
   oauth:
     client-id: ${GOOGLE_CLIENT_ID}
+
+aws:
+  region: ap-northeast-2
+  s3:
+    bucket: ${AWS_S3_BUCKET_NAME}
