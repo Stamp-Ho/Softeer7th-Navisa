@@ -5,6 +5,21 @@
 
 <br>
 
+## 📚 Project Documents
+> **Navisa의 모든 개발 기록과 기술적 고민은 위키에서 확인하실 수 있습니다.**
+> ### [👉 Navisa 통합 Wiki 바로가기](https://github.com/softeerbootcamp-7th/WEB-Team6-Navisa/wiki)
+
+<br>
+
+## 📚 Project Resources
+| Category           | Resources |
+|:-------------------| :--- |
+| **데일리 노트**         | [![Notion](https://img.shields.io/badge/Notion-Daily_Note-000000?style=flat-square&logo=notion)](https://www.notion.so/bside/2ee22020273580e58bdacc148741eaec) |
+| **기획 및 디자인 산출물**   | [![Figma](https://img.shields.io/badge/Figma-Planning-F24E1E?style=flat-square&logo=figma)](https://www.figma.com/design/AEMfiNWZUpZlpnAsM4ojmz/%EA%B8%B0%ED%9A%8D%EC%9D%98-%EB%B0%A9) [![Figma](https://img.shields.io/badge/Figma-Design-F24E1E?style=flat-square&logo=figma)](https://www.figma.com/design/YHUKhgeoJpBeixaJUsV59V/%EB%94%94%EC%9E%90%EC%9D%B8%EC%9D%98-%EB%B0%A9) |
+| **ERD 및 인프라 아키텍처** | [![ERDCloud](https://img.shields.io/badge/ERDCloud-Database-FF6C37?style=flat-square)](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn) [![Figma](https://img.shields.io/badge/Figma-Infra_Architecture-F24E1E?style=flat-square&logo=figma)](https://www.figma.com/board/QnPDChUIeMNIRU7r3rQUQq/Softeer_7th_Team6_Infra-Architecture) |
+
+<br>
+
 # 👨‍👧‍👦 팀 소개: 6캔두잇
 언어의 장벽과 복잡한 행정 절차 때문에 어려움을 겪는 외국인들이 한국에 안정적으로 정착할 수 있도록, <br>
 IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
@@ -39,50 +54,68 @@ IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
 
 <br>
 
-# 🔥 6캔두잇, 우리가 해낼 4가지 약속
 
-- **[ALL-IN]** 중도 포기 없이 모든 기능을 스마트하게 마침표 찍기
-- **[GROW-UP]** "성장은 기록으로부터", 인당 1개 이상의 기술 포스팅 달성하기
-- **[DEEP-DIVE]** 겉핥기는 거부한다! 우리가 짠 모든 코드와 기술의 원리 파헤치기
-- **[NO-LEAVE]** 뒤처지는 사람 없이, 우리 파트 지식은 우리가 상향 평준화하기
+# 🔥 6캔두잇의 4가지 약속
+| Keyword | Goal | Description |
+| :--- | :--- | :--- |
+| **🏁 ALL-IN** | **완결성** | 중도 포기 없이 모든 기능을 스마트하게 마침표 찍기 |
+| **📈 GROW-UP** | **기록** | "성장은 기록으로부터", 인당 1개 이상의 기술 포스팅 달성하기 |
+| **🤿 DEEP-DIVE** | **본질** | 겉핥기는 거부한다! 모든 코드와 기술의 원리 파헤치기 |
+| **🤝 NO-LEAVE** | **상생** | 뒤처지는 사람 없이, 우리 파트 지식은 상향 평준화하기 |
 
 <br>
-
 
 
 # 💕 그라운드 룰
+> **"상호 신뢰, 원활한 협업 흐름 유지, 그리고 소중한 팀원의 시간 보호"**
 
-0. **상호 신뢰, 원활한 협업 흐름 유지, 그리고 소중한 팀원의 시간 보호**
-1. 요일마다 당번이 그날의 점심 메뉴를 정한다.
-	- for 시간 효율, 각자 결정 장애 예방, 그리고 평등한 미식의 기회 ("아무거나" 금지 및 메뉴 선택의 독재 권력 부여)
-2. 점심 먹고 나서 다 같이 체조(스쿼트)를 한다.
-	- for 혈당 조절, 식곤증 타파, 그리고 건강한 개발 수명 연장 (거북목 방지 및 탄탄한 하체 보유 팀원 되기)
-3. 언성이 높아지면 디저트를 먹으러 간다~!
-	- for 심신 안정, 당 충전을 통한 평화 협정, 그리고 기분 전환 (싸움 구경보다 달콤한 케이크 구경)
+* 🍱 **평등한 미식의 기회 (점심 당번제)**: 요일별 당번이 메뉴 결정 
+    * for 시간 효율, 각자 결정 장애 예방, 그리고 평등한 미식의 기회
+* 🤸 **식후 하체 챌린지 (합동 체조)**: 식후 스쿼트로 혈당 조절 및 개발 수명 연장
+    * for 혈당 조절, 식곤증 타파, 그리고 건강한 개발 수명 연장
+* 🍰 **달콤한 평화 협정 (디저트 타임)**: 언성이 높아지면 즉시 당 충전으로 평화 유지
+    * for 싸움 구경보다 달콤한 케이크 구경
 
 <br>
 
 
-# 🎨 기획&디자인 링크
+# 🧗‍♀️ 백로그 & 히스토리
+> **팀의 진행 상황과 매일의 고민을 투명하게 공유합니다.**
 
-[1️⃣ 기획 산출물 링크 [figma]](https://www.figma.com/design/AEMfiNWZUpZlpnAsM4ojmz/%EA%B8%B0%ED%9A%8D%EC%9D%98-%EB%B0%A9?node-id=31-692&t=k7xQxxNYoelwGRsR-1) <br>
-[2️⃣ 디자인 산출물 링크 [figma]](https://www.figma.com/design/YHUKhgeoJpBeixaJUsV59V/%EB%94%94%EC%9E%90%EC%9D%B8%EC%9D%98-%EB%B0%A9?node-id=218-943&t=gp0JvzaDTZw5ry15-1)
+| Section | Link | Description |
+| :--- | :--- | :--- |
+| **Backlog** | [![Notion](https://img.shields.io/badge/Notion-Backlog-000000?style=for-the-badge&logo=notion)](https://www.notion.so/bside/2ed220202735807591f8cd19a8350dd7) | 현재 우선순위와 남은 태스크 확인 |
+| **Daily Note** | [![Notion](https://img.shields.io/badge/Notion-Daily_Note-000000?style=for-the-badge&logo=notion)](https://www.notion.so/bside/2ee22020273580e58bdacc148741eaec) | 6캔두잇의 매일매일의 성장 기록 |
+
+<br>
+
+
+
+# 🎨 기획&디자인 링크
+> **사용자 경험을 최우선으로 생각하는 Navisa의 설계 기반입니다.**
+
+* **📐 기획**
+    * [🔗⃣ 기획 산출물 바로가기 [figma]](https://www.figma.com/design/AEMfiNWZUpZlpnAsM4ojmz/%EA%B8%B0%ED%9A%8D%EC%9D%98-%EB%B0%A9?node-id=31-692&t=k7xQxxNYoelwGRsR-1) <br>
+<br>
+* **✨ 디자인**
+    * [🔗⃣ 디자인 산출물 바로가기 [figma]](https://www.figma.com/design/YHUKhgeoJpBeixaJUsV59V/%EB%94%94%EC%9E%90%EC%9D%B8%EC%9D%98-%EB%B0%A9?node-id=218-943&t=gp0JvzaDTZw5ry15-1)
 
 <br>
 
 
 # 📑 ERD 설계도
-[Navisa ERD 주소](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
+[🔗 Navisa ERD 바로가기](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
 
-<img width="1272" height="588" alt="스크린샷 2026-01-20 오후 2 52 03" src="https://github.com/user-attachments/assets/cbf9c5df-d06e-4845-a572-93e49cf2c481" />
+![navisa_erd.png](navisa_erd.png)
 
 
 <br>
 
+# 🏗️ Infra Architecture
+[🔗 Navisa 아키텍처 다이어그램 바로가기](https://www.figma.com/board/QnPDChUIeMNIRU7r3rQUQq/Softeer_7th_Team6_Infra-Architecture?node-id=1-1938&t=enYOk9NQJc1qkh9t-1)
 
+![navisa.infra](navisa_infra_architecture.png)
 
-# 🧗‍♀️ 백로그
-[Navisa 백로그 [Notion]](https://www.notion.so/bside/2ed220202735807591f8cd19a8350dd7?source=copy_link)
 
 
 <br>
@@ -120,7 +153,7 @@ IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
 
 # 🤙🏻 커밋 컨벤션
 
-[자세한 6캔두잇의 협업 프로세스 [Notion]](https://www.notion.so/bside/6-2ed22020273580d99f1ed4906ce86e85?source=copy_link)
+[🔗 자세한 6캔두잇의 협업 프로세스 [Notion]](https://www.notion.so/bside/6-2ed22020273580d99f1ed4906ce86e85?source=copy_link)
 
 - **Squash & Merge** 방식을 채택하여 개별 커밋에서는 이슈 번호를 생략하고, 변경 대상(BE/FE)을 명시하여 직관성을 높였습니다.
 - 기본적으로 다음 커밋 메시지 규칙을 따릅니다.
@@ -161,11 +194,8 @@ chore: cd 워크플로우 수정
 
 <br>
 
-# 📅 데일리 노트
-[6캔두잇의 데일리 노트 [Notion]](https://www.notion.so/bside/2ee22020273580e58bdacc148741eaec?source=copy_link)
+<p align="center">
+  <b>"낯선 땅에서의 시작이 두려움이 아닌 설렘이 되도록, Navisa가 든든한 내비게이터가 되겠습니다."</b>
+</p>
 
 <br>
-
-<br>
-
-

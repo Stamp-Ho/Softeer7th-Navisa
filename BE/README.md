@@ -3,23 +3,35 @@
 **"복잡한 비자 신청의 모든 과정을 스마트하게"
 외국인과 전문 행정사를 잇는 맞춤형 매칭 플랫폼**
 
-# 🔥 6캔두잇, 우리가 해낼 4가지 약속
+<br>
 
-- **[ALL-IN]** 중도 포기 없이 모든 기능을 스마트하게 마침표 찍기
-- **[GROW-UP]** "성장은 기록으로부터", 인당 1개 이상의 기술 포스팅 달성하기
-- **[DEEP-DIVE]** 겉핥기는 거부한다! 우리가 짠 모든 코드와 기술의 원리 파헤치기
-- **[NO-LEAVE]** 뒤처지는 사람 없이, 우리 파트 지식은 우리가 상향 평준화하기
+
+
+## 📚 Project Documents
+> **Navisa의 모든 개발 기록과 기술적 고민은 위키에서 확인하실 수 있습니다.**
+> ### [👉 Navisa 통합 Wiki 바로가기](https://github.com/softeerbootcamp-7th/WEB-Team6-Navisa/wiki)
 
 <br>
+
+
+# 🛠️ Backend Resources
+- [⭐️ 백엔드 기술 표준 및 개발 가이드라인](https://github.com/softeerbootcamp-7th/WEB-Team6-Navisa/wiki/BE-%EA%B8%B0%EC%88%A0-%ED%91%9C%EC%A4%80-%EB%B0%8F-%EA%B0%9C%EB%B0%9C-%EA%B0%80%EC%9D%B4%EB%93%9C%EB%9D%BC%EC%9D%B8)
+- [📝 백엔드 개발 논의 히스토리](https://github.com/softeerbootcamp-7th/WEB-Team6-Navisa/wiki/BE-%EA%B0%9C%EB%B0%9C-%EB%85%BC%EC%9D%98-%ED%9E%88%EC%8A%A4%ED%86%A0%EB%A6%AC)
+
 
 
 # 📑 ERD 설계도
-[Navisa ERD 주소](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
+[🔗 Navisa ERD 바로가기](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
 
-<img width="1272" height="588" alt="스크린샷 2026-01-20 오후 2 52 03" src="https://github.com/user-attachments/assets/cbf9c5df-d06e-4845-a572-93e49cf2c481" />
+![navisa_erd.png](../navisa_erd.png)
 
 
 <br>
+
+# 🏗️ Infra Architecture
+[🔗 Navisa 아키텍처 다이어그램 바로가기](https://www.figma.com/board/QnPDChUIeMNIRU7r3rQUQq/Softeer_7th_Team6_Infra-Architecture?node-id=1-1938&t=enYOk9NQJc1qkh9t-1)
+
+![navisa.infra](../navisa_infra_architecture.png)
 
 <br>
 
@@ -56,7 +68,7 @@
 
 # 🤙🏻 커밋 컨벤션
 
-[자세한 6캔두잇의 협업 프로세스 [Notion]](https://www.notion.so/bside/6-2ed22020273580d99f1ed4906ce86e85?source=copy_link)
+[🔗 자세한 6캔두잇의 협업 프로세스 [Notion]](https://www.notion.so/bside/6-2ed22020273580d99f1ed4906ce86e85?source=copy_link)
 
 - **Squash & Merge** 방식을 채택하여 개별 커밋에서는 이슈 번호를 생략하고, 변경 대상(BE/FE)을 명시하여 직관성을 높였습니다.
 - 기본적으로 다음 커밋 메시지 규칙을 따릅니다.
