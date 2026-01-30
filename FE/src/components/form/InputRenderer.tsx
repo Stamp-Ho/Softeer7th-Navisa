@@ -1,4 +1,3 @@
-import ProgressDot from "../../assets/icon/ProgressDot";
 import { IcDash, IcDot, IcPlus } from "../../assets/icon/StratisUi";
 import type { input } from "../../types/formType";
 import Radio from "../common/Radio";

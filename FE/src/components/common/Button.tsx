@@ -1,6 +1,6 @@
 import type React from "react";
 
-type buttonType = "lightGray" | "primary" | "grayLine";
+// type buttonType = "lightGray" | "primary" | "grayLine";
 const Button = ({
   type = "lightGray",
   size = "medium",

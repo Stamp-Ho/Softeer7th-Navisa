@@ -43,8 +43,8 @@ const AgentBlog = ({ blogList, name, profileImageUrl }: AgentBlogData) => {
             <div className="flex flex-row gap-2 items-center">
               <img
                 className="w-[26px] h-[26px] object-cover rounded-full"
-                src="https://placehold.co/748x462"
-                alt={`${name} 프로필 이미지`}
+                src={profileImageUrl}
+                alt={"https://placehold.co/748x462"}
               />
               <div className="body-s-medium text-text-sub">{name}</div>
             </div>
