@@ -4,7 +4,8 @@ import Button from "../../../components/common/Button";
 import Tag from "../../../components/common/Tag";
 import ToolTipMessage from "../../../components/common/ToolTipMessage";
 import ChatActivateModal from "./ChatActivateModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import CalcLastAccessDay from "../../../utils/CalcLastAccessDay";
 
 type ExpectedCompanyProps = {
   companyName: string;
@@ -35,22 +36,6 @@ const calcDDay = (targetDate: string): string => {
   return `D+${Math.abs(diffDays)}`;
 };
 
-// 마지막 접속일 계산
-const calcLastAccessDay = (lastAccessDay: string) => {
-  const lastDate = new Date(lastAccessDay);
-  const now = new Date();
-  const diffMs = now.getTime() - lastDate.getTime();
-
-  const ONE_HOUR = 1000 * 60 * 60;
-  const ONE_DAY = ONE_HOUR * 24;
-
-  if (diffMs <= ONE_HOUR) return "방금 접속했어요.";
-  if (diffMs <= ONE_DAY) return "최근 24시간 내 접속";
-  if (diffMs <= ONE_DAY * 3) return "최근 3일 이내 접속";
-  if (diffMs <= ONE_DAY * 7) return "최근 7일 이내 접속";
-  return null;
-};
-
 const ExpectedCompany = ({
   companyName,
   jobTitle,
@@ -61,14 +46,24 @@ const ExpectedCompany = ({
 }: ExpectedCompanyProps) => {
   const { clientId } = useParams();
   const [viewMessageModal, setViewMessageModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowToast(false);
+    }, 1500);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [showToast]);
 
   return (
     <>
       {viewMessageModal ? (
         <ChatActivateModal
-          onClose={() => {
-            setViewMessageModal(false);
-          }}
+          onClose={() => setViewMessageModal(false)}
+          onSendSuccess={() => setShowToast(true)}
+          isAgent={true}
         />
       ) : (
         <></>
@@ -109,7 +104,7 @@ const ExpectedCompany = ({
             </li>
           </ul>
           <div className="flex flex-col items-end mt-2.25">
-            <ToolTipMessage message={calcLastAccessDay(lastAccessDay)} />
+            <ToolTipMessage message={CalcLastAccessDay(lastAccessDay)} />
             <Button
               type="primary"
               size="large"

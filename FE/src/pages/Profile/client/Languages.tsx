@@ -1,6 +1,7 @@
 import FlagIcon from "../../../assets/FlagIcon";
 import { IcLanguage } from "../../../assets/icon/StratisUi";
 import { languageIconIdxList, languageList } from "../../../types/language";
+import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
 
 type LanguageIdList = {
   languageIdList: number[];
@@ -8,7 +9,7 @@ type LanguageIdList = {
 
 const Languages = ({ languageIdList }: LanguageIdList) => {
   return (
-    <div className="flex flex-col gap-5 w-124 px-5 py-7 border border-border-normal rounded-radius-400 bg-white">
+    <ProfileItemsFrame>
       <div className="flex flex-row gap-2 items-center title-m-semibold text-text-base">
         <IcLanguage />
         <span>사용 가능 언어</span>
@@ -30,7 +31,7 @@ const Languages = ({ languageIdList }: LanguageIdList) => {
           </li>
         ))}
       </ul>
-    </div>
+    </ProfileItemsFrame>
   );
 };
 

@@ -29,6 +29,11 @@ const Tag = ({
         "border border-primary h-[25px] rounded-[20px] px-2 caption-l-medium";
       break;
 
+    case "small_fill_green_max":
+      style +=
+        "bg-green-50 text-green-800 h-[25px] rounded-[20px] px-2 caption-l-medium";
+      break;
+
     case "large_violet_off":
       style +=
         "bg-violet-50-transpar text-violet-500 h-[44px] rounded-[20px] px-2 body-l-semibold";

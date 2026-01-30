@@ -4,6 +4,7 @@ import HomePage from "./pages/Landing/HomePage";
 import ProfileOfClient from "./pages/Profile/client/ProfileOfClient";
 import NavigationHeader from "./components/shared/NavigationHeader";
 import SearchAgent from "./pages/Search/SearchAgent";
+import ProfileOfAgent from "./pages/Profile/agent/ProfileOfAgent";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/search/agent" element={<SearchAgent />} />
         <Route path="/profile/client/:clientId" element={<ProfileOfClient />} />
+        <Route path="/profile/agent/:agentId" element={<ProfileOfAgent />} />
       </Routes>
     </div>
   );

@@ -1,4 +1,5 @@
 import { IcGraduation } from "../../../assets/icon/StratisUi";
+import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
 import Tag from "../../../components/common/Tag";
 
 type LastEducated = {
@@ -9,7 +10,7 @@ type LastEducated = {
 
 const Education = ({ schoolName, degreeLevel, majorName }: LastEducated) => {
   return (
-    <div className="flex flex-col gap-5 w-124 px-5 py-7 border border-border-normal rounded-radius-400 bg-white">
+    <ProfileItemsFrame>
       <div className="flex flex-row gap-2 title-m-semibold text-text-base">
         <IcGraduation size={24} />
         <span>최종학력</span>
@@ -22,7 +23,7 @@ const Education = ({ schoolName, degreeLevel, majorName }: LastEducated) => {
           {schoolName} {majorName} 전공
         </span>
       </div>
-    </div>
+    </ProfileItemsFrame>
   );
 };
 export default Education;
