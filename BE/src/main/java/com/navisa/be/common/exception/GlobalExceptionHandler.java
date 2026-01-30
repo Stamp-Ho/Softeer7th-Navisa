@@ -3,11 +3,17 @@ package com.navisa.be.common.exception;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.dto.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
@@ -22,6 +28,24 @@ public class GlobalExceptionHandler {
         log.error("BaseException: {}", e.getMessage());
         BaseResponse<Void> response = new BaseResponse<>(e.status, e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.valueOf(e.status.getCode()));
+    }
+
+    /**
+     * 스프링 Validation 중 발생하는 에러 처리
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<BaseResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+        // 발생한 에러들 중 첫 번째 에러만 가져오기
+        // 첫번째 에러는 환경에 따라 다름
+        FieldError firstError = e.getBindingResult().getFieldErrors().get(0);
+
+        // 필드명과 메시지 조합
+        String errorMessage = String.format("%s에서 검증 실패 : %s", firstError.getField(), firstError.getDefaultMessage());
+
+        log.error("Validation Error - Field: {}, Message: {}", firstError.getField(), firstError.getDefaultMessage());
+
+        BaseResponse<Void> response = new BaseResponse<>(ResponseStatus.BAD_REQUEST, errorMessage);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ResponseStatus.BAD_REQUEST.getCode()));
     }
 
     /**

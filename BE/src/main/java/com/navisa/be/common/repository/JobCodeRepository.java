@@ -20,4 +20,6 @@ public interface JobCodeRepository extends JpaRepository<JobCode, Long> {
             LIMIT 3
             """, nativeQuery = true)
     List<JobCodeSimilarityProjection> findTop3SimilarJobCodes(@Param("queryVector") float[] queryVector);
+
+    long countByIdIn(List<Long> ids);
 }

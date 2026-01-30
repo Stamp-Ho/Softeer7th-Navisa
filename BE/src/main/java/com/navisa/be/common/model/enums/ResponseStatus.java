@@ -31,6 +31,9 @@ public enum ResponseStatus {
     INVALID_LANGUAGE(400, "잘못된 Language id 정보입니다."),
     STORAGE_UNSUPPORTED_CONTENT_TYPE(400, "지원하지 않는 파일 타입입니다"),
     STORAGE_UNSUPPORTED_USAGE(400, "지원되지 않는 용도의 요청입니다"),
+    AGENT_PROFILE_MUST_CONTAIN_ONE_TYPE_LICENSE_INFO(400, "일반 자격증 정보 세트 혹은 관리번호 중 '하나만' 입력해야 합니다."),
+    INVALID_JOB_CODE(400, "유효하지 않은 직무 코드입니다"),
+    NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE(400, "행정사 프로필을 등록할 수 있는 유저가 아닙니다"),
 
     /**
      * 서버 에러 (500번대)
