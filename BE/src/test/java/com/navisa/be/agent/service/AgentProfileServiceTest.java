@@ -107,10 +107,6 @@ class AgentProfileServiceTest extends IntegrationTestSupport {
                     // 사용 가능 언어 저장 확인
                     long mappingCount = agentLanguageRepository.countByAgentProfile(result);
                     assertEquals(2L, mappingCount);
-                },
-                () -> {
-                    User user = userRepository.findByEmail(scrivenerUser.getEmail()).orElseThrow();
-                    assertTrue(user.getUserType() == UserType.VALID_AGENT);
                 }
         );
     }

@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 @Service
 @AllArgsConstructor
 @Transactional
@@ -138,5 +140,13 @@ public class AuthService {
         if (userType != UserType.UNVALID_AGENT && userType != UserType.UNFILLED_FOREIGNER) {
             throw new AuthException(ResponseStatus.INVALID_INITIAL_USER_TYPE);
         }
+    }
+
+    public boolean checkUserType(String email, UserType[] userTypes) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(ResponseStatus.FORBIDDEN));
+
+        return Arrays.stream(userTypes)
+                .anyMatch(userType -> userType.equals(user.getUserType()));
     }
 }

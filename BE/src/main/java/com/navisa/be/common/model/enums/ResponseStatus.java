@@ -34,6 +34,8 @@ public enum ResponseStatus {
     AGENT_PROFILE_MUST_CONTAIN_ONE_TYPE_LICENSE_INFO(400, "일반 자격증 정보 세트 혹은 관리번호 중 '하나만' 입력해야 합니다."),
     INVALID_JOB_CODE(400, "유효하지 않은 직무 코드입니다"),
     NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE(400, "행정사 프로필을 등록할 수 있는 유저가 아닙니다"),
+    CANNOT_PERMIT_AS_VALID_AGENT(400, "이미 인증된 행정사이거나 행정사가 아닙니다"),
+    FORBIDDEN(403, "인가되지 않은 사용자입니다"),
 
     /**
      * 서버 에러 (500번대)

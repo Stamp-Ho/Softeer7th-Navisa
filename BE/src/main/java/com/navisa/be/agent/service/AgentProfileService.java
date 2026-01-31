@@ -14,6 +14,7 @@ import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.repository.JobCodeRepository;
 import com.navisa.be.common.repository.LanguageRepository;
 import com.navisa.be.user.model.entity.User;
+import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,21 +40,19 @@ public class AgentProfileService {
 
         validateCommand(command);
 
-        // 검증 후 권한 상승
-        user.upgradeToValidAgent();
+        if(user.getUserType() != UserType.UNVALID_AGENT){
+            throw new AgentProfileDomainException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
+        }
 
-        // 저장
         AgentProfile agentProfile = dtoToEntity(command, user);
         AgentProfile savedProfile = agentProfileRepository.save(agentProfile);
 
-        // 직무 코드 중복 제거 후 저장
         List<Long> jobCodeIds = command.detailedInfo().specializedJobCodeIdList()
                 .stream()
                 .distinct()
                 .toList();
         associateJobCode(jobCodeIds, savedProfile);
 
-        // 언어 중복 제거 후 저장
         List<Long> languageIds = command.detailedInfo().availableLanguageIdList()
                 .stream()
                 .distinct()
