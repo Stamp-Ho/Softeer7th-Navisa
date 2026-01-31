@@ -40,6 +40,10 @@ public enum ResponseStatus {
      */
     SERVER_ERROR(500, "서버와의 연결에 실패하였습니다."),
     SIMILARITY_CALCULATE_FAIL(540, "vector의 코사인 유사도 계산을 실패했습니다."),
+    S3_RUNTIME_ERROR(580, "S3 서비스 접근 중 오류가 발생했습니다."),
+    S3_CLIENT_ERROR(581, "AWS 자격 증명 또는 네트워크 설정을 확인해주세요."),
+    INVALID_S3_OBJECT_KEY(584, "적절하지 않은 object key입니다."),
+    AGENT_PROFILE_PRESIGNED_REQUEST(587, "정책상 행정사는 PresignedUrl을 발행할 수 없습니다."),
     PRESIGNED_URL_GEN_FAILED(597, "업로드 URL 생성에 실패했습니다"),
     NOT_FOUND_TEXT_EMBEDDING_RESULT(598, "Text Embedding API를 호출한 결과에 임베딩 결과가 없습니다."),
     CANNOT_GENERATE_TEXT_EMBEDDING_RESULT(599, "Text Embedding API 호출에 실패했습니다.");

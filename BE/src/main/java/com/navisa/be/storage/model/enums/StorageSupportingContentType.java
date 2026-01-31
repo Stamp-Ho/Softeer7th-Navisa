@@ -1,10 +1,13 @@
-package com.navisa.be.storage.constant;
+package com.navisa.be.storage.model.enums;
+
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Getter
 public enum StorageSupportingContentType {
 
     JPG("image/jpg", "jpg"),
@@ -26,14 +29,6 @@ public enum StorageSupportingContentType {
     StorageSupportingContentType(String mimeType, String extension) {
         this.mimeType = mimeType;
         this.extension = extension;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public String getExtension() {
-        return extension;
     }
 
     public static boolean supportsMimeType(String mimeType) {

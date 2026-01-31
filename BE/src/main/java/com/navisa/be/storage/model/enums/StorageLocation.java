@@ -1,4 +1,6 @@
-package com.navisa.be.storage.constant;
+package com.navisa.be.storage.model.enums;
+
+import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,7 +12,9 @@ public enum StorageLocation {
     FOREIGNER_IDENTITY_IMAGE("foreigner-identity", "foreigner-identity");
 
     private final String usage;
+    @Getter
     private final String directory;
+
     private static final Map<String, StorageLocation> LOCATION_MAP = Collections.unmodifiableMap(
             Arrays.stream(values()).collect(Collectors.toMap(
                     location -> location.usage,
@@ -43,7 +47,4 @@ public enum StorageLocation {
         return location;
     }
 
-    public String getDirectory() {
-        return directory;
-    }
 }

@@ -7,7 +7,7 @@ import static org.mockito.Mockito.*;
 import java.net.URL;
 import java.time.LocalDate;
 
-import com.navisa.be.storage.constant.StorageLocation;
+import com.navisa.be.storage.model.enums.StorageLocation;
 import com.navisa.be.storage.dto.request.IssuePresignedUrlRequest;
 import com.navisa.be.storage.dto.response.IssuePresignedUrlResponse;
 import com.navisa.be.storage.exception.StorageDomainException;
@@ -21,6 +21,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import com.navisa.be.storage.model.enums.ImageSize;
+import com.navisa.be.common.exception.BaseException;
+import com.navisa.be.common.model.enums.ResponseStatus;
 
 @ExtendWith(MockitoExtension.class)
 class AwsS3StorageServiceTest {
@@ -60,7 +65,7 @@ class AwsS3StorageServiceTest {
         IssuePresignedUrlResponse response = awsS3StorageService.issuePresignedUrl(request);
         // then
         assertThat(response.url()).contains(url);
-        assertThat(response.objectKey()).startsWith(objectKeyRoot + "/" + directory + "/" + LocalDate.now().getYear());
+        assertThat(response.objectKey()).startsWith(directory + "/" + objectKeyRoot + "/" + LocalDate.now().getYear());
         verify(s3Presigner, times(1)).presignPutObject(any(PutObjectPresignRequest.class));
     }
 
@@ -126,5 +131,75 @@ class AwsS3StorageServiceTest {
         // when & then
         assertThatThrownBy(() -> awsS3StorageService.issuePresignedUrl(request))
                 .isInstanceOf(StorageDomainException.class);
+    }
+
+    @Test
+    @DisplayName("유효한 요청이면 S3 다운로드 Presigned URL 발급에 성공한다")
+    void getPresignedUrl_fromS3_shouldReturnUrl_whenValidRequest() throws Exception {
+        // given
+        ImageSize size = ImageSize.ORIGIN;
+        String objectKey = "foreigner-identity/origin/2024/01/01/test-uuid.jpg";
+        String expectedUrl = "https://test-bucket.s3.amazonaws.com/" + objectKey;
+
+        PresignedGetObjectRequest mockPresignedRequest = mock(PresignedGetObjectRequest.class);
+        when(mockPresignedRequest.url()).thenReturn(new URL(expectedUrl));
+        when(s3Presigner.presignGetObject((GetObjectPresignRequest) any())).thenReturn(mockPresignedRequest);
+
+        // when
+        String resultUrl = awsS3StorageService.getPresignedUrlFromS3(size, objectKey);
+
+        // then
+        assertThat(resultUrl).isEqualTo(expectedUrl);
+        verify(s3Presigner, times(1)).presignGetObject((GetObjectPresignRequest) any());
+    }
+
+    @Test
+    @DisplayName("Object Key가 유효하지 않으면 BaseException(INVALID_S3_OBJECT_KEY)이 발생한다")
+    void getPresignedUrl_fromS3_shouldThrowException_whenObjectKeyIsNotValid() {
+        // given
+        ImageSize size = ImageSize.ORIGIN;
+        String invalidObjectKey = ""; // 빈 문자열
+
+        // when & then
+        assertThatThrownBy(() -> awsS3StorageService.getPresignedUrlFromS3(size, invalidObjectKey))
+                .isInstanceOf(BaseException.class)
+                .extracting("status")
+                .isEqualTo(ResponseStatus.INVALID_S3_OBJECT_KEY);
+    }
+
+    @Test
+    @DisplayName("행정사 프로필 사진 요청이면 BaseException(AGENT_PROFILE_PRESIGNED_REQUEST)이 발생한다")
+    void getPresignedUrl_fromS3_shouldThrowException_whenObjectKeyIsAgentProfile() {
+        // given
+        ImageSize size = ImageSize.ORIGIN;
+        // StorageLocation.AGENT_PROFILE_IMAGE.getDirectory()는 "agent-profile"
+        String agentProfileKey = "agent-profile/origin/2024/01/01/test-uuid.jpg";
+
+        // when & then
+        assertThatThrownBy(() -> awsS3StorageService.getPresignedUrlFromS3(size, agentProfileKey))
+                .isInstanceOf(BaseException.class)
+                .extracting("status")
+                .isEqualTo(ResponseStatus.AGENT_PROFILE_PRESIGNED_REQUEST);
+    }
+
+    @Test
+    @DisplayName("S3 Exception 발생 시 BaseException(S3_RUNTIME_ERROR)이 발생한다")
+    void getPresignedUrl_fromS3_shouldThrowException_whenS3ExceptionOccurs() {
+        // given
+        ImageSize size = ImageSize.ORIGIN;
+        String objectKey = "foreigner-identity/origin/2024/01/01/test-uuid.jpg";
+
+        when(s3Presigner.presignGetObject((GetObjectPresignRequest) any()))
+                .thenThrow(software.amazon.awssdk.services.s3.model.S3Exception.builder()
+                        .statusCode(500)
+                        .awsErrorDetails(software.amazon.awssdk.awscore.exception.AwsErrorDetails.builder()
+                                .errorMessage("S3 Error").build())
+                        .build());
+
+        // when & then
+        assertThatThrownBy(() -> awsS3StorageService.getPresignedUrlFromS3(size, objectKey))
+                .isInstanceOf(StorageDomainException.class)
+                .extracting("status")
+                .isEqualTo(ResponseStatus.S3_RUNTIME_ERROR);
     }
 }
