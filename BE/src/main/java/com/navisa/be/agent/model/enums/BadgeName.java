@@ -1,4 +1,4 @@
-package com.navisa.be.common.model.enums;
+package com.navisa.be.agent.model.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

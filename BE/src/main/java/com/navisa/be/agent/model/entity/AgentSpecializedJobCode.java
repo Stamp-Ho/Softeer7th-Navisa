@@ -1,12 +1,10 @@
-package com.navisa.be.agent.model;
+package com.navisa.be.agent.model.entity;
 
 import com.navisa.be.common.model.entity.BaseEntity;
 import com.navisa.be.common.model.entity.JobCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Entity
 @Table(name = "agent_specialized_job_code")

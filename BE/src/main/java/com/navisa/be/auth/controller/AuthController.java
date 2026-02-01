@@ -1,6 +1,9 @@
 package com.navisa.be.auth.controller;
 
-import com.navisa.be.auth.dto.*;
+import com.navisa.be.auth.dto.request.*;
+import com.navisa.be.auth.dto.response.LoginResponse;
+import com.navisa.be.auth.dto.response.SignupResponse;
+import com.navisa.be.auth.dto.response.TokenResponse;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.common.dto.response.BaseResponse;
 import com.navisa.be.common.model.enums.ResponseStatus;

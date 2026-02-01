@@ -1,6 +1,7 @@
-package com.navisa.be.common.model.entity;
+package com.navisa.be.agent.model.entity;
 
-import com.navisa.be.common.model.enums.BadgeName;
+import com.navisa.be.agent.model.enums.BadgeName;
+import com.navisa.be.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

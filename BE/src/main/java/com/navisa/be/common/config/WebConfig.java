@@ -20,7 +20,11 @@ public class WebConfig implements WebMvcConfigurer {
             "/api/auth/oauth/google",
             "/api/auth/signup",
             "/api/auth/login",
-            "/api/auth/reissue"
+            "/api/auth/reissue",
+            "/api/home/badge-list",
+            "/api/home/feedback",
+            "/api/home/badge",
+            "/api/home/guest/agents"
     };
     private final UserTypeCheckInterceptor userTypeCheckInterceptor;
     private final AuthInterceptor authInterceptor;
@@ -29,6 +33,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns(
+                        "/api/auth/oauth/google",
+                        "/api/auth/signup",
+                        "/api/auth/login",
+                        "/api/auth/reissue",
+                        "/api/home/badge-list",
+                        "/api/home/feedback",
+                        "/api/home/badge",
+                        "/api/home/guest/agents"
+                )
                 .addPathPatterns(ALL_APIS)
                 .excludePathPatterns(AUTH_EXCLUDED_LIST);
 

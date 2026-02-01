@@ -1,4 +1,4 @@
-package com.navisa.be.agent.model;
+package com.navisa.be.agent.model.entity;
 
 import com.navisa.be.common.model.entity.BaseEntity;
 import jakarta.persistence.*;

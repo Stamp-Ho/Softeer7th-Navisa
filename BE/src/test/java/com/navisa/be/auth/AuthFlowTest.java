@@ -1,7 +1,7 @@
 package com.navisa.be.auth;
 
-import com.navisa.be.auth.dto.LoginRequest;
-import com.navisa.be.auth.dto.LoginResponse;
+import com.navisa.be.auth.dto.request.LoginRequest;
+import com.navisa.be.auth.dto.response.LoginResponse;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.common.annotation.LoginUser;

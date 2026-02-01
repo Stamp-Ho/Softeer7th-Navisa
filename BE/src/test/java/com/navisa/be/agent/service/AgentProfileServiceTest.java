@@ -2,7 +2,7 @@ package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
 import com.navisa.be.agent.exception.AgentProfileDomainException;
-import com.navisa.be.agent.model.AgentProfile;
+import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentLanguageRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobCodeRepository;
 import com.navisa.be.common.model.entity.JobCode;

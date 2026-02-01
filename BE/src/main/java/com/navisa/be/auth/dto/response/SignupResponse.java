@@ -1,4 +1,4 @@
-package com.navisa.be.auth.dto;
+package com.navisa.be.auth.dto.response;
 
 import com.navisa.be.user.model.enums.UserType;
 

@@ -3,7 +3,7 @@ package com.navisa.be.agent.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileRequest;
-import com.navisa.be.agent.model.AgentProfile;
+import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.service.AgentProfileService;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.support.AgentFixture;

@@ -1,4 +1,4 @@
-package com.navisa.be.auth.dto;
+package com.navisa.be.auth.dto.request;
 
 import com.navisa.be.user.model.enums.UserType;
 import jakarta.validation.constraints.Email;

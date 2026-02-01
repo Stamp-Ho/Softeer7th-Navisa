@@ -1,4 +1,4 @@
-package com.navisa.be.auth.dto;
+package com.navisa.be.auth.dto.request;
 
 public record LogoutRequest(
         String refreshToken
