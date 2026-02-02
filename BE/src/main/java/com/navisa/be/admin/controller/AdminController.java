@@ -27,7 +27,7 @@ public class AdminController {
 
     @Operation(
             summary = "새로운 행정사 승인 API",
-            description = "개발자가 새로운 행정사를 승인하기 위한 API입니다"
+            description = "개발자가 새로운 행정사를 승인하기 위한 API입니다. 추가적인 정보는 https://www.notion.so/bside/ea135d592a2448d09d2fbc93e55a2939?source=copy_link를 확인해주세요"
     )
     @HasUserType(UserType.ADMIN)
     @PostMapping("/permit/agent")

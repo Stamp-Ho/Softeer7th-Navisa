@@ -1,5 +1,6 @@
 package com.navisa.be.common.repository;
 
+import com.navisa.be.agent.dto.JobCodeDto;
 import com.navisa.be.common.dto.projection.JobCodeSimilarityProjection;
 import com.navisa.be.common.model.entity.JobCode;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,4 +23,11 @@ public interface JobCodeRepository extends JpaRepository<JobCode, Long> {
     List<JobCodeSimilarityProjection> findTop3SimilarJobCodes(@Param("queryVector") float[] queryVector);
 
     long countByIdIn(List<Long> ids);
+
+    @Query(value = """
+        SELECT new com.navisa.be.agent.dto.JobCodeDto(jc.id, jc.name, jc.code) 
+        FROM JobCode jc 
+        ORDER BY jc.id ASC
+    """)
+    List<JobCodeDto> findAllJobCodeDtos();
 }
