@@ -24,6 +24,9 @@ const Tag = ({
       style +=
         "bg-gray-100 text-text-base h-[25px] rounded-[20px] px-2 caption-l-medium";
       break;
+    case "small_fill_gray_2":
+      style += "bg-gray-100 text-text-base h-[25px] px-2 caption-l-medium";
+      break;
     case "small_line":
       style +=
         "border border-primary h-[25px] rounded-[20px] px-2 caption-l-medium";

@@ -49,7 +49,7 @@ const dummy = {
   },
 };
 
-function ProfileOfClient() {
+function ProfileOfforeigner() {
   return (
     <>
       <BannerBackground />
@@ -84,4 +84,4 @@ function ProfileOfClient() {
   );
 }
 
-export default ProfileOfClient;
+export default ProfileOfforeigner;

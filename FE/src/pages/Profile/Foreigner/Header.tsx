@@ -9,7 +9,7 @@ type HeaderSectionProps = {
 
 // 외국인 프로필 상단 헤더
 const Header = ({ nationIdList, nickName }: HeaderSectionProps) => {
-  const { clientId } = useParams();
+  const { foreignerId } = useParams();
   return (
     <header className="flex flex-row justify-between">
       <div className="flex flex-col gap-spacing-400">
@@ -24,7 +24,7 @@ const Header = ({ nationIdList, nickName }: HeaderSectionProps) => {
           ))}
         </ul>
         <div className="text-text-base font-pretendard text-[48px] font-semibold leading-[1.4] tracking-[-1.44px]">
-          {nickName} {clientId}
+          {nickName} {foreignerId}
         </div>
       </div>
     </header>

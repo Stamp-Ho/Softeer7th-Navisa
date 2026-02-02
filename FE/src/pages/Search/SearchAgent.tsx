@@ -352,7 +352,7 @@ const SearchAgent = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null); // 마지막 빈 div를 위한 ref
 
-  const [tempNumber, setTempNubmer] = useState(1);
+  const [tempNumber, setTempNumber] = useState(1);
 
   const goTop = () => {
     if (scrollRef.current) {
@@ -368,7 +368,7 @@ const SearchAgent = () => {
       ([entry]) => {
         if (entry.isIntersecting) {
           // 마지막 div가 보이면 다음 페이지 가져오면 됨
-          setTempNubmer((prev) => prev + 1);
+          setTempNumber((prev) => prev + 1);
         }
       },
       { threshold: 0.1 }, // 10%만 보여도 감지

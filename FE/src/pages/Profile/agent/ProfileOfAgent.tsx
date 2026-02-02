@@ -1,4 +1,4 @@
-import Languages from "../client/Languages";
+import Languages from "../Foreigner/Languages";
 import AgentBlog from "./AgentBlog";
 import AgentHeader from "./AgentHeader";
 import AgentOffice from "./AgentOffice";

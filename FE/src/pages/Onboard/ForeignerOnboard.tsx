@@ -8,7 +8,7 @@ import { languageList } from "../../types/language";
 import { regionList } from "../../types/regions";
 import type { FormSection } from "../../types/formType";
 
-const ClientOnboard = () => {
+const ForeignerOnboard = () => {
   const [isGettingOffer, setIsGettingOffer] = useState<boolean>(true);
   return (
     <div className="flex flex-row relative  overflow-y-auto overflow-x-visible">
@@ -58,7 +58,7 @@ const ClientOnboard = () => {
   );
 };
 
-export default ClientOnboard;
+export default ForeignerOnboard;
 
 const sections: FormSection[] = [
   {

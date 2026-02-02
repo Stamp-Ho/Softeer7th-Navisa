@@ -4,7 +4,7 @@ import Modal from "../common/Modal";
 import Button from "../common/Button";
 import SignUpForm from "./SignUpForm";
 const SignUpModal = ({ onClose = () => {} }) => {
-  const [userType, setUserType] = useState<number>(0); //0: none, 1: client, 2:agent
+  const [userType, setUserType] = useState<number>(0); //0: none, 1: foreigner, 2:agent
   const [signUpStep, setSignUpStep] = useState<number>(1);
   return (
     <Modal

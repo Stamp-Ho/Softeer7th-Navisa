@@ -16,7 +16,7 @@ const FilterWithDropdown = ({
   isActive?: boolean;
   className?: string;
   children?: React.ReactNode;
-  category?: { name: ""; items: [] }[];
+  category?: { name: string; items: string[] }[];
   cols?: number;
   dropdownOptions?: string[];
   dropdownAlign?: string;

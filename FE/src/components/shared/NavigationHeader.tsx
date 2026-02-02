@@ -32,7 +32,7 @@ const NavigationHeader = () => {
       : "text-text-sub";
 
   return (
-    <header className="flex flex-row h-12 justify-between items-center m-4 ml-0">
+    <header className="flex flex-row h-12 justify-between items-center m-4 ml-0 z-10">
       {authMode === 1 ? (
         <LoginModal onClose={() => setAuthMode(0)} setAuthMode={setAuthMode} />
       ) : authMode === 2 ? (
@@ -54,7 +54,7 @@ const NavigationHeader = () => {
           <button
             className={`cursor-pointer ${searchTabStyle}`}
             onClick={() => {
-              navigate(isAgent ? "/search/client" : "/search/agent", {
+              navigate(isAgent ? "/search/foreigner" : "/search/agent", {
                 replace: false,
               });
             }}

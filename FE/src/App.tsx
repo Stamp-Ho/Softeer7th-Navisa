@@ -1,12 +1,13 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import HomePage from "./pages/Landing/HomePage";
-import ProfileOfClient from "./pages/Profile/client/ProfileOfClient";
+import ProfileOfforeigner from "./pages/Profile/Foreigner/ProfileOfForeigner";
 import NavigationHeader from "./components/shared/NavigationHeader";
 import SearchAgent from "./pages/Search/SearchAgent";
-import ClientOnboard from "./pages/Onboard/ClientOnboard";
+import ForeignerOnboard from "./pages/Onboard/ForeignerOnboard";
 import AgentOnboard from "./pages/Onboard/AgentOnboard";
-import ProfileOfAgent from "./pages/Profile/agent/ProfileOfAgent";
+import ProfileOfAgent from "./pages/Profile/Agent/ProfileOfAgent";
+import SearchForeigner from "./pages/Search/SearchForeigner";
 
 function App() {
   return (
@@ -15,8 +16,12 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/search/agent" element={<SearchAgent />} />
-        <Route path="/profile/client/:clientId" element={<ProfileOfClient />} />
-        <Route path="/onboard/client" element={<ClientOnboard />} />
+        <Route path="/search/foreigner" element={<SearchForeigner />} />
+        <Route
+          path="/profile/foreigner/:foreignerId"
+          element={<ProfileOfforeigner />}
+        />
+        <Route path="/onboard/foreigner" element={<ForeignerOnboard />} />
         <Route path="/onboard/agent" element={<AgentOnboard />} />
         <Route path="/profile/agent/:agentId" element={<ProfileOfAgent />} />
       </Routes>

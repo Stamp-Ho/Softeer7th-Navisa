@@ -44,7 +44,7 @@ const ExpectedCompany = ({
   isChatting,
   nickName,
 }: ExpectedCompanyProps) => {
-  const { clientId } = useParams();
+  const { foreignerId } = useParams();
   const [viewMessageModal, setViewMessageModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
@@ -71,7 +71,7 @@ const ExpectedCompany = ({
       <div className="fixed right-48 drop-shadow-[0_0_7px_#6860A040]">
         <div className="flex flex-col w-92 px-5 py-8 border border-border-normal rounded-radius-400 bg-white">
           <div className="headline-l-bold text-text-base">
-            {nickName} {clientId}
+            {nickName} {foreignerId}
           </div>
           <div className="py-0.25 w-full bg-border-light my-7"></div>
           <div className="flex flex-row gap-2 items-center title-m-semibold text-text-base">
