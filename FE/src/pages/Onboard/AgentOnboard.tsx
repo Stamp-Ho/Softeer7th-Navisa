@@ -1,14 +1,17 @@
 import { IcArrowUp } from "../../assets/icon/StratisUi";
 import Button from "../../components/common/Button";
 import NavisaForm from "../../components/form/NavisaForm";
-import ProgressSteps from "../../components/form/ProgressSteps";
+import ProgressStepWidget from "../../components/form/ProgressStepWidget";
 import { languageList } from "../../types/language";
 import type { FormSection } from "../../types/formType";
 
 const AgentOnboard = () => {
   return (
-    <div className="flex flex-row relative  overflow-y-auto overflow-x-visible">
-      <div className=" w-284">
+    <div className="flex flex-row overflow-y-auto w-fit">
+      <div
+        className=" w-284 overflow-auto scrollbar-hide "
+        style={{ height: "calc(100vh - 100px)" }}
+      >
         <div className="flex flex-col pb-10 pt-14">
           <h2 className="headline-m-bold text-text-base mb-3">
             내 정보 등록하기
@@ -20,13 +23,19 @@ const AgentOnboard = () => {
           <NavisaForm formData={sections} />
         </div>
       </div>
-      <div className="fixed right-1/2 mt-19.75 translate-x-190 flex flex-col w-92 gap-5">
-        <Button type="primary" className="drop-shadow-[0_0_7px_#6860A040]">
-          저장
-        </Button>
-        <ProgressSteps title={"정보 등록하기"} formData={sections} />
+      <div className="w-fit ml-4 left-0 mt-19.75 flex flex-row">
+        <div className="flex flex-col w-92 gap-5 ">
+          <Button
+            type="primary"
+            size="medium"
+            className="drop-shadow-[0_0_7px_#6860A040]"
+          >
+            저장
+          </Button>
+          <ProgressStepWidget title={"정보 등록하기"} formData={sections} />
+        </div>
         <button
-          className="absolute -right-20.5 bottom-0 rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-white w-16 h-16 flex items-center justify-center"
+          className="m-4 mt-auto rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-white w-16 h-16 flex items-center justify-center"
           onClick={() => {}}
         >
           <IcArrowUp size={20} />
@@ -49,9 +58,10 @@ const sections: FormSection[] = [
             getMany: false,
             inputs: [
               {
+                inputType: "image",
+                colSpan: 9,
                 placeholder:
                   "의뢰인들에게 신뢰를 줄 수 있는 이미지를 선택해주세요",
-                inputType: "image",
               },
             ],
           },
@@ -225,7 +235,8 @@ const sections: FormSection[] = [
             getMany: false,
             inputs: [
               {
-                inputType: "longText",
+                inputType: "text",
+                colSpan: 9,
                 placeholder: "저는 이런 사람입니다",
               },
             ],
@@ -242,6 +253,7 @@ const sections: FormSection[] = [
             inputs: [
               {
                 inputType: "textArea",
+                colSpan: 9,
               },
             ],
           },

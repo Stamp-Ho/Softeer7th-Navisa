@@ -3,7 +3,7 @@ import { IcArrowUp, IcMessageBox } from "../../assets/icon/StratisUi";
 import Button from "../../components/common/Button";
 import TogglePill from "../../components/common/TogglePill";
 import NavisaForm from "../../components/form/NavisaForm";
-import ProgressSteps from "../../components/form/ProgressSteps";
+import ProgressStepWidget from "../../components/form/ProgressStepWidget";
 import { languageList } from "../../types/language";
 import { regionList } from "../../types/regions";
 import type { FormSection } from "../../types/formType";
@@ -11,8 +11,11 @@ import type { FormSection } from "../../types/formType";
 const ForeignerOnboard = () => {
   const [isGettingOffer, setIsGettingOffer] = useState<boolean>(true);
   return (
-    <div className="flex flex-row relative  overflow-y-auto overflow-x-visible">
-      <div className=" w-284">
+    <div className="flex flex-row overflow-y-auto w-fit">
+      <div
+        className=" w-284 overflow-auto scrollbar-hide "
+        style={{ height: "calc(100vh - 100px)" }}
+      >
         <div className="flex flex-col pb-10 pt-14">
           <h2 className="headline-m-bold text-text-base mb-3">
             내 요건 등록하기
@@ -24,31 +27,33 @@ const ForeignerOnboard = () => {
           <NavisaForm formData={sections} />
         </div>
       </div>
-      <div className="fixed right-1/2 mt-19.75 translate-x-190 flex flex-col w-92 gap-5">
-        <Button type="primary" className="drop-shadow-[0_0_7px_#6860A040]">
-          저장
-        </Button>
-        <div className="flex flex-col bg-green-bright drop-shadow-[0_0_7px_#6860A040] gap-7 rounded-[20px] py-7.75 px-5.25">
-          <div className="flex flex-row text-green-vivid title-s-semibold items-center gap-2">
-            <IcMessageBox />
-            행정사의 제안을 받고싶어요
-            <TogglePill
-              className="ml-auto"
-              isActive={isGettingOffer}
-              setIsActive={setIsGettingOffer}
-              activeColor={"bg-green-vivid"}
-            />
+      <div className="w-fit ml-4 left-0 mt-19.75 flex flex-row">
+        <div className="flex flex-col w-92 gap-5 ">
+          <Button type="primary" className="drop-shadow-[0_0_7px_#6860A040]">
+            저장
+          </Button>
+          <div className="flex flex-col bg-green-bright drop-shadow-[0_0_7px_#6860A040] gap-7 rounded-[20px] py-7.75 px-5.25">
+            <div className="flex flex-row text-green-vivid title-s-semibold items-center gap-2">
+              <IcMessageBox />
+              행정사의 제안을 받고싶어요
+              <TogglePill
+                className="ml-auto"
+                isActive={isGettingOffer}
+                setIsActive={setIsGettingOffer}
+                activeColor={"bg-green-vivid"}
+              />
+            </div>
+            <div className="text-text-700 break-keep text-gray-700">
+              해당 스위치를 on할 시 회원님이 작성한 프로필이{" "}
+              <strong>서비스에 공개</strong>되며, 행정사가 회원님의 프로필을
+              보고 수임 제안을 받을 수 있어요. 민감한 개인정보는 유출될 위험이
+              있으므로 작성하지 않는게 좋아요.
+            </div>
           </div>
-          <div className="text-text-700 break-keep text-gray-700">
-            해당 스위치를 on할 시 회원님이 작성한 프로필이{" "}
-            <strong>서비스에 공개</strong>되며, 행정사가 회원님의 프로필을 보고
-            수임 제안을 받을 수 있어요. 민감한 개인정보는 유출될 위험이 있으므로
-            작성하지 않는게 좋아요.
-          </div>
+          <ProgressStepWidget title="요건 등록하기" formData={sections} />
         </div>
-        <ProgressSteps title="요건 등록하기" formData={sections} />
         <button
-          className="absolute -right-20.5 bottom-0 rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-white w-16 h-16 flex items-center justify-center"
+          className="m-4 mt-auto rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-white w-16 h-16 flex items-center justify-center"
           onClick={() => {}}
         >
           <IcArrowUp size={20} />

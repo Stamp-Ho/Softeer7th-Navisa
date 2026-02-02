@@ -4,16 +4,17 @@ import LanguageSelector from "../common/LanguageSelector";
 import { IcFile, IcMessage, IcUserProfile } from "../../assets/icon/StratisUi";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const PathNamesWithBackground = ["/profile"];
 const NavigationHeader = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const currentPath = location.pathname;
   const isSpecialBackground =
     currentPath === "/" ||
     PathNamesWithBackground.some((path) => currentPath.startsWith(path));
+
+  const isMain = currentPath === "/";
 
   const [isAgent, _setIsAgent] = useState<boolean>(false);
 
@@ -32,7 +33,9 @@ const NavigationHeader = () => {
       : "text-text-sub";
 
   return (
-    <header className="flex flex-row h-12 justify-between items-center m-4 ml-0 z-10">
+    <header
+      className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${isMain && "ml-1 mr-3"}`}
+    >
       {authMode === 1 ? (
         <LoginModal onClose={() => setAuthMode(0)} setAuthMode={setAuthMode} />
       ) : authMode === 2 ? (
@@ -43,24 +46,15 @@ const NavigationHeader = () => {
       <div className="flex flex-row items-center gap-32">
         <NavisaLogo whiteMode={isSpecialBackground} />
         <div className={`flex flex-row items-center title-s-bold gap-18`}>
-          <button
-            className={`cursor-pointer ${homeTabStyle}`}
-            onClick={() => {
-              navigate("/", { replace: false });
-            }}
-          >
+          <Link className={`cursor-pointer ${homeTabStyle}`} to="/">
             홈
-          </button>
-          <button
+          </Link>
+          <Link
             className={`cursor-pointer ${searchTabStyle}`}
-            onClick={() => {
-              navigate(isAgent ? "/search/foreigner" : "/search/agent", {
-                replace: false,
-              });
-            }}
+            to={`/search/${isAgent ? "foreigner" : "agent"}`}
           >
             행정사 탐색
-          </button>
+          </Link>
         </div>
       </div>
       <div

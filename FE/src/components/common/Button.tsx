@@ -17,7 +17,9 @@ const Button = ({
   disabled?: boolean;
 }) => {
   const buttonStyle = disabled
-    ? "bg-gray-200 text-white cursor-not-allowed"
+    ? type === "brightViolet"
+      ? "bg-violet-50 text-primary"
+      : "bg-gray-200 text-white cursor-not-allowed"
     : type === "lightGray"
       ? "bg-gray-50 text-text-base outline outline-border-light"
       : type === "primary"
@@ -33,7 +35,9 @@ const Button = ({
         ? "h-14 rounded-[8px] body-l-semibold"
         : size === "large"
           ? "h-14 rounded-[10px] title-m-semibold"
-          : "h-20 rounded-[10px] title-l-semibold";
+          : size === "giant"
+            ? "h-20 rounded-[10px] title-l-semibold"
+            : "";
   return (
     <button
       disabled={disabled}

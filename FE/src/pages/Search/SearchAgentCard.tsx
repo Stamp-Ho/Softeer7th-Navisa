@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import BadgeIcon, { badgeDescription } from "../../assets/icon/BadgeIcon";
 import { IcGraduation, IcLocation } from "../../assets/icon/StratisUi";
 import Tag from "../../components/common/Tag";
@@ -5,6 +6,7 @@ import { jobList } from "../../types/job";
 
 type searchAgentCardParams = {
   agent: {
+    id: number;
     img: string;
     name: string;
     address: string;
@@ -15,6 +17,7 @@ type searchAgentCardParams = {
 
 const SearchAgentCard = ({
   agent = {
+    id: 0,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -24,7 +27,10 @@ const SearchAgentCard = ({
 }: searchAgentCardParams) => {
   const authed = true; //클라이언트 전역 상태로 하면 될 듯
   return (
-    <div className="flex flex-row gap-8 py-6 px-7 bg-gray-30 w-124 h-fit rounded-2xl items-center">
+    <Link
+      to={`/profile/agent/${agent.id}`}
+      className="flex flex-row gap-8 py-6 px-7 bg-gray-30 w-124 h-fit rounded-2xl items-center"
+    >
       <div className="w-fit h-fit rounded-full overflow-hidden">
         <img src={agent.img} className="h-35 w-35" />
       </div>
@@ -66,7 +72,7 @@ const SearchAgentCard = ({
           <a className="text-text-base body-m-medium">{agent.address}</a>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

@@ -46,10 +46,7 @@ const LoginModal = ({
           회원가입
         </a>
       </div>
-      <img
-        className="cursor-pointer mt-10"
-        src="../../../public/GoogleLogo.png"
-      />
+      <img className="cursor-pointer mt-10" src="/GoogleLogo.png" />
     </Modal>
   );
 };

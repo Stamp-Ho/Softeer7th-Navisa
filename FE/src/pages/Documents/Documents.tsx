@@ -1,0 +1,165 @@
+import { useEffect, useState } from "react";
+import Tag from "../../components/common/Tag";
+import DocumentCard from "../../components/shared/DocumentCard";
+import GrayBackground from "../../components/shared/GrayBackground";
+
+export type documentType = {
+  name: string;
+  editing: boolean;
+  filledFields: number;
+  image?: string;
+  lastEdittedAt: string;
+};
+const data: documentType[] = [
+  {
+    name: "주디",
+    editing: true,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: true,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: true,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: true,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: false,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: false,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: true,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: false,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: false,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: false,
+    filledFields: 24,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: true,
+    filledFields: 124,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: true,
+    filledFields: 30,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: false,
+    filledFields: 72,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: true,
+    filledFields: 89,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: false,
+    filledFields: 4,
+    lastEdittedAt: "2025. 06. 21",
+  },
+  {
+    name: "주디",
+    editing: true,
+    filledFields: 50,
+    lastEdittedAt: "2025. 06. 21",
+  },
+];
+const Documents = () => {
+  const [statusTab, setStatusTab] = useState<number>(0);
+  const [documentToRender, setDocumentToRender] = useState<documentType[]>([]);
+  const editingDocument = data.filter((document) => document.editing);
+  const doneDocument = data.filter((document) => !document.editing);
+  useEffect(() => {
+    if (statusTab === 0) setDocumentToRender(data);
+    if (statusTab === 1) setDocumentToRender(editingDocument);
+    if (statusTab === 2) setDocumentToRender(doneDocument);
+  }, [statusTab]);
+  return (
+    <>
+      <GrayBackground />
+      <div className="flex flex-col gap-8">
+        <h2 className="headline-m-bold mt-9">문서함</h2>
+        <div className="flex flex-row gap-3 w-full">
+          <div onClick={() => setStatusTab(0)}>
+            <Tag
+              type={statusTab === 0 ? "large_violet_off" : "large_white_off"}
+              className="w-27 cursor-pointer"
+            >
+              전체 {statusTab === 0 && data.length}
+            </Tag>
+          </div>
+          <div onClick={() => setStatusTab(1)}>
+            <Tag
+              type={statusTab === 1 ? "large_violet_off" : "large_white_off"}
+              className="w-27 cursor-pointer"
+            >
+              작성중 {statusTab === 1 && editingDocument.length}
+            </Tag>
+          </div>
+          <div onClick={() => setStatusTab(2)}>
+            <Tag
+              type={statusTab === 2 ? "large_violet_off" : "large_white_off"}
+              className="w-27 cursor-pointer"
+            >
+              작성완료 {statusTab === 2 && doneDocument.length}
+            </Tag>
+          </div>
+        </div>
+        <div
+          className="w-full grid-cols-3 grid gap-3 p-4 -m-4 mb-0 overflow-y-auto scrollbar-hide "
+          style={{ height: "calc(100vh - 250px)" }}
+        >
+          {documentToRender.map((doc) => (
+            <DocumentCard document={doc} />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Documents;

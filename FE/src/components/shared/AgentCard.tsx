@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
 import { IcGraduation, IcLocation } from "../../assets/icon/StratisUi";
 import Tag from "../common/Tag";
 
 const AgentCard = ({ hasAnimation = true, className = "" }) => {
   const agent = {
+    id: 0,
     name: "엄경례",
     address: "서울특별시 강남구",
   };
@@ -20,8 +22,10 @@ const AgentCard = ({ hasAnimation = true, className = "" }) => {
         src="https://placehold.co/240x192"
         alt="https://placehold.co/240x192"
       />
-      <div className="flex flex-col gap-3 py-5 px-4">
-        <a className="title-m-bold">{agent.name} 행정사</a>
+      <div className="flex flex-col gap-3 pb-5 px-4">
+        <Link to={`/profile/agent/${agent.id}`} className="title-m-bold pt-5">
+          {agent.name} 행정사
+        </Link>
         <div className="flex-col flex gap-1">
           <a className="flex flex-row items-center gap-1.5 caption-m-medium">
             <IcGraduation size={14} /> 전문 분야

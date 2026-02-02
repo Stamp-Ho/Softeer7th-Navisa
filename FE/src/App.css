@@ -6,7 +6,6 @@
   align-items: center;
   overflow-x: hidden;
   min-width: 1720px;
-  width: 100%;
   color: var(--text-base);
   user-select: none;
 }
@@ -14,4 +13,21 @@
 .div {
   display: flex;
   align-items: center;
+}
+
+body {
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar {
+    width: 8px; /* 세로 스크롤바 두께 */
+    height: 6px; /* 가로 스크롤바 두께 */
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbcdd2;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #a0a2a7;
+  }
 }

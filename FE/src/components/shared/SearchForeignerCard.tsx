@@ -6,61 +6,74 @@ import {
 } from "../../assets/icon/StratisUi";
 import Tag from "../common/Tag";
 import { languageList } from "../../types/language";
+import { Link } from "react-router-dom";
 
-type searchforeignerCardParams = {
-  foreigner: {
+type searchForeignerCardParams = {
+  foreigner?: {
+    id: number;
     nations: number[];
     nickName: string;
     major: string;
     targetJob: string;
     languages: number[];
   };
+  withDetails?: boolean;
 };
 
-const SearchforeignerCard = ({
+const SearchForeignerCard = ({
   foreigner = {
+    id: 0,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     major: "컴퓨터공학",
     targetJob: "웹 개발자",
     languages: [0, 1, 2, 3, 4, 5],
   },
-}: searchforeignerCardParams) => {
+  withDetails = true,
+}: searchForeignerCardParams) => {
   // const authed = true;
   return (
-    <div className="flex flex-col py-7 px-6 w-92 h-fit bg-gray-30 rounded-[16px]">
+    <div
+      className={`flex flex-col py-7 px-6 w-92 h-fit bg-gray-30 rounded-2xl ${withDetails || "drop-shadow-[0_0_7px_#6860A040] bg-white"}`}
+    >
       <ul className="flex flex-row gap-2 items-center">
         {foreigner.nations.slice(0, 5).map((nation, idx) => (
           <FlagIcon key={idx} nationIndex={nation} className="w-6 h-6" />
         ))}
       </ul>
-      <span className="mt-4 title-m-bold text-text-base">
+      <Link
+        to={`/profile/foreigner/${foreigner.id}`}
+        className="mt-4 title-m-bold text-text-base"
+      >
         {foreigner.nickName}
-      </span>
+      </Link>
 
-      <div className="w-full pt-0.25 my-5 bg-border-normal"></div>
-
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-row gap-1 items-center w-36 caption-m-medium text-text-base">
-          <IcLuggage04 size={14} />
-          입사 예정 직무
-        </div>
-        <Tag type="small_fill_gray_2" className="rounded-[4px] w-fit">
-          {foreigner.targetJob}
-        </Tag>
-      </div>
-
-      <div className="flex flex-row gap-4 mt-5">
-        <div className="flex flex-col w-36 gap-2">
-          <div className="flex flex-row gap-1 items-center caption-m-medium text-text-base">
-            <IcGraduation size={14} />
-            최종 학력
+      {withDetails && (
+        <div className="w-full pt-px my-5 bg-border-normal"></div>
+      )}
+      <div className="flex flex-row gap-4 mt-5 items-end">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row gap-1 items-center w-36 caption-m-medium text-text-base">
+              <IcLuggage04 size={14} />
+              입사 예정 직무
+            </div>
+            <Tag type="small_fill_gray_2" className="rounded-sm w-fit">
+              {foreigner.targetJob}
+            </Tag>
           </div>
-          <Tag type="small_fill_violet_max" className="w-fit">
-            {foreigner.major}
-          </Tag>
+          {withDetails && (
+            <div className="flex flex-col w-36 gap-2">
+              <div className="flex flex-row gap-1 items-center caption-m-medium text-text-base">
+                <IcGraduation size={14} />
+                최종 학력
+              </div>
+              <Tag type="small_fill_violet_max" className="w-fit">
+                {foreigner.major}
+              </Tag>
+            </div>
+          )}
         </div>
-
         <div className="flex flex-col w-36 gap-2">
           <div className="flex flex-row gap-1 items-center caption-m-medium text-text-base">
             <IcLanguage size={14} />
@@ -84,4 +97,4 @@ const SearchforeignerCard = ({
   );
 };
 
-export default SearchforeignerCard;
+export default SearchForeignerCard;

@@ -24,19 +24,6 @@ const InputRenderer = ({
           className={`bg-white ${className}`}
         />
       ); // {...register(input.fieldName)}/>;
-    case "longText":
-      return (
-        <>
-          <TextInput
-            type="text"
-            placeholder={input.placeholder}
-            className={`bg-white ${className}`}
-          />
-          <a className="ml-auto body-m-regular text-gray-400 mt-1 -mb-6">
-            {0}/{50}
-          </a>
-        </>
-      );
     case "selector":
       return (
         <Selector

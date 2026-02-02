@@ -1,5 +1,6 @@
 export type FormSection = {
   name: string;
+  description?: string;
   fields: Field[];
 };
 type Field = {
@@ -17,6 +18,7 @@ type inputLine = {
 };
 export type input = {
   inputType: formInputType;
+  colSpan?: number;
   inputDescription?: string;
   englishDescription?: string;
   placeholder?: string;
@@ -31,6 +33,5 @@ type formInputType =
   | "date"
   | "image"
   | "textArea"
-  | "longText"
   | "timeRange"
   | "phoneNumber";

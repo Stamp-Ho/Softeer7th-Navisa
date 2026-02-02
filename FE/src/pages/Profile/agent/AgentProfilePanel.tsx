@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Button from "../../../components/common/Button";
 import ToolTipMessage from "../../../components/common/ToolTipMessage";
 import CalcLastAccessDay from "../../../utils/CalcLastAccessDay";
-import ChatActivateModal from "../Foreigner/ChatActivateModal";
+import ChatActivateModal from "../foreigner/ChatActivateModal";
 import Toast from "../../../components/common/Toast";
 
 type AgentProfilePanelProps = {
