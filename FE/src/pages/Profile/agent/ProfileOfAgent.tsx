@@ -1,3 +1,4 @@
+import BannerBackground from "../../../components/shared/BannerBackground";
 import Languages from "../Foreigner/Languages";
 import AgentBlog from "./AgentBlog";
 import AgentHeader from "./AgentHeader";
@@ -10,7 +11,7 @@ const dummyData = {
   agentInfo: {
     agentId: 10,
     name: "엄경례",
-    profileImageUrl: "https://placehold.co/748x462",
+    profileImageUrl: "https://placehold.co/368x452",
     lastAccessDay: "2026-01-28T11:27:02+09:00",
     isChatting: false, // 채팅방 활성화 여부
     slogan: "최고의 결과를 막힘없이 가져다드립니다",
@@ -73,6 +74,7 @@ const dummyData = {
 const ProfileOfAgent = () => {
   return (
     <>
+      <BannerBackground />
       <div className="relative flex flex-col mt-21">
         <div className="flex flex-row justify-between">
           <section className="flex flex-col">

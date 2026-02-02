@@ -5,10 +5,10 @@ import {
   IcLuggage04,
 } from "../../assets/icon/StratisUi";
 import Tag from "../common/Tag";
-import { languageList } from "../../types/language";
+import { languageList } from "../../constants/language";
 import { Link } from "react-router-dom";
 
-type searchForeignerCardParams = {
+type searchForeignerCardProps = {
   foreigner?: {
     id: number;
     nations: number[];
@@ -30,11 +30,11 @@ const SearchForeignerCard = ({
     languages: [0, 1, 2, 3, 4, 5],
   },
   withDetails = true,
-}: searchForeignerCardParams) => {
+}: searchForeignerCardProps) => {
   // const authed = true;
   return (
     <div
-      className={`flex flex-col py-7 px-6 w-92 h-fit bg-gray-30 rounded-2xl ${withDetails || "drop-shadow-[0_0_7px_#6860A040] bg-white"}`}
+      className={`flex flex-col py-7 px-6 w-92 h-fit bg-gray-30 rounded-2xl ${withDetails || "shadow bg-white"}`}
     >
       <ul className="flex flex-row gap-2 items-center">
         {foreigner.nations.slice(0, 5).map((nation, idx) => (

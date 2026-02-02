@@ -14,7 +14,7 @@ const ProgressStep = ({
 }) => {
   return (
     <>
-      <div className="flex flex-row gap-3 items-center body-l-medium">
+      <div className="flex flex-row gap-3 items-center body-l-medium cursor-pointer">
         <ProgressDot
           status={"inProgress"}
           isFirst={index === 0}

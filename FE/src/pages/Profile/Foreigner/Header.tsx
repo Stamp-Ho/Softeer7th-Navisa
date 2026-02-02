@@ -1,6 +1,6 @@
 import FlagIcon from "../../../assets/FlagIcon";
 import { useParams } from "react-router-dom";
-import { nationList } from "../../../types/nations";
+import { nationList } from "../../../constants/nations";
 
 type HeaderSectionProps = {
   nationIdList: number[];

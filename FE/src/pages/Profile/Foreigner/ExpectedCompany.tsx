@@ -68,7 +68,7 @@ const ExpectedCompany = ({
       ) : (
         <></>
       )}
-      <div className="fixed right-48 drop-shadow-[0_0_7px_#6860A040]">
+      <div className="fixed right-48 shadow">
         <div className="flex flex-col w-92 px-5 py-8 border border-border-normal rounded-radius-400 bg-white">
           <div className="headline-l-bold text-text-base">
             {nickName} {foreignerId}

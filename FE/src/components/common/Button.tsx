@@ -1,48 +1,37 @@
 import type React from "react";
 
-// type buttonType = "lightGray" | "primary" | "grayLine";
+interface ButtonProps {
+  type?: "lightGray" | "primary" | "grayLine" | "violetLine" | "brightViolet";
+  size?: "tiny" | "small" | "medium" | "large" | "giant";
+  className?: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}
+
 const Button = ({
   type = "lightGray",
   size = "medium",
   className = "",
   children,
-  onClick = () => {},
+  onClick,
   disabled = false,
-}: {
-  type?: string;
-  size?: string;
-  className?: string;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) => {
-  const buttonStyle = disabled
-    ? type === "brightViolet"
-      ? "bg-violet-50 text-primary"
-      : "bg-gray-200 text-white cursor-not-allowed"
-    : type === "lightGray"
-      ? "bg-gray-50 text-text-base outline outline-border-light"
-      : type === "primary"
-        ? "bg-button-primary-bg text-text-inverse "
-        : type === "grayLine"
-          ? "bg-transparent outline outline-border-normal"
-          : "bg-violet-50 text-primary outline outline-violet-500 ";
+}: ButtonProps) => {
+  const getButtonStyle = () => {
+    if (disabled) return "bg-gray-200 text-white cursor-not-allowed";
+    return styles[type] || styles.lightGray;
+  };
 
-  const buttonSize =
-    size === "small"
-      ? "h-12 rounded-[6px] body-l-semibold"
-      : size === "medium"
-        ? "h-14 rounded-[8px] body-l-semibold"
-        : size === "large"
-          ? "h-14 rounded-[10px] title-m-semibold"
-          : size === "giant"
-            ? "h-20 rounded-[10px] title-l-semibold"
-            : "";
   return (
     <button
       disabled={disabled}
-      onClick={onClick}
-      className={`cursor-pointer ${buttonStyle} ${buttonSize} ${className} `}
+      onClick={!disabled ? onClick : undefined}
+      className={`
+        cursor-pointer flex items-center justify-center transition-all
+        ${getButtonStyle()} 
+        ${sizes[size] || sizes.medium} 
+        ${className}
+      `}
     >
       {children}
     </button>
@@ -50,3 +39,19 @@ const Button = ({
 };
 
 export default Button;
+
+const styles = {
+  lightGray: "bg-gray-50 text-text-base outline outline-border-light",
+  primary: "bg-button-primary-bg text-text-inverse",
+  grayLine: "bg-transparent outline outline-border-normal",
+  violetLine: "bg-violet-50 text-primary outline outline-violet-500",
+  brightViolet: "bg-violet-50 text-primary",
+};
+
+const sizes = {
+  tiny: "h-10 rounded-md",
+  small: "h-12 rounded-[6px] body-l-semibold",
+  medium: "h-14 rounded-[8px] body-l-semibold",
+  large: "h-14 rounded-[10px] title-m-semibold",
+  giant: "h-20 rounded-[10px] title-l-semibold",
+};

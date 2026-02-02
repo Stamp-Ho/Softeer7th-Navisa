@@ -12,7 +12,7 @@ const DocumentCard = ({
   documentId: number;
 }) => {
   return (
-    <div className="flex flex-row w-full h-fit p-4 gap-3 bg-white rounded-[10px] drop-shadow-[0_0_7px_#6860A040]">
+    <div className="flex flex-row w-full h-fit p-4 gap-3 bg-white rounded-[10px] shadow">
       <div className="w-18.75 h-26.25 overflow-hidden rounded-xl flex outline outline-border-normal">
         <img
           src={"https://placehold.co/76x106"}
@@ -33,8 +33,8 @@ const DocumentCard = ({
         <div className="ml-auto flex flex-row gap-3">
           <Button
             type="grayLine"
-            size=""
-            className="w-10 h-10 rounded-md flex items-center justify-center relative font-[pretendard] text-[8px]"
+            size="tiny"
+            className="w-10 flex items-center justify-center relative font-[pretendard] text-[8px]"
           >
             <div className="absolute">
               <IcFile2 />
@@ -44,8 +44,8 @@ const DocumentCard = ({
           <Link to={`/document/${documentId}`}>
             <Button
               type={document.editing ? "primary" : "grayLine"}
-              size=""
-              className="w-30 h-10 rounded-md"
+              size="tiny"
+              className="w-30"
             >
               {document.editing ? "작성하기" : "문서 활성화"}
             </Button>

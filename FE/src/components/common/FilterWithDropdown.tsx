@@ -1,7 +1,7 @@
-import type React from "react";
 import { IcArrows } from "../../assets/icon/StratisUi";
 import { useState } from "react";
 import DropDown from "./Dropdown";
+import type { FilterWithDropdownProps } from "../../types/filterWithDropdownProps";
 
 const FilterWithDropdown = ({
   isActive = false,
@@ -12,16 +12,7 @@ const FilterWithDropdown = ({
   dropdownOptions,
   dropdownAlign = "left",
   onOptionClicked,
-}: {
-  isActive?: boolean;
-  className?: string;
-  children?: React.ReactNode;
-  category?: { name: string; items: string[] }[];
-  cols?: number;
-  dropdownOptions?: string[];
-  dropdownAlign?: string;
-  onOptionClicked?: (a: number) => void;
-}) => {
+}: FilterWithDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div

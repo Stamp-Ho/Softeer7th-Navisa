@@ -1,7 +1,7 @@
 import { IcGraduation } from "../../../assets/icon/StratisUi";
 import Tag from "../../../components/common/Tag";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
-import { jobCodeList } from "../../../types/job";
+import { jobCodeList } from "../../../constants/job";
 
 type AgentSpecialtiesList = {
   specialties: number[];

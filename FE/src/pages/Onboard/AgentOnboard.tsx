@@ -2,7 +2,7 @@ import { IcArrowUp } from "../../assets/icon/StratisUi";
 import Button from "../../components/common/Button";
 import NavisaForm from "../../components/form/NavisaForm";
 import ProgressStepWidget from "../../components/form/ProgressStepWidget";
-import { languageList } from "../../types/language";
+import { languageList } from "../../constants/language";
 import type { FormSection } from "../../types/formType";
 
 const AgentOnboard = () => {
@@ -25,17 +25,13 @@ const AgentOnboard = () => {
       </div>
       <div className="w-fit ml-4 left-0 mt-19.75 flex flex-row">
         <div className="flex flex-col w-92 gap-5 ">
-          <Button
-            type="primary"
-            size="medium"
-            className="drop-shadow-[0_0_7px_#6860A040]"
-          >
+          <Button type="primary" size="medium" className="shadow">
             저장
           </Button>
           <ProgressStepWidget title={"정보 등록하기"} formData={sections} />
         </div>
         <button
-          className="m-4 mt-auto rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-white w-16 h-16 flex items-center justify-center"
+          className="m-4 mt-auto rounded-full cursor-pointer shadow bg-white w-16 h-16 flex items-center justify-center"
           onClick={() => {}}
         >
           <IcArrowUp size={20} />
@@ -89,6 +85,20 @@ const sections: FormSection[] = [
             inputs: [
               {
                 inputType: "date",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        label: "전화번호",
+        inputLines: [
+          {
+            getMany: false,
+            inputs: [
+              {
+                inputType: "text",
+                placeholder: "010-1234-5678",
               },
             ],
           },

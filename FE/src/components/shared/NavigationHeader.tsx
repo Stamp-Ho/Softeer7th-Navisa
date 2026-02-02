@@ -14,7 +14,7 @@ const NavigationHeader = () => {
     currentPath === "/" ||
     PathNamesWithBackground.some((path) => currentPath.startsWith(path));
 
-  const isMain = currentPath === "/";
+  const hasScroll = currentPath === "/" || currentPath.startsWith("/profile");
 
   const [isAgent, _setIsAgent] = useState<boolean>(false);
 
@@ -34,7 +34,7 @@ const NavigationHeader = () => {
 
   return (
     <header
-      className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${isMain && "ml-1 mr-3"}`}
+      className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${hasScroll && "ml-1 mr-3"}`}
     >
       {authMode === 1 ? (
         <LoginModal onClose={() => setAuthMode(0)} setAuthMode={setAuthMode} />

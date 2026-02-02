@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import BadgeIcon, { badgeDescription } from "../../assets/icon/BadgeIcon";
 import { IcGraduation, IcLocation } from "../../assets/icon/StratisUi";
 import Tag from "../../components/common/Tag";
-import { jobList } from "../../types/job";
+import { jobList } from "../../constants/job";
 
-type searchAgentCardParams = {
+type searchAgentCardProps = {
   agent: {
     id: number;
     img: string;
@@ -24,7 +24,7 @@ const SearchAgentCard = ({
     jobs: [1, 4, 6],
     badges: [3, 6],
   },
-}: searchAgentCardParams) => {
+}: searchAgentCardProps) => {
   const authed = true; //클라이언트 전역 상태로 하면 될 듯
   return (
     <Link

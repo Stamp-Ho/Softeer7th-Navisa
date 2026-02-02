@@ -46,7 +46,7 @@ const Selector = ({
             overflow-y-hidden
             h-75 w-full
             bg-white rounded-lg
-            drop-shadow-[0_0_7px_#6860A040]
+            shadow
             rounded-t-none
             ${zOfDropdown}
           `}

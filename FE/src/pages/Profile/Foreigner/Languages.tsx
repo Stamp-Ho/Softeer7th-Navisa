@@ -1,6 +1,6 @@
 import FlagIcon from "../../../assets/FlagIcon";
 import { IcLanguage } from "../../../assets/icon/StratisUi";
-import { languageIconIdxList, languageList } from "../../../types/language";
+import { languageIconIdxList, languageList } from "../../../constants/language";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
 
 type LanguageIdList = {

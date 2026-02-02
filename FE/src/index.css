@@ -171,6 +171,9 @@
       background-color: #a0a2a7;
     }
   }
+  .shadow {
+    filter: drop-shadow(0 0 7px rgba(104, 96, 160, 0.25));
+  }
   .banner-title {
     font-family: Pretendard;
     font-weight: 700;

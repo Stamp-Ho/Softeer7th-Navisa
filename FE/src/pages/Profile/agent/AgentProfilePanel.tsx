@@ -50,7 +50,7 @@ const AgentProfilePanel = ({
         <></>
       )}
 
-      <div className="flex flex-col items-center bg-white w-92 rounded-[20px] overflow-hidden drop-shadow-[0_0_7px_#6860A040]">
+      <div className="flex flex-col items-center bg-white w-92 rounded-[20px] overflow-hidden shadow">
         <img
           className="w-187 h-113 object-cover"
           src={profileImageUrl || "https://placehold.co/748x462"}

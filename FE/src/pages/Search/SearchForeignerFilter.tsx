@@ -1,14 +1,14 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FilterWithDropdown from "../../components/common/FilterWithDropdown";
-import { jobList } from "../../types/job";
+import { jobList } from "../../constants/job";
 import {
   IcJob,
   IcLanguage,
   IcNationality,
   IcRotate,
 } from "../../assets/icon/StratisUi";
-import { languageList } from "../../types/language";
-import { nationByCategory, nationList } from "../../types/nations";
+import { languageList } from "../../constants/language";
+import { nationByCategory, nationList } from "../../constants/nations";
 
 const SearchforeignerFilter = () => {
   const navigate = useNavigate();

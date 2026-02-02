@@ -1,20 +1,12 @@
-import type React from "react";
 import { IcX } from "../../assets/icon/StratisUi";
+import type { ModalProps } from "../../types/modalProps";
 
-const Modal = ({
-  children,
-  className,
-  onClose,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onClose: () => void;
-}) => {
+const Modal = ({ children, className, onClose }: ModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <div
         className={`bg-white p-5 rounded-[20px] flex flex-col items-center w-124
-        drop-shadow-[0_0_7px_#6860A040]`}
+        shadow`}
       >
         <div
           className="ml-auto flex justify-end cursor-pointer"

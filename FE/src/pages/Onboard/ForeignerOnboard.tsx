@@ -4,8 +4,8 @@ import Button from "../../components/common/Button";
 import TogglePill from "../../components/common/TogglePill";
 import NavisaForm from "../../components/form/NavisaForm";
 import ProgressStepWidget from "../../components/form/ProgressStepWidget";
-import { languageList } from "../../types/language";
-import { regionList } from "../../types/regions";
+import { languageList } from "../../constants/language";
+import { regionList } from "../../constants/regions";
 import type { FormSection } from "../../types/formType";
 
 const ForeignerOnboard = () => {
@@ -29,10 +29,10 @@ const ForeignerOnboard = () => {
       </div>
       <div className="w-fit ml-4 left-0 mt-19.75 flex flex-row">
         <div className="flex flex-col w-92 gap-5 ">
-          <Button type="primary" className="drop-shadow-[0_0_7px_#6860A040]">
+          <Button type="primary" className="shadow">
             저장
           </Button>
-          <div className="flex flex-col bg-green-bright drop-shadow-[0_0_7px_#6860A040] gap-7 rounded-[20px] py-7.75 px-5.25">
+          <div className="flex flex-col bg-green-bright shadow gap-7 rounded-[20px] py-7.75 px-5.25">
             <div className="flex flex-row text-green-vivid title-s-semibold items-center gap-2">
               <IcMessageBox />
               행정사의 제안을 받고싶어요
@@ -53,7 +53,7 @@ const ForeignerOnboard = () => {
           <ProgressStepWidget title="요건 등록하기" formData={sections} />
         </div>
         <button
-          className="m-4 mt-auto rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-white w-16 h-16 flex items-center justify-center"
+          className="m-4 mt-auto rounded-full cursor-pointer shadow bg-white w-16 h-16 flex items-center justify-center"
           onClick={() => {}}
         >
           <IcArrowUp size={20} />

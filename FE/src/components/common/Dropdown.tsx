@@ -1,15 +1,6 @@
 import { useState } from "react";
 import Button from "./Button";
-
-type DropDownParams = {
-  type: string;
-  cols?: number;
-  category?: { name: string; items: string[] }[];
-  dropdownOptions?: string[];
-  onInitClicked?: () => void;
-  onOptionClicked?: (arg: number) => void;
-  onApply: () => void;
-};
+import type { DropDownProps } from "../../types/dropdownProps";
 
 const DropDown = ({
   type = "left",
@@ -19,7 +10,7 @@ const DropDown = ({
   onInitClicked = () => {},
   onOptionClicked = (_a: number) => {},
   onApply = () => {},
-}: DropDownParams) => {
+}: DropDownProps) => {
   const [selectedCategoryIdx, setSelectedCategoryIdx] = useState(0);
 
   const style = type === "left" ? "left-0" : type === "right" ? "right-0" : "";
@@ -28,27 +19,27 @@ const DropDown = ({
 
   return (
     <div
-      className={`absolute top-20 rounded-[12px] flex flex-col w-max h-fit whitespace-nowrap
-        bg-white z-10 drop-shadow-[0_0_7px_#6860A040] ${style}`}
+      className={`absolute top-20 rounded-xl flex flex-col w-max h-fit whitespace-nowrap
+        bg-white z-10 shadow ${style}`}
     >
       <div className="p-9 border-b border-border-normal ">
         {category && (
-          <div className="mb-5 max-w-147 flex-wrap overflow-x-auto scrollbar-hide">
-            <div className="flex flex-row gap-5 items-center">
-              {category.map((cate, idx) => (
+          <div className="mb-5 flex max-w-147 flex-row items-center gap-5 overflow-x-auto scrollbar-hide">
+            {category.map((cate, idx) => {
+              const isSelected = selectedCategoryIdx === idx;
+              return (
                 <button
                   key={cate.name}
                   onClick={() => setSelectedCategoryIdx(idx)}
+                  className={`
+                    flex h-11 shrink-0 cursor-pointer items-center rounded-full px-4 body-l-semibold transition-colors
+                    ${isSelected ? "bg-violet-50-transpar text-violet-500" : "text-text-sub"}
+                    `}
                 >
-                  <div
-                    className={`${selectedCategoryIdx === idx ? "text-violet-500 bg-violet-50-transpar" : "text-text-sub"} 
-                  flex items-center px-4 h-11 rounded-full cursor-pointer body-l-semibold`}
-                  >
-                    {cate.name}
-                  </div>
+                  {cate.name}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
         )}
         {category ? (

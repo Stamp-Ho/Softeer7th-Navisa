@@ -1,6 +1,6 @@
 import Tag from "../../../components/common/Tag";
-import { jobCodeList } from "../../../types/job";
-import { nationList } from "../../../types/nations";
+import { jobCodeList } from "../../../constants/job";
+import { nationList } from "../../../constants/nations";
 
 type AgentBlogData = {
   blogList: AgentBlog[];

@@ -480,7 +480,7 @@ const SearchAgent = () => {
         </div>
       </div>
       <button
-        className="absolute -right-20.5 bottom-3 rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-white w-16 h-16 flex items-center justify-center"
+        className="absolute -right-20.5 bottom-3 rounded-full cursor-pointer shadow bg-white w-16 h-16 flex items-center justify-center"
         onClick={goTop}
       >
         <IcArrowUp size={20} />

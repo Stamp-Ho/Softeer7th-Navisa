@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { jobList } from "../../types/job";
+import { jobList } from "../../constants/job";
 import FilterWithDropdown from "../../components/common/FilterWithDropdown";
 import {
   IcJob,
@@ -7,8 +7,8 @@ import {
   IcLocation,
   IcRotate,
 } from "../../assets/icon/StratisUi";
-import { regionList } from "../../types/regions";
-import { languageList } from "../../types/language";
+import { regionList } from "../../constants/regions";
+import { languageList } from "../../constants/language";
 
 const SearchAgentFilter = () => {
   const navigate = useNavigate();
