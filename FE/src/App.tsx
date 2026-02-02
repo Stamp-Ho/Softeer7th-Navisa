@@ -6,7 +6,7 @@ import NavigationHeader from "./components/shared/NavigationHeader";
 import SearchAgent from "./pages/Search/SearchAgent";
 import ForeignerOnboard from "./pages/Onboard/ForeignerOnboard";
 import AgentOnboard from "./pages/Onboard/AgentOnboard";
-import ProfileOfAgent from "./pages/Profile/Agent/ProfileOfAgent";
+import ProfileOfAgent from "./pages/Profile/agent/ProfileOfAgent";
 import Documents from "./pages/Documents/Documents";
 import EditDocument from "./pages/Documents/EditDocument";
 import SearchForeigner from "./pages/Search/SearchForeigner";
