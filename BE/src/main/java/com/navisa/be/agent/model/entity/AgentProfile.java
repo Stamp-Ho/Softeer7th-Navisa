@@ -10,7 +10,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "agent_profile")
+@Table(name = "agent_profile", indexes = {
+        // 1. 활성 점수순 정렬 + No-Offset 페이징 최적화
+        @Index(name = "idx_agent_active_score_id", columnList = "active_score DESC, agent_id ASC"),
+
+        // 2. 지역 검색 성능 향상 (단, LIKE '%keyword%'는 B-Tree의 한계가 있음)
+        @Index(name = "idx_agent_office_address", columnList = "office_address")
+})
 @Getter
 public class AgentProfile extends BaseEntity {
 
@@ -50,7 +56,7 @@ public class AgentProfile extends BaseEntity {
     private List<AgentLanguage> languages = new ArrayList<>();
 
     @OneToMany(mappedBy = "agentProfile")
-    private List<AgentSpecializedJobCode> specializedJobCodes = new ArrayList<>();
+    private List<AgentSpecializedJob> specializedJobCodes = new ArrayList<>();
 
     @Column(name = "license_no")
     private String licenseNo;
@@ -67,23 +73,27 @@ public class AgentProfile extends BaseEntity {
     @Column(name = "agent_comment")
     private String comment;
 
+    @Column(name = "active_score", nullable = false)
+    private double activeScore;
+
     protected AgentProfile() {
     }
 
     public AgentProfile(String name,
-                        LocalDate birthDate,
-                        String profileImageUrl,
-                        String businessTime,
-                        String officeName,
-                        String officeAddress,
-                        String officeAddressDetail,
-                        String additionalHistory,
-                        UUID userId,
-                        String licenseNo,
-                        LocalDate licenseIssuedAt,
-                        String licenseInnerPageNo,
-                        String licenseManagementNo,
-                        String comment) {
+            LocalDate birthDate,
+            String profileImageUrl,
+            String businessTime,
+            String officeName,
+            String officeAddress,
+            String officeAddressDetail,
+            String additionalHistory,
+            UUID userId,
+            String licenseNo,
+            LocalDate licenseIssuedAt,
+            String licenseInnerPageNo,
+            String licenseManagementNo,
+            String comment,
+            Double activeScore) {
         this.name = name;
         this.birthDate = birthDate;
         this.profileImageUrl = profileImageUrl;
@@ -98,9 +108,10 @@ public class AgentProfile extends BaseEntity {
         this.licenseInnerPageNo = licenseInnerPageNo;
         this.licenseManagementNo = licenseManagementNo;
         this.comment = comment;
+        this.activeScore = 100.0;
     }
 
-    public void addSpecializedJobCodes(List<AgentSpecializedJobCode> codes) {
+    public void addSpecializedJobCodes(List<AgentSpecializedJob> codes) {
         this.specializedJobCodes.addAll(codes);
     }
 

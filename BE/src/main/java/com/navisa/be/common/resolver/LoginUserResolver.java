@@ -1,11 +1,8 @@
-package com.navisa.be.auth.resolver;
+package com.navisa.be.common.resolver;
 
-import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.common.annotation.LoginUser;
 import com.navisa.be.common.exception.BaseException;
 import com.navisa.be.common.model.enums.ResponseStatus;
-import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -18,9 +15,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 @RequiredArgsConstructor
 public class LoginUserResolver implements HandlerMethodArgumentResolver {
-
-    private final JwtProvider jwtProvider;
-    private final UserRepository userRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {

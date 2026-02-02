@@ -1,6 +1,6 @@
 package com.navisa.be.agent.service;
 
-import com.navisa.be.agent.event.ReviewCreatedEvent;
+import com.navisa.be.agent.event.ReviewCreatedBadgeEvent;
 import com.navisa.be.agent.model.entity.AgentBadgeSummary;
 import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.repository.AgentBadgeSummaryRepository;
@@ -21,7 +21,7 @@ public class BadgeSummaryService {
 
     @Transactional
     @EventListener
-    public void updateBadgeSummary(ReviewCreatedEvent event) {
+    public void updateBadgeSummary(ReviewCreatedBadgeEvent event) {
         List<Badge> badges = badgeRepository.findAllById(event.badgeIds());
 
         for (Badge badge : badges) {

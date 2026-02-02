@@ -1,10 +1,10 @@
 package com.navisa.be.agent.repository;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.model.entity.AgentSpecializedJobCode;
+import com.navisa.be.agent.model.entity.AgentSpecializedJob;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AgentSpecializedJobCodeRepository extends JpaRepository<AgentSpecializedJobCode, Long> {
+public interface AgentSpecializedJobRepository extends JpaRepository<AgentSpecializedJob, Long> {
 
     long countByAgentProfile(AgentProfile agentProfile);
 }

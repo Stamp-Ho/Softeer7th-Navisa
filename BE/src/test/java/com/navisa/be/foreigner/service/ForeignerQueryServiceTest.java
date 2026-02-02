@@ -14,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
-
+import com.navisa.be.user.model.entity.User;
+import com.navisa.be.user.model.enums.UserType;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +38,9 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
     private NationalityRepository nationalityRepository;
 
     @Autowired
+    private com.navisa.be.user.repository.UserRepository userRepository;
+
+    @Autowired
     private EntityManager em;
 
     @Test
@@ -45,7 +49,8 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
         // given
         Language language = languageRepository.save(new Language(null, "English"));
         Nationality nationality = nationalityRepository.save(new Nationality(null, "USA"));
-        UUID userId = UUID.randomUUID();
+        User savedUser = userRepository.save(User.createGoogleUser("query@example.com", UserType.UNFILLED_FOREIGNER));
+        UUID userId = savedUser.getId();
         boolean isWork = false;
 
         ForeignerRegisterRequest request = ForeignerFixture.createForeignerRegisterRequest(

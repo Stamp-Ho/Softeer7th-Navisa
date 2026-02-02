@@ -1,6 +1,6 @@
 package com.navisa.be.agent.service;
 
-import com.navisa.be.agent.event.ReviewCreatedEvent;
+import com.navisa.be.agent.event.ReviewCreatedBadgeEvent;
 import com.navisa.be.agent.model.entity.AgentBadgeSummary;
 import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.model.enums.BadgeName;
@@ -41,7 +41,7 @@ class BadgeSummaryServiceTest extends IntegrationTestSupport {
 
         summaryRepository.save(new AgentBadgeSummary(agentId, badge1));
 
-        ReviewCreatedEvent event = new ReviewCreatedEvent(agentId, badgeIds);
+        ReviewCreatedBadgeEvent event = new ReviewCreatedBadgeEvent(agentId, badgeIds);
 
         // when
         badgeSummaryService.updateBadgeSummary(event);

@@ -18,6 +18,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
 
       # 1. Gradle 빌드
       - name: Build with Gradle
@@ -84,6 +85,7 @@ jobs:
               -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
               -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
               -e AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }} \
+              -e AWS_CLOUDFRONT_DOMAIN=${{ secrets.AWS_CLOUDFRONT_DOMAIN }} \
               navisa-spring-app
             
             rm navisa-spring-app.tar

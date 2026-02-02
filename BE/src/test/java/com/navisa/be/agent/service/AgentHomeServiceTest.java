@@ -5,10 +5,10 @@ import com.navisa.be.agent.dto.response.FeedbackResponse;
 import com.navisa.be.agent.exception.AgentHomeException;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentReview;
-import com.navisa.be.agent.model.entity.AgentSpecializedJobCode;
+import com.navisa.be.agent.model.entity.AgentSpecializedJob;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
-import com.navisa.be.agent.repository.AgentSpecializedJobCodeRepository;
+import com.navisa.be.agent.repository.AgentSpecializedJobRepository;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.repository.JobCodeRepository;
@@ -41,7 +41,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
     private JobCodeRepository jobCodeRepository;
 
     @Autowired
-    private AgentSpecializedJobCodeRepository specializedJobCodeRepository;
+    private AgentSpecializedJobRepository specializedJobCodeRepository;
 
     @DisplayName("최신순으로 등록된 행정사 리뷰 4개를 조회하고 작성자 정보를 매핑한다.")
     @Test
@@ -57,8 +57,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
                     actualAgentId,
                     UUID.randomUUID(),
                     "피드백 내용 " + i,
-                    new double[]{0.8, 0.9}
-            ));
+                    new double[] { 0.8, 0.9 }));
         }
 
         // when
@@ -105,7 +104,8 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
         String loginEmail = "test@example.com";
 
         // when
-        List<com.navisa.be.agent.dto.response.AgentCardResponse> result = agentHomeService.getRandomAgentCards(loginEmail);
+        List<com.navisa.be.agent.dto.response.AgentCardResponse> result = agentHomeService
+                .getRandomAgentCards(loginEmail);
 
         // then
         assertThat(result).hasSize(12);
@@ -129,16 +129,14 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
 
     private void createAgentProfiles(int count) {
         com.navisa.be.common.model.entity.JobCode jobCode = jobCodeRepository.save(
-                new com.navisa.be.common.model.entity.JobCode(null, "CODE", "전문분야", null)
-        );
+                new com.navisa.be.common.model.entity.JobCode(null, "CODE", "전문분야", null));
 
         for (int i = 0; i < count; i++) {
             AgentProfile profile = agentProfileRepository.save(new AgentProfile(
                     "행정사" + i, LocalDate.now(), "url", "09:00~18:00",
                     "사무소", "서울", "강남", "경력",
-                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말"
-            ));
-            specializedJobCodeRepository.save(new com.navisa.be.agent.model.entity.AgentSpecializedJobCode(profile, jobCode));
+                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말", 100.0));
+            specializedJobCodeRepository.save(new AgentSpecializedJob(profile, jobCode));
         }
     }
 
@@ -167,17 +165,16 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
     }
 
     private Long createAgentProfilesWithSpeciality(int count, String jobName) {
-        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "SPEC_01", jobName,  null));
+        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "SPEC_01", jobName, null));
 
         for (int i = 0; i < count; i++) {
             AgentProfile profile = new AgentProfile(
                     "행정사" + i, LocalDate.now(), "url", "09:00~18:00",
                     "사무소", "서울", "강남", "경력",
-                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말"
-            );
+                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말", 100.0);
             agentProfileRepository.save(profile);
 
-            AgentSpecializedJobCode specializedJobCode = new AgentSpecializedJobCode(profile, jobCode);
+            AgentSpecializedJob specializedJobCode = new AgentSpecializedJob(profile, jobCode);
             specializedJobCodeRepository.save(specializedJobCode);
 
             profile.getSpecializedJobCodes().add(specializedJobCode);
@@ -190,8 +187,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
         AgentProfile profile = new AgentProfile(
                 name, LocalDate.now(), imageUrl, "09:00~18:00",
                 "내비자 사무소", "서울", "강남", "경력사항",
-                userId, "LIC-123", LocalDate.now(), "P-123", "M-123", "한마디"
-        );
+                userId, "LIC-123", LocalDate.now(), "P-123", "M-123", "한마디", 100.0);
         return agentProfileRepository.save(profile);
     }
 }

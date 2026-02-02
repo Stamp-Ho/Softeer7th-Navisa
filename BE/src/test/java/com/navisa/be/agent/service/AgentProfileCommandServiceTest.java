@@ -4,7 +4,7 @@ import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
 import com.navisa.be.agent.exception.AgentProfileDomainException;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentLanguageRepository;
-import com.navisa.be.agent.repository.AgentSpecializedJobCodeRepository;
+import com.navisa.be.agent.repository.AgentSpecializedJobRepository;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.entity.Language;
 import com.navisa.be.common.repository.JobCodeRepository;
@@ -28,10 +28,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
-class AgentProfileServiceTest extends IntegrationTestSupport {
+class AgentProfileCommandServiceTest extends IntegrationTestSupport {
 
     @Autowired
-    private AgentProfileService agentProfileService;
+    private AgentProfileCommandService agentProfileCommandService;
 
     @Autowired
     private UserRepository userRepository;
@@ -40,7 +40,7 @@ class AgentProfileServiceTest extends IntegrationTestSupport {
     private JobCodeRepository jobCodeRepository;
 
     @Autowired
-    private AgentSpecializedJobCodeRepository specializedJobCodeRepository;
+    private AgentSpecializedJobRepository specializedJobCodeRepository;
 
     @Autowired
     private LanguageRepository languageRepository;
@@ -90,7 +90,7 @@ class AgentProfileServiceTest extends IntegrationTestSupport {
         );
 
         // when
-        AgentProfile result = agentProfileService.registerAgentProfile(command);
+        AgentProfile result = agentProfileCommandService.registerAgentProfile(command);
 
         // then
         assertAll(
@@ -126,7 +126,7 @@ class AgentProfileServiceTest extends IntegrationTestSupport {
         );
 
         // when & then
-        assertThrows(AgentProfileDomainException.class, () -> agentProfileService.registerAgentProfile(command));
+        assertThrows(AgentProfileDomainException.class, () -> agentProfileCommandService.registerAgentProfile(command));
     }
 
     @Test
@@ -144,7 +144,7 @@ class AgentProfileServiceTest extends IntegrationTestSupport {
                 null);
 
         // when & then
-        assertThrows(AgentProfileDomainException.class, () -> agentProfileService.registerAgentProfile(command));
+        assertThrows(AgentProfileDomainException.class, () -> agentProfileCommandService.registerAgentProfile(command));
     }
 
     @Test
@@ -162,6 +162,6 @@ class AgentProfileServiceTest extends IntegrationTestSupport {
                 null);
 
         // when & then
-        assertThrows(AgentProfileDomainException.class, () -> agentProfileService.registerAgentProfile(command));
+        assertThrows(AgentProfileDomainException.class, () -> agentProfileCommandService.registerAgentProfile(command));
     }
 }

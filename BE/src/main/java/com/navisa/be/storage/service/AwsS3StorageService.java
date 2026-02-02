@@ -127,14 +127,14 @@ public class AwsS3StorageService implements StorageService {
     /**
      * 원본 Key를 바탕으로 도메인과 사이즈 규칙에 맞는 최종 Key로 변환
      */
-    private String convertToFinalKey(ImageSize size, String objectKey) {
+    protected String convertToFinalKey(ImageSize size, String objectKey) {
         // 원본이 아니면 경로 치환 및 확장자 변경 로직 수행
         if (size != ImageSize.ORIGIN) {
             StringBuilder sb = new StringBuilder(objectKey.length() + 10);
             sb.append(objectKey);
 
-            // 1. 경로 치환: "origin/" -> "resize/medium/" 등
-            // objectKey 구조가 "agent-profile/origin/..." 이므로 "origin/" 부분을 바꿈
+            // 1. 경로 치환: "origin" -> "resize/medium" 등
+            // objectKey 구조가 "agent-profile/origin/..." 이므로 "origin" 부분을 바꿈
             String originPath = ImageSize.ORIGIN.getPath();
             int originIdx = sb.indexOf(originPath);
             if (originIdx != -1) {
@@ -163,7 +163,7 @@ public class AwsS3StorageService implements StorageService {
                 now.getMonthValue(),
                 now.getDayOfMonth());
 
-        return String.format("%s/" + ImageSize.ORIGIN.getPath() + "%s/%s.%s", location.getDirectory(), datePath, uuid,
+        return String.format("%s/" + ImageSize.ORIGIN.getPath() + "/%s/%s.%s", location.getDirectory(), datePath, uuid,
                 extension);
     }
 }

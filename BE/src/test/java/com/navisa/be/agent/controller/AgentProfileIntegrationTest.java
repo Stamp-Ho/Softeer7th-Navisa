@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileRequest;
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.service.AgentProfileService;
+import com.navisa.be.agent.service.AgentProfileCommandService;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.repository.JobCodeRepository;
@@ -39,7 +39,7 @@ class AgentProfileIntegrationTest extends IntegrationTestSupport {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private AgentProfileService agentProfileService; // 실제 서비스 대신 Mock 사용
+    private AgentProfileCommandService agentProfileCommandService;
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -53,15 +53,16 @@ class AgentProfileIntegrationTest extends IntegrationTestSupport {
         // given
         RegisterAgentProfileRequest request = AgentFixture.getRegisterAgentProfileRequest();
 
-        when(agentProfileService.registerAgentProfile(any(RegisterAgentProfileCommand.class))).thenReturn(mock(AgentProfile.class));
+        when(agentProfileCommandService.registerAgentProfile(any(RegisterAgentProfileCommand.class)))
+                .thenReturn(mock(AgentProfile.class));
 
         String accessToken = jwtProvider.createAccessToken("email");
 
         // when & then
         mockMvc.perform(post("/api/agent/profile")
-                        .header("Authorization", "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andDo(print()); // 요청 응답 로그 출력
     }
@@ -72,15 +73,16 @@ class AgentProfileIntegrationTest extends IntegrationTestSupport {
         // given
         RegisterAgentProfileRequest request = AgentFixture.getRegisterAgentProfileRequestConsistingOfNull();
 
-        when(agentProfileService.registerAgentProfile(any(RegisterAgentProfileCommand.class))).thenReturn(mock(AgentProfile.class));
+        when(agentProfileCommandService.registerAgentProfile(any(RegisterAgentProfileCommand.class)))
+                .thenReturn(mock(AgentProfile.class));
 
         String accessToken = jwtProvider.createAccessToken("email");
 
         // when & then
         mockMvc.perform(post("/api/agent/profile")
-                        .header("Authorization", "Bearer " + accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(containsString("검증 실패")))
                 .andDo(print()); // 요청 응답 로그 출력

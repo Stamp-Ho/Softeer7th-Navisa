@@ -4,10 +4,10 @@ import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
 import com.navisa.be.agent.exception.AgentProfileDomainException;
 import com.navisa.be.agent.model.entity.AgentLanguage;
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.model.entity.AgentSpecializedJobCode;
+import com.navisa.be.agent.model.entity.AgentSpecializedJob;
 import com.navisa.be.agent.repository.AgentLanguageRepository;
 import com.navisa.be.agent.repository.AgentProfileRepository;
-import com.navisa.be.agent.repository.AgentSpecializedJobCodeRepository;
+import com.navisa.be.agent.repository.AgentSpecializedJobRepository;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.entity.Language;
 import com.navisa.be.common.model.enums.ResponseStatus;
@@ -24,12 +24,12 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class AgentProfileService {
+public class AgentProfileCommandService {
 
     private final UserRepository userRepository;
     private final AgentProfileRepository agentProfileRepository;
     private final JobCodeRepository jobCodeRepository;
-    private final AgentSpecializedJobCodeRepository agentSpecializedJobCodeRepository;
+    private final AgentSpecializedJobRepository agentSpecializedJobRepository;
     private final LanguageRepository languageRepository;
     private final AgentLanguageRepository agentLanguageRepository;
 
@@ -40,7 +40,7 @@ public class AgentProfileService {
 
         validateCommand(command);
 
-        if(user.getUserType() != UserType.UNVALID_AGENT){
+        if (user.getUserType() != UserType.UNVALID_AGENT) {
             throw new AgentProfileDomainException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
         }
 
@@ -87,10 +87,10 @@ public class AgentProfileService {
 
         // 모두 조회해서 연관관계를 저장
         List<JobCode> jobCodes = jobCodeRepository.findAllById(jobCodeIds);
-        List<AgentSpecializedJobCode> specializedJobCodes = jobCodes.stream()
-                .map(jobCode -> new AgentSpecializedJobCode(savedProfile, jobCode))
+        List<AgentSpecializedJob> specializedJobCodes = jobCodes.stream()
+                .map(jobCode -> new AgentSpecializedJob(savedProfile, jobCode))
                 .toList();
-        List<AgentSpecializedJobCode> savedCodes = agentSpecializedJobCodeRepository.saveAll(specializedJobCodes);
+        List<AgentSpecializedJob> savedCodes = agentSpecializedJobRepository.saveAll(specializedJobCodes);
         savedProfile.addSpecializedJobCodes(savedCodes);
     }
 
@@ -116,7 +116,8 @@ public class AgentProfileService {
                 command.licenseInfo().licenseIssuedAt(),
                 command.licenseInfo().licenseInnerPageNo(),
                 command.licenseInfo().licenseManagementNo(),
-                command.detailedInfo().agentComment());
+                command.detailedInfo().agentComment(),
+                100.0);
     }
 
     private static void validateCommand(RegisterAgentProfileCommand command) {

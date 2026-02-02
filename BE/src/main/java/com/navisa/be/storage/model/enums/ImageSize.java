@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum ImageSize {
-    ORIGIN("origin/"),
-    MEDIUM("resize/medium/"),
-    SMALL("resize/small/");
+    ORIGIN("origin"),
+    MEDIUM("resize/medium"),
+    SMALL("resize/small");
 
     private final String path;
 

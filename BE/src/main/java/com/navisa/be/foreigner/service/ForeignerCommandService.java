@@ -9,6 +9,9 @@ import com.navisa.be.common.repository.LanguageRepository;
 import com.navisa.be.common.repository.NationalityRepository;
 import com.navisa.be.foreigner.model.entity.*;
 import com.navisa.be.foreigner.repository.*;
+import com.navisa.be.user.model.entity.User;
+import com.navisa.be.user.model.enums.UserType;
+import com.navisa.be.user.service.UserQueryService;
 import org.springframework.stereotype.Service;
 
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
@@ -28,6 +31,7 @@ public class ForeignerCommandService {
         private final LanguageRepository languageRepository;
         private final NationalityRepository nationalityRepository;
         private final ForeignerRelationCommandService foreignerRelationCommandService;
+        private final UserQueryService userQueryService;
 
         @Transactional
         public ForeignerProfile registerForeignerTotalInfo(ForeignerRegisterRequest request, UUID userId) {
@@ -39,6 +43,11 @@ public class ForeignerCommandService {
                 List<Nationality> nationalities = nationalityRepository.findAllById(request.nationIdList());
                 if (nationalities.size() != request.nationIdList().size()) {
                         throw new BaseException(ResponseStatus.INVALID_NATIONALITY);
+                }
+
+                User findUser = userQueryService.findById(userId);
+                if (findUser.getUserType().equals(UserType.UNFILLED_FOREIGNER)) {
+                        findUser.upgradeToValidForeigner();
                 }
 
                 return foreignerProfileRepository.findByUserId(userId)

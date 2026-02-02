@@ -5,7 +5,6 @@ import com.navisa.be.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,7 @@ class AgentReviewRepositoryTest extends IntegrationTestSupport {
         // given
         UUID agentId = UUID.randomUUID();
         UUID foreignerId = UUID.randomUUID();
-        double[] similarities = {0.8, 0.9};
+        double[] similarities = { 0.8, 0.9 };
 
         // 5개의 리뷰를 생성하여 저장 (나중에 들어온 것이 최신)
         for (int i = 1; i <= 5; i++) {
@@ -34,8 +33,7 @@ class AgentReviewRepositoryTest extends IntegrationTestSupport {
                     agentId,
                     foreignerId,
                     "리뷰 내용 " + i,
-                    similarities
-            ));
+                    similarities));
         }
 
         // when

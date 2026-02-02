@@ -6,10 +6,7 @@ import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -34,6 +31,7 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false)
+    @Getter
     private UserType userType;
 
     @Enumerated(EnumType.STRING)
@@ -75,7 +73,10 @@ public class User extends BaseEntity {
         this.userType = UserType.VALID_AGENT;
     }
 
-    public UserType getUserType(){
-        return this.userType;
+    public void upgradeToValidForeigner() {
+        if(this.userType != UserType.UNFILLED_FOREIGNER){
+            throw new AgentProfileDomainException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_FOREIGNER_PROFILE);
+        }
+        this.userType = UserType.FILLED_FOREIGNER;
     }
 }

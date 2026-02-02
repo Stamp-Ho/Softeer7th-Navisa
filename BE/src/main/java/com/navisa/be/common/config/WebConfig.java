@@ -2,7 +2,8 @@ package com.navisa.be.common.config;
 
 import com.navisa.be.auth.interceptor.AuthInterceptor;
 import com.navisa.be.auth.interceptor.UserTypeCheckInterceptor;
-import com.navisa.be.auth.resolver.LoginUserResolver;
+import com.navisa.be.common.resolver.LoginUserResolver;
+import com.navisa.be.common.resolver.SliceInfoArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -29,21 +30,11 @@ public class WebConfig implements WebMvcConfigurer {
     private final UserTypeCheckInterceptor userTypeCheckInterceptor;
     private final AuthInterceptor authInterceptor;
     private final LoginUserResolver loginUserResolver;
+    private final SliceInfoArgumentResolver sliceInfoArgumentResolver;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/api/**")
-                .excludePathPatterns(
-                        "/api/auth/oauth/google",
-                        "/api/auth/signup",
-                        "/api/auth/login",
-                        "/api/auth/reissue",
-                        "/api/home/badge-list",
-                        "/api/home/feedback",
-                        "/api/home/badge",
-                        "/api/home/guest/agents"
-                )
                 .addPathPatterns(ALL_APIS)
                 .excludePathPatterns(AUTH_EXCLUDED_LIST);
 
@@ -56,5 +47,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(loginUserResolver);
+        resolvers.add(sliceInfoArgumentResolver);
     }
 }

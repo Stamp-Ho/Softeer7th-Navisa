@@ -1,12 +1,20 @@
 package com.navisa.be.agent.controller;
 
+import com.navisa.be.agent.dto.request.AgentCardRequest;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileRequest;
+import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.GetJobCodeListResponse;
-import com.navisa.be.agent.service.AgentProfileService;
+import com.navisa.be.agent.service.AgentProfileCommandService;
+import com.navisa.be.agent.service.AgentProfileQueryService;
 import com.navisa.be.agent.service.JobCodeService;
+import com.navisa.be.common.annotation.HasUserType;
 import com.navisa.be.common.annotation.LoginUser;
+import com.navisa.be.common.annotation.SliceInfo;
+import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.common.dto.response.BaseResponse;
+import com.navisa.be.common.dto.response.SliceResponse;
+import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,13 +22,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @Tag(name = "Agent Profile", description = "행정사 프로필 API")
 @RequiredArgsConstructor
 @RequestMapping("/api/agent")
 @RestController
 public class AgentProfileController {
 
-    private final AgentProfileService agentProfileService;
+    private final AgentProfileCommandService agentProfileCommandService;
+    private final AgentProfileQueryService agentProfileQueryService;
     private final JobCodeService jobCodeService;
 
     @Operation(
@@ -31,8 +42,22 @@ public class AgentProfileController {
     public BaseResponse<Void> registerAgentProfile(@Valid @RequestBody RegisterAgentProfileRequest request,
                                                    @Parameter(hidden = true) @LoginUser String loginUserEmail) {
         RegisterAgentProfileCommand command = new RegisterAgentProfileCommand(request, loginUserEmail);
-        agentProfileService.registerAgentProfile(command);
-        return new BaseResponse(null);
+        agentProfileCommandService.registerAgentProfile(command);
+        return new BaseResponse<>(null);
+    }
+
+    @Operation(
+            summary = "행정사 프로필 필터 검색 API",
+            description = "직무, 지역, 언어 필터를 기반으로 행정사 목록을 조회합니다. No-Offset 방식의 Slice 페이징을 지원합니다."
+    )
+    @HasUserType({UserType.FILLED_FOREIGNER, UserType.UNFILLED_FOREIGNER})
+    @GetMapping("/profile/search")
+    public BaseResponse<SliceResponse<AgentCardResponse, UUID>> findAgentProfileCardsBasedOnFilter(
+            @ModelAttribute AgentCardRequest request,
+            @Parameter(description = "페이징 정보 (lastElementId: 마지막으로 본 행정사 ID, size: 페이지 크기)") @SliceInfo SliceRequest<UUID> slice,
+            @LoginUser String email) {
+
+        return new BaseResponse<>(agentProfileQueryService.findAgentProfileCardsBasedOnFilter(request, slice, email));
     }
 
     @Operation(

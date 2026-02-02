@@ -7,6 +7,8 @@ import com.navisa.be.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class UserQueryService {
@@ -15,6 +17,11 @@ public class UserQueryService {
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(ResponseStatus.INVALID_USER));
+    }
+
+    public User findById(UUID userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(ResponseStatus.INVALID_USER));
     }
 }

@@ -51,8 +51,7 @@ class AgentBadgeServiceTest extends IntegrationTestSupport {
         AgentProfile profile = new AgentProfile(
                 "김행정", LocalDate.now(), "https://image.com", "09:00~18:00",
                 "내비자 사무소", "서울", "강남", "행정 전문",
-                UUID.randomUUID(), "LIC-123", LocalDate.now(), "P-123", "M-123", "안녕하세요"
-        );
+                UUID.randomUUID(), "LIC-123", LocalDate.now(), "P-123", "M-123", "안녕하세요", 100.0);
         AgentProfile savedProfile = agentProfileRepository.save(profile);
         UUID agentId = savedProfile.getId();
 
@@ -62,8 +61,7 @@ class AgentBadgeServiceTest extends IntegrationTestSupport {
         UUID foreignerId = savedForeigner.getId();
 
         AgentReview review = agentReviewRepository.save(new AgentReview(
-                agentId, foreignerId, "상담이 매우 친절합니다!", new double[]{0.1, 0.2}
-        ));
+                agentId, foreignerId, "상담이 매우 친절합니다!", new double[] { 0.1, 0.2 }));
 
         agentBadgeRepository.save(new AgentBadge(kindBadge, review));
 
@@ -105,8 +103,7 @@ class AgentBadgeServiceTest extends IntegrationTestSupport {
         AgentProfile profile = new AgentProfile(
                 name, LocalDate.now(), "https://image.com", "09:00~18:00",
                 "내비자 사무소", "서울", "강남", "행정 전문",
-                agentId, "LIC-123", LocalDate.now(), "P-123", "M-123", "안녕하세요"
-        );
+                agentId, "LIC-123", LocalDate.now(), "P-123", "M-123", "안녕하세요", 100.0);
         agentProfileRepository.save(profile);
     }
 

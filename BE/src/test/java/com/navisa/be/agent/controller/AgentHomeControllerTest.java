@@ -4,7 +4,7 @@ import com.navisa.be.agent.dto.response.FeedbackResponse;
 import com.navisa.be.agent.exception.AgentHomeException;
 import com.navisa.be.agent.service.AgentHomeService;
 import com.navisa.be.auth.jwt.JwtProvider;
-import com.navisa.be.auth.resolver.LoginUserResolver;
+import com.navisa.be.common.resolver.LoginUserResolver;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.user.repository.UserRepository;

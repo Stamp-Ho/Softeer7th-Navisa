@@ -34,6 +34,7 @@ public enum ResponseStatus {
     AGENT_PROFILE_MUST_CONTAIN_ONE_TYPE_LICENSE_INFO(400, "일반 자격증 정보 세트 혹은 관리번호 중 '하나만' 입력해야 합니다."),
     INVALID_JOB_CODE(400, "유효하지 않은 직무 코드입니다"),
     NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE(400, "행정사 프로필을 등록할 수 있는 유저가 아닙니다"),
+    NOT_ALLOWED_TO_REGISTER_FOREIGNER_PROFILE(400, "외국인 프로필을 등록할 수 있는 유저가 아닙니다"),
     BADGE_NOT_FOUND(404, "해당 조건에 맞는 배지 목록을 찾을 수 없습니다."),
     AGENT_REVIEW_NOT_FOUND(404, "등록된 블로그 사례가 없습니다."),
     BADGE_REVIEW_NOT_FOUND(404, "해당 뱃지로 등록된 리뷰가 없습니다."),

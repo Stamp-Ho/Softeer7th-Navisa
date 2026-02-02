@@ -85,6 +85,8 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
 
                 given(userQueryService.findByEmail(email))
                                 .willReturn(mockUser);
+                given(userQueryService.findById(userId))
+                                .willReturn(mockUser);
 
                 given(jobCodeRepository.findTop3SimilarJobCodes(any()))
                                 .willReturn(List.of(
@@ -126,6 +128,8 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
                                 .willReturn(mockEmbedding);
 
                 given(userQueryService.findByEmail(email))
+                                .willReturn(mockUser);
+                given(userQueryService.findById(userId))
                                 .willReturn(mockUser);
 
                 given(jobCodeRepository.findTop3SimilarJobCodes(any()))
@@ -173,6 +177,8 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
                                 .willReturn(mockEmbedding);
 
                 given(userQueryService.findByEmail(email))
+                                .willReturn(mockUser);
+                given(userQueryService.findById(userId))
                                 .willReturn(mockUser);
 
                 // Mocking jobCodeRepository to return 2 items instead of 3

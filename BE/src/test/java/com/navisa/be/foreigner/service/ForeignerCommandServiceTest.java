@@ -9,6 +9,8 @@ import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.repository.*;
 import com.navisa.be.support.ForeignerFixture;
 import com.navisa.be.support.IntegrationTestSupport;
+import com.navisa.be.user.model.entity.User;
+import com.navisa.be.user.model.enums.UserType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,9 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
     private ForeignerNationalityRepository foreignerNationalityRepository;
 
     @Autowired
+    private com.navisa.be.user.repository.UserRepository userRepository;
+
+    @Autowired
     private ForeignerSimilarityRepository foreignerSimilarityRepository;
 
     @Test
@@ -74,7 +79,8 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
                 List.of(language.getId()),
                 false);
 
-        UUID userId = UUID.randomUUID();
+        User savedUser = userRepository.save(User.createGoogleUser("test@example.com", UserType.UNFILLED_FOREIGNER));
+        UUID userId = savedUser.getId();
 
         // when
         ForeignerProfile savedProfile = foreignerCommandService.registerForeignerTotalInfo(request, userId);
@@ -108,7 +114,7 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("이미 존재하는 userId로 등록 요청 시 기존 정보를 삭제하고 새로운 정보로 업데이트한다 (Upsert)")
+    @DisplayName("이미 존재하는 userId로 등록 요청 시 변경된 정보를 업데이트한다 (Upsert)")
     void registerForeignerTotalInfo_Upsert() {
         // given
         Language langEng = languageRepository.save(new Language(null, "English"));
@@ -118,7 +124,8 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
                 List.of(natUSA.getId()),
                 List.of(langEng.getId()),
                 true);
-        UUID userId = UUID.randomUUID();
+        User savedUser = userRepository.save(User.createGoogleUser("upsert@example.com", UserType.UNFILLED_FOREIGNER));
+        UUID userId = savedUser.getId();
 
         ForeignerProfile initialProfile = foreignerCommandService.registerForeignerTotalInfo(initialRequest, userId);
 
