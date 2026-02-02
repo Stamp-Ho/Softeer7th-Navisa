@@ -16,8 +16,8 @@ const RecentlyEditedDocuments = () => {
         </div>
       </Link>
       <div className="grid grid-cols-3 grid-rows-2 whitespace-nowrap gap-3">
-        {data.map((doc) => (
-          <DocumentCard document={doc} />
+        {data.map((doc, index) => (
+          <DocumentCard document={doc} documentId={index} />
         ))}
       </div>
     </section>

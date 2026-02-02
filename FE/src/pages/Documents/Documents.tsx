@@ -150,11 +150,11 @@ const Documents = () => {
           </div>
         </div>
         <div
-          className="w-full grid-cols-3 grid gap-3 p-4 -m-4 mb-0 overflow-y-auto scrollbar-hide "
+          className="w-full grid-cols-3 grid gap-3 p-4 -m-4 pb-0 mb-0 overflow-y-auto scrollbar-hide "
           style={{ height: "calc(100vh - 250px)" }}
         >
-          {documentToRender.map((doc) => (
-            <DocumentCard document={doc} />
+          {documentToRender.map((doc, index) => (
+            <DocumentCard document={doc} documentId={index} />
           ))}
         </div>
       </div>

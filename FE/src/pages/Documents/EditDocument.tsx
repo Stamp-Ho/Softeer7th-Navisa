@@ -16,7 +16,6 @@ import {
 import type { FormSection } from "../../types/formType";
 import { useState } from "react";
 import { nationList } from "../../types/nations";
-import TextArea from "../../components/common/TextArea";
 
 const informationMessage = [
   "신청인은 사실에 근거하여 빠짐없이 정확하게 신청서를 작성하여야 합니다.",
@@ -34,7 +33,7 @@ const EditDocument = () => {
   const elementBeforeSteps = (
     <>
       <div>
-        <h4>서류 파일 업로드</h4>
+        <h4>서류 파일 업로드 {documentId}</h4>
         <h5>
           서류를 업로드하면, AI가 서류에 포함된 정보를 추출해 신청서 항목의
           빈칸을 자동으로 채워줘요.

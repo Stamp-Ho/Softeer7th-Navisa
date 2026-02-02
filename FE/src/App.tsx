@@ -18,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/search/agent" element={<SearchAgent />} />
+        <Route path="/search/foreigner" element={<SearchForeigner />} />
         <Route
           path="/profile/foreigner/:foreignerId"
           element={<ProfileOfForeigner />}

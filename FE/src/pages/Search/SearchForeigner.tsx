@@ -5,6 +5,7 @@ import SearchForeignerFilter from "./SearchForeignerFilter";
 
 const dummyData = [
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -12,6 +13,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -19,6 +21,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -26,6 +29,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -33,6 +37,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -40,6 +45,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -47,6 +53,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -54,6 +61,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -61,6 +69,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -68,6 +77,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -75,6 +85,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -82,6 +93,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -89,6 +101,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -96,6 +109,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -103,6 +117,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",
@@ -110,55 +125,7 @@ const dummyData = [
     languages: [0, 1, 2, 3, 4, 5],
   },
   {
-    nations: [0, 1, 2, 3, 4, 5],
-    nickName: "닉 주디 엘리자베스 마야",
-    targetJob: "웹 개발자",
-    major: "컴퓨터공학",
-    languages: [0, 1, 2, 3, 4, 5],
-  },
-  {
-    nations: [0, 1, 2, 3, 4, 5],
-    nickName: "닉 주디 엘리자베스 마야",
-    targetJob: "웹 개발자",
-    major: "컴퓨터공학",
-    languages: [0, 1, 2, 3, 4, 5],
-  },
-  {
-    nations: [0, 1, 2, 3, 4, 5],
-    nickName: "닉 주디 엘리자베스 마야",
-    targetJob: "웹 개발자",
-    major: "컴퓨터공학",
-    languages: [0, 1, 2, 3, 4, 5],
-  },
-  {
-    nations: [0, 1, 2, 3, 4, 5],
-    nickName: "닉 주디 엘리자베스 마야",
-    targetJob: "웹 개발자",
-    major: "컴퓨터공학",
-    languages: [0, 1, 2, 3, 4, 5],
-  },
-  {
-    nations: [0, 1, 2, 3, 4, 5],
-    nickName: "닉 주디 엘리자베스 마야",
-    targetJob: "웹 개발자",
-    major: "컴퓨터공학",
-    languages: [0, 1, 2, 3, 4, 5],
-  },
-  {
-    nations: [0, 1, 2, 3, 4, 5],
-    nickName: "닉 주디 엘리자베스 마야",
-    targetJob: "웹 개발자",
-    major: "컴퓨터공학",
-    languages: [0, 1, 2, 3, 4, 5],
-  },
-  {
-    nations: [0, 1, 2, 3, 4, 5],
-    nickName: "닉 주디 엘리자베스 마야",
-    targetJob: "웹 개발자",
-    major: "컴퓨터공학",
-    languages: [0, 1, 2, 3, 4, 5],
-  },
-  {
+    id: 3,
     nations: [0, 1, 2, 3, 4, 5],
     nickName: "닉 주디 엘리자베스 마야",
     targetJob: "웹 개발자",

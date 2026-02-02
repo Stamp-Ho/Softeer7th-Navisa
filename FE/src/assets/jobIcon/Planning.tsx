@@ -10,6 +10,7 @@ export const Planning = (props: IProps) => {
       viewBox="0 0 90 90"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <g clip-path="url(#clip0_648_39921)">
         <g opacity="0.7">

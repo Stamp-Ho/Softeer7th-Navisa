@@ -5,6 +5,7 @@ import { IcArrowUp } from "../../assets/icon/StratisUi";
 
 const dummyData = [
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례1",
     address: "서울특별시 강남구",
@@ -12,6 +13,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례2",
     address: "서울특별시 강남구",
@@ -19,6 +21,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례3",
     address: "서울특별시 강남구",
@@ -26,6 +29,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례4",
     address: "서울특별시 강남구",
@@ -33,6 +37,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례5",
     address: "서울특별시 강남구",
@@ -40,6 +45,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례6",
     address: "서울특별시 강남구",
@@ -47,6 +53,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -54,6 +61,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -61,6 +69,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -68,6 +77,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -75,6 +85,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -82,6 +93,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -89,6 +101,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -96,6 +109,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -103,6 +117,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -110,6 +125,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -117,6 +133,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -124,6 +141,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -131,6 +149,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -138,6 +157,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -145,6 +165,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -152,6 +173,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -159,6 +181,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -166,6 +189,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -173,6 +197,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -180,6 +205,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -187,6 +213,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -194,6 +221,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -201,6 +229,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -208,6 +237,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -215,6 +245,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -222,6 +253,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -229,6 +261,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -236,6 +269,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -243,6 +277,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -250,6 +285,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -257,6 +293,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -264,6 +301,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -271,6 +309,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -278,6 +317,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -285,6 +325,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -292,6 +333,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -299,6 +341,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -306,6 +349,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -313,6 +357,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -320,6 +365,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -327,6 +373,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -334,6 +381,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -341,6 +389,7 @@ const dummyData = [
     badges: [3, 6],
   },
   {
+    id: 2,
     img: "https://placehold.co/140x140",
     name: "엄경례",
     address: "서울특별시 강남구",
@@ -358,14 +407,14 @@ const SearchAgent = () => {
 
   const handleScroll = () => {
     if (scrollRef.current) {
-      const { scrollTop, scrollHeight, foreignerHeight } = scrollRef.current;
+      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
 
       // 상단 도달 체크 (여유값 20px)
       setIsAtStart(scrollTop <= 20);
 
       // 하단 도달 체크 (바닥에서 20px 이내일 때)
-      // scrollHeight(전체높이) - scrollTop(내려온길이) === foreignerHeight(보이는높이)
-      const isBottom = scrollHeight - scrollTop - foreignerHeight <= 20;
+      // scrollHeight(전체높이) - scrollTop(내려온길이) === clientHeight(보이는높이)
+      const isBottom = scrollHeight - scrollTop - clientHeight <= 20;
       setIsAtEnd(isBottom);
     }
   };
