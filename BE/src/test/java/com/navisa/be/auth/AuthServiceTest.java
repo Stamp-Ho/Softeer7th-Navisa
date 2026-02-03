@@ -6,6 +6,7 @@ import com.navisa.be.auth.dto.request.LogoutRequest;
 import com.navisa.be.auth.dto.request.SignupRequest;
 import com.navisa.be.auth.dto.response.LoginResponse;
 import com.navisa.be.auth.dto.response.SignupResponse;
+import com.navisa.be.auth.dto.response.TokenResponse;
 import com.navisa.be.auth.exception.AuthException;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.model.entity.RefreshToken;
@@ -17,6 +18,7 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +26,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 
 import java.util.Optional;
 
@@ -53,6 +56,9 @@ class AuthServiceTest {
     @Mock
     private GoogleOAuthService googleOAuthService;
 
+    @Mock
+    private HttpServletResponse response;
+
     @Test
     @DisplayName("회원가입 성공: 유저 정보가 저장되고 토큰이 발급된다")
     void signupSuccess() {
@@ -65,10 +71,10 @@ class AuthServiceTest {
         given(jwtProvider.createAccessToken(anyString())).willReturn("access-token");
         given(jwtProvider.createRefreshToken(anyString())).willReturn("refresh-token");
 
-        SignupResponse response = authService.signup(request);
+        SignupResponse responseResult = authService.signup(request, response);
 
         assertAll(
-                () -> assertThat(response.accessToken()).isEqualTo("access-token"),
+                () -> assertThat(responseResult.accessToken()).isEqualTo("access-token"),
                 () -> verify(userRepository, times(1)).save(any(User.class)),
                 () -> verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class))
         );
@@ -89,9 +95,9 @@ class AuthServiceTest {
         given(jwtProvider.createAccessToken(email)).willReturn("access-token");
         given(jwtProvider.createRefreshToken(email)).willReturn("refresh-token");
 
-        LoginResponse response = authService.login(request);
+        LoginResponse responseResult = authService.login(request, response);
 
-        assertThat(response.accessToken()).isEqualTo("access-token");
+        assertThat(responseResult.accessToken()).isEqualTo("access-token");
         verify(refreshTokenRepository).save(any(RefreshToken.class));
     }
 
@@ -102,7 +108,7 @@ class AuthServiceTest {
         LoginRequest request = new LoginRequest("none@test.com", "password123");
         given(userRepository.findByEmail(anyString())).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> authService.login(request))
+        assertThatThrownBy(() -> authService.login(request, response))
                 .isInstanceOf(AuthException.class)
                 .hasMessage(ResponseStatus.INVALID_USER.getMessage());
     }
@@ -115,10 +121,10 @@ class AuthServiceTest {
         String email = "test@test.com";
         LogoutRequest request = new LogoutRequest("refresh-token");
 
+        given(jwtProvider.validateToken(anyString())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(email);
-        given(userRepository.findByEmail(email)).willReturn(Optional.of(mock(User.class)));
 
-        authService.logout(accessToken, request);
+        authService.logout(accessToken);
 
         verify(refreshTokenRepository, times(1)).deleteById(email);
     }
@@ -133,7 +139,7 @@ class AuthServiceTest {
 
         SignupRequest request = new SignupRequest(email, "password123", UserType.UNVALID_AGENT);
 
-        assertThatThrownBy(() -> authService.signup(request))
+        assertThatThrownBy(() -> authService.signup(request, response))
                 .isInstanceOf(AuthException.class)
                 .hasFieldOrPropertyWithValue("status", ResponseStatus.ALREADY_EXIST_USER);
     }
@@ -143,7 +149,7 @@ class AuthServiceTest {
     void signup_fail_invalid_user_type() {
         SignupRequest request = new SignupRequest("new@navisa.com", "password123", UserType.VALID_AGENT);
 
-        assertThatThrownBy(() -> authService.signup(request))
+        assertThatThrownBy(() -> authService.signup(request, response))
                 .isInstanceOf(AuthException.class)
                 .hasFieldOrPropertyWithValue("status", ResponseStatus.INVALID_INITIAL_USER_TYPE);
     }
@@ -161,10 +167,10 @@ class AuthServiceTest {
         when(jwtProvider.createAccessToken(anyString())).thenReturn("test-access-token");
         when(jwtProvider.createRefreshToken(anyString())).thenReturn("test-refresh-token");
 
-        SignupResponse response = authService.signup(request);
+        SignupResponse responseResult = authService.signup(request, response);
 
-        assertThat(response.accessToken()).isNotBlank();
-        assertThat(response.userType()).isEqualTo(UserType.UNVALID_AGENT);
+        assertThat(responseResult.accessToken()).isNotBlank();
+        assertThat(responseResult.userType()).isEqualTo(UserType.UNVALID_AGENT);
     }
 
     @Test
@@ -179,7 +185,7 @@ class AuthServiceTest {
 
         GoogleLoginRequest request = new GoogleLoginRequest(idToken, UserType.UNVALID_AGENT);
 
-        assertThatThrownBy(() -> authService.googleLogin(request))
+        assertThatThrownBy(() -> authService.googleLogin(request, response))
                 .isInstanceOf(AuthException.class)
                 .hasFieldOrPropertyWithValue("status", ResponseStatus.DUPLICATE_LOGIN_TYPE);
     }
@@ -196,8 +202,30 @@ class AuthServiceTest {
 
         LoginRequest request = new LoginRequest(email, "wrong-password");
 
-        assertThatThrownBy(() -> authService.login(request))
+        assertThatThrownBy(() -> authService.login(request, response))
                 .isInstanceOf(AuthException.class)
                 .hasFieldOrPropertyWithValue("status", ResponseStatus.INVALID_PASSWORD);
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 성공: 새로운 엑세스 토큰을 반환하고 쿠키를 갱신한다")
+    void reissueSuccess() {
+        // given
+        String oldRefreshToken = "old-rt";
+        String email = "test@test.com";
+        RefreshToken savedToken = new RefreshToken(email, oldRefreshToken);
+
+        given(jwtProvider.validateToken(oldRefreshToken)).willReturn(true);
+        given(jwtProvider.getEmail(oldRefreshToken)).willReturn(email);
+        given(refreshTokenRepository.findById(email)).willReturn(Optional.of(savedToken));
+        given(jwtProvider.createAccessToken(email)).willReturn("new-at");
+        given(jwtProvider.createRefreshToken(email)).willReturn("new-rt");
+
+        // when
+        TokenResponse responseResult = authService.reissue(oldRefreshToken, response);
+
+        // then
+        assertThat(responseResult.accessToken()).isEqualTo("new-at");
+        verify(response).addHeader(eq(HttpHeaders.SET_COOKIE), anyString());
     }
 }

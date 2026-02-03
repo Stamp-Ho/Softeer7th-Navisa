@@ -16,9 +16,12 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -35,7 +38,7 @@ public class AuthService {
 
     // 구글 로그인
     @Transactional
-    public LoginResponse googleLogin(GoogleLoginRequest request) {
+    public LoginResponse googleLogin(GoogleLoginRequest request, HttpServletResponse response) {
         String email = googleOAuthService.getGoogleEmail(request.idToken());
         User existingUser = userRepository.findByEmail(email).orElse(null);
 
@@ -50,14 +53,14 @@ public class AuthService {
 
         String accessToken = jwtProvider.createAccessToken(user.getEmail());
         String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
-        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
 
-        return new LoginResponse(accessToken, refreshToken, user.getId());
+        saveRefreshTokenInCookie(user.getEmail(), refreshToken, response);
+        return new LoginResponse(accessToken, user.getId());
     }
 
     // 일반 회원가입
     @Transactional
-    public SignupResponse signup(SignupRequest request) {
+    public SignupResponse signup(SignupRequest request, HttpServletResponse response) {
         // 기존 유저 존재 여부 확인
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new AuthException(ResponseStatus.ALREADY_EXIST_USER);
@@ -79,13 +82,13 @@ public class AuthService {
 
         String accessToken = jwtProvider.createAccessToken(savedUser.getEmail());
         String refreshToken = jwtProvider.createRefreshToken(savedUser.getEmail());
-        refreshTokenRepository.save(new RefreshToken(savedUser.getEmail(), refreshToken));
 
-        return new SignupResponse(accessToken, refreshToken, savedUser.getId(), savedUser.getUserType());
+        saveRefreshTokenInCookie(savedUser.getEmail(), refreshToken, response);
+        return new SignupResponse(accessToken, savedUser.getId(), savedUser.getUserType());
     }
 
     // 일반 로그인
-    public LoginResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request, HttpServletResponse response) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new AuthException(ResponseStatus.INVALID_USER));
 
@@ -95,28 +98,30 @@ public class AuthService {
 
         String accessToken = jwtProvider.createAccessToken(user.getEmail());
         String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
-        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
 
-        return new LoginResponse(accessToken, refreshToken, user.getId());
+        saveRefreshTokenInCookie(user.getEmail(), refreshToken, response);
+        return new LoginResponse(accessToken, user.getId());
     }
 
     // 로그아웃
     @Transactional
-    public void logout(String accessToken, LogoutRequest request) {
-
+    public void logout(String accessToken) {
         if (accessToken == null || !accessToken.startsWith("Bearer ")) {
-             throw new AuthException(ResponseStatus.INVALID_TOKEN);
+            throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
-        String email = jwtProvider.getEmail(accessToken.substring(7));// "Bearer " 제거
 
-        userRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthException(ResponseStatus.INVALID_USER));
+        String token = accessToken.substring(7); // "Bearer " 제거
 
+        if (!jwtProvider.validateToken(token)) {
+            throw new AuthException(ResponseStatus.INVALID_TOKEN);
+        }
+
+        String email = jwtProvider.getEmail(token);
         refreshTokenRepository.deleteById(email);
     }
 
     // 토큰 재발급
-    public TokenResponse reissue(String refreshTokenValue) {
+    public TokenResponse reissue(String refreshTokenValue, HttpServletResponse response) {
         // Refresh Token 유효성 검증
         if (!jwtProvider.validateToken(refreshTokenValue)) {
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
@@ -135,9 +140,21 @@ public class AuthService {
         String newAccessToken = jwtProvider.createAccessToken(email);
         String newRefreshToken = jwtProvider.createRefreshToken(email);
 
-        refreshTokenRepository.save(new RefreshToken(email, newRefreshToken));
+        saveRefreshTokenInCookie(email, newRefreshToken, response);
+        return new TokenResponse(newAccessToken);
+    }
 
-        return new TokenResponse(newAccessToken, newRefreshToken);
+    private void saveRefreshTokenInCookie(String email, String refreshToken, HttpServletResponse response) {
+        refreshTokenRepository.save(new RefreshToken(email, refreshToken));
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true) // HTTPS 환경 필수
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60) // 7일
+                .sameSite("Strict") // CSRF 방지
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     // 유저타입 검증

@@ -6,7 +6,6 @@ import java.util.UUID;
 
 public record SignupResponse(
         String accessToken,
-        String refreshToken,
         UUID userId,
         UserType userType
 ) {}

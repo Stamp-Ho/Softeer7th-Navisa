@@ -2,11 +2,14 @@ package com.navisa.be.auth;
 
 import com.navisa.be.auth.dto.request.LoginRequest;
 import com.navisa.be.auth.dto.response.LoginResponse;
+import com.navisa.be.auth.dto.response.TokenResponse;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.common.annotation.LoginUser;
 import com.navisa.be.common.dto.response.BaseResponse;
 import com.navisa.be.support.IntegrationTestSupport;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,13 +50,32 @@ class AuthFlowTest extends IntegrationTestSupport {
     @DisplayName("실제 로그인 API를 호출하여 컨트롤러를 테스트한다")
     void login_controller_test() throws Exception {
         LoginRequest request = new LoginRequest("test@test.com", "password123");
+        LoginResponse loginResponse = new LoginResponse("access-token", java.util.UUID.randomUUID());
 
-        given(authService.login(any())).willReturn(new LoginResponse("at", "rt", java.util.UUID.randomUUID()));
+        given(authService.login(any(LoginRequest.class), any(HttpServletResponse.class)))
+                .willReturn(loginResponse);
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.accessToken").value("access-token"))
+                .andExpect(jsonPath("$.result.refreshToken").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 시 쿠키의 refreshToken을 사용한다")
+    void reissue_test() throws Exception {
+        // given
+        String refreshToken = "valid-refresh-token";
+        given(authService.reissue(eq(refreshToken), any(HttpServletResponse.class)))
+                .willReturn(new TokenResponse("new-access-token"));
+
+        // when & then
+        mockMvc.perform(post("/api/auth/reissue")
+                        .cookie(new Cookie("refreshToken", refreshToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.accessToken").value("new-access-token"));
     }
 
     // --- 테스트용 가짜 컨트롤러 ---
