@@ -42,6 +42,7 @@ public enum ResponseStatus {
     CANNOT_PERMIT_AS_VALID_AGENT(400, "이미 인증된 행정사이거나 행정사가 아닙니다"),
     FORBIDDEN(403, "인가되지 않은 사용자입니다"),
     AGENT_NOT_FOUND(404, "해당 리뷰와 연결된 행정사 프로필 정보를 찾을 수 없습니다."),
+    AGENT_NOT_APPROVED(403, "승인되지 않은 행정사입니다."),
 
     /**
      * 서버 에러 (500번대)

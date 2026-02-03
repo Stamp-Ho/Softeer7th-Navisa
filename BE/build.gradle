@@ -58,6 +58,7 @@ dependencies {
     // Utilities & API Documentation
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15'
     implementation 'me.paulschwarz:spring-dotenv:5.1.0'
+    runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'

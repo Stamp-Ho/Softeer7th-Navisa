@@ -8,6 +8,8 @@ import com.navisa.be.agent.model.entity.AgentReview;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
 import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.storage.model.enums.ImageSize;
+import com.navisa.be.storage.service.AwsCloudfrontService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +31,7 @@ public class AgentHomeService {
     private final AgentReviewRepository agentReviewRepository;
     private final AgentProfileRepository agentProfileRepository;
     private final AgentBadgeService agentBadgeService;
+    private final AwsCloudfrontService awsCloudfrontService;
 
     // 행정사 후기 사례 최신순 4개 조회
     public List<FeedbackResponse> getLatestFeedbacks() {
@@ -55,12 +58,14 @@ public class AgentHomeService {
                         throw new AgentHomeException(ResponseStatus.AGENT_NOT_FOUND);
                     }
 
+                    String profileUrl = awsCloudfrontService.getImageUrl(ImageSize.SMALL, profile.getProfileObjectKey());
+
                     return new FeedbackResponse(
                             review.getId(),
                             review.getFeedbackContent(),
                             profile.getId(),
                             profile.getName(),
-                            profile.getProfileImageUrl()
+                            profileUrl
                     );
                 })
                 .toList();
@@ -80,6 +85,8 @@ public class AgentHomeService {
 
         return agents.stream()
                 .map(agent -> {
+                    String profileUrl = awsCloudfrontService.getImageUrl(ImageSize.MEDIUM, agent.getProfileObjectKey());
+
                     // 로그인 시에만 JobCode 명칭 리스트 추출
                     List<Long> specialityIds = null;
                     if (isLoggedIn) {
@@ -91,7 +98,7 @@ public class AgentHomeService {
 
                     List<Long> topBadges = agentBadgeService.getTop2BadgeIds(agent.getId());
 
-                    return AgentCardResponse.of(agent, specialityIds, topBadges);
+                    return AgentCardResponse.of(agent, profileUrl, specialityIds, topBadges);
                 })
                 .toList();
     }

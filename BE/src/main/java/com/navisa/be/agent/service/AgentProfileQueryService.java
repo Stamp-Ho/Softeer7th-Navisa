@@ -6,6 +6,7 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.common.dto.response.SliceResponse;
+import com.navisa.be.storage.service.AwsCloudfrontService;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
 import org.springframework.stereotype.Service;
@@ -24,12 +25,15 @@ public class AgentProfileQueryService {
     private final AgentBadgeService agentBadgeService;
     private final AgentSpecializedJobService agentSpecializedJobService;
     private final UserQueryService userQueryService;
+    private final AwsCloudfrontService awsCloudfrontService;
 
-    public AgentProfileQueryService(AgentProfileRepository agentProfileRepository, AgentBadgeService agentBadgeService, AgentSpecializedJobService agentSpecializedJobService, UserQueryService userQueryService) {
+    public AgentProfileQueryService(AgentProfileRepository agentProfileRepository, AgentBadgeService agentBadgeService,
+                                    AgentSpecializedJobService agentSpecializedJobService, UserQueryService userQueryService, AwsCloudfrontService awsCloudfrontService) {
         this.agentProfileRepository = agentProfileRepository;
         this.agentBadgeService = agentBadgeService;
         this.agentSpecializedJobService = agentSpecializedJobService;
         this.userQueryService = userQueryService;
+        this.awsCloudfrontService = awsCloudfrontService;
     }
 
     public SliceResponse<AgentCardResponse, UUID> findAgentProfileCardsBasedOnFilter(
@@ -60,12 +64,20 @@ public class AgentProfileQueryService {
         UserType requestUserType = userQueryService.findByEmail(email).getUserType();
 
         List<AgentCardResponse> content = contentProfiles.stream()
-                .map(agent -> AgentCardResponse.of(
-                        agent,
-                        agentSpecialityTop2.get(agent.getId()),
-                        badgeTop2Map.get(agent.getId()),
-                        requestUserType
-                ))
+                .map(agent -> {
+                        String profileUrl = awsCloudfrontService.getImageUrl(
+                                com.navisa.be.storage.model.enums.ImageSize.SMALL,
+                                agent.getProfileObjectKey()
+                        );
+
+                        return AgentCardResponse.of(
+                            agent,
+                            profileUrl,
+                            agentSpecialityTop2.get(agent.getId()),
+                            badgeTop2Map.get(agent.getId()),
+                            requestUserType
+                        );
+                })
                 .toList();
 
         UUID lastElementId = content.isEmpty() ? null : content.get(content.size() - 1).agentId();

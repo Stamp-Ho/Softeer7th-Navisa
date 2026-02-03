@@ -31,8 +31,8 @@ public class AgentProfile extends BaseEntity {
     @Column(name = "agent_birth", nullable = false)
     private LocalDate birthDate;
 
-    @Column(name = "profile_img_url", nullable = false)
-    private String profileImageUrl;
+    @Column(name = "profile_object_key", nullable = false)
+    private String profileObjectKey;
 
     @Column(name = "agent_business_time", nullable = false)
     private String businessTime;
@@ -80,23 +80,23 @@ public class AgentProfile extends BaseEntity {
     }
 
     public AgentProfile(String name,
-            LocalDate birthDate,
-            String profileImageUrl,
-            String businessTime,
-            String officeName,
-            String officeAddress,
-            String officeAddressDetail,
-            String additionalHistory,
-            UUID userId,
-            String licenseNo,
-            LocalDate licenseIssuedAt,
-            String licenseInnerPageNo,
-            String licenseManagementNo,
-            String comment,
-            Double activeScore) {
+                        LocalDate birthDate,
+                        String profileObjectKey,
+                        String businessTime,
+                        String officeName,
+                        String officeAddress,
+                        String officeAddressDetail,
+                        String additionalHistory,
+                        UUID userId,
+                        String licenseNo,
+                        LocalDate licenseIssuedAt,
+                        String licenseInnerPageNo,
+                        String licenseManagementNo,
+                        String comment
+        ) {
         this.name = name;
         this.birthDate = birthDate;
-        this.profileImageUrl = profileImageUrl;
+        this.profileObjectKey = profileObjectKey;
         this.businessTime = businessTime;
         this.officeName = officeName;
         this.officeAddress = officeAddress;

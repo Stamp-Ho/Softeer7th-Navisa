@@ -60,8 +60,8 @@ public class AgentProfileTestFixture {
                 LocalDate.now(),
                 "inner",
                 "mgmt",
-                "Comment",
-                100.0);
+                "Comment"
+        );
         agentProfileRepository.save(profile);
 
         AgentSpecializedJob agentJob = new AgentSpecializedJob(profile, job);

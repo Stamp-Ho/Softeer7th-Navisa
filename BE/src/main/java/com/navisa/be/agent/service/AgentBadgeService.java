@@ -92,7 +92,7 @@ public class AgentBadgeService {
                             review.getFeedbackContent(),
                             agent != null ? agent.getId() : null,
                             agent != null ? agent.getName() : "알 수 없는 행정사",
-                            agent != null ? agent.getProfileImageUrl() : null,
+                            agent != null ? agent.getProfileObjectKey() : null,
                             top2BadgeIds
                     );
                 })

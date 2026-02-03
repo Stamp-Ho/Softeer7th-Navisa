@@ -116,8 +116,8 @@ public class AgentProfileCommandService {
                 command.licenseInfo().licenseIssuedAt(),
                 command.licenseInfo().licenseInnerPageNo(),
                 command.licenseInfo().licenseManagementNo(),
-                command.detailedInfo().agentComment(),
-                100.0);
+                command.detailedInfo().agentComment()
+        );
     }
 
     private static void validateCommand(RegisterAgentProfileCommand command) {

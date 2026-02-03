@@ -36,6 +36,9 @@ public class VisaApplicationForm extends BaseEntity {
     @Column(name = "is_done", nullable = false)
     private Boolean isDone = false;
 
+    @Column(name = "current_step", nullable = false)
+    private Integer currentStep = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_code_id", nullable = false)
     private JobCode jobCode;
@@ -77,10 +80,11 @@ public class VisaApplicationForm extends BaseEntity {
     private Map<String, Object> inviteInformation;
 
     public VisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
-                               JobCode jobCode, Boolean isDone) {
+                               JobCode jobCode, Boolean isDone, Integer currentStep) {
         this.agentProfile = agentProfile;
         this.foreignerProfile = foreignerProfile;
         this.jobCode = jobCode;
         this.isDone = isDone;
+        this.currentStep = currentStep;
     }
 }

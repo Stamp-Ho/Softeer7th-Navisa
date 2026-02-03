@@ -17,11 +17,11 @@ public record AgentCardResponse(
         @Schema(description = "보유 뱃지 상위 2개 (리뷰가 많은 순서의 badge_id)", example = "[3, 2]") List<Long> badgeTop2,
         @Schema(description = "전문 분야 개수") Integer specialityJobCount
 ) {
-    public static AgentCardResponse of(AgentProfile agent, List<Long> specialities, List<Long> badges) {
+    public static AgentCardResponse of(AgentProfile agent, String profileImageUrl, List<Long> specialities, List<Long> badges) {
         return new AgentCardResponse(
                 agent.getId(),
                 agent.getName(),
-                agent.getProfileImageUrl(),
+                profileImageUrl,
                 agent.getOfficeAddress(),
                 specialities,
                 badges,
@@ -29,11 +29,11 @@ public record AgentCardResponse(
         );
     }
 
-    public static AgentCardResponse of(AgentProfile agent, List<Long> specialities, List<Long> badges, UserType requestUserType) {
+    public static AgentCardResponse of(AgentProfile agent, String profileImageUrl, List<Long> specialities, List<Long> badges, UserType requestUserType) {
         return new AgentCardResponse(
                 agent.getId(),
                 agent.getName(),
-                agent.getProfileImageUrl(),
+                profileImageUrl,
                 agent.getOfficeAddress(),
                 requestUserType.equals(UserType.FILLED_FOREIGNER) ? specialities : null,
                 badges,

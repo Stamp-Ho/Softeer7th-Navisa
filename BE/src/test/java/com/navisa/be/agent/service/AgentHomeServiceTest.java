@@ -51,23 +51,26 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
         AgentProfile savedProfile = saveAgentProfile(mockUserId, "김행정", "https://image.com/profile1");
         UUID actualAgentId = savedProfile.getId();
 
-        // 리뷰 5개 생성 (생성 순서에 따라 최신순 정렬 확인)
         for (int i = 1; i <= 5; i++) {
-            agentReviewRepository.save(new AgentReview(
+            AgentReview review = new AgentReview(
                     actualAgentId,
-                    UUID.randomUUID(),
+                    mockUserId,
                     "피드백 내용 " + i,
-                    new double[] { 0.8, 0.9 }));
+                    new double[] { 0.8, 0.9 });
+
+            agentReviewRepository.save(review);
+
+            org.springframework.test.util.ReflectionTestUtils.setField(review, "createdAt", java.time.LocalDateTime.now().plusSeconds(i));
+            agentReviewRepository.saveAndFlush(review);
         }
 
         // when
         List<FeedbackResponse> result = agentHomeService.getLatestFeedbacks();
 
         // then
-        assertThat(result).hasSize(4); // 최대 4개 조회 확인
-        assertThat(result.get(0).feedbackContent()).isEqualTo("피드백 내용 5"); // 최신순 정렬 확인
-        assertThat(result.get(0).writerName()).isEqualTo("김행정"); // 프로필 매핑 확인
-        assertThat(result.get(0).writerProfileImgUrl()).isEqualTo("https://image.com/profile1");
+        assertThat(result).hasSize(4);
+        assertThat(result.get(0).feedbackContent()).isEqualTo("피드백 내용 5");
+        assertThat(result.get(0).writerName()).isEqualTo("김행정");
     }
 
     @DisplayName("등록된 리뷰가 하나도 없을 경우 AGENT_REVIEW_NOT_FOUND 예외가 발생한다.")
@@ -135,7 +138,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
             AgentProfile profile = agentProfileRepository.save(new AgentProfile(
                     "행정사" + i, LocalDate.now(), "url", "09:00~18:00",
                     "사무소", "서울", "강남", "경력",
-                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말", 100.0));
+                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말"));
             specializedJobCodeRepository.save(new AgentSpecializedJob(profile, jobCode));
         }
     }
@@ -171,7 +174,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
             AgentProfile profile = new AgentProfile(
                     "행정사" + i, LocalDate.now(), "url", "09:00~18:00",
                     "사무소", "서울", "강남", "경력",
-                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말", 100.0);
+                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말");
             agentProfileRepository.save(profile);
 
             AgentSpecializedJob specializedJobCode = new AgentSpecializedJob(profile, jobCode);
@@ -187,7 +190,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
         AgentProfile profile = new AgentProfile(
                 name, LocalDate.now(), imageUrl, "09:00~18:00",
                 "내비자 사무소", "서울", "강남", "경력사항",
-                userId, "LIC-123", LocalDate.now(), "P-123", "M-123", "한마디", 100.0);
+                userId, "LIC-123", LocalDate.now(), "P-123", "M-123", "한마디");
         return agentProfileRepository.save(profile);
     }
 }

@@ -61,7 +61,7 @@ class AgentProfileQueryServiceTest extends IntegrationTestSupport {
 
         AgentProfile profile1 = new AgentProfile("Agent A", java.time.LocalDate.now(), "url", "09:00", "Office",
                 "Address", "Detail", "Hist", UUID.randomUUID(), "Lic", java.time.LocalDate.now(), "Page", "Mgmt",
-                "Comment", 100.0);
+                "Comment");
         ReflectionTestUtils.setField(profile1, "id", UUID.randomUUID());
 
         given(agentSpecializedJobService.getTop2SpecializedJobIds(any(UUID.class)))
@@ -107,7 +107,7 @@ class AgentProfileQueryServiceTest extends IntegrationTestSupport {
 
         AgentProfile profile1 = new AgentProfile("Agent A", java.time.LocalDate.now(), "url", "09:00", "Office",
                 "Address", "Detail", "Hist", UUID.randomUUID(), "Lic", java.time.LocalDate.now(), "Page", "Mgmt",
-                "Comment", 100.0);
+                "Comment");
         ReflectionTestUtils.setField(profile1, "id", UUID.randomUUID());
 
         given(agentSpecializedJobService.getTop2SpecializedJobIds(any(UUID.class)))
@@ -151,7 +151,7 @@ class AgentProfileQueryServiceTest extends IntegrationTestSupport {
 
                 
                 
-        AgentProfile profile1 = new AgentProfile("Agent A", java.time.LocalDate.now(), "url", "09:00", "Office", "Address", "Detail", "Hist", UUID.randomUUID(), "Lic", java.time.LocalDate.now(), "Page", "Mgmt", "Comment", 100.0);
+        AgentProfile profile1 = new AgentProfile("Agent A", java.time.LocalDate.now(), "url", "09:00", "Office", "Address", "Detail", "Hist", UUID.randomUUID(), "Lic", java.time.LocalDate.now(), "Page", "Mgmt", "Comment");
         ReflectionTestUtils.setField(profile1, "id", UUID.randomUUID());
 
         given(agentSpecializedJobService.getTop2SpecializedJobIds(any(UUID.class))).willReturn(List.of());

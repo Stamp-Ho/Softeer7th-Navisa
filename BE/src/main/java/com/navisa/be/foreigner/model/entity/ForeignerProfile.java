@@ -26,6 +26,9 @@ public class ForeignerProfile extends BaseEntity {
     @Column(name = "nickname")
     private String nickname;
 
+    @Column(name = "profile_object_key")
+    private String profileObjectKey;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ForeignerSearchStatus status;
@@ -44,6 +47,11 @@ public class ForeignerProfile extends BaseEntity {
         this.nickname = RandomNickname.getRandomNickname();
         this.userId = userId;
         this.status = status;
+    }
+
+    // 프로필 이미지 업데이트 메서드
+    public void updateProfileImage(String profileObjectKey) {
+        this.profileObjectKey = profileObjectKey;
     }
 
     public void updateStatus(ForeignerSearchStatus status) {

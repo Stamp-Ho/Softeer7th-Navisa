@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AgentProfileRepository extends JpaRepository<AgentProfile, UUID>, AgentProfileRepositoryQueryDsl {
 
     @Query(value = "SELECT * FROM agent_profile ORDER BY RANDOM() LIMIT 12", nativeQuery = true)
     List<AgentProfile> findRandom12();
+
+    Optional<AgentProfile> findByUserId(UUID userId);
 }
