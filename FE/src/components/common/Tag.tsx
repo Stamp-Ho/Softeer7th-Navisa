@@ -5,6 +5,7 @@ const Tag = ({
   children,
   type = "default",
   className = "",
+  value = 0,
 }: TagProps) => {
   // 2. 미리 정의된 스타일을 가져오고 없을 경우를 대비해 처리
   const typeStyle = TAG_STYLES[type] || TAG_STYLES.default;
@@ -23,12 +24,15 @@ type TagType =
   | "small_fill_violet_max"
   | "small_fill_gray"
   | "small_fill_gray_dark"
-  | "small_fill_gray_2"
-  | "small_line"
+  | "small_fill_gray_2""
   | "small_fill_green_max"
+  | "small_line
+  | "small_fill_icon"
   | "large_violet_off"
   | "large_white_off"
   | "large_gray_off"
+  | "large_violet_on_alarm"
+  | "large_white_on_alarm"
   | "default";
 
 interface TagProps {
@@ -38,6 +42,8 @@ interface TagProps {
   className?: string;
 }
 
+    
+      
 // 1. 공통 스타일과 타입별 스타일을 상수로 분리
 const BASE_STYLE = "flex flex-row justify-center items-center";
 
@@ -53,6 +59,8 @@ const TAG_STYLES: Record<TagType, string> = {
     "bg-gray-200 text-text-base h-[25px] rounded-[20px] px-2 caption-l-medium",
   small_fill_gray_2:
     "bg-gray-100 text-text-base h-[25px] px-2 caption-l-medium",
+  small_fill_icon:
+    "flex gap-[2px] items-center bg-violet-50-transpar text-primary h-[25px] rounded-[20px] px-2 caption-l-medium",
   small_line:
     "border border-primary h-[25px] rounded-[20px] px-2 caption-l-medium",
   small_fill_green_max:
@@ -62,4 +70,8 @@ const TAG_STYLES: Record<TagType, string> = {
   large_white_off: "bg-white h-[44px] rounded-[20px] px-2 body-l-semibold",
   large_gray_off:
     "bg-gray-100 text-text-base h-[44px] rounded-[8px] px-2 body-l-semibold",
+  large_violet_on_alarm:
+    "flex flex-row gap-3 items-center h-[44px] pl-4 py-2 bg-violet-50-transpar rounded-full text-violet-500",
+  large_white_on_alarm:
+    "flex flex-row gap-3 items-center h-[44px] pl-4 py-2 bg-gray-0 rounded-full text-text-sub",
 };

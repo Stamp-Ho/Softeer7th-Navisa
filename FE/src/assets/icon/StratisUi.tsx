@@ -392,7 +392,7 @@ export const IcRotate = () => {
   );
 };
 
-export const IcMessageBox = ({ size = 24 }) => {
+export const IcMessageBox = ({ color = "#008B88", size = 24 }) => {
   return (
     <svg
       width={size}
@@ -403,11 +403,11 @@ export const IcMessageBox = ({ size = 24 }) => {
     >
       <path
         d="M6.6767 21.5984L11.6854 16.5897H19.1984C20.5239 16.5897 21.5984 15.5152 21.5984 14.1897V4.79844C21.5984 3.47295 20.5239 2.39844 19.1984 2.39844H4.79844C3.47295 2.39844 2.39844 3.47296 2.39844 4.79844V14.1897C2.39844 15.5152 3.47296 16.5897 4.79844 16.5897H6.6767V21.5984Z"
-        fill="#008B88"
+        fill={color}
       />
       <path
         d="M14.3984 11.9984L11.9984 9.59844M11.9984 9.59844L9.59844 7.19844M11.9984 9.59844L9.59844 11.9984M11.9984 9.59844L14.3984 7.19844M11.6854 16.5897L6.6767 21.5984V16.5897H4.79844C3.47296 16.5897 2.39844 15.5152 2.39844 14.1897V4.79844C2.39844 3.47296 3.47295 2.39844 4.79844 2.39844H19.1984C20.5239 2.39844 21.5984 3.47295 21.5984 4.79844V14.1897C21.5984 15.5152 20.5239 16.5897 19.1984 16.5897H11.6854Z"
-        stroke="#008B88"
+        stroke={color}
         strokeWidth="1.24"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -421,6 +421,42 @@ export const IcMessageBox = ({ size = 24 }) => {
     </svg>
   );
 };
+export const IcMessageBoxCross = ({ color = "black", size = 24 }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 28 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.7916 25.2005L13.6351 19.3571H22.4003C23.9467 19.3571 25.2003 18.1035 25.2003 16.5571V5.60054C25.2003 4.05414 23.9467 2.80054 22.4003 2.80054H5.60029C4.0539 2.80054 2.80029 4.05414 2.80029 5.60054V16.5571C2.80029 18.1035 4.0539 19.3571 5.60029 19.3571H7.7916V25.2005Z"
+        fill={color}
+      />
+      <path
+        d="M16.8003 14.0005L14.0003 11.2005M14.0003 11.2005L11.2003 8.40054M14.0003 11.2005L11.2003 14.0005M14.0003 11.2005L16.8003 8.40054M13.6351 19.3571L7.7916 25.2005V19.3571H5.60029C4.0539 19.3571 2.80029 18.1035 2.80029 16.5571V5.60054C2.80029 4.05414 4.0539 2.80054 5.60029 2.80054H22.4003C23.9467 2.80054 25.2003 4.05414 25.2003 5.60054V16.5571C25.2003 18.1035 23.9467 19.3571 22.4003 19.3571H13.6351Z"
+        stroke={color}
+        strokeWidth="1.44667"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M11.5693 8.61011L16.5191 13.5599"
+        stroke="white"
+        strokeWidth="1.94833"
+        strokeLinecap="round"
+      />
+      <path
+        d="M16.5186 8.60083L11.5688 13.5506"
+        stroke="white"
+        strokeWidth="1.94833"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
 export const IcLanguage = ({ isActive = false, size = 24 }) => {
   return (
     <svg
@@ -536,6 +572,94 @@ export const IcNationality = ({ isActive = false, size = "24" }) => {
   );
 };
 
+export const IcPencilCross = ({ color = "", size = "24" }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M11.024 4.16199L13.859 6.59199M3.73404 11.452L11.7202 3.18691C12.5801 2.32702 13.9742 2.32702 14.8341 3.1869C15.694 4.04679 15.694 5.44093 14.8341 6.30082L6.56904 14.287L2.51904 15.502L3.73404 11.452Z"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12.7051 12.3987L15.8871 15.5807"
+        stroke={color}
+        strokeWidth="1.125"
+        strokeLinecap="round"
+      />
+      <path
+        d="M15.8887 12.3855L12.7067 15.5675"
+        stroke={color}
+        strokeWidth="1.125"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
+export const IcPencilLine = ({ color = "", size = "24" }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8.99904 15.907H15.479M11.024 4.16199L13.859 6.59199M3.73404 11.452L11.7202 3.18691C12.5801 2.32702 13.9742 2.32702 14.8341 3.1869C15.694 4.04679 15.694 5.44093 14.8341 6.30082L6.56904 14.287L2.51904 15.502L3.73404 11.452Z"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+export const IcPin = ({ color = "", size = "24" }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 14 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8.16699 11.9583C8.16699 12.1193 8.03603 12.2502 7.875 12.2502H6.125C5.96392 12.2502 5.83301 12.1193 5.83301 11.9583V9.33325H3.03711C2.77744 9.33304 2.64738 9.01888 2.83105 8.83521L4.66699 7.00024L3.68066 3.05786C3.58884 2.6898 3.86767 2.33325 4.24707 2.33325H9.75293C10.1323 2.33335 10.4103 2.68978 10.3184 3.05786L9.33301 7.00024L11.1689 8.83521C11.3525 9.01884 11.2224 9.33287 10.9629 9.33325H8.16699V11.9583Z"
+        fill={color}
+      />
+    </svg>
+  );
+};
+
+export const IcSendDefault = ({ size = "24" }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M19.3327 19.8457L13.7593 19.8457M12.1776 9.11739L31.4456 18.3386C32.6321 18.9064 32.6407 20.5926 31.46 21.1726L12.2869 30.5895C10.9734 31.2346 9.56702 29.8958 10.1467 28.5521L13.6305 20.4775C13.8045 20.0742 13.8022 19.6166 13.6241 19.2151L10.0583 11.1764C9.46491 9.83876 10.8576 8.48568 12.1776 9.11739Z"
+        stroke="#787F8B"
+        strokeWidth="1.67438"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+      
 export const IcPdf = ({ size = 24 }) => {
   return (
     <svg
@@ -549,6 +673,22 @@ export const IcPdf = ({ size = 24 }) => {
   );
 };
 
+export const IcSendActive = ({ color = "var(--primary)", size = "24" }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M10.0586 11.177C9.46524 9.83936 10.8578 8.48579 12.1777 9.11743L31.4453 18.3391C32.6319 18.907 32.6407 20.5932 31.46 21.1731L12.2871 30.5901C10.9737 31.235 9.5668 29.8956 10.1465 28.552L13.5625 20.636H19.2002C19.6612 20.6359 20.0351 20.262 20.0352 19.801C20.0352 19.3399 19.6613 18.9662 19.2002 18.9661H13.5137L10.0586 11.177Z"
+        fill={color}
+      />
+    </svg>
+  );
+};
 export const IcFile2 = ({ size = 24 }) => {
   return (
     <svg
