@@ -2,7 +2,7 @@ package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.response.BadgeResponse;
 import com.navisa.be.agent.dto.response.HomeAgentBadgeResponse;
-import com.navisa.be.agent.exception.AgentHomeException;
+import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.AgentBadgeSummary;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentReview;
@@ -53,7 +53,7 @@ public class AgentBadgeService {
         List<AgentReview> reviews = agentBadgeRepository.findByBadgeId(badgeId, PageRequest.of(0, 10));
 
         if (reviews.isEmpty()) {
-            throw new AgentHomeException(ResponseStatus.BADGE_REVIEW_NOT_FOUND);
+            throw new AgentException(ResponseStatus.BADGE_REVIEW_NOT_FOUND);
         }
 
         List<UUID> agentIds = reviews.stream().map(AgentReview::getAgentProfileId).distinct().toList();
@@ -101,7 +101,7 @@ public class AgentBadgeService {
 
     // 특정 행정사의 상위 2개 배지 Id 조회
     public List<Long> getTop2BadgeIds(UUID agentId) {
-        List<AgentBadgeSummary> summaries = agentBadgeSummaryRepository.findTop2SummaryByAgentId(
+        List<AgentBadgeSummary> summaries = agentBadgeSummaryRepository.findTopKBadgeSummarysByAgentId(
                 agentId, PageRequest.of(0, 2)
         );
 

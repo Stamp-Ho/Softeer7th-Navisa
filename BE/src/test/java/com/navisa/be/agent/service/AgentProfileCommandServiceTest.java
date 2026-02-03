@@ -1,7 +1,7 @@
 package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
-import com.navisa.be.agent.exception.AgentProfileDomainException;
+import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentLanguageRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobRepository;
@@ -122,7 +122,7 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
                 "MGMT-999");
 
         // when & then
-        assertThrows(AgentProfileDomainException.class, () -> agentProfileCommandService.registerAgentProfile(command));
+        assertThrows(AgentException.class, () -> agentProfileCommandService.registerAgentProfile(command));
     }
 
     @Test
@@ -140,7 +140,7 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
                 null);
 
         // when & then
-        assertThrows(AgentProfileDomainException.class, () -> agentProfileCommandService.registerAgentProfile(command));
+        assertThrows(AgentException.class, () -> agentProfileCommandService.registerAgentProfile(command));
     }
 
     @Test
@@ -158,6 +158,6 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
                 null);
 
         // when & then
-        assertThrows(AgentProfileDomainException.class, () -> agentProfileCommandService.registerAgentProfile(command));
+        assertThrows(AgentException.class, () -> agentProfileCommandService.registerAgentProfile(command));
     }
 }

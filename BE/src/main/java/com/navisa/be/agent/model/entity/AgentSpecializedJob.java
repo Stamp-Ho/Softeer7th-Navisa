@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
     // 2. 특정 행정사의 직무들을 조회할 때 (Service 레이어용)
     @Index(name = "idx_specialized_agent_id", columnList = "agent_id")
 })
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AgentSpecializedJob extends BaseEntity {
 
@@ -29,7 +30,6 @@ public class AgentSpecializedJob extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "job_code_id")
-    @Getter
     private JobCode jobCode;
 
     public AgentSpecializedJob(AgentProfile agentProfile, JobCode jobCode) {

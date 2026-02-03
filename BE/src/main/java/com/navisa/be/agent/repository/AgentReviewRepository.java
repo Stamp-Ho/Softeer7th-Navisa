@@ -15,5 +15,5 @@ public interface AgentReviewRepository extends JpaRepository<AgentReview, Long> 
             "ORDER BY r.createdAt DESC")
     List<AgentReview> findTop4ValidFeedbacks(Pageable pageable);
 
-    List<AgentReview> findAllByAgentProfileIdIn(List<UUID> agentIds);
+    long countByAgentProfileId(UUID agentProfileId);
 }

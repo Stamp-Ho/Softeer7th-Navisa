@@ -2,7 +2,7 @@ package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.FeedbackResponse;
-import com.navisa.be.agent.exception.AgentHomeException;
+import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentReview;
 import com.navisa.be.agent.model.entity.AgentSpecializedJob;
@@ -81,7 +81,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
 
         // when & then
         assertThatThrownBy(() -> agentHomeService.getLatestFeedbacks())
-                .isInstanceOf(AgentHomeException.class)
+                .isInstanceOf(AgentException.class)
                 .hasMessageContaining(ResponseStatus.AGENT_REVIEW_NOT_FOUND.getMessage());
     }
 

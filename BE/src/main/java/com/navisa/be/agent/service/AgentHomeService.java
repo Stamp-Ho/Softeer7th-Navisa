@@ -2,7 +2,7 @@ package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.FeedbackResponse;
-import com.navisa.be.agent.exception.AgentHomeException;
+import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentReview;
 import com.navisa.be.agent.repository.AgentProfileRepository;
@@ -37,7 +37,7 @@ public class AgentHomeService {
         List<AgentReview> reviews = agentReviewRepository.findTop4ValidFeedbacks(PageRequest.of(0, 4));
 
         if (reviews.isEmpty()) {
-            throw new AgentHomeException(ResponseStatus.AGENT_REVIEW_NOT_FOUND);
+            throw new AgentException(ResponseStatus.AGENT_REVIEW_NOT_FOUND);
         }
 
         List<UUID> profileIds = reviews.stream()
@@ -54,7 +54,7 @@ public class AgentHomeService {
                     AgentProfile profile = profileMap.get(review.getAgentProfileId());
 
                     if (profile == null) {
-                        throw new AgentHomeException(ResponseStatus.AGENT_NOT_FOUND);
+                        throw new AgentException(ResponseStatus.REVIEWED_AGENT_NOT_FOUND);
                     }
 
                     String profileUrl = awsCloudfrontService.getImageUrl(ImageSize.SMALL, profile.getProfileObjectKey());
@@ -76,7 +76,7 @@ public class AgentHomeService {
         List<AgentProfile> agents = agentProfileRepository.findRandom12();
 
         if (agents.isEmpty()) {
-            throw new AgentHomeException(ResponseStatus.AGENT_CARD_NOT_FOUND);
+            throw new AgentException(ResponseStatus.AGENT_CARD_NOT_FOUND);
         }
 
         // 로그인 여부 판단

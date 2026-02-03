@@ -14,6 +14,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+        format_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug # SQL 로그 출력
+    org.hibernate.orm.jdbc.bind: trace # 쿼리 파라미터에 들어가는 실제 값 확인
 
 jwt:
   secret: "this-is-a-test-secret-key-that-must-be-longer-than-48-bytes-for-hs384"

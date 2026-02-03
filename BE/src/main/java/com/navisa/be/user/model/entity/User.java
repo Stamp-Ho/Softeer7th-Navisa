@@ -1,8 +1,8 @@
 package com.navisa.be.user.model.entity;
 
-import com.navisa.be.agent.exception.AgentProfileDomainException;
 import com.navisa.be.common.model.entity.BaseEntity;
 import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.user.exception.UserException;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import jakarta.persistence.*;
@@ -68,14 +68,14 @@ public class User extends BaseEntity {
 
     public void upgradeToValidAgent() {
         if(this.userType != UserType.UNVALID_AGENT){
-            throw new AgentProfileDomainException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
+            throw new UserException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
         }
         this.userType = UserType.VALID_AGENT;
     }
 
     public void upgradeToValidForeigner() {
         if(this.userType != UserType.UNFILLED_FOREIGNER){
-            throw new AgentProfileDomainException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_FOREIGNER_PROFILE);
+            throw new UserException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_FOREIGNER_PROFILE);
         }
         this.userType = UserType.FILLED_FOREIGNER;
     }

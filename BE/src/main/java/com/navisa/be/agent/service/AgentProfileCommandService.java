@@ -1,7 +1,7 @@
 package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
-import com.navisa.be.agent.exception.AgentProfileDomainException;
+import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.AgentLanguage;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJob;
@@ -36,12 +36,12 @@ public class AgentProfileCommandService {
     @Transactional
     public AgentProfile registerAgentProfile(RegisterAgentProfileCommand command) {
         User user = userRepository.findByEmail(command.userEmail())
-                .orElseThrow(() -> new AgentProfileDomainException(ResponseStatus.INVALID_USER));
+                .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_USER));
 
         validateCommand(command);
 
         if (user.getUserType() != UserType.UNVALID_AGENT) {
-            throw new AgentProfileDomainException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
+            throw new AgentException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
         }
 
         AgentProfile agentProfile = dtoToEntity(command, user);
@@ -78,7 +78,7 @@ public class AgentProfileCommandService {
         long requestCount = languageIds.stream().count();
         long foundCount = languageRepository.countByIdIn(languageIds);
         if (requestCount != foundCount) {
-            throw new AgentProfileDomainException(ResponseStatus.INVALID_LANGUAGE);
+            throw new AgentException(ResponseStatus.INVALID_LANGUAGE);
         }
     }
 
@@ -98,7 +98,7 @@ public class AgentProfileCommandService {
         long requestCount = jobCodeIds.stream().count();
         long foundCount = jobCodeRepository.countByIdIn(jobCodeIds);
         if (requestCount != foundCount) {
-            throw new AgentProfileDomainException(ResponseStatus.INVALID_JOB_CODE);
+            throw new AgentException(ResponseStatus.INVALID_JOB_CODE);
         }
     }
 
@@ -126,7 +126,7 @@ public class AgentProfileCommandService {
                 && command.licenseInfo().licenseInnerPageNo() != null);
         boolean hasManagement = (command.licenseInfo().licenseManagementNo() != null);
         if (hasBasic == hasManagement) {
-            throw new AgentProfileDomainException(ResponseStatus.AGENT_PROFILE_MUST_CONTAIN_ONE_TYPE_LICENSE_INFO);
+            throw new AgentException(ResponseStatus.AGENT_PROFILE_MUST_CONTAIN_ONE_TYPE_LICENSE_INFO);
         }
     }
 }

@@ -6,9 +6,11 @@ import com.navisa.be.agent.dto.request.RegisterAgentProfileRequest;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.GetJobCodeListResponse;
 import com.navisa.be.agent.service.AgentProfileCommandService;
+import com.navisa.be.agent.service.AgentProfileQueryService;
 import com.navisa.be.agent.service.AgentProfileServiceFacade;
 import com.navisa.be.agent.service.JobCodeService;
 import com.navisa.be.common.annotation.HasUserType;
+import com.navisa.be.agent.dto.response.GetAgentDetailResponse;
 import com.navisa.be.common.annotation.LoginUser;
 import com.navisa.be.common.annotation.SliceInfo;
 import com.navisa.be.common.dto.request.SliceRequest;
@@ -33,6 +35,7 @@ public class AgentProfileController {
     private final AgentProfileCommandService agentProfileCommandService;
     private final JobCodeService jobCodeService;
     private final AgentProfileServiceFacade agentProfileServiceFacade;
+    private final AgentProfileQueryService agentProfileQueryService;
 
     @Operation(
             summary = "행정사 프로필 등록 API",
@@ -67,6 +70,19 @@ public class AgentProfileController {
     @GetMapping("/register-form/jobcodes")
     public BaseResponse<GetJobCodeListResponse> getJobCodeList(){
         GetJobCodeListResponse response = jobCodeService.getJobCodeList();
+        return new BaseResponse<>(response);
+    }
+
+    @Operation(
+            summary = "외국인과 행정사의 행정사 상세 조회 API",
+            description = "외국인과 행정사가 특정 행정사를 상세 조회하는 API입니다. 추가적인 정보는 https://www.notion.so/bside/2fb22020273580059241f9d855571532?source=copy_link를 참고해주세요"
+    )
+    @HasUserType({UserType.VALID_AGENT, UserType.FILLED_FOREIGNER})
+    @GetMapping("/{agentId}")
+    public BaseResponse<GetAgentDetailResponse> getAgentDetail(@PathVariable("agentId") UUID agentId,
+                                                               @Parameter(hidden = true)
+                                                               @LoginUser String loginUserEmail){
+        GetAgentDetailResponse response = agentProfileQueryService.getAgentDetail(loginUserEmail, agentId);
         return new BaseResponse<>(response);
     }
 }

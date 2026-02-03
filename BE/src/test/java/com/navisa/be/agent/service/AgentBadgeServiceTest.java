@@ -1,7 +1,7 @@
 package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.response.HomeAgentBadgeResponse;
-import com.navisa.be.agent.exception.AgentHomeException;
+import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.*;
 import com.navisa.be.agent.model.enums.BadgeName;
 import com.navisa.be.agent.repository.*;
@@ -101,7 +101,7 @@ class AgentBadgeServiceTest extends IntegrationTestSupport {
 
         // when & then
         assertThatThrownBy(() -> agentBadgeService.getTop10AgentsByBadge(invalidBadgeId))
-                .isInstanceOf(AgentHomeException.class)
+                .isInstanceOf(AgentException.class)
                 .hasMessageContaining(ResponseStatus.BADGE_REVIEW_NOT_FOUND.getMessage());
     }
 

@@ -1,7 +1,7 @@
 package com.navisa.be.agent.controller;
 
 import com.navisa.be.agent.dto.response.FeedbackResponse;
-import com.navisa.be.agent.exception.AgentHomeException;
+import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.service.AgentHomeService;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.common.resolver.LoginUserResolver;
@@ -72,7 +72,7 @@ class AgentHomeControllerTest {
     void getLatestAgentReviews_NotFound() throws Exception {
         // given
         given(agentHomeService.getLatestFeedbacks())
-                .willThrow(new AgentHomeException(ResponseStatus.AGENT_REVIEW_NOT_FOUND));
+                .willThrow(new AgentException(ResponseStatus.AGENT_REVIEW_NOT_FOUND));
 
         // when & then
         mockMvc.perform(get("/api/home/feedback"))

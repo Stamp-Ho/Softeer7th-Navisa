@@ -2,7 +2,6 @@ package com.navisa.be.auth.service;
 
 import com.navisa.be.auth.dto.request.GoogleLoginRequest;
 import com.navisa.be.auth.dto.request.LoginRequest;
-import com.navisa.be.auth.dto.request.LogoutRequest;
 import com.navisa.be.auth.dto.request.SignupRequest;
 import com.navisa.be.auth.dto.response.LoginResponse;
 import com.navisa.be.auth.dto.response.SignupResponse;

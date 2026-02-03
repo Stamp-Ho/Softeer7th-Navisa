@@ -7,6 +7,9 @@ import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentLanguageRepository;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobRepository;
+import com.navisa.be.agent.model.entity.*;
+import com.navisa.be.agent.model.enums.BadgeName;
+import com.navisa.be.agent.repository.*;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.entity.Language;
 import com.navisa.be.common.repository.JobCodeRepository;
@@ -14,38 +17,28 @@ import com.navisa.be.common.repository.LanguageRepository;
 import com.navisa.be.info.model.entity.JobGroup;
 import com.navisa.be.info.repository.JobGroupRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Component
 public class AgentProfileTestFixture {
 
     private final AgentProfileRepository agentProfileRepository;
     private final AgentSpecializedJobRepository agentSpecializedJobRepository;
     private final AgentLanguageRepository agentLanguageRepository;
-    private final com.navisa.be.common.repository.JobCodeRepository jobCodeRepository;
-    private final com.navisa.be.common.repository.LanguageRepository languageRepository;
-    private final com.navisa.be.info.repository.JobGroupRepository jobGroupRepository;
-    private final com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository agentSpecializedJobSummaryRepository;
-
-    public AgentProfileTestFixture(AgentProfileRepository agentProfileRepository,
-            AgentSpecializedJobRepository agentSpecializedJobRepository,
-            AgentLanguageRepository agentLanguageRepository,
-            JobCodeRepository jobCodeRepository,
-            LanguageRepository languageRepository,
-            JobGroupRepository jobGroupRepository,
-            AgentSpecializedJobSummaryRepository agentSpecializedJobSummaryRepository) {
-
-        this.agentProfileRepository = agentProfileRepository;
-        this.agentSpecializedJobRepository = agentSpecializedJobRepository;
-        this.agentLanguageRepository = agentLanguageRepository;
-        this.jobCodeRepository = jobCodeRepository;
-        this.languageRepository = languageRepository;
-        this.jobGroupRepository = jobGroupRepository;
-        this.agentSpecializedJobSummaryRepository = agentSpecializedJobSummaryRepository;
-    }
+    private final JobCodeRepository jobCodeRepository;
+    private final LanguageRepository languageRepository;
+    private final JobGroupRepository jobGroupRepository;
+    private final AgentSpecializedJobSummaryRepository agentSpecializedJobSummaryRepository;
+    private final BadgeRepository badgeRepository;
+    private final AgentBadgeRepository agentBadgeRepository;
+    private final AgentBadgeSummaryRepository agentBadgeSummaryRepository;
+    private final AgentReviewRepository agentReviewRepository;
 
     public JobCode createJobCode(String code, String name) {
         JobCode jobCode = new JobCode(null, code, name, new float[512], null);
@@ -80,7 +73,7 @@ public class AgentProfileTestFixture {
         AgentProfile profile = new AgentProfile(
                 name,
                 LocalDate.of(1990, 1, 1),
-                "http://profile.url",
+                "origin/profile.url",
                 "09:00-18:00",
                 "Office Name",
                 address,
@@ -102,5 +95,56 @@ public class AgentProfileTestFixture {
         agentLanguageRepository.save(agentLang);
 
         return profile;
+    }
+
+    public AgentProfile createAgentProfile(String name, String address, UUID userId) {
+        String uniqueLicense = UUID.randomUUID().toString().substring(0, 10);
+        AgentProfile profile = new AgentProfile(
+                name,
+                LocalDate.of(1990, 1, 1),
+                "origin/profile.url",
+                "09:00-18:00",
+                "Office Name",
+                address,
+                "Detail Address",
+                "History",
+                userId,
+                uniqueLicense,
+                LocalDate.now(),
+                "inner",
+                "mgmt",
+                "Comment"
+        );
+        return agentProfileRepository.save(profile);
+    }
+
+    public AgentSpecializedJob createAgentSpecializedJob(AgentProfile agentProfile, JobCode jobCode) {
+        AgentSpecializedJob agentJob = new AgentSpecializedJob(agentProfile, jobCode);
+        agentProfile.addSpecializedJobCodes(List.of(agentJob));
+        return agentSpecializedJobRepository.save(agentJob);
+    }
+
+    public AgentLanguage createAgentLanguage(AgentProfile agentProfile, Language language) {
+        AgentLanguage agentLang = new AgentLanguage(agentProfile, language);
+        agentProfile.addLanguages(List.of(agentLang));
+        return agentLanguageRepository.save(agentLang);
+    }
+
+    public Badge createBadge(BadgeName badgeName){
+        Badge badge = new Badge(badgeName);
+        return badgeRepository.save(badge);
+    }
+
+    public AgentReview createAgentReview(AgentProfile agentProfile, Badge badge) {
+        AgentReview review = new AgentReview(agentProfile.getId(), UUID.randomUUID(), "Review Content", new double[512]);
+        review = agentReviewRepository.save(review);
+
+        AgentBadge agentBadge = new AgentBadge(badge, review);
+        agentBadgeRepository.save(agentBadge);
+
+        AgentBadgeSummary badgeSummary = new AgentBadgeSummary(agentProfile.getId(), badge);
+        agentBadgeSummaryRepository.save(badgeSummary);
+
+        return review;
     }
 }

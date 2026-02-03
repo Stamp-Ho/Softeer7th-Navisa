@@ -1,6 +1,7 @@
 package com.navisa.be.agent.repository;
 
 import com.navisa.be.agent.model.entity.AgentBadge;
+import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentReview;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
