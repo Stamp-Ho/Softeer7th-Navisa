@@ -28,16 +28,22 @@ class AgentBadgeServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private AgentBadgeService agentBadgeService;
+
     @Autowired
     private BadgeRepository badgeRepository;
+
     @Autowired
     private AgentReviewRepository agentReviewRepository;
+
     @Autowired
     private AgentBadgeRepository agentBadgeRepository;
+
     @Autowired
     private AgentProfileRepository agentProfileRepository;
+
     @Autowired
     private ForeignerProfileRepository foreignerProfileRepository;
+
     @Autowired
     private AgentBadgeSummaryRepository agentBadgeSummaryRepository;
 
@@ -97,14 +103,6 @@ class AgentBadgeServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> agentBadgeService.getTop10AgentsByBadge(invalidBadgeId))
                 .isInstanceOf(AgentHomeException.class)
                 .hasMessageContaining(ResponseStatus.BADGE_REVIEW_NOT_FOUND.getMessage());
-    }
-
-    private void saveAgentProfile(UUID agentId, String name) {
-        AgentProfile profile = new AgentProfile(
-                name, LocalDate.now(), "https://image.com", "09:00~18:00",
-                "내비자 사무소", "서울", "강남", "행정 전문",
-                agentId, "LIC-123", LocalDate.now(), "P-123", "M-123", "안녕하세요");
-        agentProfileRepository.save(profile);
     }
 
     private void saveSummaryWithCount(UUID agentId, Badge badge, int count) {

@@ -60,7 +60,8 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
 
             agentReviewRepository.save(review);
 
-            org.springframework.test.util.ReflectionTestUtils.setField(review, "createdAt", java.time.LocalDateTime.now().plusSeconds(i));
+            org.springframework.test.util.ReflectionTestUtils.setField(review, "createdAt",
+                    java.time.LocalDateTime.now().plusSeconds(i));
             agentReviewRepository.saveAndFlush(review);
         }
 
@@ -132,7 +133,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
 
     private void createAgentProfiles(int count) {
         com.navisa.be.common.model.entity.JobCode jobCode = jobCodeRepository.save(
-                new com.navisa.be.common.model.entity.JobCode(null, "CODE", "전문분야", null));
+                new com.navisa.be.common.model.entity.JobCode(null, "CODE", "전문분야", null, null));
 
         for (int i = 0; i < count; i++) {
             AgentProfile profile = agentProfileRepository.save(new AgentProfile(
@@ -168,7 +169,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
     }
 
     private Long createAgentProfilesWithSpeciality(int count, String jobName) {
-        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "SPEC_01", jobName, null));
+        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "SPEC_01", jobName, null, null));
 
         for (int i = 0; i < count; i++) {
             AgentProfile profile = new AgentProfile(

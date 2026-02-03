@@ -16,6 +16,7 @@ import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
@@ -56,21 +56,20 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
 
     @BeforeEach
     void setUp() {
-        scrivenerUser = userRepository.save(new User("visa_helper@example.com", "hash", UserType.UNVALID_AGENT, LoginType.EMAIL, true));
+        scrivenerUser = userRepository
+                .save(new User("visa_helper@example.com", "hash", UserType.UNVALID_AGENT, LoginType.EMAIL, true));
 
         jobCodes = jobCodeRepository.saveAll(List.of(
-                new JobCode(null, "code1", "직종1", new float[512]),
-                new JobCode(null, "code2", "직종2", new float[512]),
-                new JobCode(null, "code3", "직종3", new float[512]),
-                new JobCode(null, "code4", "직종4", new float[512])
-        ));
+                new JobCode(null, "code1", "직종1", new float[512], null),
+                new JobCode(null, "code2", "직종2", new float[512], null),
+                new JobCode(null, "code3", "직종3", new float[512], null),
+                new JobCode(null, "code4", "직종4", new float[512], null)));
 
         languages = languageRepository.saveAll(List.of(
                 new Language(null, "한국어"),
                 new Language(null, "영어"),
                 new Language(null, "일본어"),
-                new Language(null, "중국어")
-        ));
+                new Language(null, "중국어")));
     }
 
     @Test
@@ -86,29 +85,27 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
                 selectedJobCodeIds,
                 selectedLangIds,
                 "2024-행정-1234",
-                null
-        );
+                null);
 
         // when
         AgentProfile result = agentProfileCommandService.registerAgentProfile(command);
 
         // then
         assertAll(
-                () -> assertNotNull(result.getId()),
-                () -> assertTrue(command.basicInfo().officeName().equals(result.getOfficeName())),
-                () -> assertTrue(scrivenerUser.getId().equals(result.getUserId())),
-                () -> assertTrue(command.basicInfo().businessTime().equals(result.getBusinessTime())),
+                () -> Assertions.assertNotNull(result.getId()),
+                () -> Assertions.assertEquals(command.basicInfo().officeName(), result.getOfficeName()),
+                () -> Assertions.assertEquals(scrivenerUser.getId(), result.getUserId()),
+                () -> Assertions.assertEquals(command.basicInfo().businessTime(), result.getBusinessTime()),
                 () -> {
                     // 전문 직무 저장 확인
                     long mappingCount = specializedJobCodeRepository.countByAgentProfile(result);
-                    assertEquals(2L, mappingCount);
+                    Assertions.assertEquals(2L, mappingCount);
                 },
                 () -> {
                     // 사용 가능 언어 저장 확인
                     long mappingCount = agentLanguageRepository.countByAgentProfile(result);
-                    assertEquals(2L, mappingCount);
-                }
-        );
+                    Assertions.assertEquals(2L, mappingCount);
+                });
     }
 
     @Test
@@ -122,8 +119,7 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
                 List.of(jobCodes.get(0).getId()),
                 List.of(languages.get(0).getId()),
                 "LICENSE-123",
-                "MGMT-999"
-        );
+                "MGMT-999");
 
         // when & then
         assertThrows(AgentProfileDomainException.class, () -> agentProfileCommandService.registerAgentProfile(command));

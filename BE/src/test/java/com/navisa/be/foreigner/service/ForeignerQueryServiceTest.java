@@ -180,7 +180,7 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
                 agentUser.getId(), "Lic", LocalDate.now(), "Page", "Mgmt", "Comment");
         agentProfileRepository.save(agentProfile);
 
-        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "JC001", "Visa", new float[512]));
+        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "JC001", "Visa", new float[512], null));
 
         AgentSpecializedJob specializedJob = new AgentSpecializedJob(agentProfile, jobCode);
         agentSpecializedJobRepository.save(specializedJob);
@@ -240,7 +240,7 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
                 agentUser.getId(), "Lic", LocalDate.now(), "Page", "Mgmt", "Comment");
         agentProfileRepository.save(agentProfile);
 
-        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "JC002", "Visa2", new float[512]));
+        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "JC002", "Visa2", new float[512], null));
 
         AgentSpecializedJob specializedJob = new AgentSpecializedJob(agentProfile, jobCode);
         agentSpecializedJobRepository.save(specializedJob);

@@ -1,5 +1,6 @@
 package com.navisa.be.common.model.entity;
 
+import com.navisa.be.info.model.entity.JobGroup;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -30,4 +31,8 @@ public class JobCode {
     @JdbcTypeCode(SqlTypes.VECTOR)
     @Column(name = "embedding_result", columnDefinition = "vector(512)")
     private float[] embeddingResult;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_group_id")
+    private JobGroup jobGroup;
 }

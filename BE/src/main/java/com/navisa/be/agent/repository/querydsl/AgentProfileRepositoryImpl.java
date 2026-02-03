@@ -1,5 +1,6 @@
 package com.navisa.be.agent.repository.querydsl;
 
+import com.navisa.be.agent.dto.AgentCardQueryDto;
 import com.navisa.be.agent.dto.request.AgentCardRequest;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.enums.OfficeAddressRegion;
@@ -21,7 +22,7 @@ public class AgentProfileRepositoryImpl implements AgentProfileRepositoryQueryDs
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<AgentProfile> findByFilters(AgentCardRequest request, SliceRequest<UUID> slice) {
+    public List<AgentProfile> findByFilters(AgentCardQueryDto dto, SliceRequest<UUID> slice) {
 
         // 1. 커서 기준점(마지막으로 본 행정사의 activeScore) 사전 조회
         Double lastActiveScore = null;
@@ -41,9 +42,9 @@ public class AgentProfileRepositoryImpl implements AgentProfileRepositoryQueryDs
                 .leftJoin(agentProfile.languages, agentLanguage)
                 .where(
                         cursorCondition(lastActiveScore, slice.lastElementId()),
-                        jobIdIn(request.jobIdList()),
-                        languageIdIn(request.languageIdList()),
-                        regionIn(request.regionList()))
+                        jobIdIn(dto.jobIdList()),
+                        languageIdIn(dto.languageIdList()),
+                        regionIn(dto.regionList()))
                 .orderBy(agentProfile.activeScore.desc(), agentProfile.id.asc())
                 .limit(slice.size() + 1)
                 .fetch();

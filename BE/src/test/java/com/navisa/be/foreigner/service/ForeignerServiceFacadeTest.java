@@ -57,7 +57,7 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
         @MockitoBean
         private UserQueryService userQueryService;
 
-        @MockitoBean
+        @Autowired
         private JobCodeRepository jobCodeRepository;
 
         @Test
@@ -66,6 +66,14 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
                 // given
                 Language language = languageRepository.save(new Language(null, "English"));
                 Nationality nationality = nationalityRepository.save(new Nationality(null, "USA"));
+
+                // JobCode 데이터 준비 (3개 이상)
+                jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J001", "Job 1",
+                                new float[512], null));
+                jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J002", "Job 2",
+                                new float[512], null));
+                jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J003", "Job 3",
+                                new float[512], null));
 
                 ForeignerRegisterRequest request = ForeignerFixture.createForeignerRegisterRequest(
                                 List.of(nationality.getId()),
@@ -81,16 +89,8 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
                 given(geminiTextEmbeddingClient.embedText(any(), any()))
                                 .willReturn(mockEmbedding);
 
-                given(userQueryService.findByEmail(email))
-                                .willReturn(mockUser);
-                given(userQueryService.findById(userId))
-                                .willReturn(mockUser);
-
-                given(jobCodeRepository.findTop3SimilarJobCodes(any()))
-                                .willReturn(List.of(
-                                                new JobCodeSimilarityProjectionImpl(1L, 0.9),
-                                                new JobCodeSimilarityProjectionImpl(2L, 0.8),
-                                                new JobCodeSimilarityProjectionImpl(3L, 0.7)));
+                given(userQueryService.findByEmail(email)).willReturn(mockUser);
+                given(userQueryService.findById(userId)).willReturn(mockUser);
 
                 // when
                 foreignerServiceFacade.registerAllForeignerInfo(request, email);
@@ -111,6 +111,14 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
                 Language language = languageRepository.save(new Language(null, "English"));
                 Nationality nationality = nationalityRepository.save(new Nationality(null, "USA"));
 
+                // JobCode 데이터 준비
+                jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J001", "Job 1",
+                                new float[512], null));
+                jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J002", "Job 2",
+                                new float[512], null));
+                jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J003", "Job 3",
+                                new float[512], null));
+
                 ForeignerRegisterRequest request = ForeignerFixture.createForeignerRegisterRequest(
                                 List.of(nationality.getId()),
                                 List.of(language.getId()),
@@ -122,19 +130,10 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
 
                 float[] mockEmbedding = new float[512];
 
-                given(geminiTextEmbeddingClient.embedText(any(), any()))
-                                .willReturn(mockEmbedding);
+                given(geminiTextEmbeddingClient.embedText(any(), any())).willReturn(mockEmbedding);
 
-                given(userQueryService.findByEmail(email))
-                                .willReturn(mockUser);
-                given(userQueryService.findById(userId))
-                                .willReturn(mockUser);
-
-                given(jobCodeRepository.findTop3SimilarJobCodes(any()))
-                                .willReturn(List.of(
-                                                new JobCodeSimilarityProjectionImpl(1L, 0.9),
-                                                new JobCodeSimilarityProjectionImpl(2L, 0.8),
-                                                new JobCodeSimilarityProjectionImpl(3L, 0.7)));
+                given(userQueryService.findByEmail(email)).willReturn(mockUser);
+                given(userQueryService.findById(userId)).willReturn(mockUser);
 
                 // 먼저 데이터 저장을 위해 register 호출
                 foreignerServiceFacade.registerAllForeignerInfo(request, email);
@@ -160,6 +159,12 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
                 Language language = languageRepository.save(new Language(null, "English"));
                 Nationality nationality = nationalityRepository.save(new Nationality(null, "USA"));
 
+                // JobCode 데이터 준비 (2개만 저장 -> 3개 미만이므로 예외 발생 예상)
+                jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J001", "Job 1",
+                                new float[512], null));
+                jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J002", "Job 2",
+                                new float[512], null));
+
                 ForeignerRegisterRequest request = ForeignerFixture.createForeignerRegisterRequest(
                                 List.of(nationality.getId()),
                                 List.of(language.getId()),
@@ -179,43 +184,10 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
                 given(userQueryService.findById(userId))
                                 .willReturn(mockUser);
 
-                // Mocking jobCodeRepository to return 2 items instead of 3
-                given(jobCodeRepository.findTop3SimilarJobCodes(any()))
-                                .willReturn(List.of(
-                                                new JobCodeSimilarityProjectionImpl(1L, 0.9),
-                                                new JobCodeSimilarityProjectionImpl(2L, 0.8)));
-
                 // when & then
                 assertThatThrownBy(() -> foreignerServiceFacade.registerAllForeignerInfo(request, email))
                                 .isInstanceOf(BaseException.class)
                                 .hasFieldOrPropertyWithValue("status",
                                                 ResponseStatus.SIMILARITY_CALCULATE_FAIL);
-        }
-
-        // Projection 구현체 (테스트용)
-        static class JobCodeSimilarityProjectionImpl
-                        implements com.navisa.be.common.dto.projection.JobCodeSimilarityProjection {
-                private final Long id;
-                private final Double similarity;
-
-                public JobCodeSimilarityProjectionImpl(Long id, Double similarity) {
-                        this.id = id;
-                        this.similarity = similarity;
-                }
-
-                @Override
-                public Long getId() {
-                        return id;
-                }
-
-                @Override
-                public String getName() {
-                        return "Dummy Job";
-                }
-
-                @Override
-                public Double getSimilarity() {
-                        return similarity;
-                }
         }
 }

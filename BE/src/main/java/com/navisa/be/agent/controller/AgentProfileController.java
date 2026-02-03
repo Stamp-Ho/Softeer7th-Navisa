@@ -6,7 +6,7 @@ import com.navisa.be.agent.dto.request.RegisterAgentProfileRequest;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.GetJobCodeListResponse;
 import com.navisa.be.agent.service.AgentProfileCommandService;
-import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.agent.service.AgentProfileServiceFacade;
 import com.navisa.be.agent.service.JobCodeService;
 import com.navisa.be.common.annotation.HasUserType;
 import com.navisa.be.common.annotation.LoginUser;
@@ -31,8 +31,8 @@ import java.util.UUID;
 public class AgentProfileController {
 
     private final AgentProfileCommandService agentProfileCommandService;
-    private final AgentProfileQueryService agentProfileQueryService;
     private final JobCodeService jobCodeService;
+    private final AgentProfileServiceFacade agentProfileServiceFacade;
 
     @Operation(
             summary = "행정사 프로필 등록 API",
@@ -51,13 +51,13 @@ public class AgentProfileController {
             description = "직무, 지역, 언어 필터를 기반으로 행정사 목록을 조회합니다. No-Offset 방식의 Slice 페이징을 지원합니다."
     )
     @HasUserType({UserType.FILLED_FOREIGNER, UserType.UNFILLED_FOREIGNER})
-    @GetMapping("/profile/search")
+    @GetMapping("/cards")
     public BaseResponse<SliceResponse<AgentCardResponse, UUID>> findAgentProfileCardsBasedOnFilter(
             @ModelAttribute AgentCardRequest request,
             @Parameter(description = "페이징 정보 (lastElementId: 마지막으로 본 행정사 ID, size: 페이지 크기)") @SliceInfo SliceRequest<UUID> slice,
             @LoginUser String email) {
 
-        return new BaseResponse<>(agentProfileQueryService.findAgentProfileCardsBasedOnFilter(request, slice, email));
+        return new BaseResponse<>(agentProfileServiceFacade.findAgentProfileCardsBasedOnFilter(request, slice, email));
     }
 
     @Operation(

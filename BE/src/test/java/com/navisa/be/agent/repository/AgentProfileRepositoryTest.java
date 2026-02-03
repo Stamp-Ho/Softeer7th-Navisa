@@ -1,6 +1,6 @@
 package com.navisa.be.agent.repository;
 
-import com.navisa.be.agent.dto.request.AgentCardRequest;
+import com.navisa.be.agent.dto.AgentCardQueryDto;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.support.AgentProfileTestFixture;
 import com.navisa.be.common.dto.request.SliceRequest;
@@ -56,7 +56,7 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
 
         agentProfileTestFixture.createAgentProfile("Agent C", "부산시 해운대구", jobCode1, language1);
 
-        AgentCardRequest request = new AgentCardRequest(
+        AgentCardQueryDto request = new AgentCardQueryDto(
                 List.of(jobCode1.getId()), // jobIdList
                 List.of("서울"), // regionList
                 List.of(language1.getId()) // languageIdList
@@ -88,7 +88,7 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
         org.springframework.test.util.ReflectionTestUtils.setField(pC, "activeScore", 100.0);
         agentProfileRepository.save(pC);
 
-        AgentCardRequest request = new AgentCardRequest(
+        AgentCardQueryDto request = new AgentCardQueryDto(
                 List.of(jobCode1.getId()),
                 List.of("서울"),
                 List.of(language1.getId()));
@@ -114,7 +114,7 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
         AgentProfile profile1 = agentProfileTestFixture.createAgentProfile("Agent Gyeongbuk", "경상북도 구미시", jobCode1,
                 language1);
 
-        AgentCardRequest request = new AgentCardRequest(
+        AgentCardQueryDto request = new AgentCardQueryDto(
                 List.of(jobCode1.getId()),
                 List.of("경북"),
                 List.of(language1.getId()));
@@ -140,7 +140,7 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
         org.springframework.test.util.ReflectionTestUtils.setField(pB, "activeScore", 100.0);
         agentProfileRepository.save(pB);
 
-        AgentCardRequest request = new AgentCardRequest(null, null, null);
+        AgentCardQueryDto request = new AgentCardQueryDto(null, null, null);
         SliceRequest<UUID> sliceRequest = new SliceRequest<>(null, 10);
 
         // when

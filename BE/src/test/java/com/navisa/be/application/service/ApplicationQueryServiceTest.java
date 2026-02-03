@@ -61,7 +61,7 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         String email = "agent@test.com";
         User user = saveUser(email, UserType.VALID_AGENT);
         AgentProfile agent = saveAgentProfile(user.getId());
-        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "V01", "관광비자", null));
+        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "V01", "관광비자", null, null));
 
         for (int i = 1; i <= 7; i++) {
             ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(UUID.randomUUID(), null));
@@ -91,7 +91,7 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         String email = "agent@test.com";
         User user = saveUser(email, UserType.VALID_AGENT);
         AgentProfile agent = saveAgentProfile(user.getId());
-        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "V01", "관광비자", null));
+        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "V01", "관광비자", null, null));
 
         for (int i = 1; i <= 2; i++) {
             ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(UUID.randomUUID(), null));
@@ -123,14 +123,12 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
                 "password123",
                 type,
                 LoginType.EMAIL,
-                true
-        ));
+                true));
     }
 
     private AgentProfile saveAgentProfile(UUID userId) {
         return agentProfileRepository.save(new AgentProfile(
                 "김행정", LocalDate.now(), "key", "09:00", "사무소", "주소", "상세", "이력",
-                userId, "LIC123", LocalDate.now(), "P123", "M123", "코멘트"
-        ));
+                userId, "LIC123", LocalDate.now(), "P123", "M123", "코멘트"));
     }
 }

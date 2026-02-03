@@ -6,7 +6,6 @@ import com.navisa.be.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Offset.offset;
 
-@SpringBootTest
 @Transactional
 class JobCodeRepositoryTest extends IntegrationTestSupport {
 
@@ -71,7 +69,7 @@ class JobCodeRepositoryTest extends IntegrationTestSupport {
 
     private void saveJobCode(String code, String name, Consumer<float[]> vectorCustomizer) {
         float[] vector = createVector(vectorCustomizer);
-        jobCodeRepository.save(new JobCode(null, code, name, vector));
+        jobCodeRepository.save(new JobCode(null, code, name, vector, null));
     }
 
     private float[] createVector(Consumer<float[]> vectorCustomizer) {

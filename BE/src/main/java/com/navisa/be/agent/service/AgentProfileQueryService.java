@@ -1,6 +1,6 @@
 package com.navisa.be.agent.service;
 
-import com.navisa.be.agent.dto.request.AgentCardRequest;
+import com.navisa.be.agent.dto.AgentCardQueryDto;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.exception.AgentProfileDomainException;
 import com.navisa.be.agent.model.entity.AgentProfile;
@@ -26,22 +26,20 @@ public class AgentProfileQueryService {
     private final AgentProfileRepository agentProfileRepository;
     private final AgentBadgeService agentBadgeService;
     private final AgentSpecializedJobService agentSpecializedJobService;
-    private final UserQueryService userQueryService;
     private final AwsCloudfrontService awsCloudfrontService;
 
     public AgentProfileQueryService(AgentProfileRepository agentProfileRepository, AgentBadgeService agentBadgeService,
-                                    AgentSpecializedJobService agentSpecializedJobService, UserQueryService userQueryService, AwsCloudfrontService awsCloudfrontService) {
+                                    AgentSpecializedJobService agentSpecializedJobService, AwsCloudfrontService awsCloudfrontService) {
         this.agentProfileRepository = agentProfileRepository;
         this.agentBadgeService = agentBadgeService;
         this.agentSpecializedJobService = agentSpecializedJobService;
-        this.userQueryService = userQueryService;
         this.awsCloudfrontService = awsCloudfrontService;
     }
 
     public SliceResponse<AgentCardResponse, UUID> findAgentProfileCardsBasedOnFilter(
-            AgentCardRequest request, SliceRequest<UUID> slice, String email) {
+            AgentCardQueryDto dto, SliceRequest<UUID> slice, UserType requestUserType) {
 
-        List<AgentProfile> agentProfiles = agentProfileRepository.findByFilters(request, slice);
+        List<AgentProfile> agentProfiles = agentProfileRepository.findByFilters(dto, slice);
 
         boolean existsNext = agentProfiles.size() > slice.size();
 
@@ -62,8 +60,6 @@ public class AgentProfileQueryService {
                         agentId -> agentId,
                         agentBadgeService::getTop2BadgeIds
                 ));
-
-        UserType requestUserType = userQueryService.findByEmail(email).getUserType();
 
         List<AgentCardResponse> content = contentProfiles.stream()
                 .map(agent -> {
