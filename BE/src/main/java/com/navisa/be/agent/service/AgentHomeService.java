@@ -12,7 +12,6 @@ import com.navisa.be.storage.model.enums.ImageSize;
 import com.navisa.be.storage.service.AwsCloudfrontService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -90,7 +89,7 @@ public class AgentHomeService {
                     // 로그인 시에만 JobCode 명칭 리스트 추출
                     List<Long> specialityIds = null;
                     if (isLoggedIn) {
-                        specialityIds = agent.getSpecializedJobCodes().stream()
+                        specialityIds = agent.getSpecializedJobs().stream()
                                 .map(specialized -> specialized.getJobCode().getId()) // ID 추출
                                 .limit(2)
                                 .toList();

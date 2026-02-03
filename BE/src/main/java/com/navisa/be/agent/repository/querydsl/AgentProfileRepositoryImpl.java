@@ -37,7 +37,7 @@ public class AgentProfileRepositoryImpl implements AgentProfileRepositoryQueryDs
         return queryFactory
                 .selectFrom(agentProfile)
                 .distinct()
-                .leftJoin(agentProfile.specializedJobCodes, agentSpecializedJob)
+                .leftJoin(agentProfile.specializedJobs, agentSpecializedJob)
                 .leftJoin(agentProfile.languages, agentLanguage)
                 .where(
                         cursorCondition(lastActiveScore, slice.lastElementId()),

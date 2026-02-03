@@ -2,6 +2,7 @@ package com.navisa.be.agent.repository;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.querydsl.AgentProfileRepositoryQueryDsl;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,6 +14,9 @@ public interface AgentProfileRepository extends JpaRepository<AgentProfile, UUID
 
     @Query(value = "SELECT * FROM agent_profile ORDER BY RANDOM() LIMIT 12", nativeQuery = true)
     List<AgentProfile> findRandom12();
+
+    @EntityGraph(attributePaths = {"specializedJobs"})
+    Optional<AgentProfile> findWithSpecializedJobByUserId(UUID userId);
 
     Optional<AgentProfile> findByUserId(UUID userId);
 }

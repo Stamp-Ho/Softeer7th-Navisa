@@ -2,11 +2,13 @@ package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.request.AgentCardRequest;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
+import com.navisa.be.agent.exception.AgentProfileDomainException;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.common.dto.response.SliceResponse;
 import com.navisa.be.storage.service.AwsCloudfrontService;
+import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
 import org.springframework.stereotype.Service;
@@ -83,5 +85,10 @@ public class AgentProfileQueryService {
         UUID lastElementId = content.isEmpty() ? null : content.get(content.size() - 1).agentId();
 
         return new SliceResponse<>(content, existsNext, lastElementId);
+    }
+
+    public AgentProfile findWithSpecializedJobByUserId(UUID userId) {
+        return agentProfileRepository.findWithSpecializedJobByUserId(userId)
+                .orElseThrow(() -> new AgentProfileDomainException(ResponseStatus.INVALID_USER));
     }
 }

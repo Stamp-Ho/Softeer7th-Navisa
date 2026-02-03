@@ -56,7 +56,7 @@ public class AgentProfile extends BaseEntity {
     private List<AgentLanguage> languages = new ArrayList<>();
 
     @OneToMany(mappedBy = "agentProfile")
-    private List<AgentSpecializedJob> specializedJobCodes = new ArrayList<>();
+    private List<AgentSpecializedJob> specializedJobs = new ArrayList<>();
 
     @Column(name = "license_no")
     private String licenseNo;
@@ -112,7 +112,7 @@ public class AgentProfile extends BaseEntity {
     }
 
     public void addSpecializedJobCodes(List<AgentSpecializedJob> codes) {
-        this.specializedJobCodes.addAll(codes);
+        this.specializedJobs.addAll(codes);
     }
 
     public void addLanguages(List<AgentLanguage> languages) {

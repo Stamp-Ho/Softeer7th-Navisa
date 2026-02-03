@@ -1,17 +1,22 @@
 package com.navisa.be.foreigner.controller;
 
+import com.navisa.be.common.annotation.HasUserType;
 import com.navisa.be.common.annotation.LoginUser;
 import com.navisa.be.common.dto.response.BaseResponse;
+import com.navisa.be.foreigner.dto.response.ForeignerCardResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.foreigner.service.ForeignerServiceFacade;
+import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/foreigner")
@@ -34,5 +39,16 @@ public class ForeignerQueryController {
     public BaseResponse<ForeignerStatusResponse> checkForeignerFilledStatus(@LoginUser String email) {
         ForeignerStatusResponse response = foreignerQueryService.checkForeignerFilledStatus(email);
         return new BaseResponse<>(response);
+    }
+
+    @Operation(
+            summary = "행정사의 특화 직무코드와 매칭되는 최신순 외국인 프로필 10개 조회",
+            description = "현재 로그인한 행정사 회원이 가진 특화 직무코드와 매칭되는 외국인 프로필 정보를 최신순으로 조회합니다. 노션 링크 : https://www.notion.so/bside/1f673f3551fd4d6888a7d579711e67fe?source=copy_link"
+    )
+    @HasUserType({ UserType.VALID_AGENT })
+    @GetMapping("/home")
+    public BaseResponse<List<ForeignerCardResponse>> findMatchedForeignerCard(@LoginUser String email) {
+        List<ForeignerCardResponse> cards = foreignerQueryService.findForeignerCardMatchOnSpecializedJob(email);
+        return new BaseResponse<>(cards);
     }
 }

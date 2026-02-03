@@ -27,6 +27,7 @@ public enum ResponseStatus {
     DUPLICATE_LOGIN_TYPE(409, "다른 로그인 방식(소셜 등)으로 이미 가입된 계정입니다."),
     INVALID_INITIAL_USER_TYPE(400, "가입 시 유효하지 않은 유저 타입입니다."),
     INVALID_FOREIGNER(400, "존재하지 않는 외국인 프로필 정보입니다."),
+    INVALID_FOREIGNER_EXPECTEDCOMPANY(400, "존재하지 않는 외국인 입사 예정 정보입니다."),
     INVALID_NATIONALITY(400, "잘못된 Nationality id 정보입니다."),
     INVALID_LANGUAGE(400, "잘못된 Language id 정보입니다."),
     STORAGE_UNSUPPORTED_CONTENT_TYPE(400, "지원하지 않는 파일 타입입니다"),
@@ -43,6 +44,7 @@ public enum ResponseStatus {
     FORBIDDEN(403, "인가되지 않은 사용자입니다"),
     AGENT_NOT_FOUND(404, "해당 리뷰와 연결된 행정사 프로필 정보를 찾을 수 없습니다."),
     AGENT_NOT_APPROVED(403, "승인되지 않은 행정사입니다."),
+    NOT_FOUND_MATCHER_FOREIGNER(404, "조건에 맞는 새로운 의뢰인이 없습니다. 전문 분야를 추가하여 새로운 외국인을 찾아보세요."),
 
     /**
      * 서버 에러 (500번대)

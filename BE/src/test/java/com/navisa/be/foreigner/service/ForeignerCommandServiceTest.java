@@ -14,7 +14,6 @@ import com.navisa.be.user.model.enums.UserType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -30,7 +29,6 @@ import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
 import com.navisa.be.common.dto.projection.JobCodeSimilarityProjection;
 
-@SpringBootTest
 @Transactional
 class ForeignerCommandServiceTest extends IntegrationTestSupport {
 

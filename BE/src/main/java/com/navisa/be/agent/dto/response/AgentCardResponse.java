@@ -25,7 +25,7 @@ public record AgentCardResponse(
                 agent.getOfficeAddress(),
                 specialities,
                 badges,
-                agent.getSpecializedJobCodes().size()
+                agent.getSpecializedJobs().size()
         );
     }
 
@@ -37,7 +37,7 @@ public record AgentCardResponse(
                 agent.getOfficeAddress(),
                 requestUserType.equals(UserType.FILLED_FOREIGNER) ? specialities : null,
                 badges,
-                requestUserType.equals(UserType.FILLED_FOREIGNER) ? agent.getSpecializedJobCodes().size() : null
+                requestUserType.equals(UserType.FILLED_FOREIGNER) ? agent.getSpecializedJobs().size() : null
         );
     }
 }

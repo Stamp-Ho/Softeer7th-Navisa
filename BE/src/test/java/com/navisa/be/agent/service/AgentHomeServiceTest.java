@@ -180,7 +180,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
             AgentSpecializedJob specializedJobCode = new AgentSpecializedJob(profile, jobCode);
             specializedJobCodeRepository.save(specializedJobCode);
 
-            profile.getSpecializedJobCodes().add(specializedJobCode);
+            profile.getSpecializedJobs().add(specializedJobCode);
         }
 
         return jobCode.getId();

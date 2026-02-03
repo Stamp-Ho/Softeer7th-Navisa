@@ -18,7 +18,7 @@ public abstract class IntegrationTestSupport {
 
     @ServiceConnection
     static final PostgreSQLContainer<?> postgresDB = new PostgreSQLContainer<>("pgvector/pgvector:pg17")
-            .withInitScript("init-pgvector.sql");
+            .withInitScript("init-postgres.sql");
 
     @ServiceConnection(name = "redis")
     static final GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7-alpine"))
