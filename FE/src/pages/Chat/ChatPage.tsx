@@ -5,6 +5,7 @@ import Envelope from "./Envelope";
 import { IcArrows } from "../../assets/icon/StratisUi";
 import ChatRoom from "./ChatRoom";
 import ChatRoomModal from "./ChatRoomModal";
+import AlarmBadge from "../../assets/icon/AlarmBadge";
 
 const dummyDataAll = [
   {
@@ -1008,9 +1009,13 @@ const ChatPage = () => {
                       ? "large_violet_on_alarm"
                       : "large_white_on_alarm"
                   }
-                  value={dummyDataUnread.length}
                 >
                   안 읽음
+                  {dummyDataUnread.length === 0 || (
+                    <AlarmBadge isActive={selectedTab === 1}>
+                      {dummyDataUnread.length}
+                    </AlarmBadge>
+                  )}
                 </Tag>
               </div>
               {amAgent && dummyDataMatched.length > 0 && (
@@ -1027,9 +1032,13 @@ const ChatPage = () => {
                         ? "large_violet_on_alarm"
                         : "large_white_on_alarm"
                     }
-                    value={dummyDataMatched.length}
                   >
                     수임 중
+                    {dummyDataMatched.length === 0 || (
+                      <AlarmBadge isActive={selectedTab === 2}>
+                        {dummyDataMatched.length}
+                      </AlarmBadge>
+                    )}
                   </Tag>
                 </div>
               )}
@@ -1100,7 +1109,7 @@ const ChatPage = () => {
             <button className="flex flex-row items-center pl-5 title-m-semibold text-violet-500 cursor-pointer">
               {isFileReady ? "행정사 탐색하기" : "내 요건 등록하고 상담하기"}
               <span className="-rotate-90">
-                <IcArrows stroke="var(--violet-500)" size="32" />
+                <IcArrows stroke="var(--violet-500)" size={32} />
               </span>
             </button>
           </div>

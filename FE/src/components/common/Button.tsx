@@ -1,7 +1,13 @@
 import type React from "react";
 
 interface ButtonProps {
-  type?: "lightGray" | "primary" | "grayLine" | "violetLine" | "brightViolet";
+  type?:
+    | "lightGray"
+    | "primary"
+    | "grayLine"
+    | "gray"
+    | "violetLine"
+    | "brightViolet";
   size?: "tiny" | "small" | "medium" | "large" | "giant";
   className?: string;
   children: React.ReactNode;
@@ -44,6 +50,7 @@ const styles = {
   lightGray: "bg-gray-50 text-text-base outline outline-border-light",
   primary: "bg-button-primary-bg text-text-inverse",
   grayLine: "bg-transparent outline outline-border-normal",
+  gray: "bg-gray-200 text-white rounded-[8px]",
   violetLine: "bg-violet-50 text-primary outline outline-violet-500",
   brightViolet: "bg-violet-50 text-primary",
 };

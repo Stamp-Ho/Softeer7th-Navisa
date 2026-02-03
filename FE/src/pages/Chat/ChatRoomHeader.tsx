@@ -2,7 +2,7 @@ import BadgeIcon, { badgeDescription } from "../../assets/icon/BadgeIcon";
 import { IcArrows, IcX } from "../../assets/icon/StratisUi";
 import Button from "../../components/common/Button";
 import Chip from "../../components/common/Chip";
-import { nationList } from "../../types/nations";
+import { nationList } from "../../constants/nations";
 
 // 필요 데이터
 // 행정사
@@ -75,7 +75,7 @@ const ChatRoomHeader = ({
                 <div className="flex flex-row items-center gap-1 title-m-bold text-text-base">
                   {dummyAgent.agentInfo.name} 행정사
                   <div className="flex items-center -rotate-90 cursor-pointer">
-                    <IcArrows size="20" />
+                    <IcArrows size={20} />
                   </div>
                 </div>
               </div>
@@ -100,7 +100,7 @@ const ChatRoomHeader = ({
                   </div>
                 </div>
                 <div className="flex items-center -rotate-90 cursor-pointer ml-6">
-                  <IcArrows size="20" />
+                  <IcArrows size={20} />
                 </div>
               </div>
             )}

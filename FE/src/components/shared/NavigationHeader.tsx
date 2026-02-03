@@ -16,7 +16,7 @@ const NavigationHeader = () => {
 
   const hasScroll = currentPath === "/" || currentPath.startsWith("/profile");
 
-  const [isAgent, _setIsAgent] = useState<boolean>(false);
+  const [isAgent, setIsAgent] = useState<boolean>(false);
 
   const [authMode, setAuthMode] = useState<number>(0); // 0:none, 1:log in, 2:sign in
   const [isAuthed, setIsAuthed] = useState<boolean>(false);
@@ -53,20 +53,27 @@ const NavigationHeader = () => {
             className={`cursor-pointer ${searchTabStyle}`}
             to={`/search/${isAgent ? "foreigner" : "agent"}`}
           >
-            행정사 탐색
+            {isAgent ? "외국인" : "행정사"} 탐색
           </Link>
         </div>
       </div>
+      <div onClick={() => setIsAgent(!isAgent)}>유저 변경</div>
       <div
-        className="flex flex-row gap-6 h-12"
+        className="mr-auto ml-3"
         onClick={() => setIsAuthed((prev) => !prev)}
       >
+        로그인 상태 변경
+      </div>
+      <div className="flex flex-row gap-6 h-12">
         {isAuthed ? (
           <div className="flex flex-row items-center">
-            <div className="flex flex-row items-center gap-2.25 mr-spacing-700 body-l-semibold text-text-base cursor-pointer">
+            <Link
+              to="/chat"
+              className="flex flex-row items-center gap-2.25 mr-spacing-700 body-l-semibold text-text-base cursor-pointer"
+            >
               <IcMessage />
               상담 메세지
-            </div>
+            </Link>
             <div className="flex flex-row items-center gap-2.25 mr-spacing-1100 body-l-semibold text-text-base cursor-pointer">
               <IcFile />
               비자서류 작성

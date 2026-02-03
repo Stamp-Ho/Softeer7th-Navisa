@@ -5,7 +5,6 @@ const Tag = ({
   children,
   type = "default",
   className = "",
-  value = 0,
 }: TagProps) => {
   // 2. 미리 정의된 스타일을 가져오고 없을 경우를 대비해 처리
   const typeStyle = TAG_STYLES[type] || TAG_STYLES.default;
@@ -24,9 +23,9 @@ type TagType =
   | "small_fill_violet_max"
   | "small_fill_gray"
   | "small_fill_gray_dark"
-  | "small_fill_gray_2""
+  | "small_fill_gray_2"
   | "small_fill_green_max"
-  | "small_line
+  | "small_line"
   | "small_fill_icon"
   | "large_violet_off"
   | "large_white_off"
@@ -42,8 +41,6 @@ interface TagProps {
   className?: string;
 }
 
-    
-      
 // 1. 공통 스타일과 타입별 스타일을 상수로 분리
 const BASE_STYLE = "flex flex-row justify-center items-center";
 

@@ -5,7 +5,7 @@ type ChatRoomListProps = {
   chatList: ChatRoomCardParams[];
   onSelectChat: (id: number | null) => void;
   selectedTab: number;
-  selectedChatRoomId: number;
+  selectedChatRoomId: number | null;
 };
 
 type ChatRoomCardParams = {
