@@ -59,7 +59,7 @@ const ChatRoomCard = ({
             {lastMessage}
           </div>
           {noneRead > 0 && (
-            <AlarmBadge type="alarm_violet">
+            <AlarmBadge isActive={true}>
               {noneRead > 99 ? `99+` : noneRead}
             </AlarmBadge>
           )}
