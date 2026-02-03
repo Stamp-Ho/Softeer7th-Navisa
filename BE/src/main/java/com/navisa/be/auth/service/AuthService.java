@@ -152,7 +152,7 @@ public class AuthService {
                 .secure(true) // HTTPS 환경 필수
                 .path("/")
                 .maxAge(7 * 24 * 60 * 60) // 7일
-                .sameSite("Strict") // CSRF 방지
+                .sameSite("None")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
