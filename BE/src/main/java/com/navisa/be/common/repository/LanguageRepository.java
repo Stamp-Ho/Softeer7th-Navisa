@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface LanguageRepository extends JpaRepository<Language, Long> {
+
     long countByIdIn(List<Long> ids);
+    List<Language> findAllByOrderByIdAsc();
 }
