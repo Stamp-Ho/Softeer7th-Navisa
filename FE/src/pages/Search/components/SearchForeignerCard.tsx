@@ -1,13 +1,13 @@
-import FlagIcon from "../../assets/FlagIcon";
+import FlagIcon from "../../../assets/FlagIcon";
 import {
   IcGraduation,
   IcLanguage,
   IcLuggage04,
-} from "../../assets/icon/StratisUi";
-import Tag from "../common/Tag";
-import { languageList } from "../../constants/language";
+} from "../../../assets/icon/StratisUi";
+import Tag from "../../../components/common/Tag";
+import { languageList } from "../../../constants/language";
 import { Link } from "react-router-dom";
-import type { SearchForeignerCardType } from "../../types/Cards";
+import type { SearchForeignerCardType } from "../../../types/Cards";
 
 const dummyData = {
   id: 0,

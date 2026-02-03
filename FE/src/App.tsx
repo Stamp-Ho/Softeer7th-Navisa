@@ -2,8 +2,7 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import NavigationHeader from "./components/shared/NavigationHeader";
 import HomePage from "./pages/Landing/HomePage";
-import SearchAgent from "./pages/Search/SearchAgent";
-import SearchForeigner from "./pages/Search/SearchForeigner";
+import Search from "./pages/Search/Search";
 import ProfileOfAgent from "./pages/Profile/agent/ProfileOfAgent";
 import ProfileOfForeigner from "./pages/Profile/Foreigner/ProfileOfForeigner";
 import AgentOnboard from "./pages/Onboard/AgentOnboard";
@@ -17,8 +16,7 @@ function App() {
       <NavigationHeader />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/search/agent" element={<SearchAgent />} />
-        <Route path="/search/foreigner" element={<SearchForeigner />} />
+        <Route path="/search/:targetType" element={<Search />} />
         <Route
           path="/profile/foreigner/:foreignerId"
           element={<ProfileOfForeigner />}
