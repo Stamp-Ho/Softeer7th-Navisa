@@ -7,6 +7,7 @@ import com.navisa.be.common.resolver.SliceInfoArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -31,6 +32,16 @@ public class WebConfig implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
     private final LoginUserResolver loginUserResolver;
     private final SliceInfoArgumentResolver sliceInfoArgumentResolver;
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:5173", "http://localhost:5174", "https://api.navisa.site", "https://www.navisa.site")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
