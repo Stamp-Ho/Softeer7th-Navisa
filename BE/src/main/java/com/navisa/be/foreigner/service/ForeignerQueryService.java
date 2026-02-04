@@ -1,9 +1,12 @@
 package com.navisa.be.foreigner.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.service.AgentProfileQueryService;
 import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.common.dto.response.SliceResponse;
+import com.navisa.be.chat.model.entity.ChatRoom;
+import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.common.model.entity.Language;
 import com.navisa.be.common.model.entity.Nationality;
 import com.navisa.be.common.model.enums.ResponseStatus;
@@ -12,6 +15,9 @@ import com.navisa.be.foreigner.dto.ForeignerCareerDto;
 import com.navisa.be.foreigner.dto.ForeignerEducationDto;
 import com.navisa.be.foreigner.dto.ForeignerExpectedCompanyDto;
 import com.navisa.be.foreigner.dto.response.ForeignerCardExtensionResponse;
+import com.navisa.be.foreigner.dto.*;
+import com.navisa.be.foreigner.dto.request.FindForeignerDetailCommand;
+import com.navisa.be.foreigner.dto.response.FindForeignerDetailResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerCardResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
@@ -33,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,6 +56,8 @@ public class ForeignerQueryService {
     private final UserRepository userRepository;
     private final UserQueryService userQueryService;
     private final AgentProfileQueryService agentProfileQueryService;
+    private final AgentProfileRepository agentProfileRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     public ForeignerQueryResponse findForeignerTotalInfo(UUID userId) {
         ForeignerProfile profile = foreignerProfileRepository.findByUserIdWithNationalitiesAndLanguages(userId)
@@ -57,7 +66,7 @@ public class ForeignerQueryService {
         ForeignerEducationDto education = foreignerEducationRepository.findByForeignerId(profile.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER)).toDto();
 
-        List<ForeignerCareerDto> careers = foreignerCareersRepository.findByForeignerId(profile.getId())
+        List<ForeignerCareerDto> careers = foreignerCareersRepository.findAllByForeignerId(profile.getId())
                 .stream().map(ForeignerCareers::toDto).toList();
 
         ForeignerExpectedCompanyDto expectedCompany = foreignerExpectedCompanyRepository.findByForeignerId(profile.getId())
@@ -187,5 +196,44 @@ public class ForeignerQueryService {
         }
 
         return resultMap;
+    }
+
+    public FindForeignerDetailResponse findForeignerDetail(FindForeignerDetailCommand command) {
+        ForeignerProfile foreignerProfile = foreignerProfileRepository.findById(command.foreignerId())
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+
+        List<Long> nationIds = foreignerProfile.getForeignerNationalities().stream().map(ForeignerNationality::getId).toList();
+
+        User user = userRepository.findById(foreignerProfile.getUserId())
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+
+        User agentUser = userRepository.findByEmail(command.loginUserEmail())
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_USER));
+
+        AgentProfile agentProfile = agentProfileRepository.findByUserId(agentUser.getId())
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.AGENT_NOT_FOUND));
+
+        Optional<ChatRoom> optChatRoom = chatRoomRepository.findByAgentIdAndForeignerId(agentProfile.getId(), foreignerProfile.getId());
+
+        ForeignerEducation foreignerEducation = foreignerEducationRepository.findByForeignerId(foreignerProfile.getId())
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+
+        List<Long> langIdList = foreignerProfile.getForeignLanguages().stream()
+                .map(foreignerLanguage -> foreignerLanguage.getLanguage().getId())
+                .toList();
+
+        // 외국인의 경력들을 조회
+        List<ForeignerCareers> careers = foreignerCareersRepository.findAllByForeignerId(foreignerProfile.getId());
+
+        ForeignerExpectedCompany expectedCompany = foreignerExpectedCompanyRepository.findByForeignerId(foreignerProfile.getId())
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+
+        return new FindForeignerDetailResponse(
+                ForeignerBasicInfoDto.of(foreignerProfile, nationIds, user, optChatRoom),
+                new EducationInfoDto(foreignerEducation.getDegreeLevel(), foreignerEducation.getSchoolName(), foreignerEducation.getMajorName()),
+                langIdList,
+                CareerInfoDto.of(careers),
+                ExpectedCompanyInfoDto.of(expectedCompany)
+        );
     }
 }

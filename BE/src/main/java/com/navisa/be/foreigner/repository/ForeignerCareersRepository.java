@@ -10,5 +10,5 @@ import java.util.UUID;
 @Repository
 public interface ForeignerCareersRepository extends JpaRepository<ForeignerCareers, Long> {
 
-    List<ForeignerCareers> findByForeignerId(UUID foreignerId);
+    List<ForeignerCareers> findAllByForeignerId(UUID foreignerId);
 }

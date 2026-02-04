@@ -95,7 +95,7 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
         var savedEducation = foreignerEducationRepository.findByForeignerId(foundProfile.getId()).orElseThrow();
         assertThat(savedEducation.getSchoolName()).isEqualTo(request.education().schoolName());
 
-        var savedCareers = foreignerCareersRepository.findByForeignerId(foundProfile.getId());
+        var savedCareers = foreignerCareersRepository.findAllByForeignerId(foundProfile.getId());
         assertThat(savedCareers).hasSize(1);
         assertThat(savedCareers.get(0).getCompanyName()).isEqualTo(request.foreignerCareers().get(0).companyName());
 

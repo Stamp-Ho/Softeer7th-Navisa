@@ -3,10 +3,13 @@ package com.navisa.be.foreigner.controller;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.foreigner.dto.request.FindForeignerDetailCommand;
+import com.navisa.be.foreigner.dto.response.FindForeignerDetailResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
 import com.navisa.be.foreigner.exception.ForeignerException;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.foreigner.service.ForeignerServiceFacade;
+import com.navisa.be.support.ForeignerFixture;
 import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,6 +51,7 @@ class ForeignerQueryControllerTest {
 
     @MockitoBean
     private UserRepository userRepository;
+
 
     @Test
     @DisplayName("외국인 상세 요건 상태 조회 성공 시 200 OK와 상태 정보를 반환한다.")
@@ -106,5 +110,33 @@ class ForeignerQueryControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(ResponseStatus.INVALID_FOREIGNER.getMessage()));
+    }
+
+    @Test
+    @DisplayName("외국인 상세 조회는 성공한다")
+    void findForeignerDetail_shouldSucceed() throws Exception {
+        // given
+        String mockEmail = "nonexistent@navisa.com";
+        given(jwtProvider.validateToken(anyString())).willReturn(true);
+        given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
+
+        given(loginUserResolver.supportsParameter(any())).willReturn(true);
+        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
+
+        given(authService.checkUserType(any(), any())).willReturn(true);
+
+        FindForeignerDetailResponse response = ForeignerFixture.createFindForeignerDetailResponse();
+
+        given(foreignerQueryService.findForeignerDetail(any(FindForeignerDetailCommand.class)))
+                .willReturn(response);
+
+        UUID foreignerId = UUID.randomUUID();
+
+        // when & then
+        mockMvc.perform(get("/api/foreigner/" + foreignerId)
+                        .header("Authorization", "Bearer test-token"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.basicInfo.nickname").value(response.basicInfo().nickname()));
     }
 }

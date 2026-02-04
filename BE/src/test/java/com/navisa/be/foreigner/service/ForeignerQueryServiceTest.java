@@ -4,6 +4,8 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJob;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobRepository;
+import com.navisa.be.chat.model.entity.ChatRoom;
+import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.common.exception.BaseException;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.entity.Language;
@@ -12,13 +14,18 @@ import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.repository.JobCodeRepository;
 import com.navisa.be.common.repository.LanguageRepository;
 import com.navisa.be.common.repository.NationalityRepository;
+import com.navisa.be.foreigner.dto.request.FindForeignerDetailCommand;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
+import com.navisa.be.foreigner.dto.response.FindForeignerDetailResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerCardResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
 import com.navisa.be.foreigner.model.entity.ForeignerExpectedCompany;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
+import com.navisa.be.foreigner.exception.ForeignerException;
+import com.navisa.be.foreigner.model.entity.*;
+import com.navisa.be.foreigner.model.enums.EducationDegreeLevel;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
 import com.navisa.be.foreigner.repository.ForeignerExpectedCompanyRepository;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
@@ -26,6 +33,8 @@ import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
 import com.navisa.be.info.model.entity.JobGroup;
 import com.navisa.be.support.*;
 import com.navisa.be.user.model.entity.User;
+import com.navisa.be.foreigner.repository.*;
+import com.navisa.be.support.*;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
@@ -36,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -90,6 +100,24 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
     @Autowired
     private UserTestFixture userFixture;
 
+    @Autowired
+    private ForeignerNationalityRepository foreignerNationalityRepository;
+
+    @Autowired
+    private ForeignerLanguageRepository foreignerLanguageRepository;
+
+    @Autowired
+    private ForeignerProfileTestFixture foreignerProfileTestFixture;
+
+    @Autowired
+    private UserTestFixture userTestFixture;
+
+    @Autowired
+    private AgentProfileTestFixture agentProfileTestFixture;
+
+    @Autowired
+    private ChatRoomTestFixture chatRoomTestFixture;
+
     @Test
     @DisplayName("userId로 외국인 전체 정보를 조회한다")
     void findForeignerTotalInfo() {
@@ -105,7 +133,6 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
                 List.of(language.getId()),
                 isWork);
 
-        // Save data using Command Service
         foreignerCommandService.registerForeignerTotalInfo(request, userId);
 
         em.flush();
@@ -178,7 +205,6 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
     @DisplayName("행정사 전문분야와 겹치는 외국인을 추천한다 (Manual Setup)")
     void findForeignerCardMatchOnSpecializedJob_integration() {
         // given
-        // 1. Agent Setup
         String email = "agent@test.com";
         User agentUser = userRepository.save(new User(email, "password", UserType.VALID_AGENT,
                 LoginType.EMAIL, true));
@@ -193,7 +219,6 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
         AgentSpecializedJob specializedJob = new AgentSpecializedJob(agentProfile, jobCode);
         agentSpecializedJobRepository.save(specializedJob);
 
-        // 2. Foreigner Setup (Matching)
         ForeignerProfile matchForeigner = new ForeignerProfile(UUID.randomUUID(), ForeignerSearchStatus.IDLE);
         foreignerProfileRepository.save(matchForeigner);
 
@@ -209,7 +234,6 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
                 null, matchForeigner.getId(), "Samsung", "Software Engineer", LocalDate.now());
         foreignerExpectedCompanyRepository.save(expectedCompany);
 
-        // 3. Foreigner Setup (Not Matching)
         ForeignerProfile otherForeigner = new ForeignerProfile(UUID.randomUUID(), ForeignerSearchStatus.IDLE);
         foreignerProfileRepository.save(otherForeigner);
 
@@ -238,7 +262,6 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
     @DisplayName("매칭되는 외국인이 없으면 빈 리스트를 반환한다")
     void findForeignerCardMatchOnSpecializedJob_shouldReturnEmptyList_whenNoMatch() {
         // given
-        // 1. Agent Setup
         String email = "agent_empty@test.com";
         User agentUser = userRepository.save(new User(email, "password", UserType.VALID_AGENT,
                 LoginType.EMAIL, true));
@@ -253,7 +276,6 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
         AgentSpecializedJob specializedJob = new AgentSpecializedJob(agentProfile, jobCode);
         agentSpecializedJobRepository.save(specializedJob);
 
-        // 2. Foreigner Setup (Not Matching)
         ForeignerProfile otherForeigner = new ForeignerProfile(UUID.randomUUID(), ForeignerSearchStatus.IDLE);
         foreignerProfileRepository.save(otherForeigner);
 
@@ -319,7 +341,92 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
         long[] jobIds = (jobCodeId != null) ? new long[] { jobCodeId } : new long[] {};
         foreignerFixture.createForeignerSimilarity(profile, jobIds);
 
-        // Strict Validation Requirement
         foreignerFixture.createForeignerExpectedCompany(profile, jobTitle);
+    }
+
+    @Test
+    @DisplayName("외국인 상세 조회에 성공한다")
+    void findForeignerDetail_shouldSucceed() {
+        // given
+        User agentUser = userTestFixture.createUser("agent@user", UserType.VALID_AGENT);
+        agentProfileTestFixture.createAgentProfile("박행정", "주소", agentUser.getId());
+
+        User foreignerUser = userTestFixture.createUser("foreigner@user", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        FindForeignerDetailCommand command = new FindForeignerDetailCommand(agentUser.getEmail(), foreignerProfile.getId());
+
+        // when
+        FindForeignerDetailResponse response = foreignerQueryService.findForeignerDetail(command);
+
+        // then
+        List<ForeignerNationality> fns = foreignerNationalityRepository.findByForeignerProfileId(foreignerProfile.getId());
+        List<ForeignerLanguage> fls = foreignerLanguageRepository.findByForeignerProfileId(foreignerProfile.getId());
+
+        // basicInfo 검증
+        assertThat(response).isNotNull();
+        assertThat(response.basicInfo().foreignerId()).isEqualTo(foreignerProfile.getId());
+        assertThat(response.basicInfo().nationIdList()).containsExactlyInAnyOrderElementsOf(
+                fns.stream().map(fn -> fn.getId()).toList()
+        );
+        assertThat(response.basicInfo().lastAccessDay()).isEqualTo(foreignerUser.getLastLoginAt());
+        assertThat(response.basicInfo().hasChatRoomBetween()).isFalse();
+        assertThat(response.basicInfo().chatRoomId()).isNull();
+
+        // educationInfo 검증
+        assertThat(response.educationInfo().degreeLevel()).isEqualTo(EducationDegreeLevel.ABOVE_MASTER);
+
+        // careerInfo 검증
+        assertThat(response.careerInfo().totalCareerMonths()).isEqualTo(12);
+
+        // languageList 검증
+        assertThat(response.languageList()).containsExactlyInAnyOrderElementsOf(
+                fls.stream().map(foreignerLanguage -> foreignerLanguage.getLanguage().getId()).toList()
+        );
+
+        // expectedCompanyInfo 검증
+        assertThat(response.expectedCompanyInfo().companyName()).isEqualTo("새 회사");
+    }
+
+
+    @Test
+    @DisplayName("외국인 상세 조회 시에 외국인이 없으면 예외가 발생한다")
+    void findForeignerDetail_shouldThrowException() {
+        // given
+        User agentUser = userTestFixture.createUser("agent@user", UserType.VALID_AGENT);
+        agentProfileTestFixture.createAgentProfile("박행정", "주소", agentUser.getId());
+
+        UUID unknownForeignerId = UUID.randomUUID();
+        FindForeignerDetailCommand command = new FindForeignerDetailCommand(agentUser.getEmail(), unknownForeignerId);
+
+        // when & then
+        assertThatThrownBy(() ->  foreignerQueryService.findForeignerDetail(command))
+                .isInstanceOf(ForeignerException.class);
+    }
+
+    @Test
+    @DisplayName("외국인 상세 조회는 행정사와 외국인 사이에 채팅방이 있으면 채팅방 정보를 반환한다")
+    void findForeignerDetail_shouldReturnChatRoomInfo() {
+        // given
+        User agentUser = userTestFixture.createUser("agent@user", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("박행정", "주소", agentUser.getId());
+
+        User foreignerUser = userTestFixture.createUser("foreigner@user", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        FindForeignerDetailCommand command = new FindForeignerDetailCommand(agentUser.getEmail(), foreignerProfile.getId());
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+
+        // when
+        FindForeignerDetailResponse response = foreignerQueryService.findForeignerDetail(command);
+
+        // then
+
+        // basicInfo 검증
+        assertThat(response).isNotNull();
+        assertThat(response.basicInfo().foreignerId()).isEqualTo(foreignerProfile.getId());
+        assertThat(response.basicInfo().hasChatRoomBetween()).isTrue();
+        assertThat(response.basicInfo().chatRoomId()).isEqualTo(chatRoom.getId());
     }
 }

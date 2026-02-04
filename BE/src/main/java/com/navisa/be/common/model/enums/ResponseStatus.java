@@ -48,7 +48,6 @@ public enum ResponseStatus {
     NOT_FOUND_MATCHER_FOREIGNER(404, "조건에 맞는 새로운 의뢰인이 없습니다. 전문 분야를 추가하여 새로운 외국인을 찾아보세요."),
     AGENT_NOT_FOUND(404, "행정사 프로필 정보를 찾을 수 없습니다."),
 
-
     /**
      * 서버 에러 (500번대)
      */

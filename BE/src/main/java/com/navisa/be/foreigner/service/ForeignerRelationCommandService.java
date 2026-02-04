@@ -118,17 +118,14 @@ public class ForeignerRelationCommandService {
     }
 
     public void updateCareers(ForeignerProfile profile, List<ForeignerCareerDto> newCareers) {
-        List<ForeignerCareers> existingCareers = foreignerCareersRepository.findByForeignerId(profile.getId());
+        List<ForeignerCareers> existingCareers = foreignerCareersRepository.findAllByForeignerId(profile.getId());
 
-        // 1. Delete items not in new list (Diff by value equality approx: companyName +
-        // startDate)
         List<ForeignerCareers> toDelete = existingCareers.stream()
                 .filter(existing -> newCareers.stream()
                         .noneMatch(newItem -> isSameCareer(existing, newItem)))
                 .toList();
         foreignerCareersRepository.deleteAll(toDelete);
 
-        // 2. Insert items not in existing list
         List<ForeignerCareers> toInsert = newCareers.stream()
                 .filter(newItem -> existingCareers.stream()
                         .noneMatch(existing -> isSameCareer(existing, newItem)))
@@ -136,7 +133,6 @@ public class ForeignerRelationCommandService {
                 .toList();
         foreignerCareersRepository.saveAll(toInsert);
 
-        // 3. Update existing
         existingCareers.forEach(existing -> newCareers.stream()
                 .filter(newItem -> isSameCareer(existing, newItem))
                 .findFirst()
