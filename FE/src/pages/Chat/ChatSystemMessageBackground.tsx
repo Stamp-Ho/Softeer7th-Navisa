@@ -141,7 +141,6 @@ const ChatSystemMessageBackground = () => {
           height="233.687"
         >
           <div
-            xmlns="http://www.w3.org/1999/xhtml"
             style={{
               backdropFilter: "blur(15.56px)",
               clipPath: "url(#bgblur_2_2539_4562_clip_path)",

@@ -22,7 +22,7 @@ const SearchForeignerCard = ({
   foreigner = dummyData,
   withDetails = true,
 }: {
-  foreigner: SearchForeignerCardType;
+  foreigner?: SearchForeignerCardType;
   withDetails?: boolean;
 }) => {
   // const authed = true;

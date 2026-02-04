@@ -42,7 +42,7 @@ const Chip = ({
         <Component className={`${style}  ${className}`}>
           비자 신청서 바로가기
           <div className="flex items-center -rotate-90">
-            <IcArrows stroke="var(--violet-500)" size="20" />
+            <IcArrows stroke="var(--violet-500)" size={20} />
           </div>
         </Component>
       );
@@ -53,7 +53,7 @@ const Chip = ({
         <Component className={`${style}  ${className}`}>
           리뷰 작성하기
           <div className="flex items-center -rotate-90">
-            <IcArrows stroke="var(--violet-500)" size="20" />
+            <IcArrows stroke="var(--violet-500)" size={20} />
           </div>
         </Component>
       );

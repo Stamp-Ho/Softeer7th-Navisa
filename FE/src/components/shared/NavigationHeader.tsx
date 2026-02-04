@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import NavisaLogo from "../../assets/NavisaLogo";
 import LanguageSelector from "../common/LanguageSelector";
 import { IcFile, IcMessage, IcUserProfile } from "../../assets/icon/StratisUi";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
 import { Link, useLocation } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const PathNamesWithBackground = ["/profile"];
 const NavigationHeader = () => {
@@ -16,10 +17,13 @@ const NavigationHeader = () => {
 
   const hasScroll = currentPath === "/" || currentPath.startsWith("/profile");
 
-  const [isAgent, setIsAgent] = useState<boolean>(false);
-
   const [authMode, setAuthMode] = useState<number>(0); // 0:none, 1:log in, 2:sign in
-  const [isAuthed, setIsAuthed] = useState<boolean>(false);
+
+  // Context 전역 상태 호출
+  const context = useContext(AuthContext);
+  if (!context) return null;
+
+  const { userType } = context; //, setUserType } = context;
 
   const homeTabStyle = isSpecialBackground
     ? "text-gray-0"
@@ -51,21 +55,16 @@ const NavigationHeader = () => {
           </Link>
           <Link
             className={`cursor-pointer ${searchTabStyle}`}
-            to={`/search/${isAgent ? "foreigner" : "agent"}`}
+            to={`/search/${userType === "VALID_AGENT" ? "foreigner" : "agent"}`}
           >
-            {isAgent ? "외국인" : "행정사"} 탐색
+            {userType === "VALID_AGENT" ? "외국인" : "행정사"}
+            탐색
           </Link>
         </div>
       </div>
-      <div onClick={() => setIsAgent(!isAgent)}>유저 변경</div>
-      <div
-        className="mr-auto ml-3"
-        onClick={() => setIsAuthed((prev) => !prev)}
-      >
-        로그인 상태 변경
-      </div>
+
       <div className="flex flex-row gap-6 h-12">
-        {isAuthed ? (
+        {userType !== "NOT_AUTHED" ? (
           <div className="flex flex-row items-center">
             <Link
               to="/chat"

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { IcGraduation, IcLocation } from "../../assets/icon/StratisUi";
 import Tag from "../common/Tag";
+import { useContext } from "react";
+import { UserContext } from "../../contexts/AuthContext";
 
 const AgentCard = ({ hasAnimation = true, className = "" }) => {
   const agent = {
@@ -8,7 +10,11 @@ const AgentCard = ({ hasAnimation = true, className = "" }) => {
     name: "엄경례",
     address: "서울특별시 강남구",
   };
-  const authed = false;
+
+  const context = useContext(UserContext);
+  if (!context) return null;
+  const { userType } = context;
+
   const animationStyle = hasAnimation
     ? "transition-all duration-150 ease-out hover:scale-107 hover:m-2"
     : "";
@@ -30,7 +36,7 @@ const AgentCard = ({ hasAnimation = true, className = "" }) => {
           <a className="flex flex-row items-center gap-1.5 caption-m-medium">
             <IcGraduation size={14} /> 전문 분야
           </a>
-          {authed ? (
+          {userType !== "NOT_AUTHED" ? (
             <ol></ol>
           ) : (
             <Tag type={"small_fill_gray"}>로그인 후 확인 가능합니다.</Tag>
