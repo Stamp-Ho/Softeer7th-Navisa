@@ -56,23 +56,37 @@ jobs:
             cd ~/navisa-dev
             
             # ==========================================
-            # [Part 1] Spring Boot Docker 배포
+            # [Part 1] Blue/Green Info Setup
+            # ==========================================
+            echo "Identifying target environment..."
+            
+            # 컨테이너 실행 여부를 이름으로 체크 (가장 확실한 방법)
+            if [ $(docker ps -q -f name=navisa-spring-app-blue) ]; then
+              echo "Current is BLUE -> Target is GREEN (8081)"
+              TARGET_NAME="navisa-spring-app-green"
+              TARGET_PORT=8081
+              CURRENT_NAME="navisa-spring-app-blue"
+            else
+              echo "Current is GREEN (or none) -> Target is BLUE (8080)"
+              TARGET_NAME="navisa-spring-app-blue"
+              TARGET_PORT=8080
+              CURRENT_NAME="navisa-spring-app-green"
+            fi
+
+            # ==========================================
+            # [Part 2] New Container Deployment
             # ==========================================
             echo "Loading Docker image..."
             docker load -i navisa-spring-app.tar
+
+            # 기존에 혹시나 남아있을 타겟 컨테이너/포트 강제 정리
+            echo "Cleaning up $TARGET_NAME if exists..."
+            docker rm -f $TARGET_NAME 2>/dev/null || true
             
-            if [ "$(docker ps -aq -f name=navisa-spring-app)" ]; then
-                echo "Stopping existing container..."
-                docker stop navisa-spring-app
-                docker rm navisa-spring-app
-            fi
-            
-            docker image prune -f
-            
-            echo "Starting new container..."
+            echo "Starting new container ($TARGET_NAME) on port $TARGET_PORT..."
             docker run -d \
-              --name navisa-spring-app \
-              -p 8080:8080 \
+              --name $TARGET_NAME \
+              -p $TARGET_PORT:8080 \
               -e SPRING_PROFILES_ACTIVE=remote \
               -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
               -e POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
@@ -86,23 +100,84 @@ jobs:
               -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
               -e AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }} \
               -e AWS_CLOUDFRONT_DOMAIN=${{ secrets.AWS_CLOUDFRONT_DOMAIN }} \
+              --restart unless-stopped \
               navisa-spring-app
             
             rm navisa-spring-app.tar
-            
+
             # ==========================================
-            # [Part 2] Nginx 설정 배포 및 적용
+            # [Part 3] Health Check (강화됨)
             # ==========================================
-            echo "Updating Nginx configuration..."
-            sudo cp ~/navisa-dev/docs/infra/nginx.conf /etc/nginx/sites-available/api.navisa.site
-            sudo nginx -t
+            echo "Health checking $TARGET_NAME at port $TARGET_PORT..."
             
-            # 검사 결과($?)가 성공(0)이면 재시작
-            if [ $? -eq 0 ]; then
-                sudo systemctl reload nginx
-                echo "Nginx reloaded successfully."
-            else
-                echo "❌ Nginx configuration test failed! Not reloading."
-                # 배포 실패로 처리하려면 아래 exit 1 주석 해제
-                # exit 1
+            MAX_RETRIES=15  # JVM 기동 시간을 고려해 횟수 상향
+            COUNT=0
+            SUCCESS=0
+            
+            # 애플리케이션 내부 로직이 준비될 때까지 대기
+            while [ $COUNT -lt $MAX_RETRIES ]; do
+              # 컨테이너 생존 여부 확인
+              if [ -z "$(docker ps -q -f name=$TARGET_NAME)" ]; then
+                  echo "❌ Container $TARGET_NAME died! Checking logs..."
+                  docker logs --tail 50 $TARGET_NAME
+                  exit 1
+              fi
+
+              # 실제 HTTP 응답 확인
+              RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$TARGET_PORT/swagger-ui/index.html || echo "000")
+              
+              if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "302" ]; then
+                 echo "✅ Health Check Passed! (HTTP $RESPONSE)"
+                 SUCCESS=1
+                 break
+              fi
+              
+              echo "Waiting for Spring Boot... ($((COUNT+1))/$MAX_RETRIES)"
+              sleep 10
+              COUNT=$((COUNT+1))
+            done
+            
+            if [ $SUCCESS -eq 0 ]; then
+              echo "❌ Health Check Timeout! Rolling back..."
+              docker logs --tail 100 $TARGET_NAME
+              docker stop $TARGET_NAME && docker rm $TARGET_NAME
+              exit 1
             fi
+
+            # ==========================================
+            # [Part 4] Switch Traffic (Nginx)
+            # ==========================================
+            echo "Switching Nginx traffic to $TARGET_PORT..."
+
+            # 1. 현재 설정 백업 (old container 포트 정보 보존)
+            sudo cp /etc/nginx/conf.d/service-url.inc /etc/nginx/conf.d/service-url.inc.bak
+
+            # 2. 새로운 포트로 설정 변경
+            echo "set \$service_url http://127.0.0.1:$TARGET_PORT;" | sudo tee /etc/nginx/conf.d/service-url.inc
+
+            # 3. Nginx 문법 검사
+            if ! sudo nginx -t; then
+              echo "❌ Nginx config test failed! Rolling back..."
+              # 백업 복원 (old container 포트로 되돌림)
+              sudo mv /etc/nginx/conf.d/service-url.inc.bak /etc/nginx/conf.d/service-url.inc
+              sudo systemctl reload nginx
+              # 새 컨테이너 정리
+              docker stop $TARGET_NAME && docker rm $TARGET_NAME
+              exit 1
+            fi
+
+            # 4. 검증 성공 시 트래픽 전환
+            sudo systemctl reload nginx
+            sudo rm -f /etc/nginx/conf.d/service-url.inc.bak
+            echo "Traffic successfully switched."
+
+            # ==========================================
+            # [Part 5] Cleanup Old Container
+            # ==========================================
+            if [ $(docker ps -q -f name=$CURRENT_NAME) ]; then
+              echo "Stopping old container ($CURRENT_NAME)..."
+              docker stop $CURRENT_NAME && docker rm $CURRENT_NAME
+            fi
+            
+            docker image prune -af
+            echo "🚀 Deployment Completed Successfully!"
