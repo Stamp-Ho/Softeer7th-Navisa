@@ -37,7 +37,7 @@ export const Chemistry = (props: IProps) => {
         <path
           d="M59.707 61.0586L63.0557 66.9512L63.1699 67.1689C64.2597 69.4302 62.6185 72.1122 60.0527 72.1123H28.9189C26.2699 72.1123 24.6064 69.2537 25.915 66.9512L29.2646 61.0586H59.707Z"
           fill="url(#paint2_linear_648_39797)"
-          fill-opacity="0.5"
+          fillOpacity="0.5"
         />
         <rect
           x="36.207"
@@ -65,8 +65,8 @@ export const Chemistry = (props: IProps) => {
           y2="76.7344"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7360FF" />
-          <stop offset="1" stop-color="#4FBCCF" />
+          <stop stopColor="#7360FF" />
+          <stop offset="1" stopColor="#4FBCCF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_648_39797"
@@ -76,8 +76,8 @@ export const Chemistry = (props: IProps) => {
           y2="41.0233"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_648_39797"
@@ -87,8 +87,8 @@ export const Chemistry = (props: IProps) => {
           y2="72.1123"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#F4F3FF" />
-          <stop offset="1" stop-color="#F4F3FF" stop-opacity="0" />
+          <stop stopColor="#F4F3FF" />
+          <stop offset="1" stopColor="#F4F3FF" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>

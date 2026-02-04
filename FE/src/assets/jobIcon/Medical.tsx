@@ -23,8 +23,8 @@ export const Medical = (props: IProps) => {
       >
         <g opacity="0.7">
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M20.1316 27.5207C22.8291 24.714 26.4872 23.1372 30.3016 23.1372C34.1159 23.1372 37.774 24.714 40.4715 27.5207L43.735 30.9143C44.2542 31.4543 45.1183 31.4543 45.6375 30.9143L48.901 27.5207C50.2279 26.0907 51.8152 24.9502 53.5702 24.1656C55.3252 23.3809 57.2127 22.9679 59.1227 22.9506C61.0327 22.9334 62.9269 23.3122 64.6947 24.0649C66.4625 24.8177 68.0686 25.9294 69.4192 27.3351C70.7699 28.7408 71.838 30.4124 72.5612 32.2523C73.2845 34.0922 73.6485 36.0637 73.6319 38.0515C73.6153 40.0394 73.2185 42.004 72.4646 43.8305C71.7107 45.6571 70.6148 47.3091 69.2409 48.6902L45.6379 73.2594C45.1186 73.8 44.2539 73.8 43.7346 73.2594L20.1316 48.6902C17.4349 45.8826 15.9199 42.0753 15.9199 38.1054C15.9199 34.1356 17.4349 30.3282 20.1316 27.5207Z"
             fill="#787F8B"
           />
@@ -63,8 +63,8 @@ export const Medical = (props: IProps) => {
           y2="41.8093"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.343539" stop-color="#7360FF" />
-          <stop offset="1" stop-color="#4FBCCF" />
+          <stop offset="0.343539" stopColor="#7360FF" />
+          <stop offset="1" stopColor="#4FBCCF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_648_40003"
@@ -74,8 +74,8 @@ export const Medical = (props: IProps) => {
           y2="73.6088"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_648_40003"
@@ -85,8 +85,8 @@ export const Medical = (props: IProps) => {
           y2="73.6088"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>

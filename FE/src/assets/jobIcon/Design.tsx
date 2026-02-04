@@ -127,8 +127,8 @@ export const Design = (props: IProps) => {
           y2="37.4524"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.343539" stop-color="#7360FF" />
-          <stop offset="1" stop-color="#4FBCCF" />
+          <stop offset="0.343539" stopColor="#7360FF" />
+          <stop offset="1" stopColor="#4FBCCF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_648_39967"
@@ -138,8 +138,8 @@ export const Design = (props: IProps) => {
           y2="93.6179"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#005251" />
-          <stop offset="1" stop-color="#005251" stop-opacity="0" />
+          <stop stopColor="#005251" />
+          <stop offset="1" stopColor="#005251" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_648_39967"
@@ -149,8 +149,8 @@ export const Design = (props: IProps) => {
           y2="71.8828"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#005251" />
-          <stop offset="1" stop-color="#005251" stop-opacity="0" />
+          <stop stopColor="#005251" />
+          <stop offset="1" stopColor="#005251" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>

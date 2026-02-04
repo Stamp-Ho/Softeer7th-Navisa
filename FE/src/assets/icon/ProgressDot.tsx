@@ -82,8 +82,8 @@ const ProgressDot = ({
                   gradientUnits="userSpaceOnUse"
                   gradientTransform="translate(25.0261 25.0257) rotate(90.0588) scale(25)"
                 >
-                  <stop stop-color={"#6958DE"} />
-                  <stop offset="1" stop-color="white" stop-opacity="0" />
+                  <stop stopColor={"#6958DE"} />
+                  <stop offset="1" stopColor="white" stopOpacity="0" />
                 </radialGradient>
                 <radialGradient
                   id="grayShadow"
@@ -93,8 +93,8 @@ const ProgressDot = ({
                   gradientUnits="userSpaceOnUse"
                   gradientTransform="translate(25.0261 25.0257) rotate(90.0588) scale(25)"
                 >
-                  <stop stop-color={"#999999"} />
-                  <stop offset="1" stop-color="white" stop-opacity="0" />
+                  <stop stopColor={"#999999"} />
+                  <stop offset="1" stopColor="white" stopOpacity="0" />
                 </radialGradient>
               </defs>
             </svg>

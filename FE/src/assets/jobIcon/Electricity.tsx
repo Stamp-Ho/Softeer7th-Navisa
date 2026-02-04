@@ -80,12 +80,12 @@ export const Electricity = (props: IProps) => {
         <path
           d="M69.8172 48.8288C70.4762 49.4878 71.5502 49.4918 72.1567 48.7841C73.66 47.0297 74.8791 45.046 75.766 42.9049C76.8684 40.2433 77.4359 37.3906 77.4359 34.5097C77.4359 31.6288 76.8684 28.7761 75.766 26.1145C74.6635 23.4528 73.0475 21.0344 71.0104 18.9973C68.9733 16.9602 66.5549 15.3443 63.8933 14.2418C61.2317 13.1393 58.379 12.5719 55.498 12.5719C52.6171 12.5719 49.7644 13.1393 47.1028 14.2418C44.9617 15.1286 42.9781 16.3478 41.2236 17.8511C40.5159 18.4575 40.5199 19.5316 41.1789 20.1906L45.773 24.7846C46.432 25.4436 47.4945 25.4325 48.2389 24.8718C49.0505 24.2606 49.9378 23.7529 50.8807 23.3623C52.3446 22.756 53.9135 22.4439 55.498 22.4439C57.0825 22.4439 58.6515 22.756 60.1154 23.3623C61.5793 23.9687 62.9094 24.8575 64.0299 25.9779C65.1503 27.0983 66.039 28.4284 66.6454 29.8923C67.2518 31.3562 67.5639 32.9252 67.5639 34.5097C67.5639 36.0942 67.2518 37.6632 66.6454 39.1271C66.2549 40.0699 65.7472 40.9573 65.1359 41.7688C64.5752 42.5133 64.5641 43.5758 65.2231 44.2348L69.8172 48.8288Z"
           fill="url(#paint5_linear_648_39721)"
-          fill-opacity="0.9"
+          fillOpacity="0.9"
         />
         <path
           d="M67.0769 23.0189C68.6048 24.5468 69.8174 26.3605 70.6442 28.3568C71.471 30.3529 71.8968 32.4925 71.8968 34.6531C71.8968 36.8136 71.471 38.9532 70.6442 40.9493C70.0331 42.4248 69.2113 43.8009 68.2073 45.0352C67.8502 45.4743 67.3132 45.6443 66.7988 45.5627C66.5689 45.5263 66.3739 45.3853 66.2093 45.2207L65.1683 44.1797C64.5094 43.5207 64.5201 42.4582 65.0806 41.7138C65.6918 40.9023 66.1996 40.0145 66.5901 39.0718C67.1965 37.6079 67.5092 36.0387 67.5092 34.4542C67.5092 32.8697 67.1964 31.3004 66.5901 29.8366C65.9837 28.3728 65.0947 27.043 63.9744 25.9226C62.854 24.8023 61.5242 23.9132 60.0604 23.3069C58.5967 22.7006 57.0278 22.3885 55.4435 22.3885C53.859 22.3885 52.2891 22.7005 50.8252 23.3069C49.8825 23.6974 48.9947 24.2052 48.1832 24.8164C47.4388 25.3768 46.3769 25.3881 45.718 24.7294L44.8753 23.8867C44.7106 23.722 44.5695 23.5269 44.5332 23.2968C44.452 22.7827 44.6224 22.2462 45.0613 21.8892C46.2956 20.8853 47.6711 20.0628 49.1465 19.4516C51.1427 18.6248 53.2829 18.1997 55.4435 18.1997C57.604 18.1998 59.7437 18.6255 61.7398 19.4523C63.7358 20.2792 65.5492 21.4913 67.0769 23.0189Z"
           fill="url(#paint6_linear_648_39721)"
-          fill-opacity="0.5"
+          fillOpacity="0.5"
         />
       </g>
       <defs>
@@ -97,8 +97,8 @@ export const Electricity = (props: IProps) => {
           y2="78.0353"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7360FF" />
-          <stop offset="1" stop-color="#4FBCCF" />
+          <stop stopColor="#7360FF" />
+          <stop offset="1" stopColor="#4FBCCF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_648_39721"
@@ -108,8 +108,8 @@ export const Electricity = (props: IProps) => {
           y2="62.49"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_648_39721"
@@ -119,8 +119,8 @@ export const Electricity = (props: IProps) => {
           y2="81.2816"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7360FF" />
-          <stop offset="1" stop-color="#4FBCCF" />
+          <stop stopColor="#7360FF" />
+          <stop offset="1" stopColor="#4FBCCF" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_648_39721"
@@ -130,8 +130,8 @@ export const Electricity = (props: IProps) => {
           y2="70.9447"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_648_39721"
@@ -141,8 +141,8 @@ export const Electricity = (props: IProps) => {
           y2="88.97"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7360FF" />
-          <stop offset="1" stop-color="#4FBCCF" />
+          <stop stopColor="#7360FF" />
+          <stop offset="1" stopColor="#4FBCCF" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_648_39721"
@@ -152,8 +152,8 @@ export const Electricity = (props: IProps) => {
           y2="34.5097"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7360FF" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#7360FF" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint6_linear_648_39721"
@@ -163,8 +163,8 @@ export const Electricity = (props: IProps) => {
           y2="34.5538"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7360FF" />
-          <stop offset="1" stop-color="#7360FF" stop-opacity="0" />
+          <stop stopColor="#7360FF" />
+          <stop offset="1" stopColor="#7360FF" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>

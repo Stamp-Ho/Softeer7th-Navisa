@@ -98,7 +98,7 @@ export const Sales = (props: IProps) => {
         <path
           d="M30.9766 35.1823L18.9259 48.9463L21.3531 51.8277L25.886 56.3509L39.8865 68.1366L27.9441 52.7123L26.8578 49.2199C26.1727 47.0172 26.3554 44.6359 27.3685 42.5635L30.9766 35.1823Z"
           fill="url(#paint1_linear_648_39933)"
-          fill-opacity="0.5"
+          fillOpacity="0.5"
         />
       </g>
       <defs>
@@ -110,8 +110,8 @@ export const Sales = (props: IProps) => {
           y2="41.1679"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.343539" stop-color="#7360FF" />
-          <stop offset="1" stop-color="#4FBCCF" />
+          <stop offset="0.343539" stopColor="#7360FF" />
+          <stop offset="1" stopColor="#4FBCCF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_648_39933"
@@ -121,8 +121,8 @@ export const Sales = (props: IProps) => {
           y2="69.5399"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>

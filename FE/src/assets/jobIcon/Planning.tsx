@@ -47,17 +47,17 @@ export const Planning = (props: IProps) => {
           <path
             d="M26.9599 54.6487L21.0005 57.9385L23.049 58.3377C24.2936 58.5803 25.5744 58.5694 26.8147 58.3056L28.7812 57.8874L36.8124 53.492L31.4566 42.0064L31.7902 45.4942C32.148 49.2356 30.2502 52.8323 26.9599 54.6487Z"
             fill="url(#paint2_linear_648_39921)"
-            fill-opacity="0.5"
+            fillOpacity="0.5"
           />
           <path
             d="M45.4935 51.5151L40.1232 52.9235L48.8492 47.2285L50.2101 46.0603C52.9945 43.6703 54.4314 40.0679 54.0563 36.4177L53.0927 27.0391L63.8044 50.0105L47.5334 51.1774C46.8445 51.2268 46.1616 51.3399 45.4935 51.5151Z"
             fill="url(#paint3_linear_648_39921)"
-            fill-opacity="0.5"
+            fillOpacity="0.5"
           />
           <path
             d="M33.6135 57.1348L29.4395 57.9059L40.3909 52.7991L48.88 65.4252L44.3187 60.8317C43.6836 60.1922 42.9697 59.6361 42.194 59.1771L40.9448 58.4377C38.7387 57.132 36.1344 56.6692 33.6135 57.1348Z"
             fill="url(#paint4_linear_648_39921)"
-            fill-opacity="0.5"
+            fillOpacity="0.5"
           />
         </g>
       </g>
@@ -70,8 +70,8 @@ export const Planning = (props: IProps) => {
           y2="56.186"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#4FBCCF" />
-          <stop offset="1" stop-color="#7360FF" />
+          <stop stopColor="#4FBCCF" />
+          <stop offset="1" stopColor="#7360FF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_648_39921"
@@ -81,8 +81,8 @@ export const Planning = (props: IProps) => {
           y2="32.0995"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#4FBCCF" />
-          <stop offset="1" stop-color="#7360FF" />
+          <stop stopColor="#4FBCCF" />
+          <stop offset="1" stopColor="#7360FF" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_648_39921"
@@ -92,8 +92,8 @@ export const Planning = (props: IProps) => {
           y2="56.1958"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_648_39921"
@@ -103,8 +103,8 @@ export const Planning = (props: IProps) => {
           y2="53.2176"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_648_39921"
@@ -114,8 +114,8 @@ export const Planning = (props: IProps) => {
           y2="67.4643"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <clipPath id="clip0_648_39921">
           <rect width="90" height="90" rx="45" fill="white" />

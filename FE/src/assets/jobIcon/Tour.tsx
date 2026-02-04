@@ -62,8 +62,8 @@ export const Tour = (props: IProps) => {
           y2="42.8093"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.343539" stop-color="#7360FF" />
-          <stop offset="1" stop-color="#4FBCCF" />
+          <stop offset="0.343539" stopColor="#7360FF" />
+          <stop offset="1" stopColor="#4FBCCF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_648_40019"
@@ -73,8 +73,8 @@ export const Tour = (props: IProps) => {
           y2="71.6416"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <clipPath id="clip0_648_40019">
           <rect width="90" height="90" rx="45" fill="white" />

@@ -75,8 +75,8 @@ export const AllJobs = (props: IProps) => {
           y2="59.0295"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.343539" stop-color="#7360FF" />
-          <stop offset="1" stop-color="#4FBCCF" />
+          <stop offset="0.343539" stopColor="#7360FF" />
+          <stop offset="1" stopColor="#4FBCCF" />
         </linearGradient>
       </defs>
     </svg>
