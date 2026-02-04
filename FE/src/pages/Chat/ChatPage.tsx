@@ -6,6 +6,7 @@ import { IcArrows } from "../../assets/icon/StratisUi";
 import ChatRoom from "./ChatRoom";
 import ChatRoomModal from "./ChatRoomModal";
 import AlarmBadge from "../../assets/icon/AlarmBadge";
+import ReviewModal from "./ReviewModal";
 
 const dummyDataAll = [
   {
@@ -950,6 +951,8 @@ const ChatPage = () => {
 
   const [viewMessageModal, setViewMessageModal] = useState<number>(0); // 0 미표기, 1 수임 제안하기, 2 수임 취소하기, 3 수임 제안 답변보내기, 4 차단하기
 
+  const [reviewModal, setReviewModal] = useState<number>(0); // 0 미표기, 1 뱃지 리뷰 모달, 2 서비스 리뷰 모달
+
   const onModalAction = (num: number) => {
     setViewMessageModal(num);
   };
@@ -962,9 +965,16 @@ const ChatPage = () => {
     setSelectedChatRoomId(null);
   };
 
+  const reviewHandler = (num: number) => {
+    setReviewModal(num);
+  };
+
   return (
     <>
       <div className="fixed inset-0 bg-background-sub -z-10"></div>
+      {reviewModal > 0 && (
+        <ReviewModal reviewHandler={reviewHandler} modalView={reviewModal} />
+      )}
       {viewMessageModal > 0 && (
         <ChatRoomModal
           onModalAction={onModalAction}
@@ -1115,6 +1125,8 @@ const ChatPage = () => {
           </div>
         </div>
       )}
+      <button onClick={() => setReviewModal(1)}>리뷰1</button>
+      <button onClick={() => setReviewModal(2)}>리뷰2</button>
     </>
   );
 };

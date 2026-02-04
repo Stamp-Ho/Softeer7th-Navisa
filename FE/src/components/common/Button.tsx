@@ -25,7 +25,7 @@ const Button = ({
 }: ButtonProps) => {
   const getButtonStyle = () => {
     if (disabled) return "bg-gray-200 text-white cursor-not-allowed";
-    return styles[type] || styles.lightGray;
+    return "cursor-pointer " + (styles[type] || styles.lightGray);
   };
 
   return (
@@ -33,7 +33,7 @@ const Button = ({
       disabled={disabled}
       onClick={!disabled ? onClick : undefined}
       className={`
-        cursor-pointer flex items-center justify-center transition-all
+        flex items-center justify-center transition-all
         ${getButtonStyle()} 
         ${sizes[size] || sizes.medium} 
         ${className}
