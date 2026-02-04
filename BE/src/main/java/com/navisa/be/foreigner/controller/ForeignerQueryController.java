@@ -2,7 +2,12 @@ package com.navisa.be.foreigner.controller;
 
 import com.navisa.be.common.annotation.HasUserType;
 import com.navisa.be.common.annotation.LoginUser;
+import com.navisa.be.common.annotation.SliceInfo;
+import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.common.dto.response.BaseResponse;
+import com.navisa.be.common.dto.response.SliceResponse;
+import com.navisa.be.foreigner.dto.request.ForeignerCardRequest;
+import com.navisa.be.foreigner.dto.response.ForeignerCardExtensionResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerCardResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
@@ -10,13 +15,16 @@ import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.foreigner.service.ForeignerServiceFacade;
 import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/foreigner")
@@ -50,5 +58,18 @@ public class ForeignerQueryController {
     public BaseResponse<List<ForeignerCardResponse>> findMatchedForeignerCard(@LoginUser String email) {
         List<ForeignerCardResponse> cards = foreignerQueryService.findForeignerCardMatchOnSpecializedJob(email);
         return new BaseResponse<>(cards);
+    }
+
+    @Operation(
+            summary = "외국인 프로필 필터 검색 API",
+            description = "직무, 지역, 언어 필터를 기반으로 외국인 목록을 조회합니다. No-Offset 방식의 Slice 페이징을 지원합니다."
+    )
+    @HasUserType({ UserType.VALID_AGENT })
+    @GetMapping("/cards")
+    public BaseResponse<SliceResponse<ForeignerCardExtensionResponse, UUID>> findForeignerProfileCardsBasedOnFilter(
+            @ModelAttribute ForeignerCardRequest request,
+            @Parameter(description = "페이징 정보 (lastElementId: 마지막으로 본 외국인 ID, size: 페이지 크기)") @SliceInfo SliceRequest<UUID> slice) {
+
+        return new BaseResponse<>(foreignerServiceFacade.findForeignerProfileCardsBasedOnFilter(request, slice));
     }
 }

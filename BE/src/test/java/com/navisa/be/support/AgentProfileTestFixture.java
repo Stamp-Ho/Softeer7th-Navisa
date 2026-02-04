@@ -12,8 +12,10 @@ import com.navisa.be.agent.model.enums.BadgeName;
 import com.navisa.be.agent.repository.*;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.entity.Language;
+import com.navisa.be.common.model.entity.Nationality;
 import com.navisa.be.common.repository.JobCodeRepository;
 import com.navisa.be.common.repository.LanguageRepository;
+import com.navisa.be.common.repository.NationalityRepository;
 import com.navisa.be.info.model.entity.JobGroup;
 import com.navisa.be.info.repository.JobGroupRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
@@ -39,6 +41,7 @@ public class AgentProfileTestFixture {
     private final AgentBadgeRepository agentBadgeRepository;
     private final AgentBadgeSummaryRepository agentBadgeSummaryRepository;
     private final AgentReviewRepository agentReviewRepository;
+    private final NationalityRepository nationalityRepository;
 
     public JobCode createJobCode(String code, String name) {
         JobCode jobCode = new JobCode(null, code, name, new float[512], null);
@@ -66,6 +69,11 @@ public class AgentProfileTestFixture {
     public Language createLanguage(String name) {
         Language language = new Language(null, name);
         return languageRepository.save(language);
+    }
+
+    public Nationality createNationality(String name) {
+        Nationality nationality = new Nationality(null, name);
+        return nationalityRepository.save(nationality);
     }
 
     public AgentProfile createAgentProfile(String name, String address, JobCode job, Language lang) {
@@ -113,8 +121,7 @@ public class AgentProfileTestFixture {
                 LocalDate.now(),
                 "inner",
                 "mgmt",
-                "Comment"
-        );
+                "Comment");
         return agentProfileRepository.save(profile);
     }
 
@@ -130,13 +137,14 @@ public class AgentProfileTestFixture {
         return agentLanguageRepository.save(agentLang);
     }
 
-    public Badge createBadge(BadgeName badgeName){
+    public Badge createBadge(BadgeName badgeName) {
         Badge badge = new Badge(badgeName);
         return badgeRepository.save(badge);
     }
 
     public AgentReview createAgentReview(AgentProfile agentProfile, Badge badge) {
-        AgentReview review = new AgentReview(agentProfile.getId(), UUID.randomUUID(), "Review Content", new double[512]);
+        AgentReview review = new AgentReview(agentProfile.getId(), UUID.randomUUID(), "Review Content",
+                new double[512]);
         review = agentReviewRepository.save(review);
 
         AgentBadge agentBadge = new AgentBadge(badge, review);

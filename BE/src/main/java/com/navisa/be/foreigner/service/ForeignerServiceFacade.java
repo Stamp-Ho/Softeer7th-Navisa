@@ -1,14 +1,20 @@
 package com.navisa.be.foreigner.service;
 
 import com.navisa.be.common.dto.projection.JobCodeSimilarityProjection;
+import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.common.dto.response.SliceResponse;
 import com.navisa.be.common.exception.BaseException;
 import com.navisa.be.common.infrastructure.client.GeminiEmbeddingRequestType;
 import com.navisa.be.common.infrastructure.client.GeminiTextEmbeddingClient;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.repository.JobCodeRepository;
+import com.navisa.be.foreigner.dto.ForeignerCardQueryDto;
+import com.navisa.be.foreigner.dto.request.ForeignerCardRequest;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
+import com.navisa.be.foreigner.dto.response.ForeignerCardExtensionResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
+import com.navisa.be.info.service.JobGroupService;
 import com.navisa.be.user.service.UserQueryService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +33,7 @@ public class ForeignerServiceFacade {
     private final JobCodeRepository jobCodeRepository;
     private final UserQueryService userQueryService;
     private final ForeignerQueryService foreignerQueryService;
+    private final JobGroupService jobGroupService;
 
     @Transactional
     public void registerAllForeignerInfo(ForeignerRegisterRequest request, String email) {
@@ -52,5 +59,15 @@ public class ForeignerServiceFacade {
     public ForeignerQueryResponse findForeignerTotalInfo(String email) {
         UUID userId = userQueryService.findByEmail(email).getId();
         return foreignerQueryService.findForeignerTotalInfo(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public SliceResponse<ForeignerCardExtensionResponse, UUID> findForeignerProfileCardsBasedOnFilter(ForeignerCardRequest request, SliceRequest<UUID> slice) {
+
+        List<Long> jobCodeIds = jobGroupService.findAllJobCodeIdsByGroupNames(request.jobGroupNameList());
+
+        ForeignerCardQueryDto dto = new ForeignerCardQueryDto(jobCodeIds, request.nationIdList(), request.languageIdList());
+
+        return foreignerQueryService.findForeignerProfileCardsBasedOnFilter(dto, slice);
     }
 }

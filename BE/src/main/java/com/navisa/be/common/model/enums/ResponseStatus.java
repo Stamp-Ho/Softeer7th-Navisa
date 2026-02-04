@@ -28,6 +28,7 @@ public enum ResponseStatus {
     INVALID_INITIAL_USER_TYPE(400, "가입 시 유효하지 않은 유저 타입입니다."),
     INVALID_FOREIGNER(400, "존재하지 않는 외국인 프로필 정보입니다."),
     INVALID_FOREIGNER_EXPECTEDCOMPANY(400, "존재하지 않는 외국인 입사 예정 정보입니다."),
+    INVALID_FOREIGNER_EDUCATION(400, "존재하지 않는 외국인 학력 정보입니다."),
     INVALID_NATIONALITY(400, "잘못된 Nationality id 정보입니다."),
     INVALID_LANGUAGE(400, "잘못된 Language id 정보입니다."),
     STORAGE_UNSUPPORTED_CONTENT_TYPE(400, "지원하지 않는 파일 타입입니다"),

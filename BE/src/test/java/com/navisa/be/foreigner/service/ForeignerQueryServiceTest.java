@@ -16,22 +16,24 @@ import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.dto.response.ForeignerCardResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
+import com.navisa.be.foreigner.model.entity.ForeignerExpectedCompany;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
+import com.navisa.be.foreigner.repository.ForeignerExpectedCompanyRepository;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
 import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
-import com.navisa.be.support.ForeignerFixture;
-import com.navisa.be.support.IntegrationTestSupport;
-import com.navisa.be.user.model.enums.LoginType;
+import com.navisa.be.info.model.entity.JobGroup;
+import com.navisa.be.support.*;
 import com.navisa.be.user.model.entity.User;
+import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,9 +41,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-
-import com.navisa.be.foreigner.model.entity.ForeignerExpectedCompany;
-import com.navisa.be.foreigner.repository.ForeignerExpectedCompanyRepository;
 
 @Transactional
 class ForeignerQueryServiceTest extends IntegrationTestSupport {
@@ -81,6 +80,15 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private ForeignerExpectedCompanyRepository foreignerExpectedCompanyRepository;
+
+    @Autowired
+    private ForeignerProfileTestFixture foreignerFixture;
+
+    @Autowired
+    private AgentProfileTestFixture agentFixture;
+
+    @Autowired
+    private UserTestFixture userFixture;
 
     @Test
     @DisplayName("userId로 외국인 전체 정보를 조회한다")
@@ -167,7 +175,7 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("행정사 전문분야와 겹치는 외국인을 추천한다")
+    @DisplayName("행정사 전문분야와 겹치는 외국인을 추천한다 (Manual Setup)")
     void findForeignerCardMatchOnSpecializedJob_integration() {
         // given
         // 1. Agent Setup
@@ -222,8 +230,8 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
         // then
         assertThat(result).hasSize(1);
         ForeignerCardResponse response = result.get(0);
-        assertThat(response.foreignerId()).isEqualTo(matchForeigner.getId());
-        assertThat(response.jobTitle()).isEqualTo("Software Engineer");
+        assertThat(response.getForeignerId()).isEqualTo(matchForeigner.getId());
+        assertThat(response.getJobTitle()).isEqualTo("Software Engineer");
     }
 
     @Test
@@ -264,5 +272,54 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
 
         // then
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("행정사의 특화 직무와 매칭되는 외국인 프로필을 조회한다 (Fixture Usage)")
+    void findForeignerCardMatchOnSpecializedJob_ShouldReturnMatchedProfiles() {
+        // given
+        // 1. 행정사 생성 (특화 직무: Backend)
+        JobGroup devGroup = agentFixture.createJobGroup("IT 개발");
+        JobCode backendJob = agentFixture.createJobCode("DEV-001", "BackEnd", devGroup);
+        JobCode frontendJob = agentFixture.createJobCode("DEV-002", "FrontEnd", devGroup);
+
+        String agentEmail = "agent_fixture@test.com";
+        User agentUser = userFixture.createUser(agentEmail, UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentFixture.createAgentProfile("Agent Kim", "Seoul", agentUser.getId());
+        agentFixture.createAgentSpecializedJob(agentProfile, backendJob);
+
+        // 2. 외국인 생성
+        // Case 1: 매칭되는 외국인 (Backend Similarity)
+        createForeignerWithSimilarity("Matched Foreigner", backendJob.getId(), "Backend Developer");
+
+        // Case 2: 매칭되지 않는 외국인 (Frontend Similarity only)
+        createForeignerWithSimilarity("Unmatched Foreigner", frontendJob.getId(), "Frontend Developer");
+
+        // Case 3: 매칭되지 않는 외국인 (No Similarity)
+        createForeignerWithSimilarity("No Match Foreigner", null, "Chef");
+
+        em.flush();
+        em.clear();
+
+        // when
+        List<ForeignerCardResponse> responses = foreignerQueryService
+                .findForeignerCardMatchOnSpecializedJob(agentEmail);
+
+        // then
+        assertThat(responses).hasSize(1);
+        ForeignerCardResponse response = responses.get(0);
+        assertThat(response.getNickname()).startsWith("Matched Foreigner");
+        assertThat(response.getJobTitle()).isEqualTo("Backend Developer");
+    }
+
+    private void createForeignerWithSimilarity(String nicknameAlias, Long jobCodeId, String jobTitle) {
+        User user = userFixture.createUser(UUID.randomUUID() + "@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile profile = foreignerFixture.createForeignerProfile(user, nicknameAlias);
+
+        long[] jobIds = (jobCodeId != null) ? new long[] { jobCodeId } : new long[] {};
+        foreignerFixture.createForeignerSimilarity(profile, jobIds);
+
+        // Strict Validation Requirement
+        foreignerFixture.createForeignerExpectedCompany(profile, jobTitle);
     }
 }

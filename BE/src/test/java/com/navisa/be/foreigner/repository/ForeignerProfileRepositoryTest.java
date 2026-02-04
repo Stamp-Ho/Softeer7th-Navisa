@@ -108,25 +108,27 @@ class ForeignerProfileRepositoryTest extends IntegrationTestSupport {
         // then
         assertThat(result).hasSize(10);
     }
+
     @Test
     @DisplayName("결과는 최신순(createdAt Desc)으로 정렬되어야 한다")
     void findTop10ByJobCodeMatching_shouldOrderByCreatedAtDesc() throws InterruptedException {
         // given
         long[] commonIds = { 100L };
 
-        // Save 3 profiles sequentially with a small delay to ensure different timestamps
+        // Save 3 profiles sequentially with a small delay to ensure different
+        // timestamps
         ForeignerProfile p1 = new ForeignerProfile(UUID.randomUUID(), ForeignerSearchStatus.IDLE);
         foreignerProfileRepository.save(p1);
         ForeignerSimilarity s1 = new ForeignerSimilarity(null, p1.getId(), new double[] {}, commonIds);
         foreignerSimilarityRepository.save(s1);
-        
+
         Thread.sleep(100);
 
         ForeignerProfile p2 = new ForeignerProfile(UUID.randomUUID(), ForeignerSearchStatus.IDLE);
         foreignerProfileRepository.save(p2);
         ForeignerSimilarity s2 = new ForeignerSimilarity(null, p2.getId(), new double[] {}, commonIds);
         foreignerSimilarityRepository.save(s2);
-        
+
         Thread.sleep(100);
 
         ForeignerProfile p3 = new ForeignerProfile(UUID.randomUUID(), ForeignerSearchStatus.IDLE);
@@ -145,17 +147,17 @@ class ForeignerProfileRepositoryTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("직무 코드가 null이거나 비어있으면 빈 리스트를 반환한다")
-    void findTop10ByJobCodeMatching_shouldReturnEmpty_whenJobIdsNullOrEmpty() {
+    @DisplayName("직무 코드가 null이거나 비어있으면 전체 리스트를 반환한다 (필터 무시)")
+    void findTop10ByJobCodeMatching_shouldReturnAll_whenJobIdsNullOrEmpty() {
         // given
         ForeignerProfile p = new ForeignerProfile(UUID.randomUUID(), ForeignerSearchStatus.IDLE);
         foreignerProfileRepository.save(p);
-        
+
         ForeignerSimilarity s = new ForeignerSimilarity(null, p.getId(), new double[] {}, new long[] { 100L });
         foreignerSimilarityRepository.save(s);
 
         // when & then
-        assertThat(foreignerProfileRepository.findTop10ByJobCodeMatching(null)).isEmpty();
-        assertThat(foreignerProfileRepository.findTop10ByJobCodeMatching(new long[] {})).isEmpty();
+        assertThat(foreignerProfileRepository.findTop10ByJobCodeMatching(null)).hasSize(1);
+        assertThat(foreignerProfileRepository.findTop10ByJobCodeMatching(new long[] {})).hasSize(1);
     }
 }

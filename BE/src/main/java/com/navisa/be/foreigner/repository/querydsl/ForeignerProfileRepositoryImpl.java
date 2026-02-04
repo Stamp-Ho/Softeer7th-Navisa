@@ -1,11 +1,16 @@
 package com.navisa.be.foreigner.repository.querydsl;
 
+import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.foreigner.dto.ForeignerCardQueryDto;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
+import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,20 +47,6 @@ public class ForeignerProfileRepositoryImpl implements ForeignerProfileRepositor
                 .fetch();
     }
 
-    /**
-     * PostgreSQL의 '&&' 연산자를 사용하여 배열 간의 교집합이 있는지 확인하는 템플릿
-     */
-    private BooleanExpression overlapJobIds(long[] jobIds) {
-        if (jobIds == null || jobIds.length == 0) {
-            return Expressions.asBoolean(false).isTrue();
-        }
-        // {1, 2, 3} 형태의 문자열로 변환하여 템플릿에 전달
-        return Expressions.booleanTemplate(
-                "function('array_overlap', {0}, {1}) = true",
-                foreignerSimilarity.jobCodeIdList,
-                jobIds);
-    }
-
     @Override
     public Optional<ForeignerProfile> findByUserIdWithNationalitiesAndLanguages(UUID userId) {
         return Optional.ofNullable(
@@ -69,5 +60,82 @@ public class ForeignerProfileRepositoryImpl implements ForeignerProfileRepositor
                         .leftJoin(foreignerLanguage.language, language).fetchJoin()
                         .where(foreignerProfile.userId.eq(userId))
                         .fetchOne());
+    }
+
+    @Override
+    public List<ForeignerProfile> findByFilters(ForeignerCardQueryDto dto, SliceRequest<UUID> slice) {
+
+        LocalDateTime lastElementCreatedAt = null;
+        if (slice.lastElementId() != null) {
+            lastElementCreatedAt = queryFactory
+                    .select(foreignerProfile.createdAt)
+                    .from(foreignerProfile)
+                    .where(foreignerProfile.id.eq(slice.lastElementId()))
+                    .fetchOne();
+        }
+
+        JPAQuery<ForeignerProfile> query = queryFactory
+                .selectFrom(foreignerProfile)
+                .distinct()
+                .innerJoin(foreignerSimilarity).on(foreignerProfile.id.eq(foreignerSimilarity.foreignerId)) // 필수 조인
+                .where(
+                        isIdle(),
+                        cursorCondition(lastElementCreatedAt, slice.lastElementId()),
+                        overlapJobIds(dto.jobIdList().stream().mapToLong(Long::longValue).toArray()));
+
+        // [최적화] 조건이 있을 때만 Join & Where 적용
+        if (dto.nationIdList() != null && !dto.nationIdList().isEmpty()) {
+            query.leftJoin(foreignerProfile.foreignerNationalities, foreignerNationality)
+                    .where(nationIdIn(dto.nationIdList()));
+        }
+        if (dto.languageIdList() != null && !dto.languageIdList().isEmpty()) {
+            query.leftJoin(foreignerProfile.foreignLanguages, foreignerLanguage)
+                    .where(languageIdIn(dto.languageIdList()));
+        }
+        return query
+                .orderBy(foreignerProfile.createdAt.desc(), foreignerProfile.id.asc())
+                .limit(slice.size() + 1)
+                .fetch();
+    }
+
+    private BooleanExpression isIdle() {
+        return foreignerProfile.status.eq(ForeignerSearchStatus.IDLE);
+    }
+
+    /**
+     * PostgreSQL의 '&&' 연산자를 사용하여 배열 간의 교집합이 있는지 확인하는 템플릿
+     */
+    private BooleanExpression overlapJobIds(long[] jobIds) {
+        if (jobIds == null || jobIds.length == 0) {
+            return null;
+        }
+        // {1, 2, 3} 형태의 문자열로 변환하여 템플릿에 전달
+        return Expressions.booleanTemplate(
+                "function('array_overlap', {0}, {1}) = true",
+                foreignerSimilarity.jobCodeIdList,
+                jobIds);
+    }
+
+    /**
+     * created_at 기준 No-Offset 커서 조건
+     * 정렬 기준: created_at DESC, id ASC
+     */
+    private BooleanExpression cursorCondition(LocalDateTime lastCreatedAt, UUID lastId) {
+        if (lastCreatedAt == null || lastId == null) {
+            return null; // 첫 페이지 조회 시 null 반환
+        }
+
+        // (생성일 < 마지막생성일) OR (생성일 == 마지막생성일 AND ID > 마지막ID)
+        return foreignerProfile.createdAt.lt(lastCreatedAt)
+                .or(foreignerProfile.createdAt.eq(lastCreatedAt)
+                        .and(foreignerProfile.id.gt(lastId)));
+    }
+
+    private BooleanExpression languageIdIn(List<Long> languageIds) {
+        return (languageIds == null || languageIds.isEmpty()) ? null : foreignerLanguage.language.id.in(languageIds);
+    }
+
+    private BooleanExpression nationIdIn(List<Long> nationIds) {
+        return (nationIds == null || nationIds.isEmpty()) ? null : foreignerNationality.nationality.id.in(nationIds);
     }
 }

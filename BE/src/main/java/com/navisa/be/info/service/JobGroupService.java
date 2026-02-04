@@ -17,6 +17,10 @@ public class JobGroupService {
 
     @Transactional(readOnly = true)
     public List<Long> findAllJobCodeIdsByGroupNames(List<String> jobGroupNameList) {
+        if (jobGroupNameList == null || jobGroupNameList.isEmpty()) {
+            return List.of();
+        }
+
         // 1. 이름 리스트로 JobGroup 엔티티들을 조회
         List<JobGroup> jobGroups = jobGroupRepository.findAllByJobGroupNameIn(jobGroupNameList);
 

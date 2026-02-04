@@ -49,6 +49,12 @@ public class ForeignerProfile extends BaseEntity {
         this.status = status;
     }
 
+    public ForeignerProfile(UUID userId, String nickname, ForeignerSearchStatus status) {
+        this.nickname = nickname;
+        this.userId = userId;
+        this.status = status;
+    }
+
     // 프로필 이미지 업데이트 메서드
     public void updateProfileImage(String profileObjectKey) {
         this.profileObjectKey = profileObjectKey;

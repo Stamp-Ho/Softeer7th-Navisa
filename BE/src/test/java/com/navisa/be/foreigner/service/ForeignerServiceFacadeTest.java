@@ -1,6 +1,9 @@
 package com.navisa.be.foreigner.service;
 
+import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.common.dto.response.SliceResponse;
 import com.navisa.be.common.infrastructure.client.GeminiTextEmbeddingClient;
+import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.entity.Language;
 import com.navisa.be.common.model.entity.Nationality;
 import com.navisa.be.common.repository.LanguageRepository;
@@ -8,12 +11,18 @@ import com.navisa.be.common.repository.NationalityRepository;
 import com.navisa.be.common.exception.BaseException;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.repository.JobCodeRepository;
+import com.navisa.be.foreigner.dto.request.ForeignerCardRequest;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
+import com.navisa.be.foreigner.dto.response.ForeignerCardExtensionResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
+import com.navisa.be.info.model.entity.JobGroup;
+import com.navisa.be.support.AgentProfileTestFixture;
 import com.navisa.be.support.ForeignerFixture;
+import com.navisa.be.support.ForeignerProfileTestFixture;
 import com.navisa.be.support.IntegrationTestSupport;
+import com.navisa.be.support.UserTestFixture;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
@@ -59,6 +68,15 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
 
         @Autowired
         private JobCodeRepository jobCodeRepository;
+
+        @Autowired
+        private ForeignerProfileTestFixture foreignerFixture;
+
+        @Autowired
+        private AgentProfileTestFixture agentFixture;
+
+        @Autowired
+        private UserTestFixture userFixture;
 
         @Test
         @DisplayName("Facade를 통해 외국인 정보 등록과 유사도 계산 프로세스가 정상 수행된다")
@@ -189,5 +207,106 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
                                 .isInstanceOf(BaseException.class)
                                 .hasFieldOrPropertyWithValue("status",
                                                 ResponseStatus.SIMILARITY_CALCULATE_FAIL);
+        }
+
+        @Test
+        @DisplayName("복합 필터링(직업군+국적+언어) 조건에 맞는 외국인 프로필 카드를 조회한다")
+        void findForeignerProfileCardsBasedOnFilter_ShouldReturnMatchedProfiles() {
+                // given
+                // 1. 기초 데이터 (직업군, 국적, 언어)
+                JobGroup devGroup = agentFixture.createJobGroup("IT 개발");
+                JobCode backendJob = agentFixture.createJobCode("DEV-001", "BackEnd", devGroup);
+                JobCode frontendJob = agentFixture.createJobCode("DEV-002", "FrontEnd", devGroup);
+
+                Nationality usa = agentFixture.createNationality("USA");
+                Nationality korea = agentFixture.createNationality("Korea");
+
+                Language english = agentFixture.createLanguage("English");
+                Language korean = agentFixture.createLanguage("Korean");
+
+                // 2. 외국인 데이터 생성
+                // Target: IT 직무 희망 + USA 국적 + English 가능
+                createForeigner("Target Foreigner", backendJob.getId(), usa, english, "Backend Developer");
+
+                // Non-Target 1: 직무 불일치 (No Similarity)
+                createForeigner("No Job Match", null, usa, english, "Chef");
+
+                // Non-Target 2: 국적 불일치 (Korea)
+                createForeigner("Wrong Nation", backendJob.getId(), korea, english, "Backend Developer");
+
+                // Non-Target 3: 언어 불일치 (Korean only)
+                createForeigner("Wrong Lang", backendJob.getId(), usa, korean, "Backend Developer");
+
+                em.flush();
+                em.clear();
+
+                // when
+                ForeignerCardRequest request = new ForeignerCardRequest(
+                                List.of("IT 개발"), // JobGroup -> JobCode Ids 변환 테스트 포함
+                                List.of(usa.getId()),
+                                List.of(english.getId()));
+
+                SliceResponse<ForeignerCardExtensionResponse, UUID> response = foreignerServiceFacade
+                                .findForeignerProfileCardsBasedOnFilter(request, new SliceRequest<>(null, 10));
+
+                // then
+                assertThat(response.content()).hasSize(1);
+                ForeignerCardExtensionResponse card = response.content().get(0);
+                assertThat(card.getNickname()).startsWith("Target Foreigner");
+                assertThat(card.getJobTitle()).isEqualTo("Backend Developer");
+                assertThat(card.getNationIdList()).contains(usa.getId());
+                assertThat(card.getLanguageIdList()).contains(english.getId());
+        }
+
+        @Test
+        @DisplayName("필터 조건이 없을 경우 전체 목록을 조회한다 (단, IDLE 상태만)")
+        void findForeignerProfileCardsBasedOnFilter_ShouldReturnAllIdleProfiles_WhenNoFilter() {
+                // given
+                User user1 = userFixture.createUser("f1@test.com", UserType.FILLED_FOREIGNER);
+                ForeignerProfile p1 = foreignerFixture.createForeignerProfile(user1);
+                foreignerFixture.createForeignerSimilarity(p1, new long[] { 100L });
+                foreignerFixture.createForeignerEducation(p1);
+                foreignerFixture.createForeignerExpectedCompany(p1, "Job1");
+
+                User user2 = userFixture.createUser("f2@test.com", UserType.FILLED_FOREIGNER);
+                ForeignerProfile p2 = foreignerFixture.createForeignerProfile(user2);
+                foreignerFixture.createForeignerSimilarity(p2, new long[] { 200L });
+                foreignerFixture.createForeignerEducation(p2);
+                foreignerFixture.createForeignerExpectedCompany(p2, "Job2");
+
+                em.flush();
+                em.clear();
+
+                // when
+                ForeignerCardRequest request = new ForeignerCardRequest(null, null, null);
+                SliceResponse<ForeignerCardExtensionResponse, UUID> response = foreignerServiceFacade
+                                .findForeignerProfileCardsBasedOnFilter(request, new SliceRequest<>(null, 10));
+
+                // then
+                assertThat(response.content()).hasSize(2);
+        }
+
+        private void createForeigner(String nicknameAlias, Long jobCodeId, Nationality nationality, Language language,
+                        String jobTitle) {
+                User user = userFixture.createUser(UUID.randomUUID() + "@test.com", UserType.FILLED_FOREIGNER);
+                ForeignerProfile profile = foreignerFixture.createForeignerProfile(user, nicknameAlias);
+
+                // Similarity (JobCode)
+                long[] jobIds = (jobCodeId != null) ? new long[] { jobCodeId } : new long[] {};
+                foreignerFixture.createForeignerSimilarity(profile, jobIds);
+
+                // Necessary Info for Response (Education, ExpectedCompany)
+                foreignerFixture.createForeignerEducation(profile);
+                foreignerFixture.createForeignerExpectedCompany(profile, jobTitle);
+
+                // Nationality (Optional but used for filter)
+                if (nationality != null) {
+                        foreignerFixture.createForeignerNationality(profile, nationality);
+                }
+
+                // Language (Optional but used for filter)
+                if (language != null) {
+                        foreignerFixture.createForeignerLanguage(profile, language);
+                }
         }
 }
