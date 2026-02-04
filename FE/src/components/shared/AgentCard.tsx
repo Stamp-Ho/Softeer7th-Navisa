@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { IcGraduation, IcLocation } from "../../assets/icon/StratisUi";
 import Tag from "../common/Tag";
 import { useContext } from "react";
-import { UserContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const AgentCard = ({ hasAnimation = true, className = "" }) => {
   const agent = {
@@ -11,7 +11,7 @@ const AgentCard = ({ hasAnimation = true, className = "" }) => {
     address: "서울특별시 강남구",
   };
 
-  const context = useContext(UserContext);
+  const context = useContext(AuthContext);
   if (!context) return null;
   const { userType } = context;
 
