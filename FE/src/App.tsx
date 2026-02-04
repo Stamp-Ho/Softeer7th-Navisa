@@ -4,7 +4,7 @@ import NavigationHeader from "./components/shared/NavigationHeader";
 import HomePage from "./pages/Landing/HomePage";
 import ChatPage from "./pages/Chat/ChatPage";
 import Search from "./pages/Search/Search";
-import ProfileOfAgent from "./pages/Profile/Agent/ProfileOfAgent";
+import ProfileOfAgent from "./pages/Profile/agent/ProfileOfAgent";
 import ProfileOfForeigner from "./pages/Profile/Foreigner/ProfileOfForeigner";
 import AgentOnboard from "./pages/Onboard/AgentOnboard";
 import ForeignerOnboard from "./pages/Onboard/ForeignerOnboard";
