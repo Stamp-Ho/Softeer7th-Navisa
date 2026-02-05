@@ -5,13 +5,29 @@
 
 <br>
 
-## 📚 Project Documents
+
+## 📚 프로젝트 문서
+
 > **Navisa의 모든 개발 기록과 기술적 고민은 위키에서 확인하실 수 있습니다.**
 > ### [👉 Navisa 통합 Wiki 바로가기](https://github.com/softeerbootcamp-7th/WEB-Team6-Navisa/wiki)
 
 <br>
 
-## 📚 Project Resources
+
+## 📌 파트별 바로가기
+> **각 파트별 상세 구현 사항 및 기술 스택은 아래 리드미에서 확인하실 수 있습니다.**
+
+
+| 파트 | 바로가기 링크 |
+| :--- | :--- |
+| **Frontend** | [🎨 FE 상세 README 바로가기](https://github.com/softeerbootcamp-7th/WEB-Team6-Navisa/tree/develop/FE) |
+| **Backend** | [⚙️ BE 상세 README 바로가기](https://github.com/softeerbootcamp-7th/WEB-Team6-Navisa/tree/develop/BE) |
+
+
+<br>
+
+## 📚 프로젝트 자원
+
 | Category           | Resources |
 |:-------------------| :--- |
 | **데일리 노트**         | [![Notion](https://img.shields.io/badge/Notion-Daily_Note-000000?style=flat-square&logo=notion)](https://www.notion.so/bside/2ee22020273580e58bdacc148741eaec) |
@@ -87,6 +103,7 @@ IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
 | **Backlog** | [![Notion](https://img.shields.io/badge/Notion-Backlog-000000?style=for-the-badge&logo=notion)](https://www.notion.so/bside/2ed220202735807591f8cd19a8350dd7) | 현재 우선순위와 남은 태스크 확인 |
 | **Daily Note** | [![Notion](https://img.shields.io/badge/Notion-Daily_Note-000000?style=for-the-badge&logo=notion)](https://www.notion.so/bside/2ee22020273580e58bdacc148741eaec) | 6캔두잇의 매일매일의 성장 기록 |
 
+
 <br>
 
 
@@ -95,10 +112,11 @@ IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
 > **사용자 경험을 최우선으로 생각하는 Navisa의 설계 기반입니다.**
 
 * **📐 기획**
-    * [🔗⃣ 기획 산출물 바로가기 [figma]](https://www.figma.com/design/AEMfiNWZUpZlpnAsM4ojmz/%EA%B8%B0%ED%9A%8D%EC%9D%98-%EB%B0%A9?node-id=31-692&t=k7xQxxNYoelwGRsR-1) <br>
+    * [🔗 기획 산출물 바로가기 [figma]](https://www.figma.com/design/AEMfiNWZUpZlpnAsM4ojmz/%EA%B8%B0%ED%9A%8D%EC%9D%98-%EB%B0%A9?node-id=604-3271&t=uuS4FtztboyvOutp-1) <br>
 <br>
 * **✨ 디자인**
-    * [🔗⃣ 디자인 산출물 바로가기 [figma]](https://www.figma.com/design/YHUKhgeoJpBeixaJUsV59V/%EB%94%94%EC%9E%90%EC%9D%B8%EC%9D%98-%EB%B0%A9?node-id=218-943&t=gp0JvzaDTZw5ry15-1)
+    * [🔗 디자인 산출물 바로가기 [figma]](https://www.figma.com/design/YHUKhgeoJpBeixaJUsV59V/%EB%94%94%EC%9E%90%EC%9D%B8%EC%9D%98-%EB%B0%A92?node-id=170-53&t=g8Wtm39Triwe2q70-1) <br>
+
 
 <br>
 
@@ -106,12 +124,15 @@ IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
 # 📑 ERD 설계도
 [🔗 Navisa ERD 바로가기](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
 
-![navisa_erd.png](navisa_erd.png)
+![navisa_erd.png](navisa_ERD.png)
+
 
 
 <br>
 
-# 🏗️ Infra Architecture
+
+# 🏗️ 인프라 아키텍처
+
 [🔗 Navisa 아키텍처 다이어그램 바로가기](https://www.figma.com/board/QnPDChUIeMNIRU7r3rQUQq/Softeer_7th_Team6_Infra-Architecture?node-id=1-1938&t=enYOk9NQJc1qkh9t-1)
 
 ![navisa.infra](navisa_infra_architecture.png)
