@@ -11,7 +11,7 @@ interface ButtonProps {
   size?: "tiny" | "small" | "medium" | "large" | "giant";
   className?: string;
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
 }
 

@@ -77,7 +77,7 @@ const NavigationHeader = () => {
               <IcFile />
               비자서류 작성
             </div>
-            <a href="" className="cursor-pointer">
+            <a className="cursor-pointer">
               <IcUserProfile />
             </a>
           </div>

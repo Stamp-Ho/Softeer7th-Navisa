@@ -1,5 +1,5 @@
 import type { BaseResponse } from "../types/common";
-import type { apiClientType } from "../useApiClient";
+import type { apiClientType } from "../../hooks/useApiClient";
 
 // homeService.ts
 export const homeService = {

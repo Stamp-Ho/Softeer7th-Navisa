@@ -1,21 +1,52 @@
-const TextInput = ({
-  className = "",
-  placeholder = "",
-  value = "",
-  setValue = (_a: string) => {},
-  type = "text",
-}) => {
-  return (
-    <input
-      className={`w-full px-spacing-600 bg-gray-50 rounded-radius-400
-        body-l-medium focus:outline-gray-300 focus:outline-2 h-15
-        placeholder:text-text-sub ${className}`}
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      type={type}
-    />
-  );
-};
+import { forwardRef } from "react";
+import type { InputHTMLAttributes } from "react";
+
+interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  className?: string;
+  isInvalid?: boolean;
+  invalidMsg?: string;
+  // setValue는 hook form 사용 시 선택 사항이 되므로 옵셔널로 변경하거나 제외 가능
+  setValue?: (val: string) => void;
+}
+
+const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
+  (
+    {
+      className = "",
+      placeholder = "",
+      type = "text",
+      isInvalid = false,
+      invalidMsg = "",
+      value,
+      onChange,
+      ...props // 나머지 속성(name, onBlur 등)을 input에 전달
+    },
+    ref,
+  ) => {
+    return (
+      <div className="w-full flex flex-col relative">
+        {isInvalid && (
+          <span className="absolute text-red-500 text-xs bottom-px left-5">
+            {invalidMsg}
+          </span>
+        )}
+        <input
+          ref={ref} // forwardRef로 받은 ref를 여기에 연결
+          className={`w-full px-5 bg-gray-50 rounded-[12px]
+          text-[16px] font-medium focus:outline-gray-300 focus:outline-2 h-[56px]
+          placeholder:text-gray-400 ${className}
+          ${isInvalid ? "outline-2 outline-red-400 focus:outline-red-400" : ""}`}
+          placeholder={placeholder}
+          type={type}
+          value={value}
+          onChange={onChange}
+          {...props}
+        />
+      </div>
+    );
+  },
+);
+
+TextInput.displayName = "TextInput";
 
 export default TextInput;

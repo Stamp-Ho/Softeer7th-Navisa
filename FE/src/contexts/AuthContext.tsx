@@ -5,11 +5,20 @@ type AuthContextType = {
   setUserType: (a: feUserType) => void;
   accessToken: string;
   setAccessToken: (a: string) => void;
+  userId: string;
+  setUserId: (a: string) => void;
 };
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined,
-);
+const defaultContext: AuthContextType = {
+  userType: "NOT_AUTHED",
+  setUserType: () => {},
+  accessToken: "",
+  setAccessToken: () => {},
+  userId: "",
+  setUserId: () => {},
+};
+
+export const AuthContext = createContext<AuthContextType>(defaultContext);
 
 export type feUserType =
   | "VALID_AGENT"

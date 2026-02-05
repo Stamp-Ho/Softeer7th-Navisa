@@ -36,6 +36,7 @@ const SignUpModal = ({ onClose = () => {} }) => {
           </div>
           <Button
             className="w-full mt-25 -mb-5"
+            type="primary"
             onClick={() => {
               // 구글 인증에 성공하여, token이 넘어온 경우, 바로 완료
               // 그게 아니면 다음 단계로 이동
@@ -48,6 +49,7 @@ const SignUpModal = ({ onClose = () => {} }) => {
         </>
       ) : (
         <SignUpForm
+          isAgent={userType === 2}
           onSubmit={() => {
             onClose();
           }}

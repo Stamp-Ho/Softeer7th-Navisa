@@ -4,23 +4,32 @@ import Button from "../common/Button";
 import Modal from "../common/Modal";
 import { IcCheckBroken } from "../../assets/icon/StratisUi";
 import TextInput from "../common/TextInput";
+import { useLoginMutation } from "../../api/hooks/useLoginMutation";
 
 const LoginModal = ({
   onClose = () => {},
   setAuthMode = (_a: number) => {},
 }) => {
+  const loginMutation = useLoginMutation(onClose);
   const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
-  const [id, setId] = useState<string>("");
-  const [pw, setPw] = useState<string>("");
+  const [email, setEmail] = useState<string>("feTest0001@example.com");
+  const [pw, setPw] = useState<string>("test1234");
 
+  const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    loginMutation.mutate({
+      email: email,
+      password: pw,
+    });
+  };
   return (
     <Modal className="flex flex-col items-center px-10 py-20" onClose={onClose}>
       <NavisaLogo height={10} />
       <TextInput
         className="mt-16 mb-3"
         placeholder="아이디 (이메일)"
-        value={id}
-        setValue={setId}
+        value={email}
+        setValue={setEmail}
       />
       <TextInput
         className="mb-3"
@@ -36,7 +45,14 @@ const LoginModal = ({
         <IcCheckBroken activated={stayLoggedIn} />
         로그인 상태 유지
       </a>
-      <Button className="w-full mb-6">로그인</Button>
+      <Button
+        className="w-full mb-6"
+        type={"primary"}
+        onClick={handleLogin}
+        disabled={loginMutation.isPending}
+      >
+        {loginMutation.isPending ? "로그인 중..." : "로그인"}
+      </Button>
       <div className="flex flex-row body-s-medium text-text-sub gap-3">
         <a className="cursor-pointer">비밀번호 찾기</a>
         <div className="border-r border-gray-200 h-2 w-px mt-auto mb-auto"></div>

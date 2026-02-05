@@ -20,6 +20,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   accessToken: string;
   userId: string;
+  userType: UserType;
 }
 
 export interface GoogleLoginRequest {

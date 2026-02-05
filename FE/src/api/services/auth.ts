@@ -1,4 +1,4 @@
-import type { apiClientType } from "../useApiClient";
+import type { apiClientType } from "../../hooks/useApiClient";
 import type { BaseResponse } from "../types/common";
 import * as T from "../types/auth";
 
