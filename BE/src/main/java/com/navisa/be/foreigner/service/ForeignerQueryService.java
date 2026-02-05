@@ -236,4 +236,9 @@ public class ForeignerQueryService {
                 ExpectedCompanyInfoDto.of(expectedCompany)
         );
     }
+
+    public ForeignerProfile findByUserId(UUID userId) {
+        return foreignerProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+    }
 }

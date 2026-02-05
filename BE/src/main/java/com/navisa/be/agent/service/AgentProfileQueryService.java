@@ -207,4 +207,9 @@ public class AgentProfileQueryService {
                 false,
                 null);
     }
+
+    public AgentProfile findByUserId(UUID userId) {
+        return agentProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_AGENT));
+    }
 }
