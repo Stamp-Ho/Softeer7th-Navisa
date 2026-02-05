@@ -8,6 +8,7 @@ import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.common.annotation.LoginUser;
 import com.navisa.be.common.dto.response.BaseResponse;
 import com.navisa.be.support.IntegrationTestSupport;
+import com.navisa.be.user.model.enums.UserType;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +51,7 @@ class AuthFlowTest extends IntegrationTestSupport {
     @DisplayName("실제 로그인 API를 호출하여 컨트롤러를 테스트한다")
     void login_controller_test() throws Exception {
         LoginRequest request = new LoginRequest("test@test.com", "password123");
-        LoginResponse loginResponse = new LoginResponse("access-token", java.util.UUID.randomUUID());
+        LoginResponse loginResponse = new LoginResponse("access-token", java.util.UUID.randomUUID(), UserType.UNVALID_AGENT);
 
         given(authService.login(any(LoginRequest.class), any(HttpServletResponse.class)))
                 .willReturn(loginResponse);

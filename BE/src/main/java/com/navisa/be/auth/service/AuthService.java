@@ -54,7 +54,7 @@ public class AuthService {
         String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
 
         saveRefreshTokenInCookie(user.getEmail(), refreshToken, response);
-        return new LoginResponse(accessToken, user.getId());
+        return new LoginResponse(accessToken, user.getId(), user.getUserType());
     }
 
     // 일반 회원가입
@@ -99,7 +99,7 @@ public class AuthService {
         String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
 
         saveRefreshTokenInCookie(user.getEmail(), refreshToken, response);
-        return new LoginResponse(accessToken, user.getId());
+        return new LoginResponse(accessToken, user.getId(), user.getUserType());
     }
 
     // 로그아웃
@@ -121,8 +121,12 @@ public class AuthService {
 
     // 토큰 재발급
     public TokenResponse reissue(String refreshTokenValue, HttpServletResponse response) {
-        // Refresh Token 유효성 검증
-        if (!jwtProvider.validateToken(refreshTokenValue)) {
+        try {
+            if (refreshTokenValue == null || !jwtProvider.validateToken(refreshTokenValue)) {
+                throw new AuthException(ResponseStatus.INVALID_TOKEN);
+            }
+        } catch (Exception e) {
+            // 토큰 파싱 중 발생하는 모든 에러를 401(INVALID_TOKEN)로 처리
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
 

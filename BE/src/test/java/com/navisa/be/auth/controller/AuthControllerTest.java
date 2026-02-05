@@ -70,7 +70,7 @@ class AuthControllerTest {
     void login_success() throws Exception {
         // given
         LoginRequest request = new LoginRequest("test@test.com", "password123");
-        LoginResponse responseDto = new LoginResponse("access-token", UUID.randomUUID());
+        LoginResponse responseDto = new LoginResponse("access-token", UUID.randomUUID(), UserType.UNVALID_AGENT);
 
         org.mockito.BDDMockito.willAnswer(invocation -> {
             HttpServletResponse response = invocation.getArgument(1);
