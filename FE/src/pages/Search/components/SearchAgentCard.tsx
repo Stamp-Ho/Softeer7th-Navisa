@@ -4,6 +4,8 @@ import { IcGraduation, IcLocation } from "../../../assets/icon/StratisUi";
 import Tag from "../../../components/common/Tag";
 import { jobList } from "../../../constants/job";
 import type { SearchAgentCardType } from "../../../types/Cards";
+import { useContext } from "react";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 const SearchAgentCard = ({
   agent = {
@@ -17,7 +19,12 @@ const SearchAgentCard = ({
 }: {
   agent: SearchAgentCardType;
 }) => {
-  const authed = true; //클라이언트 전역 상태로 하면 될 듯
+  const context = useContext(AuthContext);
+  if (!context) return null;
+  const { userType } = context;
+
+  const authed = userType !== "NOT_AUTHED";
+
   return (
     <div>
       <Link

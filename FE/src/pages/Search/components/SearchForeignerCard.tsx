@@ -25,7 +25,6 @@ const SearchForeignerCard = ({
   foreigner: SearchForeignerCardType;
   withDetails?: boolean;
 }) => {
-  // const authed = true;
   return (
     <div
       className={`flex flex-col py-7 px-6 w-92 h-fit bg-gray-30 rounded-2xl ${withDetails || "shadow bg-white"}`}

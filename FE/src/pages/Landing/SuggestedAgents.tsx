@@ -29,6 +29,23 @@ const SuggestedAgents = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (scrollContainer) {
+      const onWheel = (event: WheelEvent) => {
+        event.preventDefault();
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY))
+          scrollContainer.scrollLeft += event.deltaX;
+        else scrollContainer.scrollLeft += event.deltaY;
+      };
+
+      scrollContainer.addEventListener("wheel", onWheel);
+      return () => {
+        scrollContainer.removeEventListener("wheel", onWheel);
+      };
+    }
+  }, []);
+
   // 3. 상태에 따른 마스크 스타일 결정
   const getMaskStyle = () => {
     const base = "transition-all duration-500 ";

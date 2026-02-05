@@ -1,14 +1,25 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import ChatRoomList from "./components/ChatList/ChatRoomList";
+import Envelope from "../../assets/Envelope";
+import ChatRoom from "./components/ChatRoom/ChatRoom";
+import ChatRoomModal from "./components/Modal/ChatRoomModal";
+import ReviewModal from "./components/Review/ReviewModal";
+import { AuthContext } from "../../contexts/AuthContext";
+import NoChatView from "./components/ChatRoom/NoChatView";
 import Tag from "../../components/common/Tag";
-import ChatRoomList from "./ChatRoomList";
-import Envelope from "./Envelope";
-import { IcArrows } from "../../assets/icon/StratisUi";
-import ChatRoom from "./ChatRoom";
-import ChatRoomModal from "./ChatRoomModal";
 import AlarmBadge from "../../assets/icon/AlarmBadge";
-import ReviewModal from "./ReviewModal";
 
-const dummyDataAll = [
+type ChatLogData = {
+  chatRoomId: number;
+  profileImgUrl: string;
+  opponentName: string;
+  roomStatus: string;
+  lastMessage: string;
+  noneRead: number;
+  lastChattedAt: string;
+};
+
+const dummyDataAll: ChatLogData[] = [
   {
     chatRoomId: 0,
     profileImgUrl: "https://placehold.co/80x80",
@@ -318,7 +329,7 @@ const dummyDataAll = [
     lastChattedAt: "2026-01-20T16:45:00",
   },
 ];
-const dummyDataUnread = [
+const dummyDataUnread: ChatLogData[] = [
   {
     chatRoomId: 0,
     profileImgUrl: "https://placehold.co/80x80",
@@ -628,7 +639,7 @@ const dummyDataUnread = [
     lastChattedAt: "2026-01-20T16:45:00",
   },
 ];
-const dummyDataMatched = [
+const dummyDataMatched: ChatLogData[] = [
   {
     chatRoomId: 0,
     profileImgUrl: "https://placehold.co/80x80",
@@ -938,36 +949,48 @@ const dummyDataMatched = [
     lastChattedAt: "2026-01-20T16:45:00",
   },
 ];
-// const dummyDataUnread = [];
-// const dummyDataAccpeted = [];
-const isFileReady = true;
-const amAgent = true;
+
+// const dummyDataAll: ChatLogData[] = [];
+// const dummyDataUnread: ChatLogData[] = [];
+// const dummyDataMatched: ChatLogData[] = [];
 
 const ChatPage = () => {
-  const [selectedChatRoomId, setSelectedChatRoomId] = useState<number | null>(
-    null,
-  );
+  const [selectedChatRoomId, setSelectedChatRoomId] = useState<number>(-1);
   const [selectedTab, setSelectedTab] = useState<number>(0); // 0:전체 탭, 1:안 읽음 탭, 2:수임 중 탭
-
   const [viewMessageModal, setViewMessageModal] = useState<number>(0); // 0 미표기, 1 수임 제안하기, 2 수임 취소하기, 3 수임 제안 답변보내기, 4 차단하기
-
   const [reviewModal, setReviewModal] = useState<number>(0); // 0 미표기, 1 뱃지 리뷰 모달, 2 서비스 리뷰 모달
 
-  const onModalAction = (num: number) => {
-    setViewMessageModal(num);
-  };
+  const onModalAction = (num: number) => setViewMessageModal(num);
+  const onSelectChat = (id: number) => setSelectedChatRoomId(id);
+  const onCloseChat = () => setSelectedChatRoomId(-1);
+  const reviewHandler = (num: number) => setReviewModal(num);
 
-  const onSelectChat = (id: number | null) => {
-    setSelectedChatRoomId(id);
-  };
+  // 유저 타입 전역상태 관리
+  const context = useContext(AuthContext);
+  if (!context) return null;
+  const { userType } = context;
 
-  const onCloseChat = () => {
-    setSelectedChatRoomId(null);
-  };
+  // 본인이 행정사인가?
+  const isAgent = userType === "VALID_AGENT";
 
-  const reviewHandler = (num: number) => {
-    setReviewModal(num);
-  };
+  // 요건 등록을 했는가?
+  const isFileReady =
+    userType === "VALID_AGENT" || userType === "FILLED_FOREIGNER";
+
+  // 채팅이 존재하는가?
+  const isChatExist = dummyDataAll.length > 0;
+
+  if (!isFileReady || !isChatExist)
+    return <NoChatView isFileReady={isFileReady} />;
+
+  const currentTabChatRoomList =
+    selectedTab === 0
+      ? dummyDataAll
+      : selectedTab === 1
+        ? dummyDataUnread
+        : dummyDataMatched;
+
+  const isCurrentTabChatExist = currentTabChatRoomList.length > 0;
 
   return (
     <>
@@ -981,150 +1004,123 @@ const ChatPage = () => {
           modalView={viewMessageModal}
         />
       )}
-      {/* 요건 작성 완료 & 채팅 있음 */}
-      {isFileReady && dummyDataAll.length > 0 ? (
-        <div className="relative flex flex-row justify-between mt-12 h-[904px]">
-          <div className="flex flex-col">
-            <div className="headline-m-bold text-gray-1000 mb-13">
-              상담 메시지
-            </div>
 
-            <div className="flex flex-row gap-3 px-3 mb-10">
+      <div className="relative flex flex-row justify-between mt-12 h-[904px]">
+        {/* 상단 채팅 필터링 탭 */}
+        <div className="flex flex-col">
+          <div className="headline-m-bold text-gray-1000 mb-13">
+            상담 메시지
+          </div>
+
+          <div className="flex flex-row gap-3 px-3 mb-10">
+            <div
+              className="cursor-pointer"
+              onClick={() => {
+                setSelectedTab(0);
+                setSelectedChatRoomId(-1);
+              }}
+            >
+              <Tag
+                type={
+                  selectedTab === 0 ? "large_violet_off" : "large_white_off"
+                }
+                className="w-[92px]"
+              >
+                전체
+              </Tag>
+            </div>
+            <div
+              className="cursor-pointer"
+              onClick={() => {
+                setSelectedTab(1);
+                setSelectedChatRoomId(-1);
+              }}
+            >
+              <Tag
+                type={
+                  selectedTab === 1
+                    ? "large_violet_on_alarm"
+                    : "large_white_on_alarm"
+                }
+              >
+                안 읽음
+                {dummyDataUnread.length === 0 || (
+                  <AlarmBadge isActive={selectedTab === 1}>
+                    {dummyDataUnread.length}
+                  </AlarmBadge>
+                )}
+              </Tag>
+            </div>
+            {isAgent && (
               <div
                 className="cursor-pointer"
                 onClick={() => {
-                  setSelectedTab(0);
-                  setSelectedChatRoomId(null);
+                  setSelectedTab(2);
+                  setSelectedChatRoomId(-1);
                 }}
               >
                 <Tag
                   type={
-                    selectedTab === 0 ? "large_violet_off" : "large_white_off"
-                  }
-                  className="w-[92px]"
-                >
-                  전체
-                </Tag>
-              </div>
-              <div
-                className="cursor-pointer"
-                onClick={() => {
-                  setSelectedTab(1);
-                  setSelectedChatRoomId(null);
-                }}
-              >
-                <Tag
-                  type={
-                    selectedTab === 1
+                    selectedTab === 2
                       ? "large_violet_on_alarm"
                       : "large_white_on_alarm"
                   }
                 >
-                  안 읽음
-                  {dummyDataUnread.length === 0 || (
-                    <AlarmBadge isActive={selectedTab === 1}>
-                      {dummyDataUnread.length}
+                  수임 중
+                  {dummyDataMatched.length === 0 || (
+                    <AlarmBadge isActive={selectedTab === 2}>
+                      {dummyDataMatched.length}
                     </AlarmBadge>
                   )}
                 </Tag>
               </div>
-              {amAgent && dummyDataMatched.length > 0 && (
-                <div
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSelectedTab(2);
-                    setSelectedChatRoomId(null);
-                  }}
-                >
-                  <Tag
-                    type={
-                      selectedTab === 2
-                        ? "large_violet_on_alarm"
-                        : "large_white_on_alarm"
-                    }
-                  >
-                    수임 중
-                    {dummyDataMatched.length === 0 || (
-                      <AlarmBadge isActive={selectedTab === 2}>
-                        {dummyDataMatched.length}
-                      </AlarmBadge>
-                    )}
-                  </Tag>
-                </div>
-              )}
-            </div>
-
-            {((selectedTab === 0 && dummyDataAll.length > 0) ||
-              (selectedTab === 1 && dummyDataUnread.length > 0) ||
-              (selectedTab === 2 && dummyDataMatched.length > 0)) && (
-              <ChatRoomList
-                chatList={
-                  selectedTab === 0
-                    ? dummyDataAll
-                    : selectedTab === 1
-                      ? dummyDataUnread
-                      : dummyDataMatched
-                }
-                onSelectChat={onSelectChat}
-                selectedTab={selectedTab}
-                selectedChatRoomId={selectedChatRoomId}
-              />
             )}
           </div>
 
-          {(selectedTab === 0 && dummyDataAll.length > 0) ||
-          (selectedTab === 1 && dummyDataUnread.length > 0) ||
-          (selectedTab === 2 && dummyDataMatched.length > 0) ? (
-            <div className="relative flex flex-col w-[880px] h-full rounded-[20px] overflow-hidden bg-gray-0">
-              {/* 선택한 채팅방 없음 */}
-              {selectedChatRoomId === null && (
-                <div className="flex flex-col items-center my-auto">
-                  <Envelope />
-                  <div className="mt-7 headline-s-medium text-gray-500">
-                    대화할 메시지를 선택해 주세요.
-                  </div>
-                </div>
-              )}
-
-              {/* 선택한 채팅방 있음 */}
-              {selectedChatRoomId !== null && (
-                <div className="flex flex-col justify-between h-full">
-                  <div className="w-full pt-10"></div>
-                  <ChatRoom
-                    amAgent={amAgent}
-                    chatRoomId={selectedChatRoomId}
-                    onClose={onCloseChat}
-                    onModalAction={onModalAction}
-                  />
-                  <div className="w-full pt-28"></div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="absolute flex justify-center top-[40%] w-full h-full headline-s-medium text-gray-500">
-              읽지 않은 메시지가 없어요.
-            </div>
+          {/* 현재 탭의 채팅방 목록 출력 */}
+          {isCurrentTabChatExist && (
+            <ChatRoomList
+              chatList={currentTabChatRoomList}
+              onSelectChat={onSelectChat}
+              selectedTab={selectedTab}
+              selectedChatRoomId={selectedChatRoomId}
+            />
           )}
         </div>
-      ) : (
-        // 요건 작성 미완료 OR 진행중인 채팅 없음
-        <div className="flex flex-col mt-12 h-[904px]">
-          <div className="headline-m-bold text-gray-1000 mb-13">
-            상담 메시지
+
+        {isCurrentTabChatExist ? (
+          <div className="relative flex flex-col w-[880px] h-full rounded-[20px] overflow-hidden bg-gray-0">
+            {/* 선택한 채팅방 없음 */}
+            {selectedChatRoomId === -1 && (
+              <div className="flex flex-col items-center my-auto">
+                <Envelope />
+                <div className="mt-7 headline-s-medium text-gray-500">
+                  대화할 메시지를 선택해 주세요.
+                </div>
+              </div>
+            )}
+
+            {/* 선택한 채팅방 있음 */}
+            {selectedChatRoomId !== -1 && (
+              <div className="flex flex-col justify-between h-full">
+                <div className="w-full pt-10"></div>
+                <ChatRoom
+                  // chatRoomId={selectedChatRoomId} // ChatRoom에서 api 호출해서 값을 불러오는데 사용
+                  // roomStatus={이거 어떻게?}
+                  onClose={onCloseChat}
+                  onModalAction={onModalAction}
+                />
+                <div className="w-full pt-28"></div>
+              </div>
+            )}
           </div>
-          <div className="flex flex-col gap-4 justify-center items-center h-full">
-            <div className="headline-s-medium text-gray-500">
-              진행 중인 상담이 없어요.
-            </div>
-            <button className="flex flex-row items-center pl-5 title-m-semibold text-violet-500 cursor-pointer">
-              {isFileReady ? "행정사 탐색하기" : "내 요건 등록하고 상담하기"}
-              <span className="-rotate-90">
-                <IcArrows stroke="var(--violet-500)" size={32} />
-              </span>
-            </button>
+        ) : (
+          <div className="absolute flex justify-center top-[40%] w-full h-full headline-s-medium text-gray-500">
+            읽지 않은 메시지가 없어요.
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
       <button onClick={() => setReviewModal(1)}>리뷰1</button>
       <button onClick={() => setReviewModal(2)}>리뷰2</button>
     </>

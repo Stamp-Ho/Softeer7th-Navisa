@@ -11,6 +11,7 @@ const HomePage = () => {
   const context = useContext(AuthContext);
   if (!context) return null;
   const { userType, setUserType } = context;
+  const isAgent = userType === "VALID_AGENT";
 
   return (
     <>
@@ -25,7 +26,7 @@ const HomePage = () => {
         </div>
         <div onClick={() => setUserType("NOT_AUTHED")}>미로그인</div>
       </div>
-      {userType === "VALID_AGENT" || userType === "UNVALID_AGENT" ? (
+      {isAgent ? (
         <>
           <RecentlyEditedDocuments />
           <SuggestedForeigners />
@@ -36,7 +37,7 @@ const HomePage = () => {
           <SuggestedAgents />
         </>
       )}
-      <ExploreJobs userType={userType} />
+      <ExploreJobs isAgent={isAgent} />
     </>
   );
 };

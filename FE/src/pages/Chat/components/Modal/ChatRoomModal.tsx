@@ -1,4 +1,4 @@
-import Modal from "../../components/common/Modal";
+import Modal from "../../../../components/common/Modal";
 import ChatModalBlock from "./ChatModalBlock";
 import ChatModalCancel from "./ChatModalCancel";
 import ChatModalProposal from "./ChatModalProposal";

@@ -4,8 +4,10 @@ import Button from "../../../components/common/Button";
 import Tag from "../../../components/common/Tag";
 import ToolTipMessage from "../../../components/common/ToolTipMessage";
 import ChatActivateModal from "./ChatActivateModal";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CalcLastAccessDay from "../../../utils/CalcLastAccessDay";
+import { AuthContext } from "../../../contexts/AuthContext";
+import Toast from "../../../components/common/Toast";
 
 type ExpectedCompanyProps = {
   companyName: string;
@@ -49,6 +51,7 @@ const ExpectedCompany = ({
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
+    if (!showToast) return;
     const timer = setTimeout(() => {
       setShowToast(false);
     }, 1500);
@@ -57,13 +60,19 @@ const ExpectedCompany = ({
     };
   }, [showToast]);
 
+  const context = useContext(AuthContext);
+  if (!context) return null;
+  const { userType } = context;
+  const isAgent = userType === "VALID_AGENT";
+
   return (
     <>
+      {showToast && <Toast message="상담메시지가 전송되었습니다." />}
       {viewMessageModal ? (
         <ChatActivateModal
           onClose={() => setViewMessageModal(false)}
           onSendSuccess={() => setShowToast(true)}
-          isAgent={true}
+          isAgent={isAgent}
         />
       ) : (
         <></>

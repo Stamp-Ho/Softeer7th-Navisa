@@ -1,18 +1,18 @@
-import Button from "../../components/common/Button";
+import Button from "../../../../components/common/Button";
 
 type ProposalParams = {
   onAnswer: (num: number) => void;
 };
 
-const ChatModalCancel = ({ onAnswer }: ProposalParams) => {
+const ChatModalBlock = ({ onAnswer }: ProposalParams) => {
   return (
     <div className="flex flex-col gap-8 items-center w-full">
       <div className="flex flex-col gap-2 items-center">
         <div className="title-l-semibold text-text-base">
-          수임을 취소하시겠습니까?
+          해당 사용자를 차단하시겠습니까?
         </div>
         <div className="body-l-medium text-text-base">
-          취소 시, 행정사의 비자 신청서 작성 권한이 사라져요.
+          언제든 상담 메시지 창에서 차단을 해제할 수 있어요.
         </div>
       </div>
       <Button
@@ -21,10 +21,10 @@ const ChatModalCancel = ({ onAnswer }: ProposalParams) => {
         className="w-full"
         onClick={() => onAnswer(0)}
       >
-        취소하기
+        차단하기
       </Button>
     </div>
   );
 };
 
-export default ChatModalCancel;
+export default ChatModalBlock;

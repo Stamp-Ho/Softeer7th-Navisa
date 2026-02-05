@@ -1,5 +1,8 @@
-import { IcMessageBox, IcMessageBoxCross } from "../../assets/icon/StratisUi";
-import ChatSystemMessageBackground from "./ChatSystemMessageBackground";
+import {
+  IcMessageBox,
+  IcMessageBoxCross,
+} from "../../../../../assets/icon/StratisUi";
+import ChatSystemMessageBackground from "../../../../../assets/ChatSystemMessageBackground";
 
 type ChatSystemMessageParams = {
   type: "PROPOSAL" | "ANSWER" | "DATE";

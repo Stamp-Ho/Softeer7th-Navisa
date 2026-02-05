@@ -1,6 +1,8 @@
-import AlarmBadge from "../../assets/icon/AlarmBadge";
-import Tag from "../../components/common/Tag";
-import CalcLastChattedAt from "../../utils/CalcLastChattedAt";
+import { useContext } from "react";
+import AlarmBadge from "../../../../assets/icon/AlarmBadge";
+import Tag from "../../../../components/common/Tag";
+import { AuthContext } from "../../../../contexts/AuthContext";
+import CalcLastChattedAt from "../../../../utils/CalcLastChattedAt";
 
 type ChatRoomCardParams = {
   chatRoomId: number;
@@ -21,16 +23,28 @@ const ChatRoomCard = ({
   noneRead,
   lastChattedAt,
 }: ChatRoomCardParams) => {
+  const context = useContext(AuthContext);
+  if (!context) return null;
+  const { userType } = context;
+
+  const isAgent = userType === "VALID_AGENT";
+
   return (
     <div
       key={chatRoomId}
       className={`flex flex-row gap-6 items-center p-3 cursor-pointer`}
     >
-      <img
-        src={profileImgUrl}
-        alt="행정사 프로필 사진"
-        className="w-20 h-20 object-cover rounded-full"
-      />
+      {isAgent ? (
+        <div className="flex flex-row justify-center items-center w-20 aspect-square border border-border-normal rounded-full bg-violet-25 headline-l-bold text-violet-500">
+          {opponentName[0]}
+        </div>
+      ) : (
+        <img
+          src={profileImgUrl}
+          alt="행정사 프로필 사진"
+          className="w-20 h-20 object-cover rounded-full"
+        />
+      )}
       <div className="flex flex-col gap-3 w-full    ">
         <div className="flex flex-row justify-between">
           <div>

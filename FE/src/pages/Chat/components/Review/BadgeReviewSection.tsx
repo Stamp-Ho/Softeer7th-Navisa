@@ -1,4 +1,4 @@
-import BadgeIcon, { badgeDescription } from "../../assets/icon/BadgeIcon";
+import BadgeIcon, { badgeDescription } from "../../../../assets/icon/BadgeIcon";
 
 type BadgeReviewSectionParams = {
   title: string;

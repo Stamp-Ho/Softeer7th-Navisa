@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import type { DropDownProps } from "../../types/dropdownProps";
 
@@ -8,7 +8,9 @@ const DropDown = ({
   category,
   dropdownOptions = [""],
   onInitClicked = () => {},
-  onOptionClicked = (_a: number) => {},
+  onOptionClicked = (a: number) => {
+    alert(a);
+  },
   onApply = () => {},
 }: DropDownProps) => {
   const [selectedCategoryIdx, setSelectedCategoryIdx] = useState(0);
@@ -17,6 +19,24 @@ const DropDown = ({
 
   const gridStyle = cols === 5 ? `grid-cols-5` : `grid-cols-4`;
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (scrollContainer) {
+      const onWheel = (event: WheelEvent) => {
+        event.preventDefault();
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY))
+          scrollContainer.scrollLeft += event.deltaX;
+        else scrollContainer.scrollLeft += event.deltaY;
+      };
+
+      scrollContainer.addEventListener("wheel", onWheel);
+      return () => {
+        scrollContainer.removeEventListener("wheel", onWheel);
+      };
+    }
+  }, []);
+
   return (
     <div
       className={`absolute top-20 rounded-xl flex flex-col w-max h-fit whitespace-nowrap
@@ -24,7 +44,10 @@ const DropDown = ({
     >
       <div className="p-9 border-b border-border-normal ">
         {category && (
-          <div className="mb-5 flex max-w-147 flex-row items-center gap-5 overflow-x-auto scrollbar-hide">
+          <div
+            ref={scrollRef}
+            className="mb-5 flex max-w-147 flex-row items-center gap-5 overflow-x-auto scrollbar-hide"
+          >
             {category.map((cate, idx) => {
               const isSelected = selectedCategoryIdx === idx;
               return (

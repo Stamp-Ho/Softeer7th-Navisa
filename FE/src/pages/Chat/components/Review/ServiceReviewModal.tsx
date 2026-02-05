@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Button from "../../components/common/Button";
-import Modal from "../../components/common/Modal";
-import Radio from "../../components/common/Radio";
-import Tag from "../../components/common/Tag";
+import Button from "../../../../components/common/Button";
+import Modal from "../../../../components/common/Modal";
+import Radio from "../../../../components/common/Radio";
+import Tag from "../../../../components/common/Tag";
 
 type ServiceReviewModalParams = {
   reviewHandler: (num: number) => void;

@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { IcSendActive, IcSendDefault } from "../../assets/icon/StratisUi";
+import {
+  IcSendActive,
+  IcSendDefault,
+} from "../../../../../assets/icon/StratisUi";
 import ChatArea from "./ChatArea";
-import Chip from "../../components/common/Chip";
+import Chip from "../../../../../components/common/Chip";
 
 type ChatRoomFooterParams = {
   isMatched: boolean;

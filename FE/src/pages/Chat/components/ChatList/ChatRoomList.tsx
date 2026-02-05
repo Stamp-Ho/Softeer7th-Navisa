@@ -3,7 +3,7 @@ import ChatRoomCard from "./ChatRoomCard";
 
 type ChatRoomListProps = {
   chatList: ChatRoomCardParams[];
-  onSelectChat: (id: number | null) => void;
+  onSelectChat: (id: number) => void;
   selectedTab: number;
   selectedChatRoomId: number | null;
 };
@@ -21,8 +21,8 @@ type ChatRoomCardParams = {
 const ChatRoomList = ({
   chatList,
   onSelectChat,
-  selectedChatRoomId,
   // selectedTab,
+  selectedChatRoomId,
 }: ChatRoomListProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -46,17 +46,14 @@ const ChatRoomList = ({
   const getMaskStyle = `transition-all duration-500 mask-[linear-gradient(to_bottom,transparent_0%,black_5%,black_90%,transparent_100%)]
                         [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_5%,black_90%,transparent_100%)]`;
 
-  const matched: ChatRoomCardParams[] = [];
-  const unMatched: ChatRoomCardParams[] = [];
-
-  sortChatRoom(chatList, matched, unMatched);
+  const sortedChatRoom = sortChatRoom(chatList);
 
   return (
     <div
       ref={scrollRef}
       className={`w-[602px] h-full overflow-auto pr-6 -mr-6 ${getMaskStyle}`}
     >
-      {unMatched.slice(0, 20 * tempNumber).map((data) => (
+      {sortedChatRoom.slice(0, 20 * tempNumber).map((data) => (
         <div
           className={
             selectedChatRoomId === data.chatRoomId
@@ -84,16 +81,9 @@ const ChatRoomList = ({
 
 export default ChatRoomList;
 
-const sortChatRoom = (
-  arr: ChatRoomCardParams[],
-  a: ChatRoomCardParams[],
-  b: ChatRoomCardParams[],
-) => {
-  arr.map((data) => {
-    if (data.roomStatus === "MATCHED") {
-      a.push(data);
-    } else {
-      b.push(data);
-    }
-  });
+const sortChatRoom = (arr: ChatRoomCardParams[]) => {
+  const matched = arr.filter((r) => r.roomStatus === "MATCHED");
+  const unmatched = arr.filter((r) => r.roomStatus !== "MATCHED");
+
+  return [...matched, ...unmatched];
 };

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Button from "../../../components/common/Button";
 import ToolTipMessage from "../../../components/common/ToolTipMessage";
 import CalcLastAccessDay from "../../../utils/CalcLastAccessDay";
 import ChatActivateModal from "../Foreigner/ChatActivateModal";
 import Toast from "../../../components/common/Toast";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 type AgentProfilePanelProps = {
   profileImageUrl: string;
@@ -33,6 +34,11 @@ const AgentProfilePanel = ({
     };
   }, [showToast]);
 
+  const context = useContext(AuthContext);
+  if (!context) return null;
+  const { userType } = context;
+  const isAgent = userType === "VALID_AGENT";
+
   return (
     <>
       {showToast && <Toast message="상담메시지가 전송되었습니다." />}
@@ -44,7 +50,7 @@ const AgentProfilePanel = ({
           onSendSuccess={() => {
             setShowToast(true);
           }}
-          isAgent={false}
+          isAgent={isAgent}
         />
       ) : (
         <></>
