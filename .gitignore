@@ -26,6 +26,3 @@ deps
 
 # nektos/act용 로컬 시크릿
 .secrets
-
-navisa_erd.png
-navisa_infra_architecture.png

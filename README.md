@@ -108,14 +108,18 @@ IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
 
 
 
-# 🎨 기획&디자인 링크
+# 🎨 기획 및 디자인
 > **사용자 경험을 최우선으로 생각하는 Navisa의 설계 기반입니다.**
 
 * **📐 기획**
-    * [🔗 기획 산출물 바로가기 [figma]](https://www.figma.com/design/AEMfiNWZUpZlpnAsM4ojmz/%EA%B8%B0%ED%9A%8D%EC%9D%98-%EB%B0%A9?node-id=604-3271&t=uuS4FtztboyvOutp-1) <br>
+    * [🔗 기획 산출물 바로가기 (figma)](https://www.figma.com/design/AEMfiNWZUpZlpnAsM4ojmz/%EA%B8%B0%ED%9A%8D%EC%9D%98-%EB%B0%A9?node-id=604-3271&t=uuS4FtztboyvOutp-1) 
+  
 <br>
+  
 * **✨ 디자인**
-    * [🔗 디자인 산출물 바로가기 [figma]](https://www.figma.com/design/YHUKhgeoJpBeixaJUsV59V/%EB%94%94%EC%9E%90%EC%9D%B8%EC%9D%98-%EB%B0%A92?node-id=170-53&t=g8Wtm39Triwe2q70-1) <br>
+    * [🔗 디자인 산출물 바로가기 (figma)](https://www.figma.com/design/YHUKhgeoJpBeixaJUsV59V/%EB%94%94%EC%9E%90%EC%9D%B8%EC%9D%98-%EB%B0%A92?node-id=170-53&t=g8Wtm39Triwe2q70-1)
+  
+
 
 
 <br>
@@ -124,7 +128,7 @@ IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
 # 📑 ERD 설계도
 [🔗 Navisa ERD 바로가기](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
 
-![navisa_erd.png](navisa_ERD.png)
+![navisa_erd.png](navisa_erd.png)
 
 
 

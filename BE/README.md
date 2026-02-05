@@ -34,7 +34,7 @@
 ## 📑 ERD 설계도
 [🔗 Navisa ERD 바로가기](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
 
-![navisa_erd.png](../navisa_ERD.png)
+![navisa_erd.png](../navisa_erd.png)
 
 
 <br>
