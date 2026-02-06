@@ -13,6 +13,10 @@ const useApiClient = () => {
     return fetch(`${BASEURL}${url}`, {
       ...defaultOptions,
       ...options,
+      headers: {
+        ...defaultOptions.headers,
+        ...(options?.headers || {}),
+      },
     })
       .then(async (res) => {
         if (!res.ok) {
@@ -110,7 +114,7 @@ export type apiClientType = {
   patch<T = any>(url: string, options?: FetchOptions): Promise<T>;
 };
 
-type FetchOptions = {
+export type FetchOptions = {
   method?: "POST" | "GET" | "PUT" | "PATCH" | "DELETE";
   mode?: "cors" | "no-cors" | "same-origin";
   cache?: "default" | "no-cache" | "reload" | "force-cache" | "only-if-cached";

@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import AgentCard from "../../components/shared/AgentCard";
 import LoadingBar from "./LoadingBar";
+import { useRecommendedAgentQuery } from "../../api/hooks/useRecommendAgentQuery";
 
 const SuggestedAgents = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -68,12 +69,14 @@ const SuggestedAgents = () => {
     );
   };
 
+  const { data, isLoading, isError } = useRecommendedAgentQuery();
   const [loading, setLoading] = useState<boolean>(true);
   const [showLoadingBar, setShowLoadingBar] = useState<boolean>(true);
   const [isTilted, setIsTilted] = useState<boolean>(true);
   const flyTime = 1000;
+
   useEffect(() => {
-    setTimeout(() => {
+    const finishLoading = () => {
       setShowLoadingBar(false);
       setTimeout(() => {
         setLoading(false);
@@ -81,8 +84,32 @@ const SuggestedAgents = () => {
           setIsTilted(false);
         }, flyTime);
       }, 750);
-    }, 5000);
-  }, []);
+    };
+
+    if (!isLoading) {
+      finishLoading();
+    }
+  }, [isLoading]);
+
+  const dataToRender = isError ? (
+    <>
+      {Array.from({ length: 12 }).map((_, idx) => (
+        <AgentCard
+          key={idx}
+          className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
+        />
+      ))}
+    </>
+  ) : (
+    <>
+      {data?.map((_, idx) => (
+        <AgentCard
+          key={idx}
+          className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
+        />
+      ))}
+    </>
+  );
   return (
     <section className="w-full flex flex-col relative">
       <h2 className="headline-s-bold">행정사 탐색</h2>
@@ -98,12 +125,7 @@ const SuggestedAgents = () => {
             transition-all duration-1000
             flex flex-row gap-5 w-fit items-center justify-start h-104`}
         >
-          {Array.from({ length: 12 }).map((_, idx) => (
-            <AgentCard
-              key={idx}
-              className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
-            />
-          ))}
+          {dataToRender}
           {/* 4. 마지막 감지용 빈 div */}
           <div ref={endRef} className="w-3 h-1 -ml-6" />
         </ol>

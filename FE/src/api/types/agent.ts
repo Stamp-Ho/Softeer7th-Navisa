@@ -1,3 +1,4 @@
+// 행정사 카드 (리스트용)
 export interface AgentCardResponse {
   agentId: string;
   agentName: string;
@@ -8,6 +9,7 @@ export interface AgentCardResponse {
   specialityJobCount: number;
 }
 
+// 행정사 상세 조회 응답
 export interface GetAgentDetailResponse {
   header: { top2badgeIds: number[]; comment: string };
   expertise: { jobCodeIds: number[]; languageIds: number[] };
@@ -33,11 +35,12 @@ export interface GetAgentDetailResponse {
   };
 }
 
+// 행정사 프로필 등록 DTO
 export interface RegisterAgentProfileRequest {
   basicInfo: {
     profileImageUrl: string;
     agentName: string;
-    birthDate: string;
+    birthDate: string; // date string
     officeName: string;
     officeAddress: string;
     officeAddressDetail: string;

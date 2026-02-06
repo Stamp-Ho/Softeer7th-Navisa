@@ -7,17 +7,17 @@ const ChatSystemMessageBackground = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clipPath="url(#clip0_2539_4562)">
+      <g clip-path="url(#clip0_845_54392)">
         <rect
           width="368"
           height="140"
-          fill="url(#paint0_linear_2539_4562)"
+          fill="url(#paint0_linear_845_54392)"
           fillOpacity="0.35"
         />
         <g
           style={{ mixBlendMode: "lighten" }}
           opacity="0.5"
-          filter="url(#filter0_f_2539_4562)"
+          filter="url(#filter0_f_845_54392)"
         >
           <g opacity="0.4">
             <rect
@@ -51,42 +51,42 @@ const ChatSystemMessageBackground = () => {
             <rect x="130" y="-13.4001" width="36" height="40.5" fill="white" />
           </g>
           <g opacity="0.4">
-            <rect x="-21.2002" y="28.9" width="36" height="40.5" fill="white" />
-            <rect x="16.6001" y="28.9" width="36" height="40.5" fill="white" />
-            <rect x="54.3999" y="28.9" width="36" height="40.5" fill="white" />
-            <rect x="92.2002" y="28.9" width="36" height="40.5" fill="white" />
-            <rect x="130" y="28.8999" width="36" height="40.5" fill="white" />
-          </g>
-          <g opacity="0.4">
             <rect
               x="-21.2002"
-              y="71.1999"
+              y="28.8999"
               width="36"
               height="40.5"
               fill="white"
             />
             <rect
               x="16.6001"
-              y="71.1999"
+              y="28.8999"
               width="36"
               height="40.5"
               fill="white"
             />
             <rect
               x="54.3999"
-              y="71.1999"
+              y="28.8999"
               width="36"
               height="40.5"
               fill="white"
             />
             <rect
               x="92.2002"
-              y="71.1999"
+              y="28.8999"
               width="36"
               height="40.5"
               fill="white"
             />
-            <rect x="130" y="71.1999" width="36" height="40.5" fill="white" />
+            <rect x="130" y="28.8999" width="36" height="40.5" fill="white" />
+          </g>
+          <g opacity="0.4">
+            <rect x="-21.2002" y="71.2" width="36" height="40.5" fill="white" />
+            <rect x="16.6001" y="71.2" width="36" height="40.5" fill="white" />
+            <rect x="54.3999" y="71.2" width="36" height="40.5" fill="white" />
+            <rect x="92.2002" y="71.2" width="36" height="40.5" fill="white" />
+            <rect x="130" y="71.2" width="36" height="40.5" fill="white" />
           </g>
           <g opacity="0.4">
             <rect
@@ -102,20 +102,50 @@ const ChatSystemMessageBackground = () => {
             <rect x="130" y="113.5" width="36" height="40.5" fill="white" />
           </g>
           <g opacity="0.4">
-            <rect x="167.8" y="-13.4" width="36" height="40.5" fill="white" />
-            <rect x="205.6" y="-13.4" width="36" height="40.5" fill="white" />
-            <rect x="243.4" y="-13.4" width="36" height="40.5" fill="white" />
-            <rect x="281.2" y="-13.4" width="36" height="40.5" fill="white" />
-            <rect x="319" y="-13.4" width="36" height="40.5" fill="white" />
-            <rect x="356.8" y="-13.4" width="36" height="40.5" fill="white" />
+            <rect
+              x="167.8"
+              y="-13.3999"
+              width="36"
+              height="40.5"
+              fill="white"
+            />
+            <rect
+              x="205.6"
+              y="-13.3999"
+              width="36"
+              height="40.5"
+              fill="white"
+            />
+            <rect
+              x="243.4"
+              y="-13.3999"
+              width="36"
+              height="40.5"
+              fill="white"
+            />
+            <rect
+              x="281.2"
+              y="-13.3999"
+              width="36"
+              height="40.5"
+              fill="white"
+            />
+            <rect x="319" y="-13.3999" width="36" height="40.5" fill="white" />
+            <rect
+              x="356.8"
+              y="-13.3999"
+              width="36"
+              height="40.5"
+              fill="white"
+            />
           </g>
           <g opacity="0.4">
-            <rect x="167.8" y="28.9" width="36" height="40.5" fill="white" />
+            <rect x="167.8" y="28.8999" width="36" height="40.5" fill="white" />
             <rect x="205.6" y="28.8999" width="36" height="40.5" fill="white" />
             <rect x="243.4" y="28.8999" width="36" height="40.5" fill="white" />
-            <rect x="281.2" y="28.9" width="36" height="40.5" fill="white" />
-            <rect x="319" y="28.9" width="36" height="40.5" fill="white" />
-            <rect x="356.8" y="28.9" width="36" height="40.5" fill="white" />
+            <rect x="281.2" y="28.8999" width="36" height="40.5" fill="white" />
+            <rect x="319" y="28.8999" width="36" height="40.5" fill="white" />
+            <rect x="356.8" y="28.8999" width="36" height="40.5" fill="white" />
           </g>
           <g opacity="0.4">
             <rect x="167.8" y="71.2" width="36" height="40.5" fill="white" />
@@ -135,112 +165,100 @@ const ChatSystemMessageBackground = () => {
           </g>
         </g>
         <foreignObject
-          x="130.338"
-          y="-14.6616"
+          x="130.889"
+          y="-15.1111"
           width="233.687"
           height="233.687"
         >
           <div
             style={{
               backdropFilter: "blur(15.56px)",
-              clipPath: "url(#bgblur_2_2539_4562_clip_path)",
+              clipPath: "url(#bgblur_1_845_54392_clip_path)",
               height: "100%",
               width: "100%",
             }}
           ></div>
         </foreignObject>
         <g
-          filter="url(#filter1_di_2539_4562)"
+          filter="url(#filter1_di_845_54392)"
           data-figma-bg-blur-radius="31.1111"
         >
-          <g clipPath="url(#clip1_2539_4562)">
-            <rect
-              x="197.684"
-              y="16.4495"
-              width="140"
-              height="140"
-              rx="13.6111"
-              transform="rotate(15 197.684 16.4495)"
-              fill="url(#paint1_linear_2539_4562)"
-              fillOpacity="0.4"
-              shapeRendering="crispEdges"
-            />
-            <rect
-              x="208.568"
-              y="55.9814"
-              width="98"
-              height="68.6"
-              rx="8.16667"
-              transform="rotate(15 208.568 55.9814)"
-              fill="#B1B5BC"
-            />
-            <mask
-              id="mask0_2539_4562"
-              style={{ maskType: "alpha" }}
-              maskUnits="userSpaceOnUse"
-              x="192"
-              y="57"
-              width="110"
-              height="89"
-            >
-              <rect
-                x="208.571"
-                y="55.9819"
-                width="98"
-                height="68.6"
-                rx="8.16667"
-                transform="rotate(15 208.571 55.9819)"
-                fill="#787F8B"
-              />
-            </mask>
-            <g mask="url(#mask0_2539_4562)">
-              <path
-                d="M187.133 123.367L231.452 103.114"
-                stroke="url(#paint2_linear_2539_4562)"
-                strokeWidth="2.72222"
-              />
-              <path
-                d="M288.104 150.422L259.85 110.723"
-                stroke="url(#paint3_linear_2539_4562)"
-                strokeWidth="2.72222"
-              />
-              <path
-                d="M240.405 105.341L206.156 52.3755L236.642 116.521C238.8 121.064 244.512 122.594 248.653 119.74L307.127 79.4308L250.984 108.175C247.253 110.086 242.681 108.861 240.405 105.341Z"
-                fill="url(#paint4_linear_2539_4562)"
-              />
-            </g>
-            <circle
-              cx="247.179"
-              cy="102.181"
-              r="105"
-              transform="rotate(-30 247.179 102.181)"
-              fill="url(#paint5_linear_2539_4562)"
-            />
-          </g>
           <rect
-            x="198.027"
-            y="17.0449"
+            x="198.235"
+            y="16"
+            width="140"
+            height="140"
+            rx="13.6111"
+            transform="rotate(15 198.235 16)"
+            fill="url(#paint1_linear_845_54392)"
+          />
+          <rect
+            x="198.579"
+            y="16.5954"
             width="139.028"
             height="139.028"
             rx="13.125"
-            transform="rotate(15 198.027 17.0449)"
+            transform="rotate(15 198.579 16.5954)"
             stroke="white"
             strokeWidth="0.972222"
-            shapeRendering="crispEdges"
           />
+          <rect
+            x="209.115"
+            y="55.5308"
+            width="97.9972"
+            height="68.598"
+            rx="8.16643"
+            transform="rotate(15 209.115 55.5308)"
+            fill="url(#paint2_linear_845_54392)"
+          />
+          <mask
+            id="mask0_845_54392"
+            style={{ maskType: "alpha" }}
+            maskUnits="userSpaceOnUse"
+            x="193"
+            y="57"
+            width="109"
+            height="89"
+          >
+            <rect
+              x="209.117"
+              y="55.531"
+              width="97.9972"
+              height="68.598"
+              rx="8.16643"
+              transform="rotate(15 209.117 55.531)"
+              fill="#787F8B"
+            />
+          </mask>
+          <g mask="url(#mask0_845_54392)">
+            <path
+              d="M187.68 122.914L231.997 102.661"
+              stroke="url(#paint3_linear_845_54392)"
+              strokeWidth="2.72214"
+            />
+            <path
+              d="M288.648 149.968L260.394 110.271"
+              stroke="url(#paint4_linear_845_54392)"
+              strokeWidth="2.72214"
+            />
+            <path
+              d="M240.95 104.888L206.702 51.9246L237.187 116.069C239.345 120.611 245.057 122.141 249.197 119.287L307.67 78.979L251.529 107.723C247.798 109.633 243.226 108.408 240.95 104.888Z"
+              fill="url(#paint5_linear_845_54392)"
+            />
+          </g>
         </g>
       </g>
       <defs>
         <filter
-          id="filter0_f_2539_4562"
+          id="filter0_f_845_54392"
           x="-250.25"
           y="-100.25"
           width="1250.1"
           height="341.1"
           filterUnits="userSpaceOnUse"
-          color-interpolation-fillters="sRGB"
+          color-interpolation-filters="sRGB"
         >
-          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feFlood flood-opacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -249,19 +267,19 @@ const ChatSystemMessageBackground = () => {
           />
           <feGaussianBlur
             stdDeviation="1.125"
-            result="effect1_foregroundBlur_2539_4562"
+            result="effect1_foregroundBlur_845_54392"
           />
         </filter>
         <filter
-          id="filter1_di_2539_4562"
-          x="130.338"
-          y="-14.6616"
+          id="filter1_di_845_54392"
+          x="130.889"
+          y="-15.1111"
           width="233.687"
           height="233.687"
           filterUnits="userSpaceOnUse"
-          color-interpolation-fillters="sRGB"
+          color-interpolation-filters="sRGB"
         >
-          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feFlood flood-opacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -278,12 +296,12 @@ const ChatSystemMessageBackground = () => {
           <feBlend
             mode="normal"
             in2="BackgroundImageFix"
-            result="effect1_dropShadow_2539_4562"
+            result="effect1_dropShadow_845_54392"
           />
           <feBlend
             mode="normal"
             in="SourceGraphic"
-            in2="effect1_dropShadow_2539_4562"
+            in2="effect1_dropShadow_845_54392"
             result="shape"
           />
           <feColorMatrix
@@ -302,101 +320,90 @@ const ChatSystemMessageBackground = () => {
           <feBlend
             mode="normal"
             in2="shape"
-            result="effect2_innerShadow_2539_4562"
+            result="effect2_innerShadow_845_54392"
           />
         </filter>
         <clipPath
-          id="bgblur_2_2539_4562_clip_path"
-          transform="translate(-130.338 14.6616)"
+          id="bgblur_1_845_54392_clip_path"
+          transform="translate(-130.889 15.1111)"
         >
           <rect
-            x="197.684"
-            y="16.4495"
+            x="198.235"
+            y="16"
             width="140"
             height="140"
             rx="13.6111"
-            transform="rotate(15 197.684 16.4495)"
+            transform="rotate(15 198.235 16)"
           />
         </clipPath>
         <linearGradient
-          id="paint0_linear_2539_4562"
+          id="paint0_linear_845_54392"
           x1="0"
           y1="70"
           x2="368"
           y2="70"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#8D7EED" />
-          <stop offset="1" stopColor="#54D7D5" />
+          <stop stop-color="#8D7EED" />
+          <stop offset="1" stop-color="#54D7D5" />
         </linearGradient>
         <linearGradient
-          id="paint1_linear_2539_4562"
-          x1="200.541"
-          y1="16.4495"
-          x2="348.695"
-          y2="34.4468"
+          id="paint1_linear_845_54392"
+          x1="201.092"
+          y1="16"
+          x2="349.246"
+          y2="33.9973"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#A699FF" stopOpacity="0.2" />
-          <stop offset="1" stopColor="#33D0CD" stopOpacity="0.2" />
+          <stop stop-color="#D4CDFF" />
+          <stop offset="1" stop-color="#C7FCFF" />
         </linearGradient>
         <linearGradient
-          id="paint2_linear_2539_4562"
-          x1="236.975"
-          y1="101.107"
-          x2="192.767"
-          y2="121.6"
+          id="paint2_linear_845_54392"
+          x1="210.864"
+          y1="55.3348"
+          x2="307.111"
+          y2="124.166"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#006C6A" stopOpacity="0.3" />
-          <stop offset="1" stopColor="#006C6A" stopOpacity="0" />
+          <stop offset="0.5" stop-color="#B3A8FF" />
+          <stop offset="1" stop-color="#71CCEB" />
         </linearGradient>
         <linearGradient
-          id="paint3_linear_2539_4562"
-          x1="256.07"
-          y1="106.224"
-          x2="284.109"
-          y2="146.075"
+          id="paint3_linear_845_54392"
+          x1="237.521"
+          y1="100.654"
+          x2="193.314"
+          y2="121.146"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#006C6A" stopOpacity="0.3" />
-          <stop offset="1" stopColor="#006C6A" stopOpacity="0" />
+          <stop stop-color="#7E99F1" />
+          <stop offset="1" stop-color="#B0A4FF" stop-opacity="0" />
         </linearGradient>
         <linearGradient
-          id="paint4_linear_2539_4562"
-          x1="255.902"
-          y1="68.6641"
-          x2="240.758"
-          y2="125.182"
+          id="paint4_linear_845_54392"
+          x1="256.614"
+          y1="105.771"
+          x2="284.653"
+          y2="145.621"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#005251" />
-          <stop offset="1" stopColor="#B0B9FF" />
+          <stop stop-color="#7E99F1" />
+          <stop offset="1" stop-color="#B0A4FF" stop-opacity="0" />
         </linearGradient>
         <linearGradient
-          id="paint5_linear_2539_4562"
-          x1="247.179"
-          y1="-2.81896"
-          x2="247.179"
-          y2="207.181"
+          id="paint5_linear_845_54392"
+          x1="256.446"
+          y1="68.2126"
+          x2="241.303"
+          y2="124.729"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stopColor="#4132A9" />
-          <stop offset="1" stopColor="#00C4C0" stopOpacity="0.1" />
+          <stop stop-color="#3E2FA6" />
+          <stop offset="1" stop-color="#9FAEFE" />
         </linearGradient>
-        <clipPath id="clip0_2539_4562">
+        <clipPath id="clip0_845_54392">
           <rect width="368" height="140" fill="white" />
-        </clipPath>
-        <clipPath id="clip1_2539_4562">
-          <rect
-            x="197.684"
-            y="16.4495"
-            width="140"
-            height="140"
-            rx="13.6111"
-            transform="rotate(15 197.684 16.4495)"
-            fill="white"
-          />
         </clipPath>
       </defs>
     </svg>
