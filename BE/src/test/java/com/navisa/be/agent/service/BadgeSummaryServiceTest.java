@@ -6,6 +6,7 @@ import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.model.enums.BadgeName;
 import com.navisa.be.agent.repository.AgentBadgeSummaryRepository;
 import com.navisa.be.agent.repository.BadgeRepository;
+import com.navisa.be.agent.service.BadgeSummaryService;
 import com.navisa.be.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

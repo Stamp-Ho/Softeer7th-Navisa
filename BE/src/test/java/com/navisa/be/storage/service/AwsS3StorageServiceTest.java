@@ -11,6 +11,7 @@ import com.navisa.be.storage.model.enums.StorageLocation;
 import com.navisa.be.storage.dto.request.IssuePresignedUrlRequest;
 import com.navisa.be.storage.dto.response.IssuePresignedUrlResponse;
 import com.navisa.be.storage.exception.StorageDomainException;
+import com.navisa.be.storage.service.AwsS3StorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,8 +1,8 @@
 package com.navisa.be.common.repository;
 
-import com.navisa.be.agent.dto.JobCodeDto;
 import com.navisa.be.common.dto.projection.JobCodeSimilarityProjection;
 import com.navisa.be.common.model.entity.JobCode;
+import com.navisa.be.agent.dto.JobCodeDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

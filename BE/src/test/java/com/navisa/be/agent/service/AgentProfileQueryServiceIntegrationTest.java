@@ -2,8 +2,10 @@ package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.response.GetAgentDetailResponse;
 import com.navisa.be.agent.exception.AgentException;
-import com.navisa.be.agent.model.entity.*;
+import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.model.enums.BadgeName;
+import com.navisa.be.agent.service.AgentProfileQueryService;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.common.model.entity.JobCode;

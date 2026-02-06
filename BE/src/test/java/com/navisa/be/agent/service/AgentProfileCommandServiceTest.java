@@ -9,6 +9,7 @@ import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.entity.Language;
 import com.navisa.be.common.repository.JobCodeRepository;
 import com.navisa.be.common.repository.LanguageRepository;
+import com.navisa.be.agent.service.AgentProfileCommandService;
 import com.navisa.be.support.AgentFixture;
 import com.navisa.be.support.IntegrationTestSupport;
 import com.navisa.be.user.model.entity.User;

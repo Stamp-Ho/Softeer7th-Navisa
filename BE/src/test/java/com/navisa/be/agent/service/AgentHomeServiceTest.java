@@ -12,6 +12,7 @@ import com.navisa.be.agent.repository.AgentSpecializedJobRepository;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.repository.JobCodeRepository;
+import com.navisa.be.agent.service.AgentHomeService;
 import com.navisa.be.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -108,7 +109,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
         String loginEmail = "test@example.com";
 
         // when
-        List<com.navisa.be.agent.dto.response.AgentCardResponse> result = agentHomeService
+        List<AgentCardResponse> result = agentHomeService
                 .getRandomAgentCards(loginEmail);
 
         // then

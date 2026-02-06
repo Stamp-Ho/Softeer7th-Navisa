@@ -1,5 +1,6 @@
 package com.navisa.be.application.controller;
 
+import com.navisa.be.application.controller.ApplicationQueryController;
 import com.navisa.be.application.dto.response.RecentVisaFormsResponse;
 import com.navisa.be.application.service.ApplicationQueryService;
 import com.navisa.be.auth.jwt.JwtProvider;

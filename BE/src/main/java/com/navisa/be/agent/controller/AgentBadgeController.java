@@ -6,7 +6,6 @@ import com.navisa.be.common.dto.response.BaseResponse;
 import com.navisa.be.agent.service.AgentBadgeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

@@ -3,6 +3,8 @@ package com.navisa.be.storage.service;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.storage.exception.StorageDomainException;
 import com.navisa.be.storage.model.enums.ImageSize;
+import com.navisa.be.storage.service.AwsCloudfrontService;
+import com.navisa.be.storage.service.AwsS3StorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

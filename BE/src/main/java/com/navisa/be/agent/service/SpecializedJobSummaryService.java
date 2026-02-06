@@ -1,10 +1,7 @@
 package com.navisa.be.agent.service;
 
-import com.navisa.be.agent.event.ReviewCreatedBadgeEvent;
 import com.navisa.be.agent.event.ReviewCreatedSpecializedJobEvent;
-import com.navisa.be.agent.model.entity.AgentBadgeSummary;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
-import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.repository.JobCodeRepository;

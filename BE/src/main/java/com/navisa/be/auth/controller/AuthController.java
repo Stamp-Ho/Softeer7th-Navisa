@@ -1,6 +1,8 @@
 package com.navisa.be.auth.controller;
 
-import com.navisa.be.auth.dto.request.*;
+import com.navisa.be.auth.dto.request.GoogleLoginRequest;
+import com.navisa.be.auth.dto.request.LoginRequest;
+import com.navisa.be.auth.dto.request.SignupRequest;
 import com.navisa.be.auth.dto.response.LoginResponse;
 import com.navisa.be.auth.dto.response.SignupResponse;
 import com.navisa.be.auth.dto.response.TokenResponse;

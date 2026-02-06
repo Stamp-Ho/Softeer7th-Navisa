@@ -7,6 +7,8 @@ import com.navisa.be.common.repository.NationalityRepository;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.repository.*;
+import com.navisa.be.foreigner.service.ForeignerCommandService;
+import com.navisa.be.user.repository.UserRepository;
 import com.navisa.be.support.ForeignerFixture;
 import com.navisa.be.support.IntegrationTestSupport;
 import com.navisa.be.user.model.entity.User;
@@ -20,12 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.navisa.be.foreigner.repository.ForeignerEducationRepository;
-import com.navisa.be.foreigner.repository.ForeignerCareersRepository;
-import com.navisa.be.foreigner.repository.ForeignerExpectedCompanyRepository;
-import com.navisa.be.foreigner.repository.ForeignerLanguageRepository;
-import com.navisa.be.foreigner.repository.ForeignerNationalityRepository;
-import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
+
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
 import com.navisa.be.common.dto.projection.JobCodeSimilarityProjection;
 
@@ -60,7 +57,7 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
     private ForeignerNationalityRepository foreignerNationalityRepository;
 
     @Autowired
-    private com.navisa.be.user.repository.UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private ForeignerSimilarityRepository foreignerSimilarityRepository;

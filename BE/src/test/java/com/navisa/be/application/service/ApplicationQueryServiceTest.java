@@ -8,6 +8,7 @@ import com.navisa.be.application.model.entity.VisaApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.repository.JobCodeRepository;
+import com.navisa.be.application.service.ApplicationQueryService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
 import com.navisa.be.support.IntegrationTestSupport;

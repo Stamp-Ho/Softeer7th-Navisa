@@ -1,6 +1,6 @@
 package com.navisa.be.agent.service;
 
-import com.navisa.be.agent.dto.AgentCardQueryDto;
+import com.navisa.be.agent.dto.*;
 import com.navisa.be.agent.dto.*;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.GetAgentDetailResponse;
@@ -79,7 +79,7 @@ public class AgentProfileQueryService {
         List<AgentCardResponse> content = contentProfiles.stream()
                 .map(agent -> {
                         String profileUrl = awsCloudfrontService.getImageUrl(
-                                com.navisa.be.storage.model.enums.ImageSize.SMALL,
+                                ImageSize.SMALL,
                                 agent.getProfileObjectKey()
                         );
 

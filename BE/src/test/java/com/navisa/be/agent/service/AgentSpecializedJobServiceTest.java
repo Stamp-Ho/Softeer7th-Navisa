@@ -3,6 +3,7 @@ package com.navisa.be.agent.service;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
 import com.navisa.be.common.model.entity.JobCode;
+import com.navisa.be.agent.service.AgentSpecializedJobService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

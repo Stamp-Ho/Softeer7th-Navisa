@@ -2,6 +2,7 @@ package com.navisa.be.agent.repository;
 
 import com.navisa.be.agent.dto.AgentCardQueryDto;
 import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.support.AgentProfileTestFixture;
 import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.common.model.entity.JobCode;

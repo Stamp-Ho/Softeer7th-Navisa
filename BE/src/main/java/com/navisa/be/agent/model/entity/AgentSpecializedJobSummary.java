@@ -38,13 +38,22 @@ public class AgentSpecializedJobSummary {
     @Column(name = "count", nullable = false)
     private int count;
 
+    @Column(name = "accumulated_review_reliability", nullable = false)
+    @Getter
+    private double accumulatedReviewReliability;  // 누적 리뷰 신뢰도
+
     public AgentSpecializedJobSummary(UUID agentId, JobCode jobCode) {
         this.agentId = agentId;
         this.jobCode = jobCode;
         this.count = 1;
+        this.accumulatedReviewReliability = 0.0; // 초기값
     }
 
     public void incrementCount() {
         this.count++;
+    }
+
+    public void addAccumulatedReviewReliability(double reviewWeight) {
+        this.accumulatedReviewReliability += reviewWeight;
     }
 }

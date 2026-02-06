@@ -52,7 +52,6 @@ class ForeignerQueryControllerTest {
     @MockitoBean
     private UserRepository userRepository;
 
-
     @Test
     @DisplayName("외국인 상세 요건 상태 조회 성공 시 200 OK와 상태 정보를 반환한다.")
     void checkForeignerFilledStatus_Success() throws Exception {

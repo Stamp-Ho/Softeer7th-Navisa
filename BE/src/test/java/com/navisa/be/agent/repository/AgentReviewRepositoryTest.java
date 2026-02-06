@@ -1,6 +1,7 @@
 package com.navisa.be.agent.repository;
 
 import com.navisa.be.agent.model.entity.AgentReview;
+import com.navisa.be.agent.repository.AgentReviewRepository;
 import com.navisa.be.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

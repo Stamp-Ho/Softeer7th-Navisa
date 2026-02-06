@@ -1,15 +1,8 @@
 package com.navisa.be.support;
 
-import com.navisa.be.agent.model.entity.AgentLanguage;
-import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.model.entity.AgentSpecializedJob;
-import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
-import com.navisa.be.agent.repository.AgentLanguageRepository;
-import com.navisa.be.agent.repository.AgentProfileRepository;
-import com.navisa.be.agent.repository.AgentSpecializedJobRepository;
 import com.navisa.be.agent.model.entity.*;
-import com.navisa.be.agent.model.enums.BadgeName;
 import com.navisa.be.agent.repository.*;
+import com.navisa.be.agent.model.enums.BadgeName;
 import com.navisa.be.common.model.entity.JobCode;
 import com.navisa.be.common.model.entity.Language;
 import com.navisa.be.common.model.entity.Nationality;
@@ -18,7 +11,6 @@ import com.navisa.be.common.repository.LanguageRepository;
 import com.navisa.be.common.repository.NationalityRepository;
 import com.navisa.be.info.model.entity.JobGroup;
 import com.navisa.be.info.repository.JobGroupRepository;
-import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -60,7 +52,7 @@ public class AgentProfileTestFixture {
     }
 
     public AgentSpecializedJobSummary createAgentSpecializedJobSummary(UUID agentId,
-            JobCode jobCode) {
+                                                                       JobCode jobCode) {
         AgentSpecializedJobSummary summary = new AgentSpecializedJobSummary(
                 agentId, jobCode);
         return agentSpecializedJobSummaryRepository.save(summary);

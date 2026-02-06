@@ -1,6 +1,7 @@
 package com.navisa.be.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.navisa.be.auth.controller.AuthController;
 import com.navisa.be.auth.dto.request.LoginRequest;
 import com.navisa.be.auth.dto.request.SignupRequest;
 import com.navisa.be.auth.dto.response.LoginResponse;

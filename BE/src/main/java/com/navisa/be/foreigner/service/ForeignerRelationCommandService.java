@@ -7,6 +7,7 @@ import com.navisa.be.foreigner.dto.ForeignerCareerDto;
 import com.navisa.be.foreigner.dto.ForeignerEducationDto;
 import com.navisa.be.foreigner.dto.ForeignerExpectedCompanyDto;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
+import com.navisa.be.foreigner.repository.*;
 import com.navisa.be.foreigner.model.entity.*;
 import com.navisa.be.foreigner.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class ForeignerRelationCommandService {
     private final ForeignerSimilarityRepository foreignerSimilarityRepository;
 
     public void saveForeignerRelations(ForeignerProfile profile, ForeignerRegisterRequest request,
-            List<Language> languages, List<Nationality> nationalities) {
+                                       List<Language> languages, List<Nationality> nationalities) {
 
         List<ForeignerLanguage> foreignerLanguages = languages.stream()
                 .map(language -> new ForeignerLanguage(null, profile, language))
@@ -59,14 +60,12 @@ public class ForeignerRelationCommandService {
         List<ForeignerLanguage> existingLanguages = foreignerLanguageRepository
                 .findByForeignerProfileId(profile.getId());
 
-        // Delete missing
         List<ForeignerLanguage> toDelete = existingLanguages.stream()
                 .filter(existing -> newLanguages.stream()
                         .noneMatch(lang -> lang.getId().equals(existing.getLanguage().getId())))
                 .toList();
         foreignerLanguageRepository.deleteAll(toDelete);
 
-        // Insert new
         List<ForeignerLanguage> toInsert = newLanguages.stream()
                 .filter(newItem -> existingLanguages.stream()
                         .noneMatch(existing -> existing.getLanguage().getId()
@@ -80,7 +79,6 @@ public class ForeignerRelationCommandService {
         List<ForeignerNationality> existingNationalities = foreignerNationalityRepository
                 .findByForeignerProfileId(profile.getId());
 
-        // Delete missing
         List<ForeignerNationality> toDelete = existingNationalities.stream()
                 .filter(existing -> newNationalities.stream()
                         .noneMatch(nat -> nat.getId()
@@ -88,7 +86,6 @@ public class ForeignerRelationCommandService {
                 .toList();
         foreignerNationalityRepository.deleteAll(toDelete);
 
-        // Insert new
         List<ForeignerNationality> toInsert = newNationalities.stream()
                 .filter(newItem -> existingNationalities.stream()
                         .noneMatch(existing -> existing.getNationality().getId()

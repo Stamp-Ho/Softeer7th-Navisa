@@ -3,6 +3,7 @@ package com.navisa.be.agent.service;
 import com.navisa.be.agent.dto.JobCodeDto;
 import com.navisa.be.agent.dto.response.GetJobCodeListResponse;
 import com.navisa.be.common.repository.JobCodeRepository;
+import com.navisa.be.agent.service.JobCodeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

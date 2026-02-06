@@ -1,7 +1,7 @@
 package com.navisa.be.agent.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navisa.be.agent.dto.*;
+import com.navisa.be.agent.dto.LicenseInfoDto;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileRequest;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.Badge;
@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
