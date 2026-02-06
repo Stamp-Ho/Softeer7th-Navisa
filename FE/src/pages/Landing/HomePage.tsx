@@ -1,11 +1,12 @@
 import { useContext } from "react";
 import BannerBackground from "../../components/shared/BannerBackground";
-import ForeignerBanner from "./ForeignerBanner";
-import SuggestedAgents from "./SuggestedAgents";
-import SuggestedForeigners from "./SuggestedForeigner";
-import RecentlyEditedDocuments from "./RecentlyEditedDocuments";
-import ExploreJobs from "./ExploreJobs";
+import ForeignerBanner from "./Foreigner/ForeignerBanner";
+import SuggestedAgents from "./Foreigner/SuggestedAgents";
+import SuggestedForeigners from "./Agent/SuggestedForeigner";
+import RecentlyEditedDocuments from "./Agent/RecentlyEditedDocuments";
+import ExploreJobs from "./Common/ExploreJobs";
 import { AuthContext } from "../../contexts/AuthContext";
+import RecommendPanel from "./Foreigner/RecommendPanel";
 
 const HomePage = () => {
   const context = useContext(AuthContext);
@@ -35,6 +36,7 @@ const HomePage = () => {
         <>
           <ForeignerBanner />
           <SuggestedAgents />
+          <RecommendPanel />
         </>
       )}
       <ExploreJobs isAgent={isAgent} />

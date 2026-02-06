@@ -29,7 +29,7 @@ export const IcDot = ({ size = 24, color = "var(--gray-400)" }) => {
     </svg>
   );
 };
-export const IcDash = ({ size = 24 }) => {
+export const IcDash = ({ size = 24, color = "black" }) => {
   return (
     <svg
       width={size}
@@ -40,7 +40,7 @@ export const IcDash = ({ size = 24 }) => {
     >
       <path
         d="M19.2 12L4.8 12"
-        stroke="black"
+        stroke={color}
         strokeWidth="2"
         strokeLinecap="round"
       />
@@ -659,7 +659,7 @@ export const IcSendDefault = ({ size = "24" }) => {
     </svg>
   );
 };
-      
+
 export const IcPdf = ({ size = 24 }) => {
   return (
     <svg

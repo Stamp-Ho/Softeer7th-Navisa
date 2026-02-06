@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect } from "react";
-import AgentCard from "../../components/shared/AgentCard";
-import LoadingBar from "./LoadingBar";
-import { useRecommendedAgentQuery } from "../../api/hooks/useRecommendAgentQuery";
+import AgentCard from "../../../components/shared/AgentCard";
+import LoadingBar from "../Common/LoadingBar";
 
 const SuggestedAgents = () => {
   const scrollRef = useRef<HTMLDivElement>(null);

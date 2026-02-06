@@ -8,9 +8,9 @@ export const editDocumentData: FormSection[] = [
     fields: [
       {
         label: "여권용 사진 (35mm*45mm)",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 placeholder:
@@ -25,9 +25,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "여권에 기재된 영문 성명",
         description: "Full name is English (as shown in passport)",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 placeholder: "성",
@@ -48,9 +48,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "한자성명",
         description: "Chinese character's name",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 placeholder: "한자 이름",
@@ -63,9 +63,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "성별 ",
         description: "Sex",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -79,9 +79,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "생년월일",
         description: "Date of birth",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "date",
@@ -93,9 +93,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "국적",
         description: "Nationality",
+        getMany: true,
         inputLines: [
           {
-            getMany: true,
             inputs: [
               {
                 inputType: "selector",
@@ -109,9 +109,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "출생 국가",
         description: "Country of Birth",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "selector",
@@ -125,9 +125,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "국가신분증번호",
         description: "National Identy No.",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -141,9 +141,9 @@ export const editDocumentData: FormSection[] = [
         label: "이전에 한국에 출입국하였을 때 다른 성명을 사용했는지 여부",
         description:
           "Has the applicant ever used any other names to enter or depart Korea?",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -157,9 +157,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "복수 국적 여부",
         description: "Is the applicant  a citizen of more than one country??",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -179,9 +179,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "여권 종류",
         description: "Passport Type",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -195,9 +195,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "여권번호",
         description: "Passport No.",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -210,9 +210,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "발급국가",
         description: "Country of Passport",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "selector",
@@ -226,9 +226,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "발급지",
         description: "Place of Issue",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -241,9 +241,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "발급일자",
         description: "Date of Issue",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "date",
@@ -255,9 +255,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "기간 만료일",
         description: "Date of Expiry",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "date",
@@ -269,9 +269,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "다른 여권 소지 여부",
         description: "Does the applicant have any other valid passport?",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -291,9 +291,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "본국주소",
         description: "Home Country Adress of the Applicant",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -322,9 +322,9 @@ export const editDocumentData: FormSection[] = [
         disableToggleDescription: "본국 주소와 동일해요",
         description:
           "Current Residential Adress / Please write the current address if different from above.",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -351,9 +351,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "휴대전화",
         description: "Cell Phone No.",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -365,9 +365,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "일반전화",
         description: "Telephone No.",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -379,9 +379,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "이메일",
         description: "E-mail",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -399,9 +399,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "비상시 연락처",
         description: "Emergency Contact Information",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -442,9 +442,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "현재 혼인사항",
         description: "Current Martial Status",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -457,9 +457,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "배우자 인적사항",
         description: "Personal Information of applicant’s Spouse",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -503,9 +503,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "자녀 유무",
         description: "Does the applicant have children?",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -526,9 +526,9 @@ export const editDocumentData: FormSection[] = [
         label: "최종학력",
         description:
           "What is the highest degree or level of education the applicant has completed?",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -542,9 +542,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "학교명",
         description: "Name of School",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -557,9 +557,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "학교 소재지",
         description: "Location of School (city/province/country)",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -585,9 +585,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "직업",
         description: "Current personal circumstances",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -616,9 +616,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "직업 상세정보",
         description: "Employment Details",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -662,9 +662,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "입국목적",
         description: "Purpose of Visit to Korea",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "radio",
@@ -696,9 +696,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "체류예정기간",
         description: "Period of Stay",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -711,9 +711,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "입국예정일",
         description: "Intended Date of Entry",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [{ inputType: "date" }],
           },
         ],
@@ -721,9 +721,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "체류예정지 (호텔포함)",
         description: "Address in Korea (Including hotels)",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -743,9 +743,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "한국 내 연락처",
         description: "Contact No. in Korea",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               {
                 inputType: "text",
@@ -759,11 +759,10 @@ export const editDocumentData: FormSection[] = [
         label: "과거 5년간 한국을 방문한 경력",
         description:
           "Has the applicant travelled to Korea in the last 5 years?",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
-              { inputType: "radio", colSpan: 2, options: ["예", "아니오"] },
               {
                 inputType: "selector",
                 colSpan: 1,
@@ -784,23 +783,22 @@ export const editDocumentData: FormSection[] = [
         label: "한국 외에 과거 5년간 여행한 국가",
         description:
           "Has the applicant travelled outside his/her country of residence, excluding to Korea, in the last 5 years?",
+        getMany: true,
+        addButtonAtBelowLines: true,
+        canInputBlocked: true,
         inputLines: [
           {
-            getMany: true,
-            addButtonAtBelowLines: true,
             inputs: [
-              { inputType: "radio", colSpan: 2, options: ["예", "아니오"] },
               {
                 inputType: "selector",
                 inputDescription: "국가명",
                 englishDescription: "Name of Country",
                 options: nationList,
-                changeRow: true,
               },
               {
                 inputType: "text",
                 inputDescription: "방문 목적",
-                colSpan: 6,
+                colSpan: 5,
                 englishDescription: "Purpose of Visit",
               },
               {
@@ -822,17 +820,16 @@ export const editDocumentData: FormSection[] = [
         label: "국내 체류 가족 유무",
         description:
           "Does the applicant have any family member(s) staying in Korea?",
+        getMany: true,
+        addButtonAtBelowLines: true,
+        canInputBlocked: true,
         inputLines: [
           {
-            getMany: true,
-            addButtonAtBelowLines: true,
             inputs: [
-              { inputType: "radio", colSpan: 2, options: ["예", "아니오"] },
               {
                 inputType: "text",
                 inputDescription: "성명",
                 englishDescription: "Full name inEnglish",
-                changeRow: true,
               },
               {
                 inputType: "selector",
@@ -866,17 +863,16 @@ export const editDocumentData: FormSection[] = [
         label: "동반입국 가족 유무",
         description:
           "Is the applicant traveling to Korea with any family member(s)?",
+        getMany: true,
+        addButtonAtBelowLines: true,
+        canInputBlocked: true,
         inputLines: [
           {
-            getMany: true,
-            addButtonAtBelowLines: true,
             inputs: [
-              { inputType: "radio", colSpan: 2, options: ["예", "아니오"] },
               {
                 inputType: "text",
                 inputDescription: "성명",
                 englishDescription: "Full name inEnglish",
-                changeRow: true,
               },
               {
                 inputType: "selector",
@@ -916,9 +912,9 @@ export const editDocumentData: FormSection[] = [
         label: "이 신청서를 작성하는데 다른 사람의 도움을 받았습니까?",
         description:
           "Did the applicant receive assistance in completing this form?",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               { inputType: "radio", colSpan: 2, options: ["예", "아니오"] },
               {
@@ -959,9 +955,9 @@ export const editDocumentData: FormSection[] = [
       {
         label: "초청인/초청회사",
         description: "Is there anyone inviting the applicant for the visa?",
+        getMany: false,
         inputLines: [
           {
-            getMany: false,
             inputs: [
               { inputType: "radio", options: ["예", "아니오"] },
               {

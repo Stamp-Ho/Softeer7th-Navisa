@@ -8,12 +8,14 @@ type Field = {
   isOptional?: boolean;
   description?: string;
   disableToggleDescription?: string;
+  canInputBlocked?: boolean;
   inputLines: inputLine[];
-};
-type inputLine = {
   getMany?: boolean;
   addButtonAtFirstLine?: boolean;
   addButtonAtBelowLines?: boolean;
+};
+type inputLine = {
+  rowId?: string;
   inputs: input[];
 };
 export type input = {

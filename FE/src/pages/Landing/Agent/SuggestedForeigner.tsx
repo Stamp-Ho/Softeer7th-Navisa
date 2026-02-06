@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import SearchForeignerCard from "../../components/shared/SearchForeignerCard";
+import SearchForeignerCard from "../../../components/shared/SearchForeignerCard";
 
 const SuggestedForeigners = () => {
   const scrollRef = useRef<HTMLDivElement>(null);

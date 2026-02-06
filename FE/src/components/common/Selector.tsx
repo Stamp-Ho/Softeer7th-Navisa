@@ -13,14 +13,14 @@ const Selector = ({
   const zOfDropdown = isOpen ? "z-20" : "";
 
   return (
-    <div className="relative h-15">
+    <div className="relative h-14">
       <div
         className={`absolute left-0 top-0 px-4 py-5 rounded-lg
-        flex items-center w-full h-15
+        flex items-center w-full h-14
         body-l-medium
-        ${isOpen && " border border-border-normal"}
+        ${isOpen && " outline outline-border-normal"}
         ${zOfSelector}
-        ${value ? "bg-violet-25 text-primary border-primary" : "bg-background-default text-text-base"}
+        ${value ? "bg-violet-25 text-primary outline-primary" : "bg-background-default text-text-base"}
         ${className}`}
       >
         {value === "" ? (

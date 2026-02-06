@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { IcArrows } from "../../assets/icon/StratisUi";
-import DocumentCard from "../../components/shared/DocumentCard";
-import type { documentType } from "../Documents/Documents";
+import { IcArrows } from "../../../assets/icon/StratisUi";
+import DocumentCard from "../../../components/shared/DocumentCard";
+import type { documentType } from "../../Documents/Documents";
 
 const RecentlyEditedDocuments = () => {
   return (

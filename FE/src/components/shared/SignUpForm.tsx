@@ -32,14 +32,7 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
     mode: "onChange", // 실시간 유효성 검사를 위해 설정
     defaultValues: { option1: false, option2: false, option3: false },
   });
-  const [email, pw, pwCheck, opt1, opt2, opt3] = watch([
-    "email",
-    "pw",
-    "pwCheck",
-    "option1",
-    "option2",
-    "option3",
-  ]);
+  const [pw, opt1, opt2, opt3] = watch(["pw", "option1", "option2", "option3"]);
 
   const onTotalClick = () => {
     const isAllChecked = opt1 && opt2 && opt3;

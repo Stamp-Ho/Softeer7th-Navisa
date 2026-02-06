@@ -1,4 +1,4 @@
-import NavisaLogo from "../../assets/NavisaLogo";
+import NavisaLogo from "../../../assets/NavisaLogo";
 
 const ForeignerBanner = () => {
   return (

@@ -3,7 +3,7 @@ import { useState } from "react";
 const Radio = ({ className = "", options = [""] }) => {
   const [value, setValue] = useState(-1);
   return (
-    <div className={`h-15 flex flex-row ${className}`}>
+    <div className={`h-14 flex flex-row ${className}`}>
       {options.map((opt, index) => (
         <div
           key={`radio_${index}`}

@@ -32,8 +32,8 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         )}
         <input
           ref={ref} // forwardRef로 받은 ref를 여기에 연결
-          className={`w-full px-5 bg-gray-50 rounded-[12px]
-          text-[16px] font-medium focus:outline-gray-300 focus:outline-2 h-[56px]
+          className={`w-full px-5 bg-gray-50 rounded-xl
+          text-[16px] font-medium focus:outline-gray-300 focus:outline-2 h-14
           placeholder:text-gray-400 ${className}
           ${isInvalid ? "outline-2 outline-red-400 focus:outline-red-400" : ""}`}
           placeholder={placeholder}

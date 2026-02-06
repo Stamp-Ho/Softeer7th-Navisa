@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import JobIcon, { jobs } from "../../assets/JobIcon";
+import JobIcon, { jobs } from "../../../assets/JobIcon";
 
 const ExploreJobs = ({ isAgent = false }) => {
   return (
-    <div className="flex flex-col gap-5 mt-8">
+    <div className="flex flex-col gap-5 mt-17">
       <h2 className="headline-s-bold">
         직군별 {isAgent ? "의뢰인" : "행정사"}
         탐색

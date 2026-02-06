@@ -33,7 +33,7 @@ const InputRenderer = ({
         /> // name={input.fieldName}/>
       );
     case "radio":
-      return <Radio options={input.options} />;
+      return <Radio options={input.options} className={className} />;
     case "date":
       return (
         <div className="grid grid-cols-3 gap-3">
