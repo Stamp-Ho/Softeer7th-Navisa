@@ -79,7 +79,7 @@ public class ForeignerProfileRepositoryImpl implements ForeignerProfileRepositor
                 .distinct()
                 .innerJoin(foreignerSimilarity).on(foreignerProfile.id.eq(foreignerSimilarity.foreignerId)) // 필수 조인
                 .where(
-                        isIdle(),
+                        isRequesting(),
                         cursorCondition(lastElementCreatedAt, slice.lastElementId()),
                         overlapJobIds(dto.jobIdList().stream().mapToLong(Long::longValue).toArray()));
 
@@ -98,8 +98,8 @@ public class ForeignerProfileRepositoryImpl implements ForeignerProfileRepositor
                 .fetch();
     }
 
-    private BooleanExpression isIdle() {
-        return foreignerProfile.status.eq(ForeignerSearchStatus.IDLE);
+    private BooleanExpression isRequesting() {
+        return foreignerProfile.status.eq(ForeignerSearchStatus.REQUESTING);
     }
 
     /**

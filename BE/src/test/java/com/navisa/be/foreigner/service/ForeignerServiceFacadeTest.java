@@ -164,7 +164,7 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
 
                 // then
                 assertThat(response).isNotNull();
-                assertThat(response.isIdle()).isEqualTo(request.isIdle());
+                assertThat(response.isRequesting()).isEqualTo(request.isRequesting());
                 assertThat(response.education().schoolName()).isEqualTo(request.education().schoolName());
                 assertThat(response.languageIdList()).contains(language.getId());
                 assertThat(response.nationIdList()).contains(nationality.getId());
@@ -259,7 +259,7 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
         }
 
         @Test
-        @DisplayName("필터 조건이 없을 경우 전체 목록을 조회한다 (단, IDLE 상태만)")
+        @DisplayName("필터 조건이 없을 경우 전체 목록을 조회한다 (단, REQUESTING 상태만)")
         void findForeignerProfileCardsBasedOnFilter_ShouldReturnAllIdleProfiles_WhenNoFilter() {
                 // given
                 User user1 = userFixture.createUser("f1@test.com", UserType.FILLED_FOREIGNER);

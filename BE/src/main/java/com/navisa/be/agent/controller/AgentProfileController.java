@@ -58,7 +58,7 @@ public class AgentProfileController {
     public BaseResponse<SliceResponse<AgentCardResponse, UUID>> findAgentProfileCardsBasedOnFilter(
             @ModelAttribute AgentCardRequest request,
             @Parameter(description = "페이징 정보 (lastElementId: 마지막으로 본 행정사 ID, size: 페이지 크기)") @SliceInfo SliceRequest<UUID> slice,
-            @LoginUser String email) {
+            @Parameter(hidden = true) @LoginUser String email) {
 
         return new BaseResponse<>(agentProfileServiceFacade.findAgentProfileCardsBasedOnFilter(request, slice, email));
     }
@@ -80,8 +80,7 @@ public class AgentProfileController {
     @HasUserType({UserType.VALID_AGENT, UserType.FILLED_FOREIGNER})
     @GetMapping("/{agentId}")
     public BaseResponse<GetAgentDetailResponse> getAgentDetail(@PathVariable("agentId") UUID agentId,
-                                                               @Parameter(hidden = true)
-                                                               @LoginUser String loginUserEmail){
+                                                               @Parameter(hidden = true) @LoginUser String loginUserEmail){
         GetAgentDetailResponse response = agentProfileQueryService.getAgentDetail(loginUserEmail, agentId);
         return new BaseResponse<>(response);
     }

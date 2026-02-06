@@ -33,7 +33,7 @@ public class ForeignerProfileTestFixture {
     private final EntityManager em;
 
     public ForeignerProfile createForeignerProfile(User foreignerUser) {
-        ForeignerProfile foreignerProfile = new ForeignerProfile(foreignerUser.getId(), ForeignerSearchStatus.IDLE);
+        ForeignerProfile foreignerProfile = new ForeignerProfile(foreignerUser.getId(), ForeignerSearchStatus.REQUESTING);
 
         ForeignerProfile savedForeigner = foreignerProfileRepository.save(foreignerProfile);
 
@@ -75,7 +75,7 @@ public class ForeignerProfileTestFixture {
 
     public ForeignerProfile createForeignerProfile(User loginUser, String nickname) {
         ForeignerProfile foreignerProfile = new ForeignerProfile(loginUser.getId(), nickname,
-                ForeignerSearchStatus.IDLE);
+                ForeignerSearchStatus.REQUESTING);
         return foreignerProfileRepository.save(foreignerProfile);
     }
 

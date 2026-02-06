@@ -12,6 +12,7 @@ import com.navisa.be.common.dto.response.BaseResponse;
 import com.navisa.be.common.dto.response.SliceResponse;
 import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +33,7 @@ public class ChatRoomQueryController {
     @Operation(summary = "채팅방 목록 조회", description = "로그인한 사용자의 채팅방 목록을 페이징하여 조회합니다.")
     public SliceResponse<ChatRoomCardResponse, Long> getAllChatRooms(
             @SliceInfo SliceRequest<Long> slice,
-            @LoginUser String email) {
+            @Parameter(hidden = true) @LoginUser String email) {
 
         return chatRoomServiceFacade.findAllChatRoomsByNoOffset(email, slice);
     }
@@ -40,7 +41,8 @@ public class ChatRoomQueryController {
     @GetMapping("/nonread/count")
     @HasUserType({ UserType.FILLED_FOREIGNER, UserType.VALID_AGENT })
     @Operation(summary = "안 읽은 메시지 수 조회", description = "로그인한 사용자의 전체 안 읽은 메시지 수를 조회합니다.")
-    public BaseResponse<ChatMessageCountResponse> getChatMessageNonReadCount(@LoginUser String email) {
+    public BaseResponse<ChatMessageCountResponse> getChatMessageNonReadCount(
+            @Parameter(hidden = true) @LoginUser String email) {
 
         ChatMessageCountResponse content = chatMessageServiceFacade.findNonReadCountByUserEmail(email);
         return new BaseResponse<>(content);
@@ -49,7 +51,8 @@ public class ChatRoomQueryController {
     @GetMapping("/matched/count")
     @HasUserType({ UserType.VALID_AGENT })
     @Operation(summary = "행정사의 매칭된 채팅방 중 안읽은 메시지 수 조회", description = "행정사의 매칭된 채팅방 중 안 읽은 전체 메시지 개수를 조회합니다.")
-    public BaseResponse<ChatMessageCountResponse> getChatMessageMatchedNonReadCount(@LoginUser String email) {
+    public BaseResponse<ChatMessageCountResponse> getChatMessageMatchedNonReadCount(
+            @Parameter(hidden = true) @LoginUser String email) {
 
         ChatMessageCountResponse content = chatMessageServiceFacade.findMatchedNonReadCountByUserEmail(email);
         return new BaseResponse<>(content);

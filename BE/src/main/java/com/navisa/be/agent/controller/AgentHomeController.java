@@ -6,6 +6,7 @@ import com.navisa.be.agent.service.AgentHomeService;
 import com.navisa.be.common.annotation.LoginUser;
 import com.navisa.be.common.dto.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,8 @@ public class AgentHomeController {
 
     @Operation(summary = "행정사 카드 랜덤 조회", description = "메인 페이지용 행정사 카드 12개를 랜덤으로 조회합니다. 로그인 시 전문분야가 노출됩니다.")
     @GetMapping("/guest/agents")
-    public BaseResponse<List<AgentCardResponse>> getRandomAgentCards(@LoginUser(required = false) String email) {
+    public BaseResponse<List<AgentCardResponse>> getRandomAgentCards(
+            @Parameter(hidden = true) @LoginUser(required = false) String email) {
         List<AgentCardResponse> agentCardResult = agentHomeService.getRandomAgentCards(email);
         return new BaseResponse<>(agentCardResult);
     }

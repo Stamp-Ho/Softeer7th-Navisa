@@ -79,7 +79,7 @@ public class ForeignerQueryService {
 
         return new ForeignerQueryResponse(
                 nationalityIds, languageIds, education, careers, expectedCompany,
-                profile.getStatus().equals(ForeignerSearchStatus.IDLE));
+                profile.getStatus().equals(ForeignerSearchStatus.REQUESTING));
     }
 
     // 외국인 상세 요건 입력 여부 확인
@@ -160,7 +160,7 @@ public class ForeignerQueryService {
         UUID lastElementId = contentProfiles.isEmpty() ? null : contentProfiles.get(contentProfiles.size() - 1).getId();
 
         return new SliceResponse<>(
-                foreignerProfiles.stream()
+                contentProfiles.stream()
                     .map(fp ->
                             ForeignerCardExtensionResponse.of(
                                     fp,

@@ -16,9 +16,9 @@ public record ForeignerRegisterRequest(
         @NotNull(message = "foreignerEducation은 null이면 안됩니다.") ForeignerEducationDto education,
         @NotNull(message = "foreignerCareers는 null이면 안됩니다.") List<ForeignerCareerDto> foreignerCareers,
         @NotNull(message = "expectedCompany는 null이면 안됩니다.") ForeignerExpectedCompanyDto expectedCompany,
-        @NotNull(message = "isIdle 값은 null이면 안됩니다.") Boolean isIdle) {
+        @NotNull(message = "isRequesting 값은 null이면 안됩니다.") Boolean isRequesting) {
 
     public ForeignerProfile toProfileEntity(UUID userId) {
-        return new ForeignerProfile(userId, isIdle ? ForeignerSearchStatus.IDLE : ForeignerSearchStatus.REQUESTING);
+        return new ForeignerProfile(userId, isRequesting ? ForeignerSearchStatus.REQUESTING : ForeignerSearchStatus.IDLE);
     }
 }

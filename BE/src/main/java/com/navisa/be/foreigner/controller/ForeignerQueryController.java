@@ -40,14 +40,16 @@ public class ForeignerQueryController {
 
     @Operation(summary = "내 프로필 조회", description = "현재 로그인한 외국인 회원의 전체 프로필 정보를 조회합니다.")
     @GetMapping("/profile")
-    public BaseResponse<ForeignerQueryResponse> findForeignerProfile(@LoginUser String email) {
+    public BaseResponse<ForeignerQueryResponse> findForeignerProfile(
+            @Parameter(hidden = true) @LoginUser String email) {
         ForeignerQueryResponse response = foreignerServiceFacade.findForeignerTotalInfo(email);
         return new BaseResponse<>(response);
     }
 
     @Operation(summary = "외국인 상세 요건 입력 여부 확인", description = "현재 로그인한 외국인 회원의 필수 상세 요건 입력 상태를 조회합니다.")
     @GetMapping("/requirements")
-    public BaseResponse<ForeignerStatusResponse> checkForeignerFilledStatus(@LoginUser String email) {
+    public BaseResponse<ForeignerStatusResponse> checkForeignerFilledStatus(
+            @Parameter(hidden = true) @LoginUser String email) {
         ForeignerStatusResponse response = foreignerQueryService.checkForeignerFilledStatus(email);
         return new BaseResponse<>(response);
     }
@@ -58,7 +60,8 @@ public class ForeignerQueryController {
     )
     @HasUserType({UserType.VALID_AGENT})
     @GetMapping("/home")
-    public BaseResponse<List<ForeignerCardResponse>> findMatchedForeignerCard(@LoginUser String email) {
+    public BaseResponse<List<ForeignerCardResponse>> findMatchedForeignerCard(
+            @Parameter(hidden = true) @LoginUser String email) {
         List<ForeignerCardResponse> cards = foreignerQueryService.findForeignerCardMatchOnSpecializedJob(email);
         return new BaseResponse<>(cards);
     }

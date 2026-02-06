@@ -6,6 +6,7 @@ import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.service.ForeignerServiceFacade;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,8 @@ public class ForeignerCommandController {
 
     @Operation(summary = "외국인 프로필 등록/수정", description = "외국인 회원의 프로필 정보를 등록하거나 수정합니다. 모든 하위 정보(경력, 학력 등)를 포함하여 저장합니다.")
     @PostMapping("/profile")
-    public BaseResponse<Void> registerForeignerProfile(@LoginUser String email,
+    public BaseResponse<Void> registerForeignerProfile(
+            @Parameter(hidden = true) @LoginUser String email,
             @Valid @RequestBody ForeignerRegisterRequest request) {
 
         foreignerServiceFacade.registerAllForeignerInfo(request, email);

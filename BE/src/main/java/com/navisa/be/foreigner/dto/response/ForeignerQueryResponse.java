@@ -12,6 +12,6 @@ public record ForeignerQueryResponse(
         ForeignerEducationDto education,
         List<ForeignerCareerDto> foreignerCareers,
         ForeignerExpectedCompanyDto expectedCompany,
-        boolean isIdle
+        boolean isRequesting
 ) {
 }

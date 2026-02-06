@@ -34,7 +34,6 @@ import com.navisa.be.info.model.entity.JobGroup;
 import com.navisa.be.support.*;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.foreigner.repository.*;
-import com.navisa.be.support.*;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
@@ -143,7 +142,7 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
 
         // then
         assertThat(response).isNotNull();
-        assertThat(response.isIdle()).isEqualTo(request.isIdle());
+        assertThat(response.isRequesting()).isEqualTo(request.isRequesting());
 
         assertThat(response.education()).usingRecursiveComparison().isEqualTo(request.education());
 
@@ -367,7 +366,7 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
         assertThat(response).isNotNull();
         assertThat(response.basicInfo().foreignerId()).isEqualTo(foreignerProfile.getId());
         assertThat(response.basicInfo().nationIdList()).containsExactlyInAnyOrderElementsOf(
-                fns.stream().map(fn -> fn.getId()).toList()
+                fns.stream().map(ForeignerNationality::getId).toList()
         );
         assertThat(response.basicInfo().lastAccessDay()).isEqualTo(foreignerUser.getLastLoginAt());
         assertThat(response.basicInfo().hasChatRoomBetween()).isFalse();

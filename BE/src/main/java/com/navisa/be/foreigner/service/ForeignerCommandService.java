@@ -69,7 +69,7 @@ public class ForeignerCommandService {
         private ForeignerProfile updateForeignerProfile(ForeignerProfile profile, ForeignerRegisterRequest request,
                         List<Language> languages, List<Nationality> nationalities) {
 
-                profile.updateStatus(request.isIdle() ? ForeignerSearchStatus.IDLE : ForeignerSearchStatus.REQUESTING);
+                profile.updateStatus(request.isRequesting() ? ForeignerSearchStatus.REQUESTING : ForeignerSearchStatus.IDLE);
 
                 foreignerRelationCommandService.updateLanguages(profile, languages);
                 foreignerRelationCommandService.updateNationalities(profile, nationalities);
