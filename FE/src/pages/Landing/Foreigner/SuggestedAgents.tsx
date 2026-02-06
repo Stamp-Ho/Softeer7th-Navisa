@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import AgentCard from "../../../components/shared/AgentCard";
 import LoadingBar from "../Common/LoadingBar";
+import { useRecommendedAgentQuery } from "../../../api/hooks/useRecommendAgentQuery";
 
 const SuggestedAgents = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -101,9 +102,10 @@ const SuggestedAgents = () => {
     </>
   ) : (
     <>
-      {data?.map((_, idx) => (
+      {data?.map((agent, idx) => (
         <AgentCard
           key={idx}
+          agent={agent}
           className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
         />
       ))}
