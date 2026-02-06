@@ -49,6 +49,10 @@ public enum ResponseStatus {
     AGENT_NOT_APPROVED(403, "승인되지 않은 행정사입니다."),
     NOT_FOUND_MATCHER_FOREIGNER(404, "조건에 맞는 새로운 의뢰인이 없습니다. 전문 분야를 추가하여 새로운 외국인을 찾아보세요."),
     AGENT_NOT_FOUND(404, "행정사 프로필 정보를 찾을 수 없습니다."),
+    NOT_ALLOWED_TO_REVIEW(400, "1차 내보내기 전에는 리뷰를 작성할 수 없습니다"),
+    VISA_APP_FORM_NOT_FOUND(404, "비자신청서를 찾을 수 없습니다"),
+    PROPOSAL_NOT_FOUND(404, "존재하지 않는 수임제안입니다"),
+    REVIEW_ALREADY_EXISTS(400, "리뷰가 이미 존재합니다"),
 
     /**
      * 서버 에러 (500번대)

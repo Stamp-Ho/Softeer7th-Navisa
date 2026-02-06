@@ -134,8 +134,8 @@ public class AgentProfileTestFixture {
         return badgeRepository.save(badge);
     }
 
-    public AgentReview createAgentReview(AgentProfile agentProfile, Badge badge) {
-        AgentReview review = new AgentReview(agentProfile.getId(), UUID.randomUUID(), "Review Content",
+    public AgentReview createAgentReview(AgentProfile agentProfile, Long proposalId, Badge badge) {
+        AgentReview review = new AgentReview(agentProfile.getId(), UUID.randomUUID(), proposalId, "Review Content",
                 new double[512]);
         review = agentReviewRepository.save(review);
 

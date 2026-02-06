@@ -112,7 +112,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         // 매칭된 방 (메시지 있음)
         ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
                 ZonedDateTime.now());
-        Proposal proposal1 = new Proposal(chatRoom1, agentProfile.getId().toString());
+        Proposal proposal1 = new Proposal(chatRoom1, agentProfile.getId());
         ReflectionTestUtils.setField(proposal1, "status", ProposalStatus.MATCHED);
         proposalRepository.save(proposal1);
 

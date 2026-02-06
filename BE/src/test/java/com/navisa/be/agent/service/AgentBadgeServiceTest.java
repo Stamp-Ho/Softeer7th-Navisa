@@ -68,7 +68,7 @@ class AgentBadgeServiceTest extends IntegrationTestSupport {
         UUID foreignerId = savedForeigner.getId();
 
         AgentReview review = agentReviewRepository.save(new AgentReview(
-                agentId, foreignerId, "상담이 매우 친절합니다!", new double[] { 0.1, 0.2 }));
+                agentId, foreignerId, 1L, "상담이 매우 친절합니다!", new double[] { 0.1, 0.2 }));
 
         agentBadgeRepository.save(new AgentBadge(kindBadge, review));
 

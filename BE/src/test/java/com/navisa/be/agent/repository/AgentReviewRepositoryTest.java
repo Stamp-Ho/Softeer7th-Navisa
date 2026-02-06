@@ -33,6 +33,7 @@ class AgentReviewRepositoryTest extends IntegrationTestSupport {
             agentReviewRepository.save(new AgentReview(
                     agentId,
                     foreignerId,
+                    (long) i,
                     "리뷰 내용 " + i,
                     similarities));
         }

@@ -1,14 +1,12 @@
 package com.navisa.be.agent.controller;
 
 import com.navisa.be.agent.dto.request.AgentCardRequest;
+import com.navisa.be.agent.dto.request.CreateAgentReviewRequest;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileRequest;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.GetJobCodeListResponse;
-import com.navisa.be.agent.service.AgentProfileCommandService;
-import com.navisa.be.agent.service.AgentProfileQueryService;
-import com.navisa.be.agent.service.AgentProfileServiceFacade;
-import com.navisa.be.agent.service.JobCodeService;
+import com.navisa.be.agent.service.*;
 import com.navisa.be.common.annotation.HasUserType;
 import com.navisa.be.agent.dto.response.GetAgentDetailResponse;
 import com.navisa.be.common.annotation.LoginUser;
@@ -36,6 +34,7 @@ public class AgentProfileController {
     private final JobCodeService jobCodeService;
     private final AgentProfileServiceFacade agentProfileServiceFacade;
     private final AgentProfileQueryService agentProfileQueryService;
+    private final AgentReviewService agentReviewService;
 
     @Operation(
             summary = "행정사 프로필 등록 API",
@@ -83,5 +82,17 @@ public class AgentProfileController {
                                                                @Parameter(hidden = true) @LoginUser String loginUserEmail){
         GetAgentDetailResponse response = agentProfileQueryService.getAgentDetail(loginUserEmail, agentId);
         return new BaseResponse<>(response);
+    }
+
+    @Operation(
+            summary = "외국인의 행정사 리뷰 작성 API",
+            description = "외국인이 특정 행정사에게 리뷰를 작성할 때 사용하는 API입니다. 추가적인 정보는 https://www.notion.so/bside/2ef22020273581d18476d1b8c10eb041?source=copy_link를 참고해주세요"
+    )
+    @HasUserType(UserType.FILLED_FOREIGNER)
+    @PostMapping("/reviews")
+    public BaseResponse<Void> createAgentReview(@Valid @RequestBody CreateAgentReviewRequest request,
+                                                @Parameter(hidden = true) @LoginUser String loginUserEmail){
+        agentReviewService.createAgentReview(loginUserEmail, request);
+        return new BaseResponse<>(null);
     }
 }

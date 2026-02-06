@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "proposal")
 @Getter
@@ -27,9 +29,9 @@ public class Proposal extends BaseEntity {
     private ProposalStatus status = ProposalStatus.PROPOSED;
 
     @Column(name = "sender_id", nullable = false)
-    private String senderId;
+    private UUID senderId;
 
-    public Proposal(ChatRoom chatRoom, String senderId) {
+    public Proposal(ChatRoom chatRoom, UUID senderId) {
         this.chatRoom = chatRoom;
         this.senderId = senderId;
     }

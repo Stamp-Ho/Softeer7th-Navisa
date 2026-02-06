@@ -51,7 +51,7 @@ class ProposalRepositoryTest extends IntegrationTestSupport {
         ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
                 ZonedDateTime.now());
 
-        Proposal proposal = new Proposal(chatRoom, agentProfile.getId().toString());
+        Proposal proposal = new Proposal(chatRoom, agentProfile.getId());
 
         // when
         Proposal savedProposal = proposalRepository.save(proposal);

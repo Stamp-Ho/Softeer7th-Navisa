@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(
-        name = "원격 저장소 관련 API"
+        name = "Storage",
+        description = "원격 저장소 관련 API"
 )
 @RequiredArgsConstructor
 @RequestMapping("/api/storage")

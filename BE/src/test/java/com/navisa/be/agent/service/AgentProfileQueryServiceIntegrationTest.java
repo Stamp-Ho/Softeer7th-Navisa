@@ -62,7 +62,7 @@ class AgentProfileQueryServiceIntegrationTest extends IntegrationTestSupport {
         agentProfileTestFixture.createAgentLanguage(agentProfile, lang);
 
         Badge badge = agentProfileTestFixture.createBadge(BadgeName.FAST_INFORMATION);
-        agentProfileTestFixture.createAgentReview(agentProfile, badge);
+        agentProfileTestFixture.createAgentReview(agentProfile, 1L, badge);
 
         User loginUser = userTestFixture.createUser("agent2@test.com", UserType.FILLED_FOREIGNER);
         foreignerProfileTestFixture.createForeignerProfile(loginUser);
@@ -119,7 +119,7 @@ class AgentProfileQueryServiceIntegrationTest extends IntegrationTestSupport {
         agentProfileTestFixture.createAgentLanguage(agentProfile, lang);
 
         Badge badge = agentProfileTestFixture.createBadge(BadgeName.FAST_INFORMATION);
-        agentProfileTestFixture.createAgentReview(agentProfile, badge);
+        agentProfileTestFixture.createAgentReview(agentProfile, 1L, badge);
 
         User loginUser = userTestFixture.createUser("agent2@test.com", UserType.VALID_AGENT);
         agentProfileTestFixture.createAgentProfile("행정사2", "주소2", loginUser.getId());
@@ -190,7 +190,7 @@ class AgentProfileQueryServiceIntegrationTest extends IntegrationTestSupport {
         agentProfileTestFixture.createAgentLanguage(agentProfile, lang);
 
         Badge badge = agentProfileTestFixture.createBadge(BadgeName.FAST_INFORMATION);
-        agentProfileTestFixture.createAgentReview(agentProfile, badge);
+        agentProfileTestFixture.createAgentReview(agentProfile, 1L, badge);
 
         User loginUser = userTestFixture.createUser("agent2@test.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(loginUser);

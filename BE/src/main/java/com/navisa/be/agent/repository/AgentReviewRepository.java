@@ -16,4 +16,6 @@ public interface AgentReviewRepository extends JpaRepository<AgentReview, Long> 
     List<AgentReview> findTop4ValidFeedbacks(Pageable pageable);
 
     long countByAgentProfileId(UUID agentProfileId);
+
+    boolean existsByProposalId(Long proposalId);
 }

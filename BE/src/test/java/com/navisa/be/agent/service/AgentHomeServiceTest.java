@@ -56,6 +56,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
             AgentReview review = new AgentReview(
                     actualAgentId,
                     mockUserId,
+                    (long) i,
                     "피드백 내용 " + i,
                     new double[] { 0.8, 0.9 });
 

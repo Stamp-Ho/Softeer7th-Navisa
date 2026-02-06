@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -27,6 +28,9 @@ public class AgentReview extends BaseEntity {
     @Column(name = "foreigner_profile_id")
     private UUID foreignerProfileId;
 
+    @Column(name = "proposal_id", nullable = false, unique = true)
+    private Long proposalId;
+
     @Column(name = "feedback_content", columnDefinition = "TEXT")
     private String feedbackContent;
 
@@ -34,10 +38,17 @@ public class AgentReview extends BaseEntity {
     @Column(name = "similarity_list", columnDefinition = "double precision[]")
     private double[] similarityList;
 
-    public AgentReview(UUID agentProfileId, UUID foreignerProfileId, String feedbackContent, double[] similarityList) {
+    public AgentReview(UUID agentProfileId, UUID foreignerProfileId, Long proposalId, String feedbackContent, double[] similarityList) {
         this.agentProfileId = agentProfileId;
         this.foreignerProfileId = foreignerProfileId;
+        this.proposalId = proposalId;
         this.feedbackContent = feedbackContent;
         this.similarityList = similarityList;
+    }
+
+    public AgentReview(UUID agentProfileId, UUID foreignerProfileId, Long proposalId) {
+        this.agentProfileId = agentProfileId;
+        this.foreignerProfileId = foreignerProfileId;
+        this.proposalId = proposalId;
     }
 }

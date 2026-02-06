@@ -131,7 +131,7 @@ class AgentProfileIntegrationTest extends IntegrationTestSupport {
         agentProfileTestFixture.createAgentLanguage(agentProfile, lang);
 
         Badge badge = agentProfileTestFixture.createBadge(BadgeName.FAST_INFORMATION);
-        agentProfileTestFixture.createAgentReview(agentProfile, badge);
+        agentProfileTestFixture.createAgentReview(agentProfile, 1L, badge);
 
         User loginUser = userTestFixture.createUser("agent2@test.com", UserType.FILLED_FOREIGNER);
         foreignerProfileTestFixture.createForeignerProfile(loginUser);

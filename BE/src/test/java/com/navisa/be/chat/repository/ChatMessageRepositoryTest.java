@@ -172,7 +172,7 @@ class ChatMessageRepositoryTest extends IntegrationTestSupport {
                 ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile1, agentProfile,
                                 ChatRoomStatus.DEFAULT,
                                 ZonedDateTime.now());
-                Proposal proposal1 = new Proposal(chatRoom1, agentProfile.getId().toString());
+                Proposal proposal1 = new Proposal(chatRoom1, agentProfile.getId());
                 ReflectionTestUtils.setField(proposal1, "status", ProposalStatus.MATCHED);
                 proposalRepository.save(proposal1);
 

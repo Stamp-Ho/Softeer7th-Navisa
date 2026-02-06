@@ -36,6 +36,9 @@ public class VisaApplicationForm extends BaseEntity {
     @Column(name = "is_done", nullable = false)
     private Boolean isDone = false;
 
+    @Column(name = "is_once_exported", nullable = false)
+    private Boolean isOnceExported;
+
     @Column(name = "current_step", nullable = false)
     private Integer currentStep = 0;
 
@@ -85,6 +88,7 @@ public class VisaApplicationForm extends BaseEntity {
         this.foreignerProfile = foreignerProfile;
         this.jobCode = jobCode;
         this.isDone = isDone;
+        this.isOnceExported = false;
         this.currentStep = currentStep;
     }
 }
