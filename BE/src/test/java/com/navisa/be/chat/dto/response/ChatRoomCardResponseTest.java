@@ -36,7 +36,7 @@ class ChatRoomCardResponseTest {
 
         // when
         ChatRoomCardResponse response = ChatRoomCardResponse.toDto(chatRoom, profileImgUrl, lastMessage, unreadCount,
-                isForeigner);
+                isForeigner, true, true);
 
         // then
         assertThat(response.chatRoomId()).isEqualTo(1L);
@@ -66,7 +66,7 @@ class ChatRoomCardResponseTest {
 
         // when
         ChatRoomCardResponse response = ChatRoomCardResponse.toDto(chatRoom, profileImgUrl, lastMessage, unreadCount,
-                isForeigner);
+                isForeigner, true, true);
 
         // then
         assertThat(response.chatRoomId()).isEqualTo(2L);

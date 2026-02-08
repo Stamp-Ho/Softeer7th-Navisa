@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/api/chatrooms")
@@ -31,11 +32,12 @@ public class ChatRoomQueryController {
     @GetMapping
     @HasUserType({ UserType.FILLED_FOREIGNER, UserType.VALID_AGENT })
     @Operation(summary = "채팅방 목록 조회", description = "로그인한 사용자의 채팅방 목록을 페이징하여 조회합니다.")
-    public SliceResponse<ChatRoomCardResponse, Long> getAllChatRooms(
+    public SliceResponse<ChatRoomCardResponse, Long> getChatRooms(
             @SliceInfo SliceRequest<Long> slice,
+            @Parameter(description = "필터", example="unread | matched") @RequestParam String filter,
             @Parameter(hidden = true) @LoginUser String email) {
 
-        return chatRoomServiceFacade.findAllChatRoomsByNoOffset(email, slice);
+        return chatRoomServiceFacade.findAllChatRoomsByNoOffset(email, filter, slice);
     }
 
     @GetMapping("/nonread/count")

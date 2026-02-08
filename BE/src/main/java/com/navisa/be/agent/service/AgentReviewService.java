@@ -59,7 +59,7 @@ public class AgentReviewService {
         ChatRoom chatRoom = chatRoomRepository.findByAgentIdAndForeignerId(request.agentId(), foreignerProfile.getId())
                 .orElseThrow(() -> new AgentException(ResponseStatus.PROPOSAL_NOT_FOUND));
 
-        Proposal proposal = proposalRepository.findFirstByChatRoomOrderByCreatedAtDesc(chatRoom)
+        Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom)
                 .orElseThrow(() -> new AgentException(ResponseStatus.PROPOSAL_NOT_FOUND));
 
         // 리뷰가 존재하는지 여부를 확인

@@ -12,11 +12,19 @@ public record ChatRoomCardResponse(
         ChatRoomStatus roomStatus,
         String lastMessage,
         Long noneReadCount,
-        ZonedDateTime lastChattedAt
+        ZonedDateTime lastChattedAt,
+        Boolean proposed,
+        Boolean proposalMatched
 ) {
-    public static ChatRoomCardResponse toDto(ChatRoom chatRoom, String profileImgUrl,
-                                             String lastMessage, Long noneReadCount, boolean isForeigner) {
+    public static ChatRoomCardResponse toDto(ChatRoom chatRoom,
+                                             String profileImgUrl,
+                                             String lastMessage,
+                                             Long noneReadCount,
+                                             boolean isForeigner,
+                                             boolean proposed,
+                                             boolean proposalMatched) {
 
+        // todo 수임건에 대한 상태를 응답하도록 기능 구현
         return new ChatRoomCardResponse(
                 chatRoom.getId(),
                 profileImgUrl,
@@ -24,7 +32,9 @@ public record ChatRoomCardResponse(
                 chatRoom.getStatus(),
                 lastMessage,
                 noneReadCount,
-                chatRoom.getLastChattedAt()
+                chatRoom.getLastChattedAt(),
+                proposed,
+                proposalMatched
         );
     }
 }

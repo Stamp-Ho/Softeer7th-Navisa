@@ -85,7 +85,7 @@ class ChatRoomRepositoryTest extends IntegrationTestSupport {
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
 
         // when (isForeignerId = true -> Foreigner가 자신의 채팅방 조회)
-        List<ChatRoom> result = chatRoomRepository.findByNoOffset(foreignerProfile.getId(), sliceRequest, true);
+        List<ChatRoom> result = chatRoomRepository.findByNoOffset(foreignerProfile.getId(), sliceRequest, true, null);
 
         // then
         assertThat(result).hasSize(2);
