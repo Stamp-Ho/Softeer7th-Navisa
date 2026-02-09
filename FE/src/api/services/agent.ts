@@ -1,5 +1,9 @@
 import type { apiClientType } from "../../hooks/useApiClient";
-import type { BaseResponse, SliceResponse } from "../types/common";
+import type {
+  BaseResponse,
+  PageResponse,
+  SliceResponse,
+} from "../types/common";
 import * as T from "../types/agent";
 
 export const agentService = {
@@ -11,6 +15,31 @@ export const agentService = {
     return await apiClient.get<BaseResponse<T.AgentCardResponse[]>>(
       "/api/home/guest/agents",
       undefined,
+      accessToken
+        ? { headers: { Authorization: `Bearer ${accessToken}` } }
+        : undefined,
+    );
+  },
+  getCard: (
+    api: apiClientType,
+    data: T.AgentCardRequest,
+    accessToken?: string,
+  ) => {
+    // 배열 필드들을 [ "value" ] 형태의 문자열로 변환
+    const params = {
+      ...data,
+      jobGroupNameList: data.jobGroupNameList
+        ? JSON.stringify(data.jobGroupNameList)
+        : undefined,
+      regionList: data.regionList ? JSON.stringify(data.regionList) : undefined,
+      languageIdList: data.languageIdList
+        ? JSON.stringify(data.languageIdList)
+        : undefined,
+    };
+
+    return api.get<PageResponse<T.AgentCardResponse>>(
+      "/api/agent/cards",
+      params,
       accessToken
         ? { headers: { Authorization: `Bearer ${accessToken}` } }
         : undefined,

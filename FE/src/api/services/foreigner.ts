@@ -1,5 +1,5 @@
 import type { apiClientType } from "../../hooks/useApiClient";
-import type { BaseResponse } from "../types/common";
+import type { PageResponse, BaseResponse } from "../types/common";
 import * as T from "../types/foreigner";
 
 export const foreignerService = {
@@ -14,6 +14,34 @@ export const foreignerService = {
       "/api/foreigner/requirements",
     ),
 
+  getHomeMatching: (api: apiClientType) =>
+    api.get<BaseResponse<T.ForeignerCardResponse[]>>("/api/foreigner/home"),
+
+  getCard: (
+    api: apiClientType,
+    data: T.ForeignerCardRequest,
+    accessToken: string,
+  ) => {
+    const params = {
+      ...data,
+      jobGroupNameList: data.jobGroupNameList
+        ? JSON.stringify(data.jobGroupNameList)
+        : undefined,
+      nationIdList: data.nationIdList
+        ? JSON.stringify(data.nationIdList)
+        : undefined,
+      languageIdList: data.languageIdList
+        ? JSON.stringify(data.languageIdList)
+        : undefined,
+    };
+    return api.get<PageResponse<T.ForeignerCardResponse>>(
+      "api/foreigner/cards",
+      params,
+      accessToken
+        ? { headers: { Authorization: `Bearer ${accessToken}` } }
+        : undefined,
+    );
+  },
   getRecommendedForeigners: async (api: apiClientType, accessToken: string) => {
     return await api.get<BaseResponse<T.ForeignerCardResponse[]>>(
       "/api/foreigner/home",

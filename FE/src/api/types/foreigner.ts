@@ -35,6 +35,14 @@ export interface ForeignerCardResponse {
   nationIdList: number[];
   languageIdList: number[];
   jobTitle: string;
+  degreeLevel?: "BELOW_BACHELOR";
+}
+export interface ForeignerCardRequest {
+  jobGroupNameList?: string[];
+  nationIdList?: number[];
+  languageIdList?: number[];
+  lastElementId?: string;
+  size: number;
 }
 
 // 외국인 프로필 상세보기

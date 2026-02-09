@@ -1,23 +1,70 @@
 import { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import type { DropDownProps } from "../../types/dropdownProps";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { jobList } from "../../constants/job";
+import { regionList } from "../../constants/regions";
+import { languageList } from "../../constants/language";
+import { nationList } from "../../constants/nations";
 
+const FILTER_LIST = {
+  job: jobList,
+  region: regionList,
+  language: languageList,
+  nation: nationList,
+};
 const DropDown = ({
+  paramKey,
   type = "left",
   cols = 1,
+  searchAgent,
   category,
-  dropdownOptions = [""],
-  onInitClicked = () => {},
-  onOptionClicked = (a: number) => {
-    alert(a);
-  },
-  onApply = () => {},
+  onClose,
 }: DropDownProps) => {
+  const navigate = useNavigate();
+  const [filterParams] = useSearchParams();
   const [selectedCategoryIdx, setSelectedCategoryIdx] = useState(0);
+  const thisParams = filterParams.getAll(paramKey);
+  const filterOptions = FILTER_LIST[paramKey];
+  const [selectedIds, setSelectedIds] = useState<number[]>(
+    thisParams
+      .map(Number)
+      .filter((id) => !isNaN(id) && id >= 0 && id < filterOptions.length),
+  );
 
-  const style = type === "left" ? "left-0" : type === "right" ? "right-0" : "";
+  const onOptionClicked = (targetId: number) => {
+    let tempList = [...selectedIds];
+    if (tempList.includes(targetId)) {
+      tempList = tempList.filter((id) => id !== targetId);
+    } else {
+      tempList.push(targetId);
+    }
+    setSelectedIds(tempList);
+  };
+  const onFilterInit = () => {
+    setSelectedIds([]);
+  };
 
-  const gridStyle = cols === 5 ? `grid-cols-5` : `grid-cols-4`;
+  const onOptionInCategoryClicked = (targetId: number) => {
+    if (category) {
+      const absoluteIndex = filterOptions.indexOf(
+        category[selectedCategoryIdx].items[targetId],
+      );
+      onOptionClicked(absoluteIndex);
+    }
+  };
+
+  const onApply = () => {
+    const params = new URLSearchParams(filterParams);
+
+    params.delete(paramKey);
+    selectedIds.forEach((v) => params.append(paramKey, String(v)));
+    navigate(
+      `/search/${searchAgent ? "agent" : "foreigner"}?${params.toString()}`,
+      { replace: true },
+    );
+    onClose();
+  };
 
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -36,6 +83,9 @@ const DropDown = ({
       };
     }
   }, []);
+  const selectedOpts = selectedIds.map((id) => filterOptions[id]);
+  const style = type === "left" ? "left-0" : type === "right" ? "right-0" : "";
+  const gridStyle = cols === 5 ? `grid-cols-5` : `grid-cols-4`;
 
   return (
     <div
@@ -50,6 +100,9 @@ const DropDown = ({
           >
             {category.map((cate, idx) => {
               const isSelected = selectedCategoryIdx === idx;
+              const hasSelectedOption = category[idx].items.some((opt) =>
+                selectedOpts.includes(opt),
+              );
               return (
                 <button
                   key={cate.name}
@@ -57,6 +110,7 @@ const DropDown = ({
                   className={`
                     flex h-11 shrink-0 cursor-pointer items-center rounded-full px-4 body-l-semibold transition-colors
                     ${isSelected ? "bg-violet-50-transpar text-violet-500" : "text-text-sub"}
+                    ${hasSelectedOption ? "text-violet-500" : ""}
                     `}
                 >
                   {cate.name}
@@ -68,15 +122,25 @@ const DropDown = ({
         {category ? (
           <div className={`grid ${gridStyle} gap-3`}>
             {category[selectedCategoryIdx]?.items.map((opt, index) => (
-              <Button onClick={() => onOptionClicked(index)} className="w-35">
+              <Button
+                key={`filter_btn_with_category_${paramKey}_${index}`}
+                onClick={() => onOptionInCategoryClicked(index)}
+                type={selectedOpts.includes(opt) ? "violetLine" : "lightGray"}
+                className="w-35"
+              >
                 {opt}
               </Button>
             ))}
           </div>
         ) : (
           <div className={`grid ${gridStyle} gap-3 `}>
-            {dropdownOptions.map((opt, index) => (
-              <Button onClick={() => onOptionClicked(index)} className="w-35">
+            {FILTER_LIST[paramKey].map((opt, index) => (
+              <Button
+                key={`filter_btn_${paramKey}_${index}`}
+                onClick={() => onOptionClicked(index)}
+                type={selectedIds.includes(index) ? "violetLine" : "lightGray"}
+                className="w-35"
+              >
                 {opt}
               </Button>
             ))}
@@ -84,10 +148,16 @@ const DropDown = ({
         )}
       </div>
       <div className="flex flex-row ml-auto gap-3 px-9 py-5">
-        <Button type="grayLine" className="w-30" onClick={onInitClicked}>
+        <Button type="grayLine" className="w-30" onClick={onFilterInit}>
           초기화
         </Button>
-        <Button type="primary" className="w-30" onClick={onApply}>
+        <Button
+          type="primary"
+          className="w-30"
+          onClick={() => {
+            onApply();
+          }}
+        >
           적용하기
         </Button>
       </div>

@@ -7,14 +7,27 @@ import type { SearchAgentCardType } from "../../../types/Cards";
 import { useContext } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
 
+/**
+ * 
+ * @param param0 
+  agentId: number;
+  agentName: string;
+  profileImgUrl: string;
+  officeAddress: string;
+  agentSpecialityTop2: number[];
+  badgeTop2: number[];
+  specialityJobCount: number;
+ * @returns 
+ */
 const SearchAgentCard = ({
   agent = {
-    id: 0,
-    img: "https://placehold.co/140x140",
-    name: "엄경례",
-    address: "서울특별시 강남구",
-    jobs: [1, 4, 6],
-    badges: [3, 6],
+    agentId: "0",
+    profileImgUrl: "https://placehold.co/140x140",
+    agentName: "엄경례",
+    officeAddress: "서울특별시 강남구",
+    agentSpecialityTop2: [1, 4, 6],
+    badgeTop2: [3, 6],
+    specialityJobCount: 0,
   },
 }: {
   agent: SearchAgentCardType;
@@ -28,15 +41,15 @@ const SearchAgentCard = ({
   return (
     <div>
       <Link
-        to={`/profile/agent/${agent.id}`}
+        to={`/profile/agent/${agent.agentId}`}
         className="flex flex-row gap-8 py-6 px-7 bg-gray-30 w-124 h-fit rounded-2xl items-center"
       >
         <div className="w-fit h-fit rounded-full overflow-hidden">
-          <img src={agent.img} className="h-35 w-35" />
+          <img src={agent.profileImgUrl} className="h-35 w-35" />
         </div>
         <div className="flex flex-col gap-3">
           <div className="flex flex-row gap-3">
-            {agent.badges.map((badgeId) => (
+            {agent.badgeTop2.map((badgeId) => (
               <div
                 key={`badgeId_${badgeId}`}
                 className="flex flex-row gap-1 items-center caption-m-medium text-primary "
@@ -50,18 +63,20 @@ const SearchAgentCard = ({
               </div>
             ))}
           </div>
-          <span className="title-m-bold -mt-2">{agent.name} 행정사</span>
+          <span className="title-m-bold -mt-2">{agent.agentName} 행정사</span>
           <div className="flex-col flex gap-1.5">
             <span className="flex flex-row items-center gap-1.5 caption-m-medium">
               <IcGraduation size={14} /> 전문 분야
             </span>
             {authed ? (
               <ol className="flex flex-row gap-1">
-                {agent.jobs.slice(0, 2).map((jobId) => (
+                {agent.agentSpecialityTop2.slice(0, 2).map((jobId) => (
                   <Tag type={"small_fill_violet_max"}>{jobList[jobId]}</Tag>
                 ))}
-                {agent.jobs.length > 2 && (
-                  <Tag type="small_fill_gray">+{agent.jobs.length - 2}</Tag>
+                {agent.agentSpecialityTop2.length > 2 && (
+                  <Tag type="small_fill_gray">
+                    +{agent.agentSpecialityTop2.length - 2}
+                  </Tag>
                 )}
               </ol>
             ) : (
@@ -73,7 +88,7 @@ const SearchAgentCard = ({
               <IcLocation size={14} /> 사무실 위치
             </span>
             <span className="text-text-base body-m-medium">
-              {agent.address}
+              {agent.officeAddress}
             </span>
           </div>
         </div>

@@ -1,12 +1,10 @@
-import type React from "react";
-
 export type FilterWithDropdownProps = {
-  isActive?: boolean;
   className?: string;
-  children?: React.ReactNode;
-  category?: { name: string; items: string[] }[];
+  category?: { name: string; items: string[] }[] | null;
+  searchAgent: boolean;
   cols?: number;
-  dropdownOptions?: string[];
-  dropdownAlign?: string;
-  onOptionClicked?: (a: number) => void;
+  isOpen: boolean;
+  paramKey: "job" | "region" | "language" | "nation";
+  onClick?: () => void;
+  onClose: () => void;
 };

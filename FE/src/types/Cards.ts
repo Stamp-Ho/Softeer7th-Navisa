@@ -1,10 +1,11 @@
 export type SearchAgentCardType = {
-  id: number;
-  img: string;
-  name: string;
-  address: string;
-  jobs: number[];
-  badges: number[];
+  agentId: string;
+  agentName: string;
+  profileImgUrl: string;
+  officeAddress: string;
+  agentSpecialityTop2: number[];
+  badgeTop2: number[];
+  specialityJobCount: number;
 };
 export type SearchForeignerCardType = {
   id: number;

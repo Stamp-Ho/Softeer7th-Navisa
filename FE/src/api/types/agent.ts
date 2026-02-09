@@ -1,3 +1,6 @@
+import type { JobType } from "../../types/JobType";
+import type { RegionType } from "../../types/RegionType";
+
 // 행정사 카드 (리스트용)
 export interface AgentCardResponse {
   agentId: string;
@@ -67,6 +70,28 @@ export interface RegisterAgentProfileRequest {
     agentComment: string;
     additionalHistory: string;
   };
+}
+export interface SliceRequest {
+  lastElementId?: string; // UUID, 첫 페이지 조회 시 생략 가능
+  size: number;
+}
+
+// 행정사 카드 리스트 요청 (쿼리 파라미터)
+export interface AgentCardRequest {
+  jobGroupNameList?: JobType[];
+  regionList?: RegionType[];
+  languageIdList?: number[];
+  // slice 객체를 평탄화(Flatten)해서 보낼지, 객체로 보낼지는 API 구현 방식에 따라 다르지만
+  // 보통 쿼리 스트링에서는 아래와 같이 구성합니다.
+  lastElementId?: string;
+  size: number;
+}
+
+// 응답 타입 (Slice 형태일 경우 보통 content 배열과 hasNext 여부를 포함합니다)
+export interface AgentCardSliceResponse {
+  content: AgentCardResponse[];
+  existsNext: boolean;
+  lastElementId: string;
 }
 
 // 행정사 프로필 상세보기

@@ -13,7 +13,8 @@ export interface PageInfo {
 
 export interface PageResponse<T> {
   content: T[];
-  pageInfo: PageInfo;
+  existsNext: boolean;
+  lastElementId: string;
 }
 
 export interface SliceResponse<T> {

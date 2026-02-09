@@ -1,9 +1,8 @@
 export type DropDownProps = {
+  paramKey: "job" | "region" | "language" | "nation";
   type: string;
   cols?: number;
-  category?: { name: string; items: string[] }[];
-  dropdownOptions?: string[];
-  onInitClicked?: () => void;
-  onOptionClicked?: (arg: number) => void;
-  onApply: () => void;
+  searchAgent: boolean;
+  category?: { name: string; items: string[] }[] | null;
+  onClose: () => void;
 };
