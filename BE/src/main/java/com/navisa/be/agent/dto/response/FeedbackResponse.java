@@ -10,7 +10,7 @@ public record FeedbackResponse(
         String feedbackContent,
         UUID writerId,
         String writerName,
-        String writerProfileImgUrl
+        String agentProfileImgUrl
 ) {
     public static FeedbackResponse of(AgentReview feedback, String agentName, String profileImageUrl) {
         return new FeedbackResponse(

@@ -32,9 +32,9 @@ public class AgentHomeService {
     private final AgentBadgeService agentBadgeService;
     private final AwsCloudfrontService awsCloudfrontService;
 
-    // 행정사 후기 사례 최신순 4개 조회
+    // 행정사 후기 사례 최신순 3개 조회
     public List<FeedbackResponse> getLatestFeedbacks() {
-        List<AgentReview> reviews = agentReviewRepository.findTop4ValidFeedbacks(PageRequest.of(0, 4));
+        List<AgentReview> reviews = agentReviewRepository.findTop3ValidFeedbacks(PageRequest.of(0, 3));
 
         if (reviews.isEmpty()) {
             throw new AgentException(ResponseStatus.AGENT_REVIEW_NOT_FOUND);

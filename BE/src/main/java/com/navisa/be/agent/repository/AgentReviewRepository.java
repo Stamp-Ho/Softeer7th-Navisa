@@ -13,7 +13,7 @@ public interface AgentReviewRepository extends JpaRepository<AgentReview, Long> 
     @Query("SELECT r FROM AgentReview r " +
             "WHERE r.feedbackContent IS NOT NULL AND r.feedbackContent <> '' " +
             "ORDER BY r.createdAt DESC")
-    List<AgentReview> findTop4ValidFeedbacks(Pageable pageable);
+    List<AgentReview> findTop3ValidFeedbacks(Pageable pageable);
 
     long countByAgentProfileId(UUID agentProfileId);
 

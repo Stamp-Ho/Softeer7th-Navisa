@@ -44,7 +44,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
     @Autowired
     private AgentSpecializedJobRepository specializedJobCodeRepository;
 
-    @DisplayName("최신순으로 등록된 행정사 리뷰 4개를 조회하고 작성자 정보를 매핑한다.")
+    @DisplayName("최신순으로 등록된 행정사 리뷰 3개를 조회하고 작성자 정보를 매핑한다.")
     @Test
     void getLatestFeedbacks_Success() {
         // given
@@ -71,7 +71,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
         List<FeedbackResponse> result = agentHomeService.getLatestFeedbacks();
 
         // then
-        assertThat(result).hasSize(4);
+        assertThat(result).hasSize(3);
         assertThat(result.get(0).feedbackContent()).isEqualTo("피드백 내용 5");
         assertThat(result.get(0).writerName()).isEqualTo("김행정");
     }

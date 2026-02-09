@@ -20,9 +20,9 @@ class AgentReviewRepositoryTest extends IntegrationTestSupport {
     @Autowired
     private AgentReviewRepository agentReviewRepository;
 
-    @DisplayName("최신순으로 정렬된 리뷰를 최대 4개까지만 조회한다.")
+    @DisplayName("최신순으로 정렬된 리뷰를 최대 3개까지만 조회한다.")
     @Test
-    void findTop4ByOrderByCreatedAtDesc() {
+    void findTop3ByOrderByCreatedAtDesc() {
         // given
         UUID agentId = UUID.randomUUID();
         UUID foreignerId = UUID.randomUUID();
@@ -39,19 +39,19 @@ class AgentReviewRepositoryTest extends IntegrationTestSupport {
         }
 
         // when
-        List<AgentReview> result = agentReviewRepository.findTop4ValidFeedbacks(PageRequest.of(0, 4));
+        List<AgentReview> result = agentReviewRepository.findTop3ValidFeedbacks(PageRequest.of(0, 3));
 
         // then
-        assertThat(result).hasSize(4); // 5개를 넣었지만 4개만 나와야 함
+        assertThat(result).hasSize(3); // 5개를 넣었지만 3개만 나와야 함
         assertThat(result.get(0).getFeedbackContent()).isEqualTo("리뷰 내용 5"); // 최신순(DESC) 확인
-        assertThat(result.get(3).getFeedbackContent()).isEqualTo("리뷰 내용 2"); // 4번째 데이터 확인
+        assertThat(result.get(2).getFeedbackContent()).isEqualTo("리뷰 내용 3"); // 3번째 데이터 확인
     }
 
     @DisplayName("리뷰가 하나도 없을 경우 빈 리스트를 반환한다.")
     @Test
     void findTop4WhenEmpty() {
         // given & when
-        List<AgentReview> result = agentReviewRepository.findTop4ValidFeedbacks(PageRequest.of(0, 4));
+        List<AgentReview> result = agentReviewRepository.findTop3ValidFeedbacks(PageRequest.of(0, 3));
 
         // then
         assertThat(result).isEmpty();
