@@ -2,6 +2,7 @@ package com.navisa.be.application.repository;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.application.model.entity.VisaApplicationForm;
+import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,9 @@ public interface ApplicationFormRepository extends JpaRepository<VisaApplication
             @Param("foreignerId") UUID foreignerId,
             @Param("agentId") UUID agentId
     );
+
+    Optional<VisaApplicationForm> findFirstByForeignerProfileOrderByCreatedAtDesc(ForeignerProfile foreignerProfile);
+
+    @EntityGraph(attributePaths = {"agentProfile"})
+    Optional<VisaApplicationForm> findWithAgentProfileById(UUID id);
 }

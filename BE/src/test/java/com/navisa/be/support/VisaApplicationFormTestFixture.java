@@ -22,7 +22,8 @@ public class VisaApplicationFormTestFixture {
                 foreignerProfile,
                 jobCode,
                 false,
-                0);
+                150,
+                110);
         ReflectionTestUtils.setField(form, "isOnceExported", isOnceExported);
         return applicationFormRepository.save(form);
     }

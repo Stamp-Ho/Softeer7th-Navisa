@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,6 +39,9 @@ public class VisaApplicationForm extends BaseEntity {
 
     @Column(name = "is_once_exported", nullable = false)
     private Boolean isOnceExported;
+
+    @Column(name = "total_count")
+    private Integer totalCount = 0;
 
     @Column(name = "current_step", nullable = false)
     private Integer currentStep = 0;
@@ -83,12 +87,37 @@ public class VisaApplicationForm extends BaseEntity {
     private Map<String, Object> inviteInformation;
 
     public VisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
-                               JobCode jobCode, Boolean isDone, Integer currentStep) {
+                               JobCode jobCode, Boolean isDone, Integer totalCount, Integer currentStep) {
         this.agentProfile = agentProfile;
         this.foreignerProfile = foreignerProfile;
         this.jobCode = jobCode;
         this.isDone = isDone;
         this.isOnceExported = false;
+        this.totalCount = totalCount;
         this.currentStep = currentStep;
+    }
+
+    public void updateSections(List<Map<String, Object>> sections, Integer totalCount, Integer currentStep) {
+        this.totalCount = totalCount;
+        this.currentStep = currentStep;
+
+        for (Map<String, Object> section : sections) {
+            Number sectionIdNum = (Number) section.get("sectionId");
+            if (sectionIdNum == null)
+                continue;
+            int sectionId = sectionIdNum.intValue();
+
+            switch (sectionId) {
+                case 1 -> this.personalDetail = section;
+                case 2 -> this.passportInformation = section;
+                case 3 -> this.contactInformation = section;
+                case 4 -> this.maritalStatusAndFamilyDetails = section;
+                case 5 -> this.education = section;
+                case 6 -> this.employment = section;
+                case 7 -> this.visitInformation = section;
+                case 8 -> this.helpInformation = section;
+                case 9 -> this.inviteInformation = section;
+            }
+        }
     }
 }
