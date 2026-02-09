@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -40,7 +41,7 @@ public class AgentProfileCommandService {
 
         validateCommand(command);
 
-        if (user.getUserType() != UserType.UNVALID_AGENT) {
+        if (user.getUserType() != UserType.INVALID_AGENT) {
             throw new AgentException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
         }
 
@@ -128,5 +129,14 @@ public class AgentProfileCommandService {
         if (hasBasic == hasManagement) {
             throw new AgentException(ResponseStatus.AGENT_PROFILE_MUST_CONTAIN_ONE_TYPE_LICENSE_INFO);
         }
+    }
+
+    // 행정사 로그인 시 활동 날짜 데이터를 갱신
+    @Transactional
+    public void syncAgentLoginActivity(UUID userId) {
+        AgentProfile profile = agentProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new AgentException(ResponseStatus.AGENT_NOT_FOUND));
+
+        profile.syncLoginInfo();
     }
 }

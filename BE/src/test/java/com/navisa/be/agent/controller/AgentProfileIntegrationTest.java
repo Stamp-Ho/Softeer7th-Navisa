@@ -60,7 +60,7 @@ class AgentProfileIntegrationTest extends IntegrationTestSupport {
     @DisplayName("에이전트 프로필 등록 성공에 성공한다")
     void registerAgentProfile_shouldReturnOk() throws Exception {
         // given
-        User user = userTestFixture.createUser("email", UserType.UNVALID_AGENT);
+        User user = userTestFixture.createUser("email", UserType.INVALID_AGENT);
         String accessToken = jwtProvider.createAccessToken(user.getEmail());
 
         JobCode jobCode = agentProfileTestFixture.createJobCode("코드1", "직무1");

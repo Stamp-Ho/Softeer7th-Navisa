@@ -4,7 +4,10 @@ import com.navisa.be.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -76,6 +79,24 @@ public class AgentProfile extends BaseEntity {
     @Column(name = "active_score", nullable = false)
     private double activeScore;
 
+    @Column(name = "reconnected_at")
+    private ZonedDateTime reconnectedAt;
+
+    @Column(name = "last_login_at")
+    private ZonedDateTime lastLoginAt;
+
+    public void syncLoginInfo() {
+        ZonedDateTime now = ZonedDateTime.now();
+
+        // Reconnect 판단: 5일 이상 미접속이었다면 오늘을 재접속일로 기록
+        if (this.lastLoginAt != null && Duration.between(this.lastLoginAt, now).toDays() >= 5) {
+            this.reconnectedAt = now;
+        }
+
+        // 마지막 로그인 시점 동기화
+        this.lastLoginAt = now;
+    }
+
     protected AgentProfile() {
     }
 
@@ -118,4 +139,6 @@ public class AgentProfile extends BaseEntity {
     public void addLanguages(List<AgentLanguage> languages) {
         this.languages.addAll(languages);
     }
+
+    public void updateActiveScore(double newScore) { this.activeScore = newScore; }
 }

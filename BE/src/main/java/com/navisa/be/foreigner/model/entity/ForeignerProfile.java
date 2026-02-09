@@ -6,6 +6,8 @@ import com.navisa.be.foreigner.model.enums.RandomNickname;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -39,6 +41,9 @@ public class ForeignerProfile extends BaseEntity {
     @OneToMany(mappedBy = "foreignerProfile")
     private Set<ForeignerNationality> foreignerNationalities = new HashSet<>();
 
+    @Column(name = "last_login_at")
+    private ZonedDateTime lastLoginAt;
+
     public ForeignerProfile() {
         this.nickname = RandomNickname.getRandomNickname();
     }
@@ -63,4 +68,6 @@ public class ForeignerProfile extends BaseEntity {
     public void updateStatus(ForeignerSearchStatus status) {
         this.status = status;
     }
+
+    public void updateLastLogin() { this.lastLoginAt = ZonedDateTime.now(); }
 }

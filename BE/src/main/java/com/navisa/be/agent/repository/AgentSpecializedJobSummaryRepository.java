@@ -26,12 +26,13 @@ public interface AgentSpecializedJobSummaryRepository extends JpaRepository<Agen
     @Modifying
     @Query(value = """
     INSERT INTO agent_specialized_job_summary 
-        (agent_id, job_code_id, accumulated_review_reliability, count) 
-    VALUES (:agentId, :jobCodeId, :reviewWeight, 1)
+        (agent_id, job_code_id, accumulated_review_reliability, count, created_at, updated_at) 
+    VALUES (:agentId, :jobCodeId, :reviewWeight, 1, NOW(), NOW())
     ON CONFLICT (agent_id, job_code_id) 
     DO UPDATE SET 
         accumulated_review_reliability = agent_specialized_job_summary.accumulated_review_reliability + :reviewWeight,
-        count = agent_specialized_job_summary.count + 1
+        count = agent_specialized_job_summary.count + 1,
+        updated_at = NOW()
     """, nativeQuery = true)
     void upsertReliability(@Param("agentId") UUID agentId,
                            @Param("jobCodeId") Long jobCodeId,
@@ -39,4 +40,7 @@ public interface AgentSpecializedJobSummaryRepository extends JpaRepository<Agen
 
     @Query("SELECT j FROM JobCode j WHERE j.id = :jobCodeId")
     JobCode getReferenceJobCode(Long jobCodeId);
+
+    @Query("SELECT s FROM AgentSpecializedJobSummary s JOIN FETCH s.jobCode WHERE s.agentId IN :agentIds")
+    List<AgentSpecializedJobSummary> findAllByAgentIdIn(@Param("agentIds") List<UUID> agentIds);
 }

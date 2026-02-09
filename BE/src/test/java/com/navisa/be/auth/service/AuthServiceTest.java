@@ -1,5 +1,7 @@
-package com.navisa.be.auth;
+package com.navisa.be.auth.service;
 
+import com.navisa.be.agent.service.AgentProfileCommandService;
+import com.navisa.be.agent.service.AgentProfileQueryService;
 import com.navisa.be.auth.dto.request.GoogleLoginRequest;
 import com.navisa.be.auth.dto.request.LoginRequest;
 import com.navisa.be.auth.dto.request.LogoutRequest;
@@ -11,8 +13,6 @@ import com.navisa.be.auth.exception.AuthException;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.model.entity.RefreshToken;
 import com.navisa.be.auth.repository.RefreshTokenRepository;
-import com.navisa.be.auth.service.AuthService;
-import com.navisa.be.auth.service.GoogleOAuthService;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;
@@ -58,6 +58,12 @@ class AuthServiceTest {
 
     @Mock
     private HttpServletResponse response;
+
+    @Mock
+    private AgentProfileCommandService agentProfileCommandService;
+
+    @Mock
+    private AgentProfileQueryService agentProfileQueryService;
 
     @Test
     @DisplayName("회원가입 성공: 유저 정보가 저장되고 토큰이 발급된다")
@@ -133,11 +139,11 @@ class AuthServiceTest {
     @DisplayName("회원가입 시 이미 존재하는 이메일이면 409 에러를 던진다")
     void signup_fail_duplicate_email() {
         String email = "duplicate@navisa.com";
-        User existingUser = new User(email, "hashed_pw", UserType.UNVALID_AGENT, LoginType.EMAIL, true);
+        User existingUser = new User(email, "hashed_pw", UserType.INVALID_AGENT, LoginType.EMAIL, true);
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
 
-        SignupRequest request = new SignupRequest(email, "password123", UserType.UNVALID_AGENT);
+        SignupRequest request = new SignupRequest(email, "password123", UserType.INVALID_AGENT);
 
         assertThatThrownBy(() -> authService.signup(request, response))
                 .isInstanceOf(AuthException.class)
@@ -158,7 +164,7 @@ class AuthServiceTest {
     @DisplayName("회원가입에 성공하면 토큰과 유저 정보를 반환한다")
     void signup_success() {
         String email = "newuser@navisa.com";
-        SignupRequest request = new SignupRequest(email, "password123", UserType.UNVALID_AGENT);
+        SignupRequest request = new SignupRequest(email, "password123", UserType.INVALID_AGENT);
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
         // NPE 방지: save 호출 시 인자로 받은 유저 객체를 그대로 반환하도록 설정
@@ -170,7 +176,7 @@ class AuthServiceTest {
         SignupResponse responseResult = authService.signup(request, response);
 
         assertThat(responseResult.accessToken()).isNotBlank();
-        assertThat(responseResult.userType()).isEqualTo(UserType.UNVALID_AGENT);
+        assertThat(responseResult.userType()).isEqualTo(UserType.INVALID_AGENT);
     }
 
     @Test
@@ -178,12 +184,12 @@ class AuthServiceTest {
     void google_login_fail_duplicate_type() {
         String idToken = "google-id-token";
         String email = "test@navisa.com";
-        User existingEmailUser = new User(email, "hashed_pw", UserType.UNVALID_AGENT, LoginType.EMAIL, true);
+        User existingEmailUser = new User(email, "hashed_pw", UserType.INVALID_AGENT, LoginType.EMAIL, true);
 
         when(googleOAuthService.getGoogleEmail(idToken)).thenReturn(email);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingEmailUser));
 
-        GoogleLoginRequest request = new GoogleLoginRequest(idToken, UserType.UNVALID_AGENT);
+        GoogleLoginRequest request = new GoogleLoginRequest(idToken, UserType.INVALID_AGENT);
 
         assertThatThrownBy(() -> authService.googleLogin(request, response))
                 .isInstanceOf(AuthException.class)
@@ -196,7 +202,7 @@ class AuthServiceTest {
         String email = "user@navisa.com";
         // BCrypt로 암호화된 비밀번호를 가진 유저 모킹
         String hashedPw = BCrypt.hashpw("correct-password", BCrypt.gensalt());
-        User user = new User(email, hashedPw, UserType.UNVALID_AGENT, LoginType.EMAIL, true);
+        User user = new User(email, hashedPw, UserType.INVALID_AGENT, LoginType.EMAIL, true);
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
@@ -227,5 +233,75 @@ class AuthServiceTest {
         // then
         assertThat(responseResult.accessToken()).isEqualTo("new-at");
         verify(response).addHeader(eq(HttpHeaders.SET_COOKIE), anyString());
+    }
+
+    @Test
+    @DisplayName("로그인 시 VALID_AGENT 유저라면 활동 정보 동기화가 호출된다")
+    void login_syncs_activity_for_valid_agent() {
+        // given
+        String email = "agent@test.com";
+        String password = "password123";
+        String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+
+        User agent = new User(email, hashed, UserType.VALID_AGENT, LoginType.EMAIL, true);
+        LoginRequest request = new LoginRequest(email, password);
+
+        given(userRepository.findByEmail(email)).willReturn(Optional.of(agent));
+        given(jwtProvider.createAccessToken(anyString())).willReturn("at");
+        given(jwtProvider.createRefreshToken(anyString())).willReturn("rt");
+        given(agentProfileQueryService.existsByUserId(agent.getId())).willReturn(true);
+
+        // when
+        authService.login(request, response);
+
+        // then
+        verify(agentProfileCommandService, times(1)).syncAgentLoginActivity(agent.getId());
+    }
+
+    @Test
+    @DisplayName("로그인 시 VALID_AGENT가 아닌 유저(외국인 등)라면 활동 정보 동기화가 호출되지 않는다")
+    void login_does_not_sync_activity_for_non_agent() {
+        // given
+        String email = "foreigner@test.com";
+        String password = "password123";
+        String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+
+        User foreigner = new User(email, hashed, UserType.UNFILLED_FOREIGNER, LoginType.EMAIL, true);
+        LoginRequest request = new LoginRequest(email, password);
+
+        given(userRepository.findByEmail(email)).willReturn(Optional.of(foreigner));
+        given(jwtProvider.createAccessToken(anyString())).willReturn("at");
+        given(jwtProvider.createRefreshToken(anyString())).willReturn("rt");
+
+        // when
+        authService.login(request, response);
+
+        // then
+        verify(agentProfileCommandService, never()).syncAgentLoginActivity(any());
+    }
+
+    @Test
+    @DisplayName("구글 로그인 시 VALID_AGENT라면 활동 정보 동기화가 호출된다")
+    void googleLogin_syncs_activity_for_valid_agent() {
+        // given
+        String idToken = "google-token";
+        String email = "agent@test.com";
+        GoogleLoginRequest request = new GoogleLoginRequest(idToken, UserType.VALID_AGENT);
+
+        given(googleOAuthService.getGoogleEmail(idToken)).willReturn(email);
+
+        User agent = User.createGoogleUser(email, UserType.VALID_AGENT);
+        given(userRepository.findByEmail(email)).willReturn(Optional.of(agent));
+
+        given(agentProfileQueryService.existsByUserId(any())).willReturn(true);
+
+        given(jwtProvider.createAccessToken(anyString())).willReturn("at");
+        given(jwtProvider.createRefreshToken(anyString())).willReturn("rt");
+
+        // when
+        authService.googleLogin(request, response);
+
+        // then
+        verify(agentProfileCommandService, times(1)).syncAgentLoginActivity(any());
     }
 }

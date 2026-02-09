@@ -21,6 +21,7 @@ import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
 import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
+import com.navisa.be.recommendation.calculator.ReviewReliabilityCalculator;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -47,6 +49,7 @@ public class AgentReviewService {
     private final BadgeRepository badgeRepository;
     private final ForeignerSimilarityRepository foreignerSimilarityRepository;
     private final ApplicationFormRepository applicationFormRepository;
+    private final ReviewReliabilityCalculator reliabilityCalculator;
 
     @Transactional
     public void createAgentReview(String loginUserEmail, CreateAgentReviewRequest request) {
@@ -99,17 +102,29 @@ public class AgentReviewService {
         );
         eventPublisher.publishEvent(reviewCreatedBadgeEvent);
 
-        // 행정사의 top2 특화 직무 업데이트를 위한 이벤트 발행
+        // Step 4-1: 행정사 특화 분야 추천을 위한 상대 신뢰도(ria) 계산
         ForeignerSimilarity similarity = foreignerSimilarityRepository.findByForeignerId(foreignerProfile.getId())
                 .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_FOREIGNER));
 
+        // 상위 3개 데이터 추출
+        List<Long> allJobCodeIds = Arrays.stream(similarity.getJobCodeIdList()).boxed().toList();
+        List<Double> allSimilarities = Arrays.stream(similarity.getSimilarityList()).boxed().toList();
+
+        int topLimit = Math.min(3, allSimilarities.size());
+        List<Long> top3JobIds = allJobCodeIds.subList(0, topLimit);
+        List<Double> top3Similarities = allSimilarities.subList(0, topLimit);
+
+        // r_i,a = w_i,a / Σ(w_i,k) 계산
+        List<Double> relativeRatios = top3Similarities.stream()
+                .map(targetW -> reliabilityCalculator.calculateRelativeRatio(targetW, top3Similarities))
+                .collect(Collectors.toList());
+
+        // Step 4-2 처리를 위한 이벤트 발행 (ria 리스트 포함)
         ReviewCreatedSpecializedJobEvent reviewCreatedSpecializedJobEvent = new ReviewCreatedSpecializedJobEvent(
                 request.agentId(),
-                Arrays.stream(similarity.getJobCodeIdList()).boxed().toList()
+                top3JobIds,
+                relativeRatios
         );
         eventPublisher.publishEvent(reviewCreatedSpecializedJobEvent);
-
-        // todo 행정사 추천을 위한 파라미터 계산 step4, step5 호출
     }
 }
-

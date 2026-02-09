@@ -49,8 +49,8 @@ class AuthControllerTest {
         // given
         UUID mockUserId = UUID.fromString("3e00d7d2-8f70-4992-aee2-2e347dce42d4");
 
-        SignupRequest request = new SignupRequest("test@test.com", "password123", UserType.UNVALID_AGENT);
-        SignupResponse responseDto = new SignupResponse("access-token", mockUserId, UserType.UNVALID_AGENT);
+        SignupRequest request = new SignupRequest("test@test.com", "password123", UserType.INVALID_AGENT);
+        SignupResponse responseDto = new SignupResponse("access-token", mockUserId, UserType.INVALID_AGENT);
 
         given(authService.signup(any(SignupRequest.class), any(HttpServletResponse.class)))
                 .willReturn(responseDto);
@@ -63,7 +63,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.result.accessToken").value("access-token"))
                 .andExpect(jsonPath("$.result.userId").value(mockUserId.toString()))
-                .andExpect(jsonPath("$.result.userType").value("UNVALID_AGENT"));
+                .andExpect(jsonPath("$.result.userType").value("INVALID_AGENT"));
     }
 
     @Test
@@ -71,7 +71,7 @@ class AuthControllerTest {
     void login_success() throws Exception {
         // given
         LoginRequest request = new LoginRequest("test@test.com", "password123");
-        LoginResponse responseDto = new LoginResponse("access-token", UUID.randomUUID(), UserType.UNVALID_AGENT);
+        LoginResponse responseDto = new LoginResponse("access-token", UUID.randomUUID(), UserType.INVALID_AGENT);
 
         org.mockito.BDDMockito.willAnswer(invocation -> {
             HttpServletResponse response = invocation.getArgument(1);

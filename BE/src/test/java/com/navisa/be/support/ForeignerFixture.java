@@ -8,6 +8,7 @@ import com.navisa.be.foreigner.model.enums.EducationDegreeLevel;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,7 +54,7 @@ public class ForeignerFixture {
                         UUID.randomUUID(),
                         "고라니 099",
                         List.of(1L, 24L),
-                        LocalDateTime.of(2026, 1, 28, 11, 27, 2),
+                        ZonedDateTime.now(),
                         false,
                         null
                 ),

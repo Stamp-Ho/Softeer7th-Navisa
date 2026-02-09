@@ -85,4 +85,10 @@ public class ForeignerCommandService {
                         List<JobCodeSimilarityProjection> projectionList) {
                 foreignerRelationCommandService.registerCalculatedSimilarity(profile, projectionList);
         }
+
+        @Transactional
+        public void syncForeignerLoginActivity(UUID userId) {
+                foreignerProfileRepository.findByUserId(userId)
+                        .ifPresent(ForeignerProfile::updateLastLogin);
+        }
 }

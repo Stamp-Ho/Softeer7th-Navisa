@@ -70,7 +70,7 @@ class AdminServiceTest {
         PermitNewAgentRequest request = new PermitNewAgentRequest(userId);
 
         User user = mock(User.class);
-        when(user.getUserType()).thenReturn(UserType.UNVALID_AGENT);
+        when(user.getUserType()).thenReturn(UserType.INVALID_AGENT);
 
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
 

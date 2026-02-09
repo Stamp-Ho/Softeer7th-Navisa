@@ -1,5 +1,7 @@
 package com.navisa.be.auth.service;
 
+import com.navisa.be.agent.service.AgentProfileCommandService;
+import com.navisa.be.agent.service.AgentProfileQueryService;
 import com.navisa.be.auth.dto.request.GoogleLoginRequest;
 import com.navisa.be.auth.dto.request.LoginRequest;
 import com.navisa.be.auth.dto.request.SignupRequest;
@@ -11,6 +13,7 @@ import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.model.entity.RefreshToken;
 import com.navisa.be.auth.repository.RefreshTokenRepository;
 import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.foreigner.service.ForeignerCommandService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
@@ -34,6 +37,9 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AgentProfileCommandService agentProfileCommandService;
+    private final AgentProfileQueryService agentProfileQueryService;
+    private final ForeignerCommandService foreignerCommandService;
 
     // 구글 로그인
     @Transactional
@@ -48,7 +54,7 @@ public class AuthService {
         User user = (existingUser != null) ? existingUser :
                 userRepository.save(User.createGoogleUser(email, request.userType()));
 
-        user.updateLastLogin();
+        syncAgentActivityIfPresent(user);
 
         String accessToken = jwtProvider.createAccessToken(user.getEmail());
         String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
@@ -78,6 +84,7 @@ public class AuthService {
                 true
         );
         User savedUser = userRepository.save(newUser);
+        syncAgentActivityIfPresent(savedUser);
 
         String accessToken = jwtProvider.createAccessToken(savedUser.getEmail());
         String refreshToken = jwtProvider.createRefreshToken(savedUser.getEmail());
@@ -94,6 +101,8 @@ public class AuthService {
         if (!BCrypt.checkpw(request.password(), user.getPasswordHash())) {
             throw new AuthException(ResponseStatus.INVALID_PASSWORD);
         }
+
+        syncAgentActivityIfPresent(user);
 
         String accessToken = jwtProvider.createAccessToken(user.getEmail());
         String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
@@ -162,8 +171,8 @@ public class AuthService {
 
     // 유저타입 검증
     private void validateInitialUserType(UserType userType) {
-        // 가입 시에는 미인증 행정사(UNVALID_AGENT) 또는 미입력 외국인(UNFILLED_FOREIGNER)만 허용
-        if (userType != UserType.UNVALID_AGENT && userType != UserType.UNFILLED_FOREIGNER) {
+        // 가입 시에는 미인증 행정사(INVALID_AGENT) 또는 미입력 외국인(UNFILLED_FOREIGNER)만 허용
+        if (userType != UserType.INVALID_AGENT && userType != UserType.UNFILLED_FOREIGNER) {
             throw new AuthException(ResponseStatus.INVALID_INITIAL_USER_TYPE);
         }
     }
@@ -174,5 +183,18 @@ public class AuthService {
 
         return Arrays.stream(userTypes)
                 .anyMatch(userType -> userType.equals(user.getUserType()));
+    }
+
+    private void syncAgentActivityIfPresent(User user) {
+        if (user.getUserType() == UserType.VALID_AGENT) {
+            // 프로필이 존재하는 경우에만 활동 정보를 동기화
+            if (agentProfileQueryService.existsByUserId(user.getId())) {
+                agentProfileCommandService.syncAgentLoginActivity(user.getId());
+            }
+        }
+
+        if (user.getUserType() == UserType.FILLED_FOREIGNER) {
+            foreignerCommandService.syncForeignerLoginActivity(user.getId());
+        }
     }
 }

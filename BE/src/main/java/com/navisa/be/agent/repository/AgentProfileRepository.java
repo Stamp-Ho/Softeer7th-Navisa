@@ -19,4 +19,9 @@ public interface AgentProfileRepository extends JpaRepository<AgentProfile, UUID
     Optional<AgentProfile> findWithSpecializedJobByUserId(UUID userId);
 
     Optional<AgentProfile> findByUserId(UUID userId);
+
+    boolean existsByUserId(UUID userId);
+
+    @Query("SELECT p FROM AgentProfile p JOIN User u ON p.userId = u.id WHERE u.userType = 'VALID_AGENT'")
+    List<AgentProfile> findAllValidAgentProfiles();
 }

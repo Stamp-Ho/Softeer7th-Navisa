@@ -35,6 +35,21 @@ public class FinalRecommendationCalculator {
      * @param similarities 전문 분야별 유사도 가중치 w_a
      * @return 최종 추천 점수 G
      */
+    public double calculateFinalGradeByLongId(Map<Long, Double> specialtyScores, Map<Long, Double> similarities) {
+        double result = 0.0;
+
+        // 사용자의 관심 분야(similarities)를 기준으로 루프
+        for (Long jobId : similarities.keySet()) {
+            double wa = similarities.getOrDefault(jobId, 0.0);
+            double sa = specialtyScores.getOrDefault(jobId, 0.0);
+
+            // 사용자의 니즈(wa)와 행정사의 전문성(sa)을 곱해서 합산
+            result += (wa * sa);
+        }
+
+        return result;
+    }
+
     public double calculateFinalGrade(
             Map<String, Double> specialtyScores,
             Map<String, Double> similarities

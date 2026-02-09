@@ -178,7 +178,7 @@ public class AgentProfileQueryService {
                             agentProfile.getId(),
                             agentProfile.getName(),
                             agentProfileImageUrl,
-                            user.getLastLoginAt(),
+                            agentProfile.getLastLoginAt(),
                             true,
                             room.getStatus() == ChatRoomStatus.BLOCKED,
                             room.getId())
@@ -187,7 +187,7 @@ public class AgentProfileQueryService {
                             agentProfile.getId(),
                             agentProfile.getName(),
                             agentProfileImageUrl,
-                            user.getLastLoginAt(),
+                            agentProfile.getLastLoginAt(),
                             false,
                             false,
                             null)
@@ -202,7 +202,7 @@ public class AgentProfileQueryService {
                 agentProfile.getId(),
                 agentProfile.getName(),
                 agentProfileImageUrl,
-                user.getLastLoginAt(),
+                agentProfile.getLastLoginAt(),
                 false,
                 false,
                 null);
@@ -211,5 +211,9 @@ public class AgentProfileQueryService {
     public AgentProfile findByUserId(UUID userId) {
         return agentProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_AGENT));
+    }
+
+    public boolean existsByUserId(UUID userId) {
+        return agentProfileRepository.existsByUserId(userId);
     }
 }

@@ -353,6 +353,9 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
         User foreignerUser = userTestFixture.createUser("foreigner@user", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
+        foreignerProfile.updateLastLogin();
+        foreignerProfileRepository.saveAndFlush(foreignerProfile);
+
         FindForeignerDetailCommand command = new FindForeignerDetailCommand(agentUser.getEmail(), foreignerProfile.getId());
 
         // when
@@ -368,7 +371,7 @@ class ForeignerQueryServiceTest extends IntegrationTestSupport {
         assertThat(response.basicInfo().nationIdList()).containsExactlyInAnyOrderElementsOf(
                 fns.stream().map(ForeignerNationality::getId).toList()
         );
-        assertThat(response.basicInfo().lastAccessDay()).isEqualTo(foreignerUser.getLastLoginAt());
+        assertThat(response.basicInfo().lastAccessDay()).isEqualTo(foreignerProfile.getLastLoginAt());
         assertThat(response.basicInfo().hasChatRoomBetween()).isFalse();
         assertThat(response.basicInfo().chatRoomId()).isNull();
 

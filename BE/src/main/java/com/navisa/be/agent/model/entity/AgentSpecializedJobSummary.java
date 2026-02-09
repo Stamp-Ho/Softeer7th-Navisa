@@ -1,5 +1,6 @@
 package com.navisa.be.agent.model.entity;
 
+import com.navisa.be.common.model.entity.BaseEntity;
 import com.navisa.be.common.model.entity.JobCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -19,7 +20,8 @@ import java.util.UUID;
 )
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AgentSpecializedJobSummary {
+@Getter
+public class AgentSpecializedJobSummary extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

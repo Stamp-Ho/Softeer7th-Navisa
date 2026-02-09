@@ -111,7 +111,7 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
     void getRecentVisaForms_NotApproved_Fail() {
         // given
         String email = "pending_agent@test.com";
-        saveUser(email, UserType.UNVALID_AGENT);
+        saveUser(email, UserType.INVALID_AGENT);
 
         // when & then
         assertThatThrownBy(() -> visaApplicationQueryService.getRecentVisaForms(email))

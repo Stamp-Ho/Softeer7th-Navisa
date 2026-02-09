@@ -57,7 +57,7 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
     @BeforeEach
     void setUp() {
         scrivenerUser = userRepository
-                .save(new User("visa_helper@example.com", "hash", UserType.UNVALID_AGENT, LoginType.EMAIL, true));
+                .save(new User("visa_helper@example.com", "hash", UserType.INVALID_AGENT, LoginType.EMAIL, true));
 
         jobCodes = jobCodeRepository.saveAll(List.of(
                 new JobCode(null, "code1", "직종1", new float[512], null),

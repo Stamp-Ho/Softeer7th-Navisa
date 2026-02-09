@@ -41,9 +41,6 @@ public class User extends BaseEntity {
     @Column(name = "is_verified", nullable = false)
     private Boolean isVerified;
 
-    @Column(name = "last_login_at")
-    private LocalDateTime lastLoginAt;
-
     public User(String email, String passwordHash, UserType userType, LoginType loginType, Boolean isVerified) {
         this.email = email;
         this.passwordHash = passwordHash;
@@ -62,12 +59,8 @@ public class User extends BaseEntity {
         );
     }
 
-    public void updateLastLogin() {
-        this.lastLoginAt = LocalDateTime.now();
-    }
-
     public void upgradeToValidAgent() {
-        if(this.userType != UserType.UNVALID_AGENT){
+        if(this.userType != UserType.INVALID_AGENT){
             throw new UserException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
         }
         this.userType = UserType.VALID_AGENT;

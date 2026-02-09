@@ -241,4 +241,14 @@ public class ForeignerQueryService {
         return foreignerProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
     }
+
+    public UUID getForeignerIdByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.USER_INVALID));
+
+        ForeignerProfile profile = foreignerProfileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+
+        return profile.getId();
+    }
 }

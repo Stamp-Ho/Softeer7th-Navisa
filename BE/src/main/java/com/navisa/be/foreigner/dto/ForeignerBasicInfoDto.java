@@ -7,6 +7,7 @@ import com.navisa.be.user.model.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,7 +21,7 @@ public record ForeignerBasicInfoDto(
         @Schema(description = "국적 id 리스트")
         List<Long> nationIdList,
         @Schema(description = "최근 접속일시")
-        LocalDateTime lastAccessDay,
+        ZonedDateTime lastAccessDay,
         @Schema(description = "행정사와 외국인 사이의 채팅방 존재 여부")
         boolean hasChatRoomBetween,
         @Schema(description = "채팅방 id")
@@ -32,7 +33,7 @@ public record ForeignerBasicInfoDto(
                         foreignerProfile.getId(),
                         foreignerProfile.getNickname(),
                         nationIds,
-                        user.getLastLoginAt(),
+                        foreignerProfile.getLastLoginAt(),
                         optChatRoom.isPresent(),
                         optChatRoom.map(ChatRoom::getId).orElse(null)
                 );

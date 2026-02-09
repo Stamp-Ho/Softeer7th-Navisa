@@ -51,7 +51,7 @@ class AuthFlowTest extends IntegrationTestSupport {
     @DisplayName("실제 로그인 API를 호출하여 컨트롤러를 테스트한다")
     void login_controller_test() throws Exception {
         LoginRequest request = new LoginRequest("test@test.com", "password123");
-        LoginResponse loginResponse = new LoginResponse("access-token", java.util.UUID.randomUUID(), UserType.UNVALID_AGENT);
+        LoginResponse loginResponse = new LoginResponse("access-token", java.util.UUID.randomUUID(), UserType.INVALID_AGENT);
 
         given(authService.login(any(LoginRequest.class), any(HttpServletResponse.class)))
                 .willReturn(loginResponse);

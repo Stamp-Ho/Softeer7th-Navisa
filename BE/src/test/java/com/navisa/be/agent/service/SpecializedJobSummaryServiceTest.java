@@ -39,7 +39,8 @@ class SpecializedJobSummaryServiceTest {
         // given
         UUID agentId = UUID.randomUUID();
         List<Long> jobIds = List.of(1L, 2L);
-        ReviewCreatedSpecializedJobEvent event = new ReviewCreatedSpecializedJobEvent(agentId, jobIds);
+        List<Double> ratios = List.of(0.8, 0.2);
+        ReviewCreatedSpecializedJobEvent event = new ReviewCreatedSpecializedJobEvent(agentId, jobIds, ratios);
 
         java.lang.reflect.Constructor<JobCode> constructor = JobCode.class.getDeclaredConstructor();
         constructor.setAccessible(true);

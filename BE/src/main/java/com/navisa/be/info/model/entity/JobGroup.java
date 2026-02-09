@@ -1,5 +1,6 @@
 package com.navisa.be.info.model.entity;
 
+import com.navisa.be.common.model.entity.BaseEntity;
 import com.navisa.be.common.model.entity.JobCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class JobGroup {
+public class JobGroup extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
