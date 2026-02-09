@@ -124,4 +124,18 @@ public class ChatRoomServiceFacade {
     private  boolean isProposalMatched(ChatRoom chatRoom, Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {
         return proposalStatusMap.containsKey(chatRoom.getId()) && proposalStatusMap.get(chatRoom.getId()).getStatus() == ProposalStatus.MATCHED;
     }
+
+    public List<Long> findAllChatRoomsByUserId(UUID userId) {
+        User findUser = userQueryService.findById(userId);
+
+        if (findUser.getUserType().equals(UserType.FILLED_FOREIGNER)) {
+            UUID foreignerId = foreignerQueryService.findByUserId(findUser.getId()).getId();
+
+            return chatRoomQueryService.findChatRoomsByForeignerId(foreignerId);
+        }
+
+        UUID agentId = agentProfileQueryService.findByUserId(findUser.getId()).getId();
+
+        return chatRoomQueryService.findChatRoomsByAgentId(agentId);
+    }
 }

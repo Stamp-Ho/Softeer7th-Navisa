@@ -11,12 +11,14 @@ import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
+@Transactional
 public class ChatRoomTestFixture {
 
     private final ChatRoomRepository chatRoomRepository;

@@ -13,6 +13,7 @@ import com.navisa.be.info.model.entity.JobGroup;
 import com.navisa.be.info.repository.JobGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
+@Transactional
 public class AgentProfileTestFixture {
 
     private final AgentProfileRepository agentProfileRepository;

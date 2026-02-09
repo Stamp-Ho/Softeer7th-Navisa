@@ -35,6 +35,7 @@ public enum ResponseStatus {
     INVALID_CHATMESSAGE(400, "존재하지 않는 채팅 메세지 정보입니다."),
     STORAGE_UNSUPPORTED_CONTENT_TYPE(400, "지원하지 않는 파일 타입입니다"),
     STORAGE_UNSUPPORTED_USAGE(400, "지원되지 않는 용도의 요청입니다"),
+    ILLEGAL_SUBSCRIBE_DESTINATION(400, "WS 구독 경로와 맞지 않는 요청입니다."),
     AGENT_PROFILE_MUST_CONTAIN_ONE_TYPE_LICENSE_INFO(400, "일반 자격증 정보 세트 혹은 관리번호 중 '하나만' 입력해야 합니다."),
     INVALID_JOB_CODE(400, "유효하지 않은 직무 코드입니다"),
     NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE(400, "행정사 프로필을 등록할 수 있는 유저가 아닙니다"),
@@ -58,6 +59,7 @@ public enum ResponseStatus {
      * 서버 에러 (500번대)
      */
     SERVER_ERROR(500, "서버와의 연결에 실패하였습니다."),
+    REDIS_SERVER_ERROR(500, "Redis 동작 과정에서 서버 에러가 발생했습니다."),
     SIMILARITY_CALCULATE_FAIL(540, "vector의 코사인 유사도 계산을 실패했습니다."),
     S3_RUNTIME_ERROR(580, "S3 서비스 접근 중 오류가 발생했습니다."),
     S3_CLIENT_ERROR(581, "AWS 자격 증명 또는 네트워크 설정을 확인해주세요."),

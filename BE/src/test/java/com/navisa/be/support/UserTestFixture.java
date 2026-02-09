@@ -6,9 +6,11 @@ import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Component
+@Transactional
 public class UserTestFixture {
 
     private final UserRepository userRepository;

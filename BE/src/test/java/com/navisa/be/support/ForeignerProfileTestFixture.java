@@ -12,6 +12,7 @@ import com.navisa.be.user.model.entity.User;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
+@Transactional
 public class ForeignerProfileTestFixture {
 
     private final ForeignerProfileRepository foreignerProfileRepository;

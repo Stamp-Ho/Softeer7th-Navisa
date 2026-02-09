@@ -22,4 +22,12 @@ public class ChatRoomQueryService {
 
         return chatRoomRepository.findByNoOffset(foreignerId, slice, isForeignerId, filter);
     }
+
+    public List<Long> findChatRoomsByForeignerId(UUID foreignerId) {
+        return chatRoomRepository.findAllIdsByForeignerProfileId(foreignerId);
+    }
+
+    public List<Long> findChatRoomsByAgentId(UUID agentId) {
+        return chatRoomRepository.findAllIdsByAgentProfileId(agentId);
+    }
 }
