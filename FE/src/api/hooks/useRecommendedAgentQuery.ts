@@ -6,19 +6,13 @@ import { useAuth } from "../../contexts/AuthContextProvider";
 
 export const useRecommendedAgentQuery = () => {
   const { apiClient } = useApiClient();
-  const { userType, accessToken } = useAuth(); // ← 토큰 추가 가정
-  const isAuthed = userType !== "NOT_AUTHED";
-  const requestParams = isAuthed
-    ? { headers: { Authorization: `Bearer ${accessToken}` } }
-    : undefined;
+  const { userType, accessToken } = useAuth();
+  const token = userType !== "NOT_AUTHED" ? accessToken : undefined;
 
   return useQuery<AgentCardResponse[]>({
     queryKey: ["recommendedAgents", userType],
     queryFn: async () => {
-      const res = await agentService.recommendedAgents(
-        apiClient,
-        requestParams,
-      );
+      const res = await agentService.getRecommendedAgents(apiClient, token);
       return res.result;
     },
   });

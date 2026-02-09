@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
-import SearchForeignerCard from "../../../components/shared/SearchForeignerCard";
+import { useRecommendedForeignerQuery } from "../../../api/hooks/useRecommendedForeignerQuery";
+import RecommendedForeignerCard from "../../../components/shared/RecommendedForeignerCard";
 
 const SuggestedForeigners = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -7,6 +8,7 @@ const SuggestedForeigners = () => {
 
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
+  const { data, isLoading, isError } = useRecommendedForeignerQuery();
 
   // 1. 스크롤 위치 감지 (왼쪽 끝 체크용)
   const handleScroll = () => {
@@ -50,6 +52,24 @@ const SuggestedForeigners = () => {
     );
   };
 
+  if (isLoading) return <div>로딩중...</div>;
+  const dataToRender = isError ? (
+    <>
+      {Array.from({ length: 12 }).map((_, idx) => (
+        <RecommendedForeignerCard key={`foreignerCard_${idx}`} />
+      ))}{" "}
+    </>
+  ) : (
+    <>
+      {data?.map((foreigner, idx) => (
+        <RecommendedForeignerCard
+          key={`foreignerCard_${idx}`}
+          foreigner={foreigner}
+        />
+      ))}
+    </>
+  );
+
   return (
     <section className="w-full flex flex-col relative mt-12.5">
       <h2 className="headline-s-bold">
@@ -65,12 +85,7 @@ const SuggestedForeigners = () => {
           className={`
             flex flex-row gap-5 w-fit items-center justify-start my-6`}
         >
-          {Array.from({ length: 12 }).map((_, idx) => (
-            <SearchForeignerCard
-              key={`foreignerCard_${idx}`}
-              withDetails={false}
-            />
-          ))}
+          {dataToRender}
           {/* 4. 마지막 감지용 빈 div */}
           <div ref={endRef} className="w-3 h-1 -ml-6" />
         </ol>

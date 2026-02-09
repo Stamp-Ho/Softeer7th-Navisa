@@ -7,6 +7,8 @@ import RecentlyEditedDocuments from "./Agent/RecentlyEditedDocuments";
 import ExploreJobs from "./Common/ExploreJobs";
 import { AuthContext } from "../../contexts/AuthContext";
 import RecommendPanel from "./Foreigner/RecommendPanel";
+import RecentFeedback from "./Foreigner/RecentFeedback";
+import BadgeReview from "./Foreigner/BadgeReview";
 
 const HomePage = () => {
   const context = useContext(AuthContext);
@@ -36,10 +38,12 @@ const HomePage = () => {
         <>
           <ForeignerBanner />
           <SuggestedAgents />
-          <RecommendPanel />
+          {userType === "FILLED_FOREIGNER" || <RecommendPanel />}
         </>
       )}
       <ExploreJobs isAgent={isAgent} />
+      <BadgeReview />
+      <RecentFeedback />
     </>
   );
 };

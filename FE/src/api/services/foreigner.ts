@@ -14,6 +14,21 @@ export const foreignerService = {
       "/api/foreigner/requirements",
     ),
 
-  getHomeMatching: (api: apiClientType) =>
-    api.get<BaseResponse<T.ForeignerCardResponse[]>>("/api/foreigner/home"),
+  getRecommendedForeigners: async (api: apiClientType, accessToken: string) => {
+    return await api.get<BaseResponse<T.ForeignerCardResponse[]>>(
+      "/api/foreigner/home",
+      undefined,
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+    );
+  },
+
+  // 외국인 프로필 상세보기
+  getForeignerProfileDetail: async (
+    api: apiClientType,
+    foreignerId: string,
+  ) => {
+    return await api.get<BaseResponse<T.ForeignerProfileDetailResponse>>(
+      `/api/foreigner/${foreignerId}`,
+    );
+  },
 };

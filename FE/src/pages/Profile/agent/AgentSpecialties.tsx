@@ -3,22 +3,22 @@ import Tag from "../../../components/common/Tag";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
 import { jobCodeList } from "../../../constants/job";
 
-type AgentSpecialtiesList = {
-  specialties: number[];
-};
-
-const AgentSpecialties = ({ specialties }: AgentSpecialtiesList) => {
+const AgentSpecialties = ({
+  jobCodeIds = [0, 1, 2, 3],
+}: {
+  jobCodeIds?: number[];
+}) => {
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 title-m-semibold text-text-base">
         <IcGraduation size={24} />
         <span>전문 분야</span>
-        <span className="text-violet-500">{specialties.length}</span>
+        <span className="text-violet-500">{jobCodeIds.length}</span>
       </div>
       <ul className="flex flex-row gap-2 flex-wrap">
-        {specialties.map((specialty, idx) => (
+        {jobCodeIds.map((code, idx) => (
           <li key={idx}>
-            <Tag type="large_violet_off">{jobCodeList[specialty]}</Tag>
+            <Tag type="large_violet_off">{jobCodeList[code]}</Tag>
           </li>
         ))}
       </ul>

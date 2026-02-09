@@ -1,17 +1,20 @@
 import { IcClock01, IcLocation, IcPhone } from "../../../assets/icon/StratisUi";
 
-type AgentOfficeProps = {
-  officeInfo: AgentOfficeData;
-};
-
-type AgentOfficeData = {
-  officeName: string;
-  address: string;
-  businessHours: string;
-  phoneNumber: string;
-};
-
-const AgentOffice = ({ officeInfo }: AgentOfficeProps) => {
+const AgentOffice = ({
+  officeInfo = {
+    officeName: "엄경례 행정사사무소",
+    address: "서울 강남구 테헤란로 116, 10층 1011호",
+    businessHours: "평일 AM 10:00~PM 6:00",
+    phoneNumber: "010-1234-5678",
+  },
+}: {
+  officeInfo?: {
+    officeName: string;
+    address: string;
+    businessHours: string;
+    phoneNumber: string;
+  };
+}) => {
   return (
     <>
       <div className="headline-m-semibold mb-13">행정사 위치</div>

@@ -18,6 +18,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       isInvalid = false,
       invalidMsg = "",
       value,
+      setValue,
       onChange,
       ...props // 나머지 속성(name, onBlur 등)을 input에 전달
     },
@@ -39,7 +40,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           placeholder={placeholder}
           type={type}
           value={value}
-          onChange={onChange}
+          onChange={onChange ?? ((e) => setValue?.(e.target.value))}
           {...props}
         />
       </div>

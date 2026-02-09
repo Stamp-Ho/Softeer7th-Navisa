@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import AgentCard from "../../../components/shared/AgentCard";
 import LoadingBar from "../Common/LoadingBar";
-import { useRecommendedAgentQuery } from "../../../api/hooks/useRecommendAgentQuery";
+import { useRecommendedAgentQuery } from "../../../api/hooks/useRecommendedAgentQuery";
 
 const SuggestedAgents = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -76,6 +76,12 @@ const SuggestedAgents = () => {
   const flyTime = 1000;
 
   useEffect(() => {
+    const startLoading = () => {
+      setLoading(true);
+      setShowLoadingBar(true);
+      setIsTilted(true);
+    };
+
     const finishLoading = () => {
       setShowLoadingBar(false);
       setTimeout(() => {
@@ -86,6 +92,7 @@ const SuggestedAgents = () => {
       }, 750);
     };
 
+    startLoading();
     if (!isLoading) {
       finishLoading();
     }

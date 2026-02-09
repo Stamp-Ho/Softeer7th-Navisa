@@ -7,19 +7,27 @@ import Toast from "../../../components/common/Toast";
 import { AuthContext } from "../../../contexts/AuthContext";
 
 type AgentProfilePanelProps = {
-  profileImageUrl: string;
-  name: string;
-  officeName: string;
-  lastAccessDay: string;
-  isChatting: boolean;
+  agentInfo?: {
+    name: string;
+    profileImageUrl: string;
+    lastLoginAt: string;
+    hasChatRoom: boolean;
+    hasBlocked: boolean;
+    chatRoomId: number;
+  };
+  officeName?: string;
 };
 
 const AgentProfilePanel = ({
-  profileImageUrl,
-  name,
-  officeName,
-  lastAccessDay,
-  isChatting,
+  agentInfo = {
+    name: "엄경례",
+    profileImageUrl: "https://placehold.co/368x452",
+    lastLoginAt: "2026-01-28T11:27:02+09:00",
+    hasChatRoom: false,
+    hasBlocked: false,
+    chatRoomId: 0,
+  },
+  officeName = "엄경례 행정사사무소",
 }: AgentProfilePanelProps) => {
   const [viewMessageModal, setViewMessageModal] = useState(false);
   const [showToast, setShowToast] = useState<boolean>(false);
@@ -59,25 +67,29 @@ const AgentProfilePanel = ({
       <div className="flex flex-col items-center bg-white w-92 rounded-[20px] overflow-hidden shadow">
         <img
           className="w-187 h-113 object-cover"
-          src={profileImageUrl || "https://placehold.co/748x462"}
-          alt={`${name} 행정사 프로필 이미지`}
+          src={agentInfo.profileImageUrl || "https://placehold.co/748x462"}
+          alt={`${agentInfo.name} 행정사 프로필 이미지`}
         />
         <div className="flex flex-col pt-6 pb-5 px-4 w-full">
           <div className="headline-l-bold text-text-base mb-3">
-            {name} 행정사
+            {agentInfo.name} 행정사
           </div>
           <div className="title-s-medium text-text-base">{officeName}</div>
           <div className="flex flex-row justify-end">
-            <ToolTipMessage message={CalcLastAccessDay(lastAccessDay)} />
+            <ToolTipMessage
+              message={CalcLastAccessDay(agentInfo.lastLoginAt)}
+            />
           </div>
           <Button
             type="primary"
             className="w-full"
             onClick={() =>
-              isChatting ? alert("gotochat") : setViewMessageModal(true)
+              agentInfo.hasChatRoom
+                ? alert("gotochat")
+                : setViewMessageModal(true)
             }
           >
-            {isChatting ? "상담 이어하기" : "상담하기"}
+            {agentInfo.hasChatRoom ? "상담 이어하기" : "상담하기"}
           </Button>
         </div>
       </div>

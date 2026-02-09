@@ -34,7 +34,6 @@ const ChatActivateModal = ({
         메시지함에서 확인할 수 있어요.
       </div>
       <TextInput
-        type="text"
         className="placeholder:text-text-base mb-5"
         placeholder={
           isAgent

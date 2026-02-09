@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { IcLuggage04 } from "../../../assets/icon/StratisUi";
 import Button from "../../../components/common/Button";
 import Tag from "../../../components/common/Tag";
@@ -8,45 +7,25 @@ import { useContext, useEffect, useState } from "react";
 import CalcLastAccessDay from "../../../utils/CalcLastAccessDay";
 import { AuthContext } from "../../../contexts/AuthContext";
 import Toast from "../../../components/common/Toast";
-
-type ExpectedCompanyProps = {
-  companyName: string;
-  jobTitle: string;
-  startDate: string;
-  lastAccessDay: string;
-  isChatting: boolean;
-  nickName: string;
-};
-
-// D-Day 계산
-const calcDDay = (targetDate: string): string => {
-  const today = new Date();
-  const normalized = targetDate.replace(/\.\s*/g, "-");
-  const target = new Date(normalized);
-
-  // 시/분/초 제거 (날짜 기준으로만 계산)
-  today.setHours(0, 0, 0, 0);
-  target.setHours(0, 0, 0, 0);
-
-  const diffTime = target.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays > 0) return `D-${diffDays}`;
-
-  if (diffDays === 0) return "D-Day";
-
-  return `D+${Math.abs(diffDays)}`;
-};
+import { calcDDay } from "../../../utils/CalcDDay";
 
 const ExpectedCompany = ({
-  companyName,
-  jobTitle,
-  startDate,
-  lastAccessDay,
-  isChatting,
-  nickName,
-}: ExpectedCompanyProps) => {
-  const { foreignerId } = useParams();
+  targetJob = "웹 개발자",
+  companyName = "대박쩌는 IT회사",
+  startDate = "2026. 01. 31",
+  nickname = "고라니 099",
+  lastAccessDay = "2026-01-26T11:27:02+09:00",
+  hasChatRoomBetween = false,
+  chatRoomId = 0,
+}: {
+  targetJob?: string;
+  companyName?: string;
+  startDate?: string;
+  nickname?: string;
+  lastAccessDay?: string;
+  hasChatRoomBetween?: boolean;
+  chatRoomId?: number;
+}) => {
   const [viewMessageModal, setViewMessageModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
@@ -79,9 +58,7 @@ const ExpectedCompany = ({
       )}
       <div className="fixed right-48 shadow">
         <div className="flex flex-col w-92 px-5 py-8 border border-border-normal rounded-radius-400 bg-white">
-          <div className="headline-l-bold text-text-base">
-            {nickName} {foreignerId}
-          </div>
+          <div className="headline-l-bold text-text-base">{nickname}</div>
           <div className="py-0.25 w-full bg-border-light my-7"></div>
           <div className="flex flex-row gap-2 items-center title-m-semibold text-text-base">
             <IcLuggage04 />
@@ -92,7 +69,7 @@ const ExpectedCompany = ({
               <Tag type="large_gray_off" className="w-22">
                 직무
               </Tag>
-              <span className="text-text-base title-s-medium">{jobTitle}</span>
+              <span className="text-text-base title-s-medium">{targetJob}</span>
             </li>
             <li className="flex flex-row gap-4 items-center">
               <Tag type="large_gray_off" className="w-22">
@@ -119,10 +96,12 @@ const ExpectedCompany = ({
               size="large"
               className="w-full"
               onClick={() =>
-                isChatting ? alert("gotochat") : setViewMessageModal(true)
+                hasChatRoomBetween
+                  ? alert("gotochat")
+                  : setViewMessageModal(true)
               }
             >
-              {isChatting ? "상담 이어하기" : "상담하기"}
+              {hasChatRoomBetween ? "상담 이어하기" : "상담하기"}
             </Button>
           </div>
         </div>

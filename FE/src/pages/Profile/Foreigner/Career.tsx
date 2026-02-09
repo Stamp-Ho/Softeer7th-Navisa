@@ -1,19 +1,10 @@
-type ForeignerCareerList = {
-  foreignerCareerList: ForeignerCareerItem[];
-};
+import { calcMonthDiff } from "../../../utils/CalcMonthDiff";
 
 type ForeignerCareerItem = {
   companyName: string;
   jobTitle: string;
   period: string;
   durationMonths: number;
-};
-
-// 경력 계산
-const calcMonthDiff = (months: number) => {
-  if (months <= 12) return `${months}개월`;
-  const years = Math.floor(months / 12);
-  return `${years}년 ${months % 12}개월`;
 };
 
 const CareerFrame = ({
@@ -39,7 +30,18 @@ const CareerFrame = ({
   );
 };
 
-const Career = ({ foreignerCareerList }: ForeignerCareerList) => {
+const Career = ({
+  foreignerCareerList = [
+    {
+      companyName: "땡땡회사",
+      jobTitle: "머시기 직무",
+      period: "2023. 11. 02 ~ 2024. 11. 02",
+      durationMonths: 18, // 서버 계산 (int)
+    },
+  ],
+}: {
+  foreignerCareerList?: ForeignerCareerItem[];
+}) => {
   return (
     <div className="flex flex-col">
       <span className="headline-m-semibold text-gray-1000 mb-10">경력</span>

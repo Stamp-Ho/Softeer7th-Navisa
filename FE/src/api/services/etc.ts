@@ -1,5 +1,6 @@
 import type { BaseResponse } from "../types/common";
 import type { apiClientType } from "../../hooks/useApiClient";
+import type { RecentVisaFormsResponse } from "../types/etc";
 
 // homeService.ts
 export const homeService = {
@@ -25,8 +26,12 @@ export const infoService = {
 
 // visaService.ts
 export const visaService = {
-  getRecentForms: (api: apiClientType) =>
-    api.get<BaseResponse<any[]>>("/api/visa-forms/recent-applications"),
+  getRecentForms: (api: apiClientType, accessToken: string) =>
+    api.get<BaseResponse<RecentVisaFormsResponse[]>>(
+      "/api/visa-forms/recent-applications",
+      undefined,
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+    ),
 };
 
 // storageService.ts

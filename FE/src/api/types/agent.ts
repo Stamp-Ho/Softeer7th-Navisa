@@ -9,6 +9,15 @@ export interface AgentCardResponse {
   specialityJobCount: number;
 }
 
+// 행정사 블로그 응답
+export interface AgentRecentFeedbackResponse {
+  feedbackId: number;
+  feedbackContent: string | null;
+  writerId: string;
+  writerName: string;
+  writerProfileImgUrl: string;
+}
+
 // 행정사 상세 조회 응답
 export interface GetAgentDetailResponse {
   header: { top2badgeIds: number[]; comment: string };
@@ -58,4 +67,50 @@ export interface RegisterAgentProfileRequest {
     agentComment: string;
     additionalHistory: string;
   };
+}
+
+// 행정사 프로필 상세보기
+export interface AgentProfileDetailResponse {
+  header: {
+    top2badgeIds: number[];
+    comment: string;
+  };
+  expertise: {
+    jobCodeIds: number[];
+    languageIds: number[];
+  };
+  agentInfo: {
+    agentId: string;
+    name: string;
+    profileImageUrl: string;
+    lastLoginAt: string;
+    hasChatRoom: boolean;
+    hasBlocked: boolean;
+    chatRoomId: number;
+  };
+  additionalHistory: string;
+  reviewSummary: {
+    totalCount: number;
+    strengths: {
+      badgeId: number;
+      badgeCount: number;
+    }[];
+  };
+  officeInfo: {
+    officeName: string;
+    address: string;
+    businessHours: string;
+    phoneNumber: string;
+  };
+}
+
+// 뱃지별 행정사 리뷰
+export interface AgentBadgeReviewResponse {
+  reviewId: number;
+  reviewerInitial: string;
+  reviewContent: string;
+  agentId: string;
+  agentName: string;
+  agentProfileImgUrl: string;
+  badgeTop2: number[];
 }
