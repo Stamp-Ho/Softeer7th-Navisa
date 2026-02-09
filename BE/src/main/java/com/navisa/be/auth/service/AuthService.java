@@ -21,6 +21,7 @@ import com.navisa.be.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 @Transactional
@@ -180,6 +182,9 @@ public class AuthService {
     public boolean checkUserType(String email, UserType[] userTypes) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AuthException(ResponseStatus.FORBIDDEN));
+
+        log.info("user.userType {}", user.getUserType());
+        log.info("userTypes {}", Arrays.toString(userTypes));
 
         return Arrays.stream(userTypes)
                 .anyMatch(userType -> userType.equals(user.getUserType()));

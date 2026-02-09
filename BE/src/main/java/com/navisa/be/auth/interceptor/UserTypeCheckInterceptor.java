@@ -19,6 +19,10 @@ public class UserTypeCheckInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
         // HandlerMethod가 아니면 통과
         if (!(handler instanceof HandlerMethod)) {
             return true;

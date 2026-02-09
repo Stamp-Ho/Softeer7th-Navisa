@@ -17,12 +17,21 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
 
-        String token = authHeader.split(" ")[1];
+        String[] parts = authHeader.split(" ");
+        if (parts.length != 2) {
+            throw new AuthException(ResponseStatus.INVALID_TOKEN);
+        }
+
+        String token = parts[1];
 
         // 유효성 검증
         if (!jwtProvider.validateToken(token)) {
