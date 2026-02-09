@@ -1,5 +1,6 @@
 package com.navisa.be.agent.service;
 
+import com.navisa.be.agent.dto.LicenseInfoDto;
 import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
 import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.AgentLanguage;
@@ -39,31 +40,21 @@ public class AgentProfileCommandService {
         User user = userRepository.findByEmail(command.userEmail())
                 .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_USER));
 
-        validateCommand(command);
+        validateLicenseType(command.licenseInfo());
 
         if (user.getUserType() != UserType.INVALID_AGENT) {
             throw new AgentException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
         }
+        AgentProfile savedProfile = agentProfileRepository.save(command.dtoToEntity(user));
 
-        AgentProfile agentProfile = dtoToEntity(command, user);
-        AgentProfile savedProfile = agentProfileRepository.save(agentProfile);
-
-        List<Long> jobCodeIds = command.detailedInfo().specializedJobCodeIdList()
-                .stream()
-                .distinct()
-                .toList();
-        associateJobCode(jobCodeIds, savedProfile);
-
-        List<Long> languageIds = command.detailedInfo().availableLanguageIdList()
-                .stream()
-                .distinct()
-                .toList();
-        associateLanguage(languageIds, savedProfile);
+        saveAgentSpecializedJob(command.detailedInfo().specializedJobCodeIdList(), savedProfile);
+        saveAgentLanguage(command.detailedInfo().availableLanguageIdList(), savedProfile);
 
         return savedProfile;
     }
 
-    private void associateLanguage(List<Long> languageIds, AgentProfile savedProfile) {
+    private void saveAgentLanguage(List<Long> languageIds, AgentProfile savedProfile) {
+        languageIds = languageIds.stream().distinct().toList();
         checkAllLanguageExists(languageIds);
 
         // 모두 조회해서 연관관계를 저장
@@ -72,6 +63,7 @@ public class AgentProfileCommandService {
                 .map(language -> new AgentLanguage(savedProfile, language))
                 .toList();
         List<AgentLanguage> savedLanguages = agentLanguageRepository.saveAll(agentLanguages);
+
         savedProfile.addLanguages(savedLanguages);
     }
 
@@ -83,7 +75,8 @@ public class AgentProfileCommandService {
         }
     }
 
-    private void associateJobCode(List<Long> jobCodeIds, AgentProfile savedProfile) {
+    private void saveAgentSpecializedJob(List<Long> jobCodeIds, AgentProfile savedProfile) {
+        jobCodeIds = jobCodeIds.stream().distinct().toList();
         checkAllJobCodeExists(jobCodeIds);
 
         // 모두 조회해서 연관관계를 저장
@@ -92,6 +85,7 @@ public class AgentProfileCommandService {
                 .map(jobCode -> new AgentSpecializedJob(savedProfile, jobCode))
                 .toList();
         List<AgentSpecializedJob> savedCodes = agentSpecializedJobRepository.saveAll(specializedJobCodes);
+
         savedProfile.addSpecializedJobCodes(savedCodes);
     }
 
@@ -103,32 +97,20 @@ public class AgentProfileCommandService {
         }
     }
 
-    private AgentProfile dtoToEntity(RegisterAgentProfileCommand command, User user) {
-        return new AgentProfile(command.basicInfo().agentName(),
-                command.basicInfo().birthDate(),
-                command.basicInfo().profileImageUrl(),
-                command.basicInfo().businessTime(),
-                command.basicInfo().officeName(),
-                command.basicInfo().officeAddress(),
-                command.basicInfo().officeAddressDetail(),
-                command.detailedInfo().additionalHistory(),
-                user.getId(),
-                command.licenseInfo().licenseNo(),
-                command.licenseInfo().licenseIssuedAt(),
-                command.licenseInfo().licenseInnerPageNo(),
-                command.licenseInfo().licenseManagementNo(),
-                command.detailedInfo().agentComment()
-        );
-    }
-
-    private static void validateCommand(RegisterAgentProfileCommand command) {
-        boolean hasBasic = (command.licenseInfo().licenseNo() != null
-                && command.licenseInfo().licenseIssuedAt() != null
-                && command.licenseInfo().licenseInnerPageNo() != null);
-        boolean hasManagement = (command.licenseInfo().licenseManagementNo() != null);
-        if (hasBasic == hasManagement) {
+    private void validateLicenseType(LicenseInfoDto licenseInfo) {
+        if (isWalletTypeLicense(licenseInfo) == isPaperTypeLicense(licenseInfo)) {
             throw new AgentException(ResponseStatus.AGENT_PROFILE_MUST_CONTAIN_ONE_TYPE_LICENSE_INFO);
         }
+    }
+
+    private boolean isPaperTypeLicense(LicenseInfoDto licenseInfo) {
+        return licenseInfo.licenseManagementNo() != null;
+    }
+
+    private boolean isWalletTypeLicense(LicenseInfoDto licenseInfo) {
+        return (licenseInfo.licenseNo() != null
+                && licenseInfo.licenseIssuedAt() != null
+                && licenseInfo.licenseInnerPageNo() != null);
     }
 
     // 행정사 로그인 시 활동 날짜 데이터를 갱신

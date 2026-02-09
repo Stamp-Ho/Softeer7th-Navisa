@@ -1,5 +1,6 @@
 package com.navisa.be.agent.dto;
 
+import com.navisa.be.agent.model.entity.AgentProfile;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "행정사 사무소 정보 dto")
@@ -13,4 +14,10 @@ public record AgentDetailOfficeInfo(
         @Schema(description = "전화번호")
         String phoneNumber
 ) {
+    public static AgentDetailOfficeInfo entityToDto(AgentProfile agentProfile) {
+        return new AgentDetailOfficeInfo(agentProfile.getOfficeName(),
+                agentProfile.getOfficeAddress(),
+                agentProfile.getBusinessTime(),
+                agentProfile.getPhoneNumber());
+    }
 }

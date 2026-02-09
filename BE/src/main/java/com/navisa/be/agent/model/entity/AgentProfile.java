@@ -52,6 +52,9 @@ public class AgentProfile extends BaseEntity {
     @Column(name = "additional_history")
     private String additionalHistory;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
@@ -108,6 +111,7 @@ public class AgentProfile extends BaseEntity {
                         String officeAddress,
                         String officeAddressDetail,
                         String additionalHistory,
+                        String phoneNumber,
                         UUID userId,
                         String licenseNo,
                         LocalDate licenseIssuedAt,
@@ -123,6 +127,7 @@ public class AgentProfile extends BaseEntity {
         this.officeAddress = officeAddress;
         this.officeAddressDetail = officeAddressDetail;
         this.additionalHistory = additionalHistory;
+        this.phoneNumber = phoneNumber;
         this.userId = userId;
         this.licenseNo = licenseNo;
         this.licenseIssuedAt = licenseIssuedAt;

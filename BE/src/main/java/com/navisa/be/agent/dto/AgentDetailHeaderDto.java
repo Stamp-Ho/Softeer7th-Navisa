@@ -1,5 +1,7 @@
 package com.navisa.be.agent.dto;
 
+import com.navisa.be.agent.model.entity.AgentBadgeSummary;
+import com.navisa.be.agent.model.entity.AgentProfile;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -11,4 +13,12 @@ public record AgentDetailHeaderDto(
         @Schema(description = "행정사 한마디")
         String comment
 ) {
+    public static AgentDetailHeaderDto entityToDto(AgentProfile agentProfile, List<AgentBadgeSummary> badgeSummarys) {
+        List<Long> top2BadgeIds = badgeSummarys.stream()
+                .map(summary -> summary.getBadge().getId())
+                .limit(2)
+                .toList();
+
+        return new AgentDetailHeaderDto(top2BadgeIds, agentProfile.getComment());
+    }
 }

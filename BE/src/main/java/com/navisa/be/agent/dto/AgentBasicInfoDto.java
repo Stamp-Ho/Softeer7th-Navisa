@@ -13,5 +13,6 @@ public record AgentBasicInfoDto(@Schema(description = "프로필 이미지") @No
                                 @Schema(description = "사무실 이름") @NotBlank String officeName,
                                 @Schema(description = "사무실 주소") @NotBlank String officeAddress,
                                 @Schema(description = "사무실 세부 주소") @NotNull String officeAddressDetail,
-                                @Schema(description = "행정사 영업시간") @NotBlank String businessTime) {
+                                @Schema(description = "행정사 영업시간") @NotBlank String businessTime,
+                                @Schema(description = "행정사 전화번호") @NotBlank String phoneNumber) {
 }

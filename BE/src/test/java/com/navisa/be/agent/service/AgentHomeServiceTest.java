@@ -141,7 +141,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
             AgentProfile profile = agentProfileRepository.save(new AgentProfile(
                     "행정사" + i, LocalDate.now(), "url", "09:00~18:00",
                     "사무소", "서울", "강남", "경력",
-                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말"));
+                    "010-1234-1234", UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말"));
             specializedJobCodeRepository.save(new AgentSpecializedJob(profile, jobCode));
         }
     }
@@ -177,7 +177,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
             AgentProfile profile = new AgentProfile(
                     "행정사" + i, LocalDate.now(), "url", "09:00~18:00",
                     "사무소", "서울", "강남", "경력",
-                    UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말");
+                    "010-1234-1234", UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말");
             agentProfileRepository.save(profile);
 
             AgentSpecializedJob specializedJobCode = new AgentSpecializedJob(profile, jobCode);
@@ -193,7 +193,7 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
         AgentProfile profile = new AgentProfile(
                 name, LocalDate.now(), imageUrl, "09:00~18:00",
                 "내비자 사무소", "서울", "강남", "경력사항",
-                userId, "LIC-123", LocalDate.now(), "P-123", "M-123", "한마디");
+                "010-1234-1234", userId, "LIC-123", LocalDate.now(), "P-123", "M-123", "한마디");
         return agentProfileRepository.save(profile);
     }
 }

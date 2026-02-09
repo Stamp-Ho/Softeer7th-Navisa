@@ -130,6 +130,6 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
     private AgentProfile saveAgentProfile(UUID userId) {
         return agentProfileRepository.save(new AgentProfile(
                 "김행정", LocalDate.now(), "key", "09:00", "사무소", "주소", "상세", "이력",
-                userId, "LIC123", LocalDate.now(), "P123", "M123", "코멘트"));
+                "010-1234-1234", userId, "LIC123", LocalDate.now(), "P123", "M123", "코멘트"));
     }
 }

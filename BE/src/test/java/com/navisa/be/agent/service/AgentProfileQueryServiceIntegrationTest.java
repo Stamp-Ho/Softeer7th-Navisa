@@ -90,7 +90,7 @@ class AgentProfileQueryServiceIntegrationTest extends IntegrationTestSupport {
         // agentInfo 검증
         assertThat(response.agentInfo()).isNotNull();
         assertThat(response.agentInfo().agentId()).isEqualTo(agentProfile.getId());
-        assertThat(response.agentInfo().name()).isEqualTo("행정사");
+        assertThat(response.agentInfo().name()).isEqualTo(agentProfile.getName());
         assertThat(response.agentInfo().hasChatRoom()).isFalse();
 
         // reviewSummary 검증
@@ -101,7 +101,8 @@ class AgentProfileQueryServiceIntegrationTest extends IntegrationTestSupport {
 
         // officeInfo 검증
         assertThat(response.officeInfo()).isNotNull();
-        assertThat(response.officeInfo().officeName()).isEqualTo("Office Name");
+        assertThat(response.officeInfo().officeName()).isEqualTo(agentProfile.getOfficeName());
+        assertThat(response.officeInfo().phoneNumber()).isEqualTo(agentProfile.getPhoneNumber());
     }
 
     @Test
@@ -147,7 +148,7 @@ class AgentProfileQueryServiceIntegrationTest extends IntegrationTestSupport {
         // agentInfo 검증
         assertThat(response.agentInfo()).isNotNull();
         assertThat(response.agentInfo().agentId()).isEqualTo(agentProfile.getId());
-        assertThat(response.agentInfo().name()).isEqualTo("행정사");
+        assertThat(response.agentInfo().name()).isEqualTo(agentProfile.getName());
         assertThat(response.agentInfo().hasChatRoom()).isFalse();
         assertThat(response.agentInfo().profileImageUrl()).contains(ImageSize.MEDIUM.getPath());
 
@@ -159,7 +160,8 @@ class AgentProfileQueryServiceIntegrationTest extends IntegrationTestSupport {
 
         // officeInfo 검증
         assertThat(response.officeInfo()).isNotNull();
-        assertThat(response.officeInfo().officeName()).isEqualTo("Office Name");
+        assertThat(response.officeInfo().officeName()).isEqualTo(agentProfile.getOfficeName());
+        assertThat(response.officeInfo().phoneNumber()).isEqualTo(agentProfile.getPhoneNumber());
     }
 
     @Test
@@ -206,7 +208,7 @@ class AgentProfileQueryServiceIntegrationTest extends IntegrationTestSupport {
         // agentInfo 검증
         assertThat(response.agentInfo()).isNotNull();
         assertThat(response.agentInfo().agentId()).isEqualTo(agentProfile.getId());
-        assertThat(response.agentInfo().name()).isEqualTo("행정사");
+        assertThat(response.agentInfo().name()).isEqualTo(agentProfile.getName());
         assertThat(response.agentInfo().hasChatRoom()).isTrue();
         assertThat(response.agentInfo().hasBlocked()).isFalse();
         assertThat(response.agentInfo().chatRoomId()).isEqualTo(chatRoom.getId());
