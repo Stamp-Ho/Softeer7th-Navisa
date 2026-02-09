@@ -1,26 +1,18 @@
 ---
 name: "♻️ Refactor"
 about: 코드 리팩토링 및 구조 개선
-title: "[Refactor]"
+title: "[BE | FE #] refactor : "
 labels: 'refactor'
 assignees: ''
 ---
 
 ## 📄 요약
 
-## 🧩 작업 범위
-
-- [ ] FE
-- [ ] BE
-- [ ] 공통
-
-## 🛠️ 상세 내용
+## 🛠️ 변경 내용
 
 - **AS-IS**:
 - **TO-BE**:
-- **이유**: 
-
-## ⚠️ 영향 범위
+- **이유**:
 
 ## ✅ 완료 기준
 
