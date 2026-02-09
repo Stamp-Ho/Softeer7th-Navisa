@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: navisa-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: navisa_db
+      POSTGRES_USER: test-user
+      POSTGRES_PASSWORD: test-password
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    # 서버 실행 후 SQL 명령어를 직접 실행하도록 설정
+    command: >
+      bash -c "
+      (sleep 5 && psql -U test-user -d navisa_db -c 'CREATE EXTENSION IF NOT EXISTS vector; CREATE OR REPLACE FUNCTION array_overlap(bigint[], bigint[]) RETURNS boolean AS \$\$ SELECT \$$1 && \$$2; \$\$ LANGUAGE sql IMMUTABLE;') &
+      exec docker-entrypoint.sh postgres
+      "
+    networks:
+      - navisa-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: navisa-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - navisa-network
+
+networks:
+  navisa-network:
+    driver: bridge

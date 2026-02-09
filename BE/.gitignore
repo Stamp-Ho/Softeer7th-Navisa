@@ -9,6 +9,9 @@ build
 .env
 **.pem
 
+# Local Postgres Data
+postgres_data
+
 # --- OS System Files ---
 .DS_Store
 Thumbs.db

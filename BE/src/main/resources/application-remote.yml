@@ -9,6 +9,14 @@ spring:
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
 
+  flyway:
+    enabled: true
+    schemas: public
+    clean-disabled: true # 실수를 방지하기 위해 clean 기능 비활성화
+    validate-on-migrate: true # 체크섬을 비교하여 기존 파일 변경 시 에러 발생
+    locations: classpath:db/migration
+    connect-retries: 3
+
   data:
     redis:
       host: 10.0.138.33

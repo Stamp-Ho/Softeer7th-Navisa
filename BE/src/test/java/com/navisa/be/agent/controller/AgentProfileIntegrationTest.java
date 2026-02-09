@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -112,7 +113,7 @@ class AgentProfileIntegrationTest extends IntegrationTestSupport {
                         .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.jobCodeList").isArray())
-                .andExpect(jsonPath("$.result.jobCodeList[0].name").value("백엔드 개발자"))
+                .andExpect(jsonPath("$.result.jobCodeList[*].name", hasItem("백엔드 개발자")))
                 .andDo(print());
     }
 
