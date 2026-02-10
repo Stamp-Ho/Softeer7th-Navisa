@@ -1,9 +1,14 @@
 package com.navisa.be.chat.service;
 
+import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.chat.dto.projection.ChatMessageNonReadCountProjection;
+import com.navisa.be.chat.exception.ChatMessageException;
 import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.repository.ChatMessageRepository;
+import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,5 +36,9 @@ public class ChatMessageQueryService {
 
     public Long findMatchedNonReadCountByAgentId(UUID agentId) {
         return chatMessageRepository.findMatchedNonReadCountByAgentId(agentId);
+    }
+
+    public List<ChatMessage> findChatMessagesByChatRoomIdAndNoOffset(Long roomId, SliceRequest<Long> slice) {
+        return chatMessageRepository.findChatMessagesByChatRoomIdAndNoOffset(roomId, slice);
     }
 }

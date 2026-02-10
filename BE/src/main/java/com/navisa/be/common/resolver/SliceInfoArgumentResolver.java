@@ -32,7 +32,14 @@ public class SliceInfoArgumentResolver implements HandlerMethodArgumentResolver 
         String sizeStr = webRequest.getParameter("size");
 
         // 1. 사이즈 처리
-        Integer size = (sizeStr != null) ? Integer.parseInt(sizeStr) : 16;
+        int size;
+        try {
+            size = (sizeStr != null)
+                    ? Integer.parseInt(sizeStr)
+                    : parameter.getParameterAnnotation(SliceInfo.class).size();
+        } catch (IllegalArgumentException | ClassCastException e) {
+            throw new BaseException(ResponseStatus.BAD_REQUEST);
+        }
 
         // 2. 제네릭 타입(ID) 확인 및 파싱
         Object lastElementId = null;

@@ -5,6 +5,7 @@ import com.navisa.be.chat.dto.projection.ChatMessageNonReadCountProjection;
 import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
+import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.support.AgentProfileTestFixture;
 import com.navisa.be.support.ChatRoomTestFixture;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -188,5 +190,56 @@ class ChatMessageRepositoryTest extends IntegrationTestSupport {
 
                 // then
                 assertThat(count).isEqualTo(1L);
+        }
+
+        @Test
+        @DisplayName("채팅방 메시지를 No-Offset 방식으로 조회한다 (다른 채팅방 메시지 제외 확인)")
+        void findChatMessagesByChatRoomIdAndNoOffset() {
+                // given
+                User foreignerUser = userTestFixture.createUser("foreigner@test.com", UserType.FILLED_FOREIGNER);
+                User agentUser = userTestFixture.createUser("agent@test.com", UserType.VALID_AGENT);
+
+                ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+                AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Address", agentUser.getId());
+
+                // LocalDateTime으로 시간 기준 설정 (BaseEntity 타입과 일치)
+                LocalDateTime now = LocalDateTime.now();
+
+                ChatRoom targetRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+                ChatRoom otherRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+
+                // 타겟 채팅방 메시지 30개 생성
+                for (int i = 1; i <= 30; i++) {
+                        ChatMessage message = chatRoomTestFixture.createChatMessage(targetRoom, foreignerProfile.getId(), "Target " + i, false);
+                        ReflectionTestUtils.setField(message, "createdAt", now.plusMinutes(i));
+                        chatMessageRepository.save(message);
+                }
+
+                // 소음용 메시지 10개 생성
+                for (int i = 1; i <= 10; i++) {
+                        ChatMessage otherMessage = chatRoomTestFixture.createChatMessage(otherRoom, foreignerProfile.getId(), "Other " + i, false);
+                        ReflectionTestUtils.setField(otherMessage, "createdAt", now.plusMinutes(i));
+                        chatMessageRepository.save(otherMessage);
+                }
+
+                // when - 1페이지 조회
+                SliceRequest<Long> sliceRequest1 = new SliceRequest<>(null, 10);
+                List<ChatMessage> page1 = chatMessageRepository.findChatMessagesByChatRoomIdAndNoOffset(targetRoom.getId(), sliceRequest1);
+
+                // then - 검증
+                assertThat(page1).hasSize(11);
+                assertThat(page1.get(0).getContent()).isEqualTo("Target 30");
+                assertThat(page1.get(9).getContent()).isEqualTo("Target 21");
+                assertThat(page1).extracting("chatRoom.id").containsOnly(targetRoom.getId());
+
+                // when - 2페이지 조회
+                Long lastId = page1.get(9).getId();
+                SliceRequest<Long> sliceRequest2 = new SliceRequest<>(lastId, 10);
+                List<ChatMessage> page2 = chatMessageRepository.findChatMessagesByChatRoomIdAndNoOffset(targetRoom.getId(), sliceRequest2);
+
+                // then - 검증
+                assertThat(page2).hasSize(11);
+                assertThat(page2.get(0).getContent()).isEqualTo("Target 20");
+                assertThat(page2.get(9).getContent()).isEqualTo("Target 11");
         }
 }

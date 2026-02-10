@@ -1,9 +1,13 @@
 package com.navisa.be.chat.service;
 
+import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomFilterType;
 import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +33,22 @@ public class ChatRoomQueryService {
 
     public List<Long> findChatRoomsByAgentId(UUID agentId) {
         return chatRoomRepository.findAllIdsByAgentProfileId(agentId);
+    }
+
+    public ChatRoom findById(Long roomId) {
+        return chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new ChatRoomException(ResponseStatus.INVALID_CHATROOM));
+    }
+
+    public boolean isOwnedByProfileIdAndChatRoomId(Long roomId, ForeignerProfile foreignerProfile) {
+        return chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new ChatRoomException(ResponseStatus.INVALID_CHATROOM))
+                .getForeignerProfile().getId().equals(foreignerProfile.getId());
+    }
+
+    public boolean isOwnedByProfileIdAndChatRoomId(Long roomId, AgentProfile agentProfile) {
+        return chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new ChatRoomException(ResponseStatus.INVALID_CHATROOM))
+                .getAgentProfile().getId().equals(agentProfile.getId());
     }
 }

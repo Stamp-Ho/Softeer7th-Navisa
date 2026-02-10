@@ -2,6 +2,7 @@ package com.navisa.be.common.resolver;
 
 import com.navisa.be.common.annotation.SliceInfo;
 import com.navisa.be.common.dto.request.SliceRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +41,16 @@ class SliceInfoArgumentResolverTest {
 
     @Mock
     private WebDataBinderFactory binderFactory;
+
+    @BeforeEach
+    void setUp() {
+        // 기본적으로 SliceInfo 어노테이션이 존재하는 것으로 설정 (size=16)
+        // 개별 테스트에서 다른 값이 필요하면 override 가능 (lenient 필요할 수 있음)
+        SliceInfo defaultSliceInfo = mock(SliceInfo.class);
+        org.mockito.Mockito.lenient().when(defaultSliceInfo.size()).thenReturn(16);
+        org.mockito.Mockito.lenient().when(parameter.getParameterAnnotation(SliceInfo.class))
+                .thenReturn(defaultSliceInfo);
+    }
 
     @Test
     @DisplayName("supportsParameter는 @SliceInfo가 있고 타입이 SliceRequest여야 true를 반환한다")
@@ -100,6 +111,26 @@ class SliceInfoArgumentResolverTest {
         SliceRequest<?> request = (SliceRequest<?>) result;
         assertNotNull(request);
         assertThat(request.size()).isEqualTo(20);
+    }
+
+    @Test
+    @DisplayName("resolveArgument는 size 파라미터가 없고 어노테이션에 size가 설정되어 있으면 그 값을 사용한다")
+    void resolveArgument_shouldUseAnnotationSize() {
+        // given
+        when(webRequest.getParameter("lastElementId")).thenReturn(null);
+        when(webRequest.getParameter("size")).thenReturn(null);
+
+        SliceInfo sliceInfo = mock(SliceInfo.class);
+        when(sliceInfo.size()).thenReturn(50);
+        when(parameter.getParameterAnnotation(SliceInfo.class)).thenReturn(sliceInfo);
+
+        // when
+        Object result = resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+
+        // then
+        SliceRequest<?> request = (SliceRequest<?>) result;
+        assertNotNull(request);
+        assertThat(request.size()).isEqualTo(50);
     }
 
     @Test
@@ -183,7 +214,6 @@ class SliceInfoArgumentResolverTest {
     private void mockGenericType(Class<?> genericType) {
         ParameterizedType mockedType = mock(ParameterizedType.class);
         when(parameter.getGenericParameterType()).thenReturn(mockedType);
-        // getActualTypeArguments returns Type[]
         when(mockedType.getActualTypeArguments()).thenReturn(new Type[] { genericType });
     }
 }
