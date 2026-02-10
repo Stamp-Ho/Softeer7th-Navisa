@@ -30,17 +30,15 @@ class ChatRoomCardResponseTest {
         when(agentProfile.getName()).thenReturn("Agent Name");
 
         boolean isForeigner = true;
-        String profileImgUrl = "http://image.url";
         String lastMessage = "Hello World";
         Long unreadCount = 5L;
 
         // when
-        ChatRoomCardResponse response = ChatRoomCardResponse.toDto(chatRoom, profileImgUrl, lastMessage, unreadCount,
+        ChatRoomCardResponse response = ChatRoomCardResponse.toDto(chatRoom, null, lastMessage, unreadCount,
                 isForeigner, true, true);
 
         // then
         assertThat(response.chatRoomId()).isEqualTo(1L);
-        assertThat(response.profileImgUrl()).isEqualTo(profileImgUrl);
         assertThat(response.opponentName()).isEqualTo("Agent Name"); // Foreigner는 Agent 이름을 봄
         assertThat(response.noneReadCount()).isEqualTo(unreadCount);
         assertThat(response.lastMessage()).isEqualTo(lastMessage);
@@ -60,12 +58,12 @@ class ChatRoomCardResponseTest {
         when(foreignerProfile.getNickname()).thenReturn("Foreigner Nick");
 
         boolean isForeigner = false;
-        String profileImgUrl = "http://image.url";
+        String profileImage = "img.png";
         String lastMessage = "Hello Agent";
         Long unreadCount = 2L;
 
         // when
-        ChatRoomCardResponse response = ChatRoomCardResponse.toDto(chatRoom, profileImgUrl, lastMessage, unreadCount,
+        ChatRoomCardResponse response = ChatRoomCardResponse.toDto(chatRoom, profileImage, lastMessage, unreadCount,
                 isForeigner, true, true);
 
         // then

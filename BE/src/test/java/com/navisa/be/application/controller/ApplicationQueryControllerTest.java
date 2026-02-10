@@ -112,4 +112,24 @@ class ApplicationQueryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("행정사는 특정 신청서 ID로 상세 정보를 조회할 수 있다.")
+    void getVisaFormForAgent_Success() throws Exception {
+        // given
+        String email = "agent@navisa.com";
+        UUID formId = UUID.randomUUID();
+        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
+
+        VisaApplicationDetailResponse response = new VisaApplicationDetailResponse(
+                formId, "img.png", false, "2026. 02. 10", 150, 80, List.of(Collections.emptyMap())
+        );
+        given(applicationQueryService.getVisaFormForAgent(eq(email), eq(formId))).willReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/application-forms/agent/{formId}", formId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.applicationFormId").value(formId.toString()));
+    }
 }

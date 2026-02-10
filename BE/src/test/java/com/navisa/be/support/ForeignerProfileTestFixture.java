@@ -36,7 +36,6 @@ public class ForeignerProfileTestFixture {
 
     public ForeignerProfile createForeignerProfile(User foreignerUser) {
         ForeignerProfile foreignerProfile = new ForeignerProfile(foreignerUser.getId(), ForeignerSearchStatus.REQUESTING);
-        foreignerProfile.updateProfileImage("/origin/image.png");
 
         ForeignerProfile savedForeigner = foreignerProfileRepository.save(foreignerProfile);
 

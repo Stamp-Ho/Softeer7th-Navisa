@@ -129,7 +129,6 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         User user = saveUser(email, UserType.FILLED_FOREIGNER);
 
         ForeignerProfile foreigner = new ForeignerProfile(user.getId(), ForeignerSearchStatus.REQUESTING);
-        foreigner.updateProfileImage("img.png");
         foreignerProfileRepository.save(foreigner);
 
         User agentUser = saveUser("agent_dummy@test.com", UserType.VALID_AGENT);
@@ -138,8 +137,11 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수활동", null, null));
 
         // 두 개의 신청서 생성 (생성 시간을 다르게 하여 최신순 확인)
+        String profileImageKey = "visa/photos/my-photo.png";
         VisaApplicationForm oldForm = new VisaApplicationForm(agent, foreigner, jobCode, false, 150, 50);
         VisaApplicationForm latestForm = new VisaApplicationForm(agent, foreigner, jobCode, true, 150, 150);
+
+        ReflectionTestUtils.setField(latestForm, "profileObjectKey", profileImageKey);
 
         visaApplicationFormRepository.save(oldForm);
         visaApplicationFormRepository.save(latestForm);
@@ -157,6 +159,7 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         assertThat(result).isNotNull();
         assertThat(result.totalCount()).isEqualTo(150);
         assertThat(result.filledCount()).isEqualTo(150);
+        assertThat(result.foreignerProfileImgUrl()).isEqualTo(profileImageKey);
         assertThat(result.isDone()).isTrue();
         assertThat(result.sections()).hasSize(9);
     }

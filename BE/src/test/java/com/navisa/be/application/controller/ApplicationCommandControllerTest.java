@@ -100,15 +100,13 @@ class ApplicationCommandControllerTest {
                 "fields", List.of(Map.of("fieldId", 101, "value", "Hong Gil Dong"))
         );
         VisaApplicationSaveRequest request = new VisaApplicationSaveRequest(150, 10, List.of(section1));
-
         VisaApplicationSaveResponse response = new VisaApplicationSaveResponse(visaFormId, updatedAt);
 
         given(applicationCommandService.saveVisaForm(eq(email), eq(visaFormId), any(VisaApplicationSaveRequest.class)))
                 .willReturn(response);
 
         // when & then
-        mockMvc.perform(post("/api/application-forms")
-                        .param("id", visaFormId.toString())
+        mockMvc.perform(post("/api/application-forms/{formId}", visaFormId)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -134,8 +132,7 @@ class ApplicationCommandControllerTest {
         Map<String, String> request = Map.of("profileObjectKey", objectKey);
 
         // when & then
-        mockMvc.perform(post("/api/application-forms/image")
-                        .param("id", visaFormId.toString())
+        mockMvc.perform(post("/api/application-forms/{formId}/image", visaFormId)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -159,8 +156,7 @@ class ApplicationCommandControllerTest {
         Map<String, Boolean> request = Map.of("isDone", true);
 
         // when & then
-        mockMvc.perform(patch("/api/application-forms/status")
-                        .param("id", visaFormId.toString())
+        mockMvc.perform(patch("/api/application-forms/{formId}/status", visaFormId)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

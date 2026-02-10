@@ -49,9 +49,7 @@ public class ApplicationCommandService {
         VisaApplicationForm form = applicationFormRepository.findById(visaFormId)
                 .orElseThrow(() -> new ApplicationException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));
 
-        ForeignerProfile foreignerProfile = form.getForeignerProfile();
-
-        foreignerProfile.updateProfileImage(objectKey);
+        form.updateProfileImage(objectKey);
         applicationFormRepository.saveAndFlush(form);
 
         return new VisaApplicationSaveResponse(form.getId(), form.getUpdatedAt());

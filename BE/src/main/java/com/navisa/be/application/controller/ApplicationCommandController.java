@@ -26,38 +26,35 @@ public class ApplicationCommandController {
     private final ApplicationCommandService applicationCommandService;
 
     @Operation(summary = "비자 신청서 자동 저장", description = "작성 중인 비자 신청서의 섹션 데이터를 저장하거나 수정합니다.")
-    @PostMapping()
+    @PostMapping("/{formId}")
     public BaseResponse<VisaApplicationSaveResponse> saveVisaForm(
             @Parameter(hidden = true) @LoginUser String email,
-            @Parameter(description = "비자 문서 ID (visaFormId)")
-            @RequestParam(name = "id") UUID id,
+            @Parameter(description = "비자 문서 ID") @PathVariable(name = "formId") UUID formId,
             @Valid @RequestBody VisaApplicationSaveRequest request) {
 
-        VisaApplicationSaveResponse response = applicationCommandService.saveVisaForm(email, id, request);
+        VisaApplicationSaveResponse response = applicationCommandService.saveVisaForm(email, formId, request);
         return new BaseResponse<>(response);
     }
 
-    @Operation(summary = "비자 신청서 증명사진 저장", description = "S3에 업로드된 증명사진의 경로를 외국인 프로필에 저장합니다.")
-    @PostMapping("/image")
+    @Operation(summary = "비자 신청서 증명사진 저장", description = "S3에 업로드된 증명사진의 경로를 비자 신청서 테이블에 저장합니다.")
+    @PostMapping("/{formId}/image")
     public BaseResponse<VisaApplicationSaveResponse> saveProfilePhoto(
             @Parameter(hidden = true) @LoginUser String email,
-            @Parameter(description = "비자 문서 ID (visaFormId)")
-            @RequestParam(name = "id") UUID id,
+            @Parameter(description = "비자 문서 ID") @PathVariable(name = "formId") UUID formId,
             @Valid @RequestBody ProfilePhotoSaveRequest request) {
 
-        VisaApplicationSaveResponse response = applicationCommandService.saveProfilePhoto(email, id, request.profileObjectKey());
+        VisaApplicationSaveResponse response = applicationCommandService.saveProfilePhoto(email, formId, request.profileObjectKey());
         return new BaseResponse<>(response);
     }
 
     @Operation(summary = "신청서 작성 상태 변경", description = "비자 신청서의 작성 완료(isDone) 상태를 true 또는 false로 변경합니다.")
-    @PatchMapping("/status")
+    @PatchMapping("/{formId}/status")
     public BaseResponse<VisaApplicationSaveResponse> updateApplicationStatus(
             @Parameter(hidden = true) @LoginUser String email,
-            @Parameter(description = "비자 문서 ID (visaFormId)")
-            @RequestParam(name = "id") UUID id,
+            @Parameter(description = "비자 문서 ID") @PathVariable(name = "formId") UUID formId,
             @Valid @RequestBody ApplicationStatusUpdateRequest request) {
 
-        VisaApplicationSaveResponse response = applicationCommandService.updateApplicationStatus(email, id, request.isDone());
+        VisaApplicationSaveResponse response = applicationCommandService.updateApplicationStatus(email, formId, request.isDone());
         return new BaseResponse<>(response);
     }
 }

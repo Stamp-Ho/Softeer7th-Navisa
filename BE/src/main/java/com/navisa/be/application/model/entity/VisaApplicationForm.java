@@ -34,6 +34,9 @@ public class VisaApplicationForm extends BaseEntity {
     @JoinColumn(name = "foreigner_id", nullable = false)
     private ForeignerProfile foreignerProfile;
 
+    @Column(name = "profile_object_key")
+    private String profileObjectKey;
+
     @Column(name = "is_done", nullable = false)
     private Boolean isDone = false;
 
@@ -123,5 +126,10 @@ public class VisaApplicationForm extends BaseEntity {
 
     public void updateStatus(Boolean isDone) {
         this.isDone = isDone;
+    }
+
+    // 외국인 이미지 업데이트 메서드
+    public void updateProfileImage(String profileObjectKey) {
+        this.profileObjectKey = profileObjectKey;
     }
 }

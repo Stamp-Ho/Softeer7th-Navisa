@@ -157,7 +157,7 @@ class ApplicationCommandServiceTest extends IntegrationTestSupport {
         assertThat(response.visaFormId()).isEqualTo(visaFormId);
 
         VisaApplicationForm updatedForm = visaApplicationFormRepository.findById(visaFormId).get();
-        String savedKey = updatedForm.getForeignerProfile().getProfileObjectKey();
+        String savedKey = updatedForm.getProfileObjectKey();
 
         assertThat(savedKey).isEqualTo(newObjectKey);
     }

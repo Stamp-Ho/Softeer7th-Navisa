@@ -98,7 +98,7 @@ public class ChatRoomServiceFacade {
                 .map(chatRoom -> ChatRoomCardResponse.toDto(
                                 chatRoom,
                                 isForeigner ? null
-                                        : awsCloudfrontService.getImageUrl(ImageSize.MEDIUM, chatRoom.getForeignerProfile().getProfileObjectKey()),
+                                        : awsCloudfrontService.getImageUrl(ImageSize.MEDIUM, chatRoom.getAgentProfile().getProfileObjectKey()),
                                 lastMessageMap.get(chatRoom.getId()),
                                 nonReadCountMap.getOrDefault(chatRoom.getId(), 0L),
                                 isForeigner,

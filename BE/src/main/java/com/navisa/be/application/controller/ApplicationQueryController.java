@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -47,13 +44,13 @@ public class ApplicationQueryController {
     }
 
     @Operation(summary = "행정사용 비자 신청서 단건 상세 조회", description = "행정사가 특정 ID를 가진 비자 신청서의 상세 내용을 조회합니다.")
-    @GetMapping("/agent")
+    @GetMapping("/agent/{formId}")
     @HasUserType(UserType.VALID_AGENT)
     public BaseResponse<VisaApplicationDetailResponse> getVisaFormForAgent(
             @Parameter(hidden = true) @LoginUser String email,
-            @Parameter(description = "조회할 신청서 ID") @RequestParam(name = "id") UUID id) {
+            @Parameter(description = "조회할 신청서 ID") @PathVariable(name = "formId") UUID formId) {
 
-        VisaApplicationDetailResponse response = visaApplicationService.getVisaFormForAgent(email, id);
+        VisaApplicationDetailResponse response = visaApplicationService.getVisaFormForAgent(email, formId);
         return new BaseResponse<>(response);
     }
 }

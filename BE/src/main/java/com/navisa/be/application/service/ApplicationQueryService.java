@@ -52,7 +52,7 @@ public class ApplicationQueryService {
                         form.getForeignerProfile().getNickname(),
                         form.getIsDone(),
                         form.getCurrentStep(),
-                        form.getForeignerProfile().getProfileObjectKey(),
+                        form.getProfileObjectKey(),
                         form.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy. MM. dd"))
                 ))
                 .toList();
@@ -74,7 +74,7 @@ public class ApplicationQueryService {
 
         return new VisaApplicationDetailResponse(
                 form.getId(),
-                foreigner.getProfileObjectKey(),
+                form.getProfileObjectKey(),
                 form.getIsDone(),
                 form.getUpdatedAt().toString(),
                 form.getTotalCount(),
@@ -101,7 +101,7 @@ public class ApplicationQueryService {
 
         return new VisaApplicationDetailResponse(
                 form.getId(),
-                form.getForeignerProfile().getProfileObjectKey(),
+                form.getProfileObjectKey(),
                 form.getIsDone(),
                 form.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy. MM. dd")),
                 form.getTotalCount(),
