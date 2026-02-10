@@ -120,4 +120,8 @@ public class VisaApplicationForm extends BaseEntity {
             }
         }
     }
+
+    public void updateStatus(Boolean isDone) {
+        this.isDone = isDone;
+    }
 }

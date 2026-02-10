@@ -56,6 +56,7 @@ public enum ResponseStatus {
     VISA_APP_FORM_NOT_FOUND(404, "비자신청서를 찾을 수 없습니다"),
     PROPOSAL_NOT_FOUND(404, "존재하지 않는 수임제안입니다"),
     REVIEW_ALREADY_EXISTS(400, "리뷰가 이미 존재합니다"),
+    FORBIDDEN_ACCESS(403, "허용되지 않는 접근입니다"),
 
     /**
      * 서버 에러 (500번대)
