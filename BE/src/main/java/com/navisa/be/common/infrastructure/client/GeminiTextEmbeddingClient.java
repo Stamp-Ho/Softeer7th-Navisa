@@ -25,10 +25,11 @@ public class GeminiTextEmbeddingClient implements TextEmbeddingClient {
 
     private final WebClient webClient;
     private static final String MODEL_ID = "gemini-embedding-001";
+    private static final int EMBEDDING_DIMENSION = 512;
 
     @Autowired
     public GeminiTextEmbeddingClient(WebClient.Builder webClientBuilder,
-            @Value("${google.gemini.api.base-url}") String baseUrl) {
+                                     @Value("${google.gemini.api.base-url}") String baseUrl) {
 
         this.webClient = webClientBuilder
                 .baseUrl(baseUrl)
@@ -49,7 +50,8 @@ public class GeminiTextEmbeddingClient implements TextEmbeddingClient {
         Map<String, Object> body = Map.of(
                 "model", "models/" + MODEL_ID,
                 "content", Map.of("parts", List.of(Map.of("text", text))),
-                "taskType", taskType.getValue());
+                "taskType", taskType.getValue(),
+                "output_dimensionality", EMBEDDING_DIMENSION);
 
         try {
             return webClient.post()
