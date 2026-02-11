@@ -56,7 +56,7 @@ public class AgentProfileController {
     @GetMapping("/cards")
     public BaseResponse<SliceResponse<AgentCardResponse, UUID>> findAgentProfileCardsBasedOnFilter(
             @ModelAttribute AgentCardRequest request,
-            @Parameter(description = "페이징 정보 (lastElementId: 마지막으로 본 행정사 ID, size: 페이지 크기)") @SliceInfo SliceRequest<UUID> slice,
+            @Parameter(description = "페이징 정보 (lastElementId: 마지막으로 본 행정사 ID, size: 페이지 크기)") @SliceInfo(max = 16) SliceRequest<UUID> slice,
             @Parameter(hidden = true) @LoginUser String email) {
 
         return new BaseResponse<>(agentProfileServiceFacade.findAgentProfileCardsBasedOnFilter(request, slice, email));

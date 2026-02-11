@@ -1,18 +1,24 @@
 package com.navisa.be.application.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.repository.AgentProfileRepository;
+import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.application.dto.projection.VisaApplicationFormProjection;
 import com.navisa.be.application.dto.response.RecentVisaFormsResponse;
+import com.navisa.be.application.dto.response.VisaApplicationCardResponse;
 import com.navisa.be.application.dto.response.VisaApplicationDetailResponse;
 import com.navisa.be.application.exception.ApplicationException;
 import com.navisa.be.application.model.entity.VisaApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
+import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.common.dto.response.SliceResponse;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
+import com.navisa.be.storage.model.enums.ImageSize;
+import com.navisa.be.storage.service.AwsS3StorageService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.repository.UserRepository;
+import com.navisa.be.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,21 +33,20 @@ import java.util.stream.Stream;
 public class ApplicationQueryService {
 
     private final ApplicationFormRepository visaApplicationFormRepository;
-    private final UserRepository userRepository;
-    private final AgentProfileRepository agentProfileRepository;
     private final ForeignerProfileRepository foreignerProfileRepository;
+    private final UserQueryService userQueryService;
+    private final AgentProfileQueryService agentProfileQueryService;
+    private final AwsS3StorageService awsS3StorageService;
 
     // 행정사의 최근 수정 문서 조회
     public List<RecentVisaFormsResponse> getRecentVisaForms(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ApplicationException(ResponseStatus.USER_INVALID));
+        User user = userQueryService.findByEmail(email);
 
         if (!user.getUserType().equals(UserType.VALID_AGENT)) {
             throw new ApplicationException(ResponseStatus.AGENT_NOT_APPROVED);
         }
 
-        AgentProfile agent = agentProfileRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new ApplicationException(ResponseStatus.AGENT_NOT_FOUND));
+        AgentProfile agent = agentProfileQueryService.findByUserId(user.getId());
 
         List<VisaApplicationForm> forms = visaApplicationFormRepository
                 .findTop6ByAgentProfileOrderByUpdatedAtDesc(agent);
@@ -58,10 +63,42 @@ public class ApplicationQueryService {
                 .toList();
     }
 
+    // 행정사의 비자 신청서 조회(필터 가능)
+    public SliceResponse<VisaApplicationCardResponse, UUID> findVisaFormsByFilter(
+            String email, SliceRequest<UUID> slice, Boolean complete) {
+
+        User findUser = userQueryService.findByEmail(email);
+
+        AgentProfile agentProfile = agentProfileQueryService.findByUserId(findUser.getId());
+
+        List<VisaApplicationFormProjection> visaApplicationFormProjections =
+                visaApplicationFormRepository.findAllByNoOffsetAndFilter(agentProfile.getId(), slice, complete);
+
+        boolean existsNext = visaApplicationFormProjections.size() > slice.size();
+
+        List<VisaApplicationFormProjection> contentVisaApplicationFormProjections = existsNext
+                ? visaApplicationFormProjections.subList(0, slice.size())
+                : visaApplicationFormProjections;
+
+        UUID lastElementId = contentVisaApplicationFormProjections.isEmpty()
+                ? null
+                : contentVisaApplicationFormProjections.get(contentVisaApplicationFormProjections.size() - 1).id();
+
+
+
+        return new SliceResponse<>(
+                contentVisaApplicationFormProjections.stream().map(
+                        projection -> VisaApplicationCardResponse.projectionToDto(
+                                projection,
+                                awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, projection.profileObjectKey())
+                        )).toList(),
+                existsNext,
+                lastElementId);
+    }
+
     // 외국인용 최신 비자신청서
     public VisaApplicationDetailResponse getLatestVisaFormForForeigner(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ApplicationException(ResponseStatus.USER_INVALID));
+        User user = userQueryService.findByEmail(email);
 
         ForeignerProfile foreigner = foreignerProfileRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ApplicationException(ResponseStatus.INVALID_FOREIGNER));
@@ -85,11 +122,9 @@ public class ApplicationQueryService {
 
     // 행정사용 특정 비자 신청서 조회
     public VisaApplicationDetailResponse getVisaFormForAgent(String email, UUID applicationFormId) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ApplicationException(ResponseStatus.USER_INVALID));
+        User user = userQueryService.findByEmail(email);
 
-        AgentProfile agent = agentProfileRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new ApplicationException(ResponseStatus.AGENT_NOT_FOUND));
+        AgentProfile agent = agentProfileQueryService.findByUserId(user.getId());
 
         VisaApplicationForm form = visaApplicationFormRepository.findWithAgentProfileById(applicationFormId)
                 .orElseThrow(() -> new ApplicationException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));

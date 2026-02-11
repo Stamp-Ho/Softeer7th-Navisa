@@ -6,9 +6,11 @@ import com.navisa.be.common.annotation.HasUserType;
 import com.navisa.be.common.annotation.LoginUser;
 import com.navisa.be.common.annotation.SliceInfo;
 import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.common.dto.response.BaseResponse;
 import com.navisa.be.common.dto.response.SliceResponse;
 import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,9 +27,11 @@ public class ChatMessageQueryController {
     @HasUserType({ UserType.FILLED_FOREIGNER, UserType.VALID_AGENT })
     @GetMapping("/{chatRoomId}/messages")
     @Operation(summary = "특정 채팅방의 무한 스크롤 방식 채팅 메세지 조회(기본 size는 20)", description = "관련 노션 링크(https://www.notion.so/bside/47f1a07246c84cdeb0a394b478d9a23b?v=2ed22020273580059255000cb37a5c85&source=copy_link)")
-    public SliceResponse<ChatMessageSimpleResponse, Long> findChatHistoryByChatRoomIdAndEndlessScroll(
-            @LoginUser String email, @SliceInfo(size = 20) SliceRequest<Long> slice, @PathVariable Long chatRoomId) {
+    public BaseResponse<SliceResponse<ChatMessageSimpleResponse, Long>> findChatHistoryByChatRoomIdAndEndlessScroll(
+            @Parameter(hidden = true) @LoginUser String email,
+            @SliceInfo(size = 20) SliceRequest<Long> slice,
+            @PathVariable Long chatRoomId) {
 
-        return chatMessageServiceFacade.findChatMessagesByChatRoomIdAndNoOffset(email, chatRoomId, slice);
+        return new BaseResponse<>(chatMessageServiceFacade.findChatMessagesByChatRoomIdAndNoOffset(email, chatRoomId, slice));
     }
 }

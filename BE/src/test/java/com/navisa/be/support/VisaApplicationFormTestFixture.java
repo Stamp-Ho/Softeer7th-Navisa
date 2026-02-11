@@ -15,8 +15,12 @@ public class VisaApplicationFormTestFixture {
 
     private final ApplicationFormRepository applicationFormRepository;
 
+    public VisaApplicationForm createVisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile, JobCode jobCode, boolean isOnceExported) {
+        return createVisaApplicationForm(agentProfile, foreignerProfile, jobCode, isOnceExported, null);
+    }
+
     public VisaApplicationForm createVisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
-            JobCode jobCode, boolean isOnceExported) {
+                                                         JobCode jobCode, boolean isOnceExported, String profileObjectKey) {
         VisaApplicationForm form = new VisaApplicationForm(
                 agentProfile,
                 foreignerProfile,
@@ -25,6 +29,24 @@ public class VisaApplicationFormTestFixture {
                 150,
                 110);
         ReflectionTestUtils.setField(form, "isOnceExported", isOnceExported);
+        if (profileObjectKey != null) {
+            form.updateProfileImage(profileObjectKey);
+        }
+        return applicationFormRepository.save(form);
+    }
+
+    public VisaApplicationForm createVisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
+                                                         JobCode jobCode, boolean isDone, int currentStep, String profileObjectKey) {
+        VisaApplicationForm form = new VisaApplicationForm(
+                agentProfile,
+                foreignerProfile,
+                jobCode,
+                isDone,
+                150,
+                currentStep);
+        if (profileObjectKey != null) {
+            form.updateProfileImage(profileObjectKey);
+        }
         return applicationFormRepository.save(form);
     }
 }

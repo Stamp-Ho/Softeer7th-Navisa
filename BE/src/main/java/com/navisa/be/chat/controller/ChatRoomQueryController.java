@@ -32,12 +32,12 @@ public class ChatRoomQueryController {
     @GetMapping
     @HasUserType({ UserType.FILLED_FOREIGNER, UserType.VALID_AGENT })
     @Operation(summary = "채팅방 목록 조회", description = "로그인한 사용자의 채팅방 목록을 페이징하여 조회합니다.")
-    public SliceResponse<ChatRoomCardResponse, Long> getChatRooms(
-            @SliceInfo SliceRequest<Long> slice,
+    public BaseResponse<SliceResponse<ChatRoomCardResponse, Long>> getChatRooms(
+            @SliceInfo(size = 10, max = 10) SliceRequest<Long> slice,
             @Parameter(description = "필터", example="unread | matched") @RequestParam String filter,
             @Parameter(hidden = true) @LoginUser String email) {
 
-        return chatRoomServiceFacade.findAllChatRoomsByNoOffset(email, filter, slice);
+        return new BaseResponse<>(chatRoomServiceFacade.findAllChatRoomsByNoOffset(email, filter, slice));
     }
 
     @GetMapping("/nonread/count")

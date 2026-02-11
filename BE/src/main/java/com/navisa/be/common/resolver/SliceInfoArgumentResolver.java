@@ -37,6 +37,11 @@ public class SliceInfoArgumentResolver implements HandlerMethodArgumentResolver 
             size = (sizeStr != null)
                     ? Integer.parseInt(sizeStr)
                     : parameter.getParameterAnnotation(SliceInfo.class).size();
+
+            int max = parameter.getParameterAnnotation(SliceInfo.class).max();
+            if (max != -1 && max < size) {
+                throw new BaseException(ResponseStatus.BAD_REQUEST);
+            }
         } catch (IllegalArgumentException | ClassCastException e) {
             throw new BaseException(ResponseStatus.BAD_REQUEST);
         }

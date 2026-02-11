@@ -74,7 +74,7 @@ public class ForeignerQueryController {
     @GetMapping("/cards")
     public BaseResponse<SliceResponse<ForeignerCardExtensionResponse, UUID>> findForeignerProfileCardsBasedOnFilter(
             @ModelAttribute ForeignerCardRequest request,
-            @Parameter(description = "페이징 정보 (lastElementId: 마지막으로 본 외국인 ID, size: 페이지 크기)") @SliceInfo SliceRequest<UUID> slice) {
+            @Parameter(description = "페이징 정보 (lastElementId: 마지막으로 본 외국인 ID, size: 페이지 크기)") @SliceInfo(max = 16) SliceRequest<UUID> slice) {
 
         return new BaseResponse<>(foreignerServiceFacade.findForeignerProfileCardsBasedOnFilter(request, slice));
     }

@@ -2,6 +2,7 @@ package com.navisa.be.common.resolver;
 
 import com.navisa.be.common.annotation.SliceInfo;
 import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.common.exception.BaseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,10 +20,9 @@ import java.lang.reflect.Type;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SliceInfoArgumentResolverTest {
@@ -47,8 +47,9 @@ class SliceInfoArgumentResolverTest {
         // 기본적으로 SliceInfo 어노테이션이 존재하는 것으로 설정 (size=16)
         // 개별 테스트에서 다른 값이 필요하면 override 가능 (lenient 필요할 수 있음)
         SliceInfo defaultSliceInfo = mock(SliceInfo.class);
-        org.mockito.Mockito.lenient().when(defaultSliceInfo.size()).thenReturn(16);
-        org.mockito.Mockito.lenient().when(parameter.getParameterAnnotation(SliceInfo.class))
+        lenient().when(defaultSliceInfo.size()).thenReturn(16);
+        lenient().when(defaultSliceInfo.max()).thenReturn(-1);
+        lenient().when(parameter.getParameterAnnotation(SliceInfo.class))
                 .thenReturn(defaultSliceInfo);
     }
 
@@ -122,6 +123,7 @@ class SliceInfoArgumentResolverTest {
 
         SliceInfo sliceInfo = mock(SliceInfo.class);
         when(sliceInfo.size()).thenReturn(50);
+        when(sliceInfo.max()).thenReturn(50);
         when(parameter.getParameterAnnotation(SliceInfo.class)).thenReturn(sliceInfo);
 
         // when
@@ -215,5 +217,44 @@ class SliceInfoArgumentResolverTest {
         ParameterizedType mockedType = mock(ParameterizedType.class);
         when(parameter.getGenericParameterType()).thenReturn(mockedType);
         when(mockedType.getActualTypeArguments()).thenReturn(new Type[] { genericType });
+    }
+
+    @Test
+    @DisplayName("요청된 size가 어노테이션의 max 설정을 초과하면 BAD_REQUEST 예외가 발생한다")
+    void resolveArgument_shouldThrowException_whenSizeExceedsMax() {
+        // given
+        // 로직 순서상 lastElementId를 먼저 찾으므로 null 반환 설정 (명시적 stubbing)
+        doReturn(null).when(webRequest).getParameter("lastElementId");
+        doReturn("100").when(webRequest).getParameter("size");
+
+        SliceInfo sliceInfo = mock(SliceInfo.class);
+        when(sliceInfo.max()).thenReturn(50);
+        when(parameter.getParameterAnnotation(SliceInfo.class)).thenReturn(sliceInfo);
+
+        // when & then
+        assertThatThrownBy(() -> resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory))
+                .isInstanceOf(BaseException.class);
+    }
+
+    @Test
+    @DisplayName("max가 -1(기본값)이면 아무리 큰 size라도 예외 없이 통과한다")
+    void resolveArgument_shouldAllowAnySize_whenMaxIsDefault() {
+        // given
+        doReturn(null).when(webRequest).getParameter("lastElementId");
+        doReturn("5000").when(webRequest).getParameter("size");
+
+        SliceInfo sliceInfo = mock(SliceInfo.class);
+
+        lenient().when(sliceInfo.size()).thenReturn(16); // size()는 호출되지 않을 수 있으므로 lenient() 처리
+
+        when(sliceInfo.max()).thenReturn(-1);
+        when(parameter.getParameterAnnotation(SliceInfo.class)).thenReturn(sliceInfo);
+
+        // when
+        Object result = resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+
+        // then
+        SliceRequest<?> request = (SliceRequest<?>) result;
+        assertThat(request.size()).isEqualTo(5000);
     }
 }

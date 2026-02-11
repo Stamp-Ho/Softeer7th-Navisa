@@ -1,11 +1,15 @@
 package com.navisa.be.application.controller;
 
 import com.navisa.be.application.dto.response.RecentVisaFormsResponse;
+import com.navisa.be.application.dto.response.VisaApplicationCardResponse;
 import com.navisa.be.application.dto.response.VisaApplicationDetailResponse;
 import com.navisa.be.application.service.ApplicationQueryService;
 import com.navisa.be.common.annotation.HasUserType;
 import com.navisa.be.common.annotation.LoginUser;
+import com.navisa.be.common.annotation.SliceInfo;
+import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.common.dto.response.BaseResponse;
+import com.navisa.be.common.dto.response.SliceResponse;
 import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,14 +26,15 @@ import java.util.UUID;
 @Tag(name = "Visa Application Query", description = "비자 신청서 조회 API")
 public class ApplicationQueryController {
 
-    private final ApplicationQueryService visaApplicationService;
+
+    private final ApplicationQueryService applicationQueryService;
 
     @Operation(summary = "최근 수정한 비자 신청서 리스트 조회", description = "로그인한 행정사가 담당하는 서류 중 최근 수정된 6개를 조회합니다.")
     @GetMapping("/recent-applications")
     public BaseResponse<List<RecentVisaFormsResponse>> getRecentVisaForms(
             @Parameter(hidden = true) @LoginUser String email) {
 
-        List<RecentVisaFormsResponse> response = visaApplicationService.getRecentVisaForms(email);
+        List<RecentVisaFormsResponse> response = applicationQueryService.getRecentVisaForms(email);
         return new BaseResponse<>(response);
     }
 
@@ -39,7 +44,7 @@ public class ApplicationQueryController {
     public BaseResponse<VisaApplicationDetailResponse> getLatestVisaFormForForeigner(
             @Parameter(hidden = true) @LoginUser String email) {
 
-        VisaApplicationDetailResponse response = visaApplicationService.getLatestVisaFormForForeigner(email);
+        VisaApplicationDetailResponse response = applicationQueryService.getLatestVisaFormForForeigner(email);
         return new BaseResponse<>(response);
     }
 
@@ -48,9 +53,20 @@ public class ApplicationQueryController {
     @HasUserType(UserType.VALID_AGENT)
     public BaseResponse<VisaApplicationDetailResponse> getVisaFormForAgent(
             @Parameter(hidden = true) @LoginUser String email,
-            @Parameter(description = "조회할 신청서 ID") @PathVariable(name = "formId") UUID formId) {
+            @Parameter(description = "조회할 신청서 ID") @PathVariable UUID formId) {
 
-        VisaApplicationDetailResponse response = visaApplicationService.getVisaFormForAgent(email, formId);
+        VisaApplicationDetailResponse response = applicationQueryService.getVisaFormForAgent(email, formId);
         return new BaseResponse<>(response);
+    }
+
+    @Operation(summary = "행정사용 비자 신청서 전체 조회(필터 가능)", description = "행정사가 수임했던 비자 신청서들을 조회합니다.")
+    @GetMapping()
+    @HasUserType(UserType.VALID_AGENT)
+    public BaseResponse<SliceResponse<VisaApplicationCardResponse, UUID>> getVisaFormsForAgent(
+            @Parameter(hidden = true) @LoginUser String email,
+            @SliceInfo(size = 18, max = 18) SliceRequest<UUID> slice,
+            @RequestParam(required = false) Boolean complete) {
+
+        return new BaseResponse<>(applicationQueryService.findVisaFormsByFilter(email, slice, complete));
     }
 }

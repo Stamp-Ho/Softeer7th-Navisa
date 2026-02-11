@@ -9,4 +9,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SliceInfo {
     int size() default 16;
+    int max() default -1;
 }
