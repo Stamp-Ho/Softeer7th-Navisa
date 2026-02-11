@@ -42,6 +42,7 @@ public enum ResponseStatus {
     NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE(403, "행정사 프로필을 등록할 수 있는 유저가 아닙니다."),
     NOT_ALLOWED_TO_REGISTER_FOREIGNER_PROFILE(403, "외국인 프로필을 등록할 수 있는 유저가 아닙니다."),
     NOT_ALLOWED_TO_GET_CHAT_MESSAGE(403, "해당 채팅방의 채팅 메세지들을 조회할 수 있는 유저가 아닙니다."),
+    NOT_ALLOWED_TO_ACCESS_CHATROOM(403, "해당 채팅방을 접근할 수 있는 유저가 아닙니다."),
     BADGE_NOT_FOUND(404, "해당 조건에 맞는 배지 목록을 찾을 수 없습니다."),
     AGENT_REVIEW_NOT_FOUND(404, "등록된 블로그 사례가 없습니다."),
     BADGE_REVIEW_NOT_FOUND(404, "해당 뱃지로 등록된 리뷰가 없습니다."),

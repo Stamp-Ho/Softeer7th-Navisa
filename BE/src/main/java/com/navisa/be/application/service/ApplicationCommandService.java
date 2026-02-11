@@ -6,6 +6,7 @@ import com.navisa.be.application.dto.response.VisaApplicationSaveResponse;
 import com.navisa.be.application.exception.ApplicationException;
 import com.navisa.be.application.model.entity.VisaApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
+import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.chat.repository.ProposalRepository;
@@ -183,5 +184,11 @@ public class ApplicationCommandService {
         VisaApplicationForm form = applicationFormRepository.findById(formId)
                 .orElseThrow(() -> new ApplicationException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));
         form.recordMailSentTime();
+    }
+
+    public void updateAgentProfileConnection(ChatRoom chatRoom) {
+        applicationFormRepository.findFirstByAgentProfileIdAndForeignerProfileIdOrderByCreatedAtDesc(
+                chatRoom.getAgentProfile().getId(), chatRoom.getForeignerProfile().getId())
+                .ifPresent(form -> form.setAgentProfile(null));
     }
 }

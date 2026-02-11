@@ -33,6 +33,6 @@ public class AdminController {
     @PostMapping("/permit/agent")
     public BaseResponse<Void> permitNewAgent(@Valid @RequestBody PermitNewAgentRequest request){
         adminService.permitNewAgent(request);
-        return new BaseResponse(null);
+        return new BaseResponse<>(null);
     }
 }

@@ -24,4 +24,6 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
             "  GROUP BY p2.chatRoom.id" +
             ")")
     List<ChatRoomProposalStatusProjection> findProposalStatusByChatRoomIn(@Param("chatRooms") Collection<ChatRoom> chatRooms);
+
+    Optional<Proposal> findFirstByChatRoom_IdOrderByIdDesc(Long chatRoomId);
 }

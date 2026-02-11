@@ -1,6 +1,7 @@
 package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.application.service.ApplicationCommandService;
 import com.navisa.be.chat.dto.projection.ChatMessageNonReadCountProjection;
 import com.navisa.be.chat.dto.projection.ChatRoomProposalStatusProjection;
 import com.navisa.be.chat.dto.response.ChatRoomCardResponse;
@@ -19,8 +20,8 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,8 @@ public class ChatRoomServiceFacade {
     private final AwsCloudfrontService awsCloudfrontService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final ProposalService proposalService;
+    private final ApplicationCommandService applicationCommandService;
+    private final ChatRoomCommandService chatRoomCommandService;
 
     public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter, SliceRequest<Long> slice) {
         ChatRoomFilterType filterType = ChatRoomFilterType.from(filter);
@@ -132,17 +135,30 @@ public class ChatRoomServiceFacade {
         return proposalStatusMap.containsKey(chatRoom.getId()) && proposalStatusMap.get(chatRoom.getId()).getStatus() == ProposalStatus.MATCHED;
     }
 
-    public List<Long> findAllChatRoomsByUserId(UUID userId) {
-        User findUser = userQueryService.findById(userId);
+    @Transactional
+    public void updateBlockStatusToEntity(String email, Long chatRoomId) {
+        User user = userQueryService.findByEmail(email);
+        
+        ChatRoom chatRoom = chatRoomQueryService.findByIdWithProfiles(chatRoomId);
 
-        if (findUser.getUserType().equals(UserType.FILLED_FOREIGNER)) {
-            UUID foreignerId = foreignerQueryService.findByUserId(findUser.getId()).getId();
+        validateChatRoomOwnership(user, chatRoom);
 
-            return chatRoomQueryService.findChatRoomsByForeignerId(foreignerId);
+        chatRoomCommandService.updateStatus(chatRoom);
+        proposalService.updateStatusByChatRoomId(chatRoom.getId());
+        applicationCommandService.updateAgentProfileConnection(chatRoom);
+    }
+
+    private void validateChatRoomOwnership(User user, ChatRoom chatRoom) {
+        UUID profileId = user.getUserType().equals(UserType.FILLED_FOREIGNER)
+                ? foreignerQueryService.findByUserId(user.getId()).getId()
+                : agentProfileQueryService.findByUserId(user.getId()).getId(); // 프로필 ID를 먼저 추출
+
+        boolean isParticipant = user.getUserType().equals(UserType.FILLED_FOREIGNER)
+                ? chatRoom.getForeignerProfile().getId().equals(profileId)
+                : chatRoom.getAgentProfile().getId().equals(profileId);
+
+        if (!isParticipant) {
+            throw new ChatRoomException(ResponseStatus.NOT_ALLOWED_TO_ACCESS_CHATROOM);
         }
-
-        UUID agentId = agentProfileQueryService.findByUserId(findUser.getId()).getId();
-
-        return chatRoomQueryService.findChatRoomsByAgentId(agentId);
     }
 }

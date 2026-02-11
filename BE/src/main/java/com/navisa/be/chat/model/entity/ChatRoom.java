@@ -43,4 +43,8 @@ public class ChatRoom extends BaseEntity {
         this.status = status;
         this.lastChattedAt = lastChattedAt;
     }
+
+    public void updateStatus(ChatRoomStatus status) {
+        this.status = status;
+    }
 }
