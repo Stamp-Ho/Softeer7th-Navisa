@@ -30,7 +30,7 @@ class WebSocketAuthTest extends WebSocketIntegrationTestSupport {
 
         String url = String.format("ws://localhost:%d/ws", port);
         StompHeaders connectHeaders = new StompHeaders();
-        connectHeaders.add("token", accessToken);
+        connectHeaders.add("Authorization", "Bearer " + accessToken);
 
         // when
         StompSession session = stompClient

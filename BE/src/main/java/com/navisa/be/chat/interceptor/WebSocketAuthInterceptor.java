@@ -31,17 +31,28 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
+        log.info("[WS Auth] 진입");
+
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (accessor == null || accessor.getCommand() == null)
             throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
 
         if (accessor.getCommand().equals(StompCommand.CONNECT)) {
-            String token = accessor.getFirstNativeHeader("token");
+            String token = accessor.getFirstNativeHeader("Authorization");
+
+            if(token == null || !token.startsWith("Bearer ")){
+                log.error("[WS Auth] missing token");
+                throw new WebSocketConnectionException(ResponseStatus.INVALID_TOKEN);
+            }
+
+            token = token.substring(7);
+
+            log.debug("token : {}", token.substring(0, 7));
 
             // 토큰 존재 여부 및 유효성 검사
-            if (token == null || !jwtProvider.validateToken(token)) {
-                log.error("[WS Auth] Invalid or missing token");
+            if (!jwtProvider.validateToken(token)) {
+                log.error("[WS Auth] Invalid token");
                 throw new WebSocketConnectionException(ResponseStatus.INVALID_TOKEN);
             }
 
@@ -63,6 +74,8 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             accessor.setUser(principal);
 
             // 세션 속성(SessionAttributes)에 저장하여 Disconnect 시점까지 활용
+            log.info("userId : {}", findUser.getId());
+
             sessionAttributes.put("userId", findUser.getId().toString());
 
             log.info("[WS Auth] Success for user: {}", email);

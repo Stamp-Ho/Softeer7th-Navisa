@@ -40,6 +40,11 @@ public class ChatRoomQueryService {
                 .orElseThrow(() -> new ChatRoomException(ResponseStatus.INVALID_CHATROOM));
     }
 
+    public ChatRoom findByIdWithProfiles(Long roomId) {
+        return chatRoomRepository.findByIdWithProfiles(roomId)
+                .orElseThrow(() -> new ChatRoomException(ResponseStatus.INVALID_CHATROOM));
+    }
+
     public boolean isOwnedByProfileIdAndChatRoomId(Long roomId, ForeignerProfile foreignerProfile) {
         return chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatRoomException(ResponseStatus.INVALID_CHATROOM))

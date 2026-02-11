@@ -56,6 +56,8 @@ public class ChatConnectionEventListener {
 
     @EventListener
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
+        log.info("subscribe 진입");
+
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String destination = headerAccessor.getDestination();
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
@@ -69,10 +71,14 @@ public class ChatConnectionEventListener {
         String userIdStr = (String) sessionAttributes.get("userId");
         UUID userId = UUID.fromString(userIdStr);
         chatSubscribeService.subscribeUserAllRooms(userId);
+
+        log.info("subscribe 성공");
     }
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        log.info("disconnect 진입");
+
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
 
@@ -90,7 +96,7 @@ public class ChatConnectionEventListener {
         }
 
         if (!sessionAttributes.containsKey("userId")) {
-            throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
+            throw new WebSocketConnectionException(ResponseStatus.INVALID_CHATTING_SESSION);
         }
     }
 }

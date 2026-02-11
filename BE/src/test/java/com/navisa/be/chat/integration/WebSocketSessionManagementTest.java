@@ -29,7 +29,7 @@ class WebSocketSessionManagementTest extends WebSocketIntegrationTestSupport {
         UUID userId = user.getId();
 
         StompHeaders headers = new StompHeaders();
-        headers.add("token", token);
+        headers.add("Authorization", "Bearer " + token);
 
         WebSocketHttpHeaders handshakeHeaders = new WebSocketHttpHeaders();
 

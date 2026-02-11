@@ -4,6 +4,7 @@ import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.repository.querydsl.ChatRoomRepositoryQueryDsl;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +20,10 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long>, ChatR
 
     @Query("SELECT c.id FROM ChatRoom c WHERE c.agentProfile.id = :agentProfileId")
     List<Long> findAllIdsByAgentProfileId(UUID agentProfileId);
+
+    @Query("SELECT cr FROM ChatRoom cr " +
+            "JOIN FETCH cr.agentProfile " +
+            "JOIN FETCH cr.foreignerProfile " +
+            "WHERE cr.id = :roomId")
+    Optional<ChatRoom> findByIdWithProfiles(@Param("roomId") Long roomId);
 }

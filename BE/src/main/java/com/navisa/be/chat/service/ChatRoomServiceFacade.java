@@ -19,6 +19,7 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -97,8 +98,7 @@ public class ChatRoomServiceFacade {
         List<ChatRoomCardResponse> responses = contentChatRooms.stream()
                 .map(chatRoom -> ChatRoomCardResponse.toDto(
                                 chatRoom,
-                                isForeigner ? null
-                                        : awsCloudfrontService.getImageUrl(ImageSize.MEDIUM, chatRoom.getAgentProfile().getProfileObjectKey()),
+                                getProfileImgUrl(chatRoom, isForeigner),
                                 lastMessageMap.get(chatRoom.getId()),
                                 nonReadCountMap.getOrDefault(chatRoom.getId(), 0L),
                                 isForeigner,
@@ -110,6 +110,13 @@ public class ChatRoomServiceFacade {
         Long lastElementId = contentChatRooms.isEmpty() ? null : contentChatRooms.get(contentChatRooms.size() - 1).getId();
 
         return new SliceResponse<>(responses, existsNext, lastElementId);
+    }
+
+    private String getProfileImgUrl(ChatRoom chatRoom, boolean isForeigner) {
+        if(isForeigner) {
+            return awsCloudfrontService.getImageUrl(ImageSize.MEDIUM, chatRoom.getAgentProfile().getProfileObjectKey());
+        }
+        return null;
     }
 
     private boolean hasReceivedProposal(ChatRoom chatRoom, UUID profileId, Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {

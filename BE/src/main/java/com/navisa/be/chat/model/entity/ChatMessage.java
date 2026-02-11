@@ -49,6 +49,14 @@ public class ChatMessage extends BaseEntity {
         this.senderId = senderId;
     }
 
+    public ChatMessage(ChatRoom chatRoom, MessageType messageType, String content, UUID senderId, ZonedDateTime sentAt) {
+        this.chatRoom = chatRoom;
+        this.messageType = messageType;
+        this.content = content;
+        this.senderId = senderId;
+        this.sentAt = sentAt;
+    }
+
     @PrePersist
     public void prePersist() { // 저장 직전, 현재 시각을 항상 UTC 타임존으로 설정
         this.sentAt = ZonedDateTime.now(ZoneOffset.UTC);

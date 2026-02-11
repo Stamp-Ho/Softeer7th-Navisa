@@ -57,6 +57,8 @@ public enum ResponseStatus {
     PROPOSAL_NOT_FOUND(404, "존재하지 않는 수임제안입니다"),
     REVIEW_ALREADY_EXISTS(400, "리뷰가 이미 존재합니다"),
     FORBIDDEN_ACCESS(403, "허용되지 않는 접근입니다"),
+    CHATROOM_NOT_FOUND(404, "존재하지 않는 채팅방입니다"),
+    INVALID_CHATTING_SESSION(401, "채팅 세션가 올바르지 않습니다"),
 
     /**
      * 서버 에러 (500번대)

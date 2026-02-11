@@ -1,6 +1,7 @@
 package com.navisa.be.chat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.navisa.be.chat.dto.message.ChatMessageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -22,22 +23,19 @@ public class RedisSubscriber implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            // 1. Redis 채널명을 통해 유저 UUID 추출 (user:ch:{uuid})
-            String channel = new String(message.getChannel());
-            String userUuid = channel.split(":")[2];
+            // 발행된 메시지 본문 파싱
+            byte[] body = message.getBody();
+            ChatMessageResponse response = objectMapper.readValue(body, ChatMessageResponse.class);
 
-            // 2. Redis에서 발행된 메시지 본문(Payload) 파싱
-            // TODO:: 추후 메시지 구조를 FE와 협의해서 어떤 정보를 구조화(DTO)해서 보내야 하는지 정의해야 함.
-            // TODO:: 이 부분은 #182 이슈에서 처리
-            String publishMessage = new String(message.getBody());
+            log.debug("redis로 부터 온 메시지 {}", response);
 
-            // 3. 특정 유저에게만 전송
-            // Spring 내부 로직에 의해 WebSocketAuthInterceptor에서 등록한 Principal을 기반으로
-            // 사용자 세션을 찾아 메세지를 전송
-            messagingTemplate.convertAndSendToUser(userUuid, "/chat/subscribe", publishMessage);
+            String receiverId = response.receiverId().toString();
+
+            // 특정 유저에게만 전송
+            // Spring 내부 로직에 의해 WebSocketAuthInterceptor에서 등록한 Principal을 기반으로 사용자 세션을 찾아 메세지를 전송
+            messagingTemplate.convertAndSendToUser(receiverId, "/chat/subscribe", response);
         } catch (Exception e) {
-            log.error("Failed to process Redis message. Channel: {}, Error: {}",
-                    new String(message.getChannel()), e.getMessage(), e);
+            log.error("Failed to process Redis message. Channel: {}, Error: {}", new String(message.getChannel()), e.getMessage(), e);
         }
     }
 }

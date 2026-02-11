@@ -2,15 +2,21 @@ package com.navisa.be.support;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.navisa.be.auth.jwt.JwtProvider;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import com.navisa.be.chat.dto.message.ChatMessageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -51,15 +57,22 @@ public abstract class WebSocketIntegrationTestSupport extends IntegrationTestSup
     void setUp() {
         StandardWebSocketClient standardWebSocketClient = new StandardWebSocketClient();
         WebSocketTransport webSocketTransport = new WebSocketTransport(standardWebSocketClient);
-        List<Transport> transports = List.of(webSocketTransport);
-        SockJsClient sockJsClient = new SockJsClient(transports);
+        SockJsClient sockJsClient = new SockJsClient(List.of(webSocketTransport));
 
         stompClient = new WebSocketStompClient(sockJsClient);
-        stompClient.setMessageConverter(new StringMessageConverter());
+
+        //  JSON 직렬화/역직렬화를 위한 컨버터 설정
+        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule()); // JSR-310 모듈 등록
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // ISO-8601 형식 사용
+
+        converter.setObjectMapper(mapper);
+        stompClient.setMessageConverter(converter);
     }
 
     public static class TestStompSessionHandler extends StompSessionHandlerAdapter {
-        public CompletableFuture<String> completableFuture = new CompletableFuture<>();
+        public CompletableFuture<ChatMessageResponse> completableFuture = new CompletableFuture<>();
 
         public void reset() {
             completableFuture = new CompletableFuture<>();
@@ -67,12 +80,12 @@ public abstract class WebSocketIntegrationTestSupport extends IntegrationTestSup
 
         @Override
         public Type getPayloadType(StompHeaders headers) {
-            return String.class;
+            return ChatMessageResponse.class;
         }
 
         @Override
         public void handleFrame(StompHeaders headers, Object payload) {
-            completableFuture.complete((String) payload);
+            completableFuture.complete((ChatMessageResponse) payload);
         }
 
         @Override
