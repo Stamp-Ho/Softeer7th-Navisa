@@ -2,117 +2,64 @@ import { useEffect, useState } from "react";
 import Tag from "../../components/common/Tag";
 import DocumentCard from "../../components/shared/DocumentCard";
 import GrayBackground from "../../components/shared/GrayBackground";
+import type { RecentVisaFormsResponse } from "../../api/types/etc";
 
-export type documentType = {
-  name: string;
-  editing: boolean;
-  filledFields: number;
-  image?: string;
-  lastEdittedAt: string;
-};
-const data: documentType[] = [
+const data: RecentVisaFormsResponse[] = [
   {
-    name: "주디",
-    editing: true,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
+    applicationFormId: "abc",
+    title: "주디",
+    isDone: false,
+    currentStep: 24,
+    foreignerProfileImgUrl: "https://placehold.co/76x106",
+    lastModifiedAt: "2025. 06. 21",
   },
   {
-    name: "주디",
-    editing: true,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
+    applicationFormId: "abc",
+    title: "주디",
+    isDone: false,
+    currentStep: 24,
+    foreignerProfileImgUrl: "https://placehold.co/76x106",
+    lastModifiedAt: "2025. 06. 21",
   },
   {
-    name: "주디",
-    editing: true,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
+    applicationFormId: "abc",
+    title: "주디",
+    isDone: false,
+    currentStep: 24,
+    foreignerProfileImgUrl: "https://placehold.co/76x106",
+    lastModifiedAt: "2025. 06. 21",
   },
   {
-    name: "주디",
-    editing: true,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
+    applicationFormId: "abc",
+    title: "주디",
+    isDone: false,
+    currentStep: 24,
+    foreignerProfileImgUrl: "https://placehold.co/76x106",
+    lastModifiedAt: "2025. 06. 21",
   },
   {
-    name: "주디",
-    editing: false,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
+    applicationFormId: "abc",
+    title: "주디",
+    isDone: false,
+    currentStep: 24,
+    foreignerProfileImgUrl: "https://placehold.co/76x106",
+    lastModifiedAt: "2025. 06. 21",
   },
   {
-    name: "주디",
-    editing: false,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: true,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: false,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: false,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: false,
-    filledFields: 24,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: true,
-    filledFields: 124,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: true,
-    filledFields: 30,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: false,
-    filledFields: 72,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: true,
-    filledFields: 89,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: false,
-    filledFields: 4,
-    lastEdittedAt: "2025. 06. 21",
-  },
-  {
-    name: "주디",
-    editing: true,
-    filledFields: 50,
-    lastEdittedAt: "2025. 06. 21",
+    applicationFormId: "abc",
+    title: "주디",
+    isDone: false,
+    currentStep: 24,
+    foreignerProfileImgUrl: "https://placehold.co/76x106",
+    lastModifiedAt: "2025. 06. 21",
   },
 ];
 const Documents = () => {
   const [statusTab, setStatusTab] = useState<number>(0);
-  const [documentToRender, setDocumentToRender] = useState<documentType[]>([]);
-  const editingDocument = data.filter((document) => document.editing);
-  const doneDocument = data.filter((document) => !document.editing);
+  const [documentToRender, setDocumentToRender] =
+    useState<RecentVisaFormsResponse[]>(data);
+  const editingDocument = data.filter((document) => !document.isDone);
+  const doneDocument = data.filter((document) => document.isDone);
   useEffect(() => {
     if (statusTab === 0) setDocumentToRender(data);
     if (statusTab === 1) setDocumentToRender(editingDocument);
@@ -154,7 +101,7 @@ const Documents = () => {
           style={{ height: "calc(100vh - 250px)" }}
         >
           {documentToRender.map((doc, index) => (
-            <DocumentCard document={doc} documentId={index} />
+            <DocumentCard key={`doc_${index}`} document={doc} />
           ))}
         </div>
       </div>

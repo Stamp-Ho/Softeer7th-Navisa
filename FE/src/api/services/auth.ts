@@ -4,10 +4,14 @@ import * as T from "../types/auth";
 
 export const authService = {
   signup: (api: apiClientType, data: T.SignupRequest) =>
-    api.post<BaseResponse<T.SignupResponse>>("/api/auth/signup", data),
+    api.post<BaseResponse<T.SignupResponse>>("/api/auth/signup", data, {
+      credentials: "include",
+    }),
 
   login: (api: apiClientType, data: T.LoginRequest) =>
-    api.post<BaseResponse<T.LoginResponse>>("/api/auth/login", data),
+    api.post<BaseResponse<T.LoginResponse>>("/api/auth/login", data, {
+      credentials: "include",
+    }),
 
   googleLogin: (api: apiClientType, data: T.GoogleLoginRequest) =>
     api.post<BaseResponse<T.LoginResponse>>("/api/auth/oauth/google", data),

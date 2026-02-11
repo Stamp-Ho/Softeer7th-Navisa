@@ -50,6 +50,7 @@ const ExpectedCompany = ({
       {viewMessageModal ? (
         <ChatActivateModal
           onClose={() => setViewMessageModal(false)}
+          chatRoomId={chatRoomId}
           onSendSuccess={() => setShowToast(true)}
           isAgent={isAgent}
         />
@@ -59,7 +60,7 @@ const ExpectedCompany = ({
       <div className="fixed right-48 shadow">
         <div className="flex flex-col w-92 px-5 py-8 border border-border-normal rounded-radius-400 bg-white">
           <div className="headline-l-bold text-text-base">{nickname}</div>
-          <div className="py-0.25 w-full bg-border-light my-7"></div>
+          <div className="py-px w-full bg-border-light my-7"></div>
           <div className="flex flex-row gap-2 items-center title-m-semibold text-text-base">
             <IcLuggage04 />
             <span>입사 예정 정보</span>

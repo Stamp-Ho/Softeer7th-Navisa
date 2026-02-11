@@ -40,15 +40,15 @@ const ProgressStepWidget = ({
       </h3>
       {stepBySection ? (
         <div className="flex flex-col">
-          {formData.map((section, index) => (
+          {formData.map((section, sectionIndex) => (
             <div
               className="flex flex-col"
-              onClick={() => onSectionClick(index)}
-              key={`progress_section_${index}`}
+              onClick={() => onSectionClick(sectionIndex)}
+              key={`progress_section_${sectionIndex}`}
             >
               <ProgressStep
                 label={section.name}
-                index={index}
+                sectionIndex={sectionIndex}
                 currentIndex={currentSectionId}
                 parentLength={formData.length}
               />
@@ -57,23 +57,26 @@ const ProgressStepWidget = ({
         </div>
       ) : (
         <div className="gap-4 flex flex-col">
-          {formData.map((section, index) => (
+          {formData.map((section, sectionIndex) => (
             <div
               className="flex flex-col"
-              key={`progress_section_without_step_${index}`}
+              key={`progress_section_without_step_${sectionIndex}`}
             >
               <h4 className="body-l-semibold mb-3">{section.name}</h4>
-              {section.fields.map((field, index2) => (
+              {section.fields.map((field, fieldIndex) => (
                 <div
-                  key={`progress_${index2}`}
+                  key={`progress_${fieldIndex}`}
                   onClick={() =>
-                    onSectionClick(getAbsoluteIndex(index, index2))
+                    onSectionClick(getAbsoluteIndex(sectionIndex, fieldIndex))
                   }
                 >
                   <ProgressStep
                     label={field.label}
-                    index={index2}
-                    currentIndex={currentSectionId - getAbsoluteIndex(index, 0)}
+                    sectionIndex={sectionIndex}
+                    fieldIndex={fieldIndex}
+                    currentIndex={
+                      currentSectionId - getAbsoluteIndex(sectionIndex, 0)
+                    }
                     parentLength={section.fields.length}
                   />
                 </div>

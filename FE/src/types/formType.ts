@@ -1,24 +1,25 @@
 export type FormSection = {
   name: string;
   description?: string;
-  fields: Field[];
+  fields: inputFieldType[];
 };
-type Field = {
+export type inputFieldType = {
   label: string;
   isOptional?: boolean;
   description?: string;
   disableToggleDescription?: string;
   canInputBlocked?: boolean;
-  inputLines: inputLine[];
+  inputLines: inputLineType[];
   getMany?: boolean;
   addButtonAtFirstLine?: boolean;
   addButtonAtBelowLines?: boolean;
 };
-type inputLine = {
+export type inputLineType = {
   rowId?: string;
   inputs: input[];
 };
 export type input = {
+  requestBodyName?: string;
   inputType: formInputType;
   colSpan?: number;
   inputDescription?: string;
@@ -27,6 +28,8 @@ export type input = {
   disableToggleDescription?: string;
   options?: string[];
   changeRow?: boolean;
+  isRequired?: boolean;
+  disableTargets?: { true: number[]; false: number[] };
 };
 type formInputType =
   | "text"
@@ -36,4 +39,5 @@ type formInputType =
   | "image"
   | "textArea"
   | "timeRange"
-  | "phoneNumber";
+  | "phoneNumber"
+  | "checkBox";

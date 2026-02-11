@@ -42,7 +42,7 @@ function ProfileOfForeigner() {
               degreeLevel={data?.educationInfo.degreeLevel}
               major={data?.educationInfo.major}
             />
-            <Languages languageIdList={data?.languageList} />
+            <Languages languageIds={data?.languageList} />
           </div>
           <Career foreignerCareerList={data?.careerInfo.history} />
         </div>

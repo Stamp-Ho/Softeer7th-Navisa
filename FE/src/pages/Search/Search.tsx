@@ -37,13 +37,18 @@ const Search = () => {
         nationIdList: searchParams.getAll("nation"),
         languageList: searchParams.getAll("language"),
       };
-  const filterParams = Object.fromEntries(searchParams.entries());
-  console.log(filterParams);
+  //const filterParams = Object.fromEntries(searchParams.entries());
 
   // 2. 통합 훅 사용 (중복 코드 제거)
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+  const {
+    data,
+    fetchNextPage,
+    isFetchingNextPage,
+    status,
+  } = //, hasNextPage
     useSearchInfiniteQuery(targetType, params);
 
+  //@ts-ignore
   const allItems = data?.pages.flatMap((page) => page.content) ?? [];
 
   const { scrollRef, handleScroll, searchResultStyle, goTop } =

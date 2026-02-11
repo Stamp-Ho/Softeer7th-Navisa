@@ -149,6 +149,9 @@
 }
 
 @layer utilities {
+  .user-select-none {
+    user-select: none;
+  }
   .scrollbar-hide {
     &::-webkit-scrollbar {
       display: none;

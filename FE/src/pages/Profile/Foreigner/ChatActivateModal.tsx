@@ -6,17 +6,20 @@ import TextInput from "../../../components/common/TextInput";
 type ChatActivateProps = {
   onClose: () => void;
   onSendSuccess: () => void;
+  chatRoomId: number;
   isAgent: boolean;
 };
 
 const ChatActivateModal = ({
   onClose,
   onSendSuccess,
+  chatRoomId,
   isAgent,
 }: ChatActivateProps) => {
   const [firstMessage, setFirstMessage] = useState<string>("");
 
   const handleSendMessage = () => {
+    alert(chatRoomId);
     onSendSuccess(); // 성공 처리 (toast)
     onClose(); // UI 닫기
   };

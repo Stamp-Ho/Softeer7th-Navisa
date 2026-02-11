@@ -6,8 +6,14 @@ export const foreignerService = {
   getProfile: (api: apiClientType) =>
     api.get<BaseResponse<T.ForeignerRegisterRequest>>("/api/foreigner/profile"),
 
-  updateProfile: (api: apiClientType, data: T.ForeignerRegisterRequest) =>
-    api.post<BaseResponse<void>>("/api/foreigner/profile", data),
+  updateProfile: (
+    api: apiClientType,
+    data: T.ForeignerRegisterRequest,
+    accessToken: string,
+  ) =>
+    api.post<BaseResponse<void>>("/api/foreigner/profile", data, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }),
 
   getRequirements: (api: apiClientType) =>
     api.get<BaseResponse<T.ForeignerStatusResponse>>(

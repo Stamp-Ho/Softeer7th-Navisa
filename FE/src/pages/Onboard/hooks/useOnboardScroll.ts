@@ -53,7 +53,7 @@ export const useOnboardScroll = () => {
       targetRect.top - containerRect.top + container.scrollTop;
 
     container.scrollTo({
-      top: scrollTarget - 20,
+      top: scrollTarget - 30,
       behavior: "smooth",
     });
   }, []);
@@ -69,16 +69,18 @@ export const useOnboardScroll = () => {
   // 그라데이션 마스크 스타일 계산
   const getMaskStyle = useCallback(() => {
     const base = "transition-all duration-500 ";
-    const maskStart = "linear-gradient(to_bottom,black_97%,transparent_100%)";
-    const maskEnd = "linear-gradient(to_top,black_97%,transparent_100%)";
+    const maskStart =
+      "mask-[linear-gradient(to_bottom,black_97%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_97%,transparent_100%)]";
+    const maskEnd =
+      "mask-[linear-gradient(to_top,black_97%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_97%,transparent_100%)]";
     const maskBoth =
-      "linear-gradient(to_bottom,transparent_0%,black_3%,black_97%,transparent_100%)";
+      "mask-[linear-gradient(to_bottom,transparent_0%,black_3%,black_97%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_3%,black_97%,transparent_100%)]";
 
     let currentMask = maskBoth;
     if (isAtStart) currentMask = maskStart;
     else if (isAtEnd) currentMask = maskEnd;
 
-    return `${base} mask-[${currentMask}] [-webkit-mask-image:${currentMask}]`;
+    return `${base} ${currentMask}`;
   }, [isAtStart, isAtEnd]);
 
   return {

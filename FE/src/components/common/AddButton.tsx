@@ -1,12 +1,19 @@
 import { IcPlus } from "../../assets/icon/StratisUi";
 
-const AddButton = ({ className = "", onClick = () => {} }) => {
+const AddButton = ({
+  className = "",
+  onClick = () => {},
+  disabled = false,
+}) => {
   return (
     <button
-      className={`${className} cursor-pointer flex-row flex items-center justify-center rounded-lg bg-violet-50 w-14 h-14`}
+      className={`${className} flex-row flex items-center justify-center rounded-lg  w-14 h-14
+      ${disabled ? "bg-gray-150" : "bg-violet-50 cursor-pointer"}`}
       onClick={onClick}
+      disabled={disabled}
+      type="button"
     >
-      <IcPlus />
+      <IcPlus color={disabled ? "var(--gray-400)" : "#4132A9"} />
     </button>
   );
 };

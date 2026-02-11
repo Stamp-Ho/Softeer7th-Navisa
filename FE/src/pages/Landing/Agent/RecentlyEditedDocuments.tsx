@@ -7,8 +7,12 @@ const RecentlyEditedDocuments = () => {
   const { data, isLoading, isError } = useRecentVisaFormsQuery();
   if (isLoading) return <div>로딩중...</div>;
   const dataToRender = isError
-    ? Array.from({ length: 6 }).map((_, index) => <DocumentCard key={index} />)
-    : data?.map((doc, index) => <DocumentCard key={index} form={doc} />);
+    ? Array.from({ length: 6 }).map((_, index) => (
+        <DocumentCard key={`doc_${index}`} />
+      ))
+    : data?.map((doc, index) => (
+        <DocumentCard key={`doc_${index}`} document={doc} />
+      ));
 
   return (
     <section className="w-full flex flex-col relative gap-5 mt-12">

@@ -45,7 +45,7 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
     signupMutation.mutate({
       email: data.email,
       password: data.pw,
-      userType: isAgent ? "UNVALID_AGENT" : "UNFILLED_FOREIGNER",
+      userType: isAgent ? "INVALID_AGENT" : "UNFILLED_FOREIGNER",
     });
   };
 

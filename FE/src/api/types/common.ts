@@ -25,8 +25,14 @@ export interface SliceResponse<T> {
 
 export type UserType =
   | "VALID_AGENT"
-  | "UNVALID_AGENT"
+  | "INVALID_AGENT"
   | "FILLED_FOREIGNER"
   | "UNFILLED_FOREIGNER"
   | "ADMIN";
 export type DegreeLevel = "BELOW_BACHELOR" | "BACHELOR" | "ABOVE_MASTER";
+
+export const DegreeLevelList: DegreeLevel[] = [
+  "BELOW_BACHELOR",
+  "BACHELOR",
+  "ABOVE_MASTER",
+];

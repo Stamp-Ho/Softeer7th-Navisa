@@ -19,8 +19,8 @@ export interface ForeignerRegisterRequest {
     companyName: string;
     jobTitle: string;
     startDate: string;
-    isIdle: boolean;
   };
+  isRequesting: boolean;
 }
 
 export interface ForeignerStatusResponse {

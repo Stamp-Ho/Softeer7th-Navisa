@@ -1,28 +1,44 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContextProvider";
 
 const BASEURL = "https://api.navisa.site";
 
 let refreshPromise: Promise<any> | null;
 const useApiClient = () => {
   const navigate = useNavigate();
+  const { accessToken, setAccessToken } = useAuth();
   const apiClient: apiClientType = async <T = any>(
     url: string,
     options: FetchOptions,
   ): Promise<T> => {
+    const headers = new Headers(options.headers);
+    const currentToken = options.manualToken || accessToken;
+    if (!options.skipAuth && currentToken) {
+      headers.set("Authorization", `Bearer ${currentToken}`);
+    }
     return fetch(`${BASEURL}${url}`, {
       ...defaultOptions,
       ...options,
+      headers,
     })
       .then(async (res) => {
         if (!res.ok) {
-          if (res.status === 401) {
+          if (res.status === 401 && !options.skipAuth) {
+            // 이미 재시도를 한 요청인데 또 401이라면 중단 (무한루프 방지)
+            if (options._retry)
+              throw new Error("Unauthorized even after retry");
+
             if (!refreshPromise) {
               refreshPromise = refreshAccessToken();
             }
-            await refreshPromise;
+            const newToken = await refreshPromise; // 새 토큰 수령
             refreshPromise = null;
-            return apiClient<T>(url, options); // 재귀 호출 시에도 타입 유지
+            return apiClient<T>(url, {
+              ...options,
+              _retry: true,
+              manualToken: newToken,
+            }); // 재귀 호출 시에도 타입 유지
           }
           throw new Error(String(res.status));
         }
@@ -77,21 +93,35 @@ const useApiClient = () => {
   ): Promise<T> => apiClient<T>(url, { ...options, method: "PATCH" });
 
   const refreshAccessToken = useCallback(async () => {
-    await fetch(`${BASEURL}/api/auth/reissue`, { method: "POST" })
-      .then((res) => {
-        if (res.ok) return;
-        if (res.status === 401) {
-          alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
-          navigate("/", { replace: false });
-          throw new Error("refresh token 시간 만료");
-        } else throw new Error("Reissue 실패!");
-      })
-      .catch((err) => {
-        console.error("Reissue 실패: ", err);
-        throw new Error("Reissue 에러: " + err);
+    try {
+      const res = await fetch(`${BASEURL}/api/auth/reissue`, {
+        method: "POST",
+        credentials: "include",
       });
-    return;
-  }, []);
+
+      if (res.ok) {
+        // 1. JSON 파싱을 먼저 기다립니다.
+        const data = await res.json();
+
+        // 2. 이제 실제 데이터를 로그로 확인할 수 있습니다.
+        setAccessToken(data.result.accessToken);
+
+        // 3. 발급받은 새로운 액세스 토큰을 반환합니다.
+        return data.result.accessToken;
+      }
+
+      if (res.status === 401) {
+        alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
+        navigate("/", { replace: false });
+        throw new Error("refresh token 시간 만료");
+      }
+
+      throw new Error(`서버 에러: ${res.status}`);
+    } catch (err) {
+      console.error("Reissue 실패:", err);
+      throw err;
+    }
+  }, [navigate]);
 
   return { apiClient: apiClient as apiClientType };
 };
@@ -110,27 +140,13 @@ export type apiClientType = {
   patch<T = any>(url: string, options?: FetchOptions): Promise<T>;
 };
 
-type FetchOptions = {
-  method?: "POST" | "GET" | "PUT" | "PATCH" | "DELETE";
-  mode?: "cors" | "no-cors" | "same-origin";
-  cache?: "default" | "no-cache" | "reload" | "force-cache" | "only-if-cached";
-  credentials?: "same-origin" | "include" | "omit";
-  headers?: {};
-  redirect?: "follow" | "manual" | "error";
-  referrerPolicy?:
-    | "no-referrer"
-    | "no-referrer-when-downgrade"
-    | "origin"
-    | "origin-when-cross-origin"
-    | "same-origin"
-    | "strict-origin"
-    | "strict-origin-when-cross-origin"
-    | "unsafe-url";
-  body?: string;
-};
+interface FetchOptions extends RequestInit {
+  skipAuth?: boolean; // 기본값은 false (즉, 기본적으로 토큰 포함)
+  _retry?: boolean;
+  manualToken?: string;
+}
 
 const defaultOptions: FetchOptions = {
   method: "GET",
   headers: { accept: "*/*" },
-  credentials: "include",
 };

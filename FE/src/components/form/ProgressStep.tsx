@@ -1,31 +1,53 @@
+import { useFormContext, useWatch } from "react-hook-form";
 import ProgressDot from "../../assets/icon/ProgressDot";
 import ProgressLine from "../../assets/icon/ProgressLine";
+import { calculateOnlyInputs } from "./utils/formUtils";
 
 const ProgressStep = ({
   label,
-  index,
+  sectionIndex,
+  fieldIndex = -1,
   currentIndex,
   parentLength,
 }: {
   label: string;
-  index: number;
+  sectionIndex: number;
+  fieldIndex?: number;
   currentIndex: number;
   parentLength: number;
 }) => {
+  const { control } = useFormContext();
+  const targetLabel =
+    fieldIndex >= 0 ? `${sectionIndex}.${fieldIndex}` : `${sectionIndex}`;
+  const targetData = useWatch({
+    name: [targetLabel],
+    control,
+  });
+  // console.log(targetData)
+  const { totalCount, filledCount } = calculateOnlyInputs(targetData);
+
+  const status =
+    filledCount === totalCount
+      ? "done"
+      : filledCount === 0
+        ? "empty"
+        : "inProgress";
+
+  const leafIndex = fieldIndex ?? sectionIndex;
   return (
     <>
       <div className="flex flex-row gap-3 items-center body-l-medium cursor-pointer">
         <ProgressDot
-          status={"inProgress"}
-          isFirst={index === 0}
-          isLast={index === parentLength - 1}
-          isEditing={index === currentIndex}
+          status={status}
+          isFirst={leafIndex === 0}
+          isLast={leafIndex === parentLength - 1}
+          isEditing={leafIndex === currentIndex}
         />
-        <a className={"done" !== "done" ? "text-primary" : "text-text-sub"}>
+        <a className={status === "done" ? "text-primary" : "text-text-sub"}>
           {label}
         </a>
       </div>
-      {index < parentLength - 1 && (
+      {leafIndex < parentLength - 1 && (
         <div className="-my-0.5">
           <ProgressLine />
         </div>

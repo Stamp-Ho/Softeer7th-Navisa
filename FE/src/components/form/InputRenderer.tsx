@@ -1,86 +1,126 @@
-import { IcDash, IcDot, IcPlus } from "../../assets/icon/StratisUi";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import type { input } from "../../types/formType";
 import Radio from "../common/Radio";
 import Selector from "../common/Selector";
-import TextArea from "../common/TextArea";
-import TextInput from "../common/TextInput";
-import TimePicker from "../common/TimePicker";
+import DateSelector from "../common/DateSelector";
+import { useEffect } from "react";
+import TimeRangePicker from "./inputComponents/TimeRangePicker";
 
 const InputRenderer = ({
   input,
+  inputLabel,
+  maxLength = 50,
   className,
 }: {
   input: input;
+  inputLabel: string;
+  maxLength?: number;
   className?: string;
 }) => {
-  //const { register } = useFormContext(); // react-hook-form 연결
+  const { register, unregister, control, setValue, getValues } =
+    useFormContext();
+  const fieldLabels = inputLabel.split(".");
+
+  const isInputDisabled = useWatch({
+    control,
+    name: `${inputLabel}disabled` || "is.disabled", // 체크박스의 name
+  });
+  const isFieldDisabled = useWatch({
+    control,
+    name: `${fieldLabels[0]}.${fieldLabels[1]}.disabled`,
+  });
+  useEffect(() => {
+    // 현재 값이 없을 때만 초기값 설정 (기존 값을 덮어쓰지 않기 위함)
+    const currentValue = getValues(inputLabel);
+    if (currentValue === undefined) {
+      // 렌더링 직후 즉시 빈 문자열로 초기화
+      setValue(inputLabel, "", { shouldValidate: false });
+    }
+  }, [inputLabel, setValue, getValues]);
+  const isDisabled = isInputDisabled || isFieldDisabled;
+
+  useEffect(() => {
+    if (isDisabled) {
+      // 체크박스가 선택되면 날짜 필드 값을 초기화
+      unregister(inputLabel);
+    }
+  }, [isDisabled, inputLabel]);
+
+  const isInputRequired = input.isRequired && !isDisabled;
 
   switch (input.inputType) {
     case "text":
       return (
-        <TextInput
-          type="text"
+        <input
+          className={`w-full px-5 rounded-xl
+          text-[16px] font-medium focus:outline-gray-300 focus:outline-2 h-14
+          ${className}
+          ${isDisabled ? "placeholder:text-gray-300 bg-gray-150 text-gray-150 " : "placeholder:text-gray-400 bg-white"}`}
           placeholder={input.placeholder}
-          className={`bg-white ${className}`}
+          disabled={isDisabled}
+          type="text"
+          {...register(inputLabel ?? "noLabel", {
+            required: isInputRequired,
+            maxLength: maxLength,
+          })}
         />
-      ); // {...register(input.fieldName)}/>;
+      );
     case "selector":
       return (
-        <Selector
-          options={input.options}
-          placeholder={input.placeholder}
-          className={className}
-        /> // name={input.fieldName}/>
+        <Controller
+          name={inputLabel ?? "noLabel"}
+          control={control}
+          rules={{ required: isInputRequired }}
+          render={({ field }) => (
+            <Selector
+              {...field}
+              options={input.options}
+              placeholder={input.placeholder}
+              disableTargets={input.disableTargets ?? { true: [], false: [] }}
+            />
+          )}
+        />
       );
     case "radio":
-      return <Radio options={input.options} className={className} />;
+      return (
+        <Controller
+          name={inputLabel ?? "noLabel"}
+          control={control}
+          rules={{ required: isInputRequired }}
+          render={({ field }) => (
+            <Radio {...field} options={input.options} className={className} />
+          )}
+        />
+      );
     case "date":
       return (
-        <div className="grid grid-cols-3 gap-3">
-          <Selector placeholder="YYYY" /> <Selector placeholder="MM" />{" "}
-          <Selector placeholder="DD" />
-        </div>
+        <Controller
+          name={inputLabel ?? "noLabel"}
+          control={control}
+          rules={{ required: isInputRequired }}
+          render={({ field }) => (
+            <DateSelector {...field} disabled={isDisabled} />
+          )}
+        />
       );
     case "textArea":
-      return <TextArea placeholder={input.placeholder} />;
+      return (
+        <textarea
+          className={`w-full px-spacing-600 py-spacing-600 bg-white rounded-radius-400 min-h-40 body-l-medium
+              focus:outline-gray-300 focus:outline-2 
+              placeholder:text-text-sub resize-none ${className}`}
+          placeholder={input.placeholder}
+          {...register(inputLabel ?? "noLabel")}
+        />
+      );
     case "timeRange":
       return (
-        <div className="flex flex-row items-center gap-3">
-          <TimePicker isStart={true} />
-          <IcDash size={36} />
-          <TimePicker />
-        </div>
-      );
-    case "image":
-      return (
-        <div className="grid-cols-3 flex flex-row gap-5">
-          <div className="rounded-xl flex items-center justify-center bg-white w-52.5 h-67.5">
-            {false ? (
-              <image />
-            ) : (
-              <div>
-                <IcPlus />
-              </div>
-            )}
-          </div>
-          <div className="flex flex-col justify-end h-67.5 title-s-medium text-gray-400">
-            <h4 className="title-l-semibold text-text-base mb-2">
-              사진 업로드하기
-            </h4>
-            <h5 className="flex flex-row items-center gap-0.5">
-              <IcDot size={24} />
-              {input.placeholder}
-            </h5>
-            <h5 className="flex flex-row items-center gap-0.5">
-              <IcDot size={24} />
-              규격 안내
-            </h5>
-            <h5 className="flex flex-row items-center gap-0.5">
-              <IcDot size={24} />
-              파일 크기 안내
-            </h5>
-          </div>
-        </div>
+        <Controller
+          name={inputLabel ?? "noLabelTimeRange"}
+          control={control}
+          rules={{ required: isInputRequired }}
+          render={({ field }) => <TimeRangePicker {...field} />}
+        />
       );
     // ... 나머지 케이스
     default:

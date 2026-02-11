@@ -73,6 +73,14 @@ export const agentService = {
     );
   },
 
+  updateProfile: (
+    api: apiClientType,
+    data: T.RegisterAgentProfileRequest,
+    accessToken: string,
+  ) =>
+    api.post<BaseResponse<void>>("/api/agent/profile", data, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }),
   // 행정사 프로필 상세보기
   getAgentProfileDetail: async (api: apiClientType, agentId: string) => {
     return await api.get<BaseResponse<T.AgentProfileDetailResponse>>(

@@ -7,6 +7,7 @@ type AuthContextType = {
   setAccessToken: (a: string) => void;
   userId: string;
   setUserId: (a: string) => void;
+  logOut: () => void;
 };
 
 const defaultContext: AuthContextType = {
@@ -16,13 +17,14 @@ const defaultContext: AuthContextType = {
   setAccessToken: () => {},
   userId: "",
   setUserId: () => {},
+  logOut: () => {},
 };
 
 export const AuthContext = createContext<AuthContextType>(defaultContext);
 
 export type feUserType =
   | "VALID_AGENT"
-  | "UNVALID_AGENT"
+  | "INVALID_AGENT"
   | "FILLED_FOREIGNER"
   | "UNFILLED_FOREIGNER"
   | "ADMIN"

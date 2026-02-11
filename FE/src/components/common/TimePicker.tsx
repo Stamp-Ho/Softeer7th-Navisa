@@ -1,11 +1,21 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
-const TimePicker = ({ isStart = false }) => {
+const TimePicker = ({
+  time,
+  setTime,
+}: {
+  time: {
+    hour: string;
+    minute: string;
+  };
+  setTime: React.Dispatch<
+    React.SetStateAction<{
+      hour: string;
+      minute: string;
+    }>
+  >;
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [time, setTime] = useState({
-    hour: isStart ? "09" : "18",
-    minute: "00",
-  });
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   // 외부 클릭 시 닫기
@@ -82,6 +92,7 @@ const TimePicker = ({ isStart = false }) => {
               {Array.from({ length: 24 }).map((_, i) => (
                 <button
                   key={i}
+                  type="button"
                   onClick={() =>
                     setTime({ ...time, hour: i.toString().padStart(2, "0") })
                   }
@@ -101,6 +112,7 @@ const TimePicker = ({ isStart = false }) => {
               {["00", "15", "30", "45"].map((m) => (
                 <button
                   key={m}
+                  type="button"
                   onClick={() => setTime({ ...time, minute: m })}
                   className={`snap-center py-2 shrink-0 rounded-lg transition-colors ${
                     time.minute === m
@@ -116,6 +128,7 @@ const TimePicker = ({ isStart = false }) => {
 
           <button
             onClick={() => setIsOpen(false)}
+            type="button"
             className="cursor-pointer w-full mt-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-black active:scale-95 transition"
           >
             확인

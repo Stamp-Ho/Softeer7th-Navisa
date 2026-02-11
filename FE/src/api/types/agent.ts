@@ -57,6 +57,7 @@ export interface RegisterAgentProfileRequest {
     officeAddress: string;
     officeAddressDetail: string;
     businessTime: string;
+    phoneNumber: string;
   };
   licenseInfo: {
     licenseNo: string;

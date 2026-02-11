@@ -5,7 +5,7 @@ import Tag from "../common/Tag";
 import type { RecentVisaFormsResponse } from "../../api/types/etc";
 
 const DocumentCard = ({
-  form = {
+  document = {
     applicationFormId: "abc",
     title: "주디",
     isDone: false,
@@ -14,27 +14,27 @@ const DocumentCard = ({
     lastModifiedAt: "2025. 06. 21",
   },
 }: {
-  form?: RecentVisaFormsResponse;
+  document?: RecentVisaFormsResponse;
 }) => {
   return (
     <div className="flex flex-row w-full h-fit p-4 gap-3 bg-white rounded-[10px] shadow">
       <div className="w-18.75 h-26.25 overflow-hidden rounded-xl flex outline outline-border-normal">
         <img
-          src={form.foreignerProfileImgUrl}
+          src={document.foreignerProfileImgUrl}
           alt="https://placehold.co/76x106"
         />
       </div>
       <div className="flex flex-col flex-1">
         <div className="flex flex-row gap-1.5">
           <Tag type="small_fill_violet_max">
-            {form.isDone ? "작성완료" : "작성중"}
+            {document.isDone ? "작성완료" : "작성중"}
           </Tag>
-          <Tag type="small_fill_green_max">{form.currentStep}/138칸</Tag>
+          <Tag type="small_fill_green_max">{document.currentStep}/138칸</Tag>
           <div className="ml-auto caption-m-medium text-text-sub">
-            최근 수정 · {form.lastModifiedAt}
+            최근 수정 · {document.lastModifiedAt}
           </div>
         </div>
-        <h4 className="title-m-bold mt-3">{form.title}</h4>
+        <h4 className="title-m-bold mt-3">{document.title}</h4>
         <div className="ml-auto flex flex-row gap-3">
           <Button
             type="grayLine"
@@ -46,13 +46,13 @@ const DocumentCard = ({
             </div>
             pdf
           </Button>
-          <Link to={`/document/${form.applicationFormId}`}>
+          <Link to={`/document/${document.applicationFormId}`}>
             <Button
-              type={form.isDone ? "grayLine" : "primary"}
+              type={document.isDone ? "grayLine" : "primary"}
               size="tiny"
               className="w-30"
             >
-              {form.isDone ? "문서 활성화" : "작성하기"}
+              {document.isDone ? "문서 활성화" : "작성하기"}
             </Button>
           </Link>
         </div>

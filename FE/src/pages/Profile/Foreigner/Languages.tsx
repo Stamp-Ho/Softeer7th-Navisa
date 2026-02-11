@@ -3,11 +3,7 @@ import { IcLanguage } from "../../../assets/icon/StratisUi";
 import { languageIconIdxList, languageList } from "../../../constants/language";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
 
-const Languages = ({
-  languageIds = [0, 13, 2, 0, 0, 0, 0],
-}: {
-  languageIds?: number[];
-}) => {
+const Languages = ({ languageIds = [13, 2] }: { languageIds?: number[] }) => {
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 items-center title-m-semibold text-text-base">

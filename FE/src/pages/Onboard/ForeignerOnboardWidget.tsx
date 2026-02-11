@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { IcMessageBox } from "../../assets/icon/StratisUi";
 import Button from "../../components/common/Button";
 import TogglePill from "../../components/common/TogglePill";
@@ -11,17 +10,21 @@ const ForeignerOnboardWidget = ({
   currentSectionIndex,
   goToSection,
   goTop,
+  isGettingOffer,
+  setIsGettingOffer,
 }: {
   sections: FormSection[];
   currentSectionIndex: number;
   goToSection: (i: number) => void;
   goTop: () => void;
-}) => {
-  const [isGettingOffer, setIsGettingOffer] = useState(true);
 
+  isGettingOffer: boolean;
+  setIsGettingOffer: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   return (
     <div className="w-fit ml-4 left-0 mt-19.75 flex flex-row">
       <div className="flex flex-col w-92 gap-5 ">
+        <button type="submit">테스트</button>
         <Button type="primary" className="shadow">
           저장
         </Button>
