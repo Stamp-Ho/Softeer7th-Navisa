@@ -48,14 +48,14 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryQueryDsl {
 
         // Fetch Join 처리
         if (isForeignerId) {
-            query.leftJoin(chatRoom.foreignerProfile, foreignerProfile).fetchJoin();
-        } else {
             query.leftJoin(chatRoom.agentProfile, agentProfile).fetchJoin();
+        } else {
+            query.leftJoin(chatRoom.foreignerProfile, foreignerProfile).fetchJoin();
         }
 
         return query
                 .orderBy(chatRoom.lastChattedAt.desc(), chatRoom.id.asc())
-                .limit(slice.size())
+                .limit(slice.size() + 1)
                 .fetch();
     }
 
@@ -63,12 +63,12 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryQueryDsl {
      * 필터링을 위한 서브 쿼리
      */
     private BooleanExpression filterCondition(UUID profileId, ChatRoomFilterType filterType) {
-        if(filterType == null || filterType == ChatRoomFilterType.ALL){
+        if (filterType == null || filterType == ChatRoomFilterType.ALL) {
             return null;
         }
 
         // 해당 채팅방에 profileId가 아닌 사람이 보낸 안읽은 메시지가 있는지 확인
-        if(filterType == ChatRoomFilterType.UNREAD){
+        if (filterType == ChatRoomFilterType.UNREAD) {
             return JPAExpressions
                     .selectOne()
                     .from(chatMessage)
@@ -81,7 +81,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryQueryDsl {
         }
 
         // 해당 채팅방에 수임중인 Proposal이 있는지 확인
-        if(filterType == ChatRoomFilterType.MATCHED){
+        if (filterType == ChatRoomFilterType.MATCHED) {
             return JPAExpressions
                     .selectOne()
                     .from(proposal)

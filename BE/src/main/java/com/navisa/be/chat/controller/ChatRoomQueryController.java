@@ -30,18 +30,19 @@ public class ChatRoomQueryController {
     private final ChatMessageServiceFacade chatMessageServiceFacade;
 
     @GetMapping
-    @HasUserType({ UserType.FILLED_FOREIGNER, UserType.VALID_AGENT })
+    @HasUserType({UserType.FILLED_FOREIGNER, UserType.VALID_AGENT})
     @Operation(summary = "채팅방 목록 조회", description = "로그인한 사용자의 채팅방 목록을 페이징하여 조회합니다.")
     public BaseResponse<SliceResponse<ChatRoomCardResponse, Long>> getChatRooms(
             @SliceInfo(size = 10, max = 10) SliceRequest<Long> slice,
-            @Parameter(description = "필터", example="unread | matched") @RequestParam String filter,
+            @Parameter(description = "필터", example = "unread | matched") @RequestParam(required = false) String filter,
+
             @Parameter(hidden = true) @LoginUser String email) {
 
         return new BaseResponse<>(chatRoomServiceFacade.findAllChatRoomsByNoOffset(email, filter, slice));
     }
 
     @GetMapping("/nonread/count")
-    @HasUserType({ UserType.FILLED_FOREIGNER, UserType.VALID_AGENT })
+    @HasUserType({UserType.FILLED_FOREIGNER, UserType.VALID_AGENT})
     @Operation(summary = "안 읽은 메시지 수 조회", description = "로그인한 사용자의 전체 안 읽은 메시지 수를 조회합니다.")
     public BaseResponse<ChatMessageCountResponse> getChatMessageNonReadCount(
             @Parameter(hidden = true) @LoginUser String email) {
@@ -51,7 +52,7 @@ public class ChatRoomQueryController {
     }
 
     @GetMapping("/matched/count")
-    @HasUserType({ UserType.VALID_AGENT })
+    @HasUserType({UserType.VALID_AGENT})
     @Operation(summary = "행정사의 매칭된 채팅방 중 안읽은 메시지 수 조회", description = "행정사의 매칭된 채팅방 중 안 읽은 전체 메시지 개수를 조회합니다.")
     public BaseResponse<ChatMessageCountResponse> getChatMessageMatchedNonReadCount(
             @Parameter(hidden = true) @LoginUser String email) {

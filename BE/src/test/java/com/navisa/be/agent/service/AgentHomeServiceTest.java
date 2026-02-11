@@ -14,6 +14,10 @@ import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.common.repository.JobCodeRepository;
 import com.navisa.be.agent.service.AgentHomeService;
 import com.navisa.be.support.IntegrationTestSupport;
+import com.navisa.be.user.model.entity.User;
+import com.navisa.be.user.model.enums.LoginType;
+import com.navisa.be.user.model.enums.UserType;
+import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,9 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private AgentSpecializedJobRepository specializedJobCodeRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @DisplayName("최신순으로 등록된 행정사 리뷰 3개를 조회하고 작성자 정보를 매핑한다.")
     @Test
@@ -134,15 +141,40 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
     }
 
     private void createAgentProfiles(int count) {
-        com.navisa.be.common.model.entity.JobCode jobCode = jobCodeRepository.save(
-                new com.navisa.be.common.model.entity.JobCode(null, "CODE", "전문분야", null, null));
+        JobCode jobCode = jobCodeRepository.save(
+                new JobCode(null, "CODE", "전문분야", null, null));
 
         for (int i = 0; i < count; i++) {
-            AgentProfile profile = agentProfileRepository.save(new AgentProfile(
-                    "행정사" + i, LocalDate.now(), "url", "09:00~18:00",
-                    "사무소", "서울", "강남", "경력",
-                    "010-1234-1234", UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말"));
-            specializedJobCodeRepository.save(new AgentSpecializedJob(profile, jobCode));
+            User user = userRepository.save(new User(
+                    "agent" + i + "@test.com",
+                    null,
+                    UserType.VALID_AGENT,
+                    LoginType.GOOGLE,
+                    true
+            ));
+
+            AgentProfile profile = new AgentProfile(
+                    "행정사" + i,
+                    LocalDate.now(),
+                    "profile-key-" + i,
+                    "09:00~18:00",
+                    "내비자 사무소",
+                    "서울시",
+                    "강남구",
+                    "추가 이력",
+                    "010-1234-5678",
+                    user.getId(),
+                    "LIC-123",
+                    LocalDate.now(),
+                    "P-123",
+                    "M-123",
+                    "인사말"
+            );
+            agentProfileRepository.save(profile);
+
+            AgentSpecializedJob specializedJob = new AgentSpecializedJob(profile, jobCode);
+            specializedJobCodeRepository.save(specializedJob);
+            profile.getSpecializedJobs().add(specializedJob);
         }
     }
 
@@ -174,10 +206,20 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "SPEC_01", jobName, null, null));
 
         for (int i = 0; i < count; i++) {
+            User user = userRepository.save(new User(
+                    "special" + i + "@test.com",
+                    null,
+                    UserType.VALID_AGENT,
+                    LoginType.GOOGLE,
+                    true
+            ));
+
             AgentProfile profile = new AgentProfile(
                     "행정사" + i, LocalDate.now(), "url", "09:00~18:00",
                     "사무소", "서울", "강남", "경력",
-                    "010-1234-1234", UUID.randomUUID(), "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말");
+                    "010-1234-1234",
+                    user.getId(),
+                    "LIC-" + i, LocalDate.now(), "P-" + i, "M-" + i, "인사말");
             agentProfileRepository.save(profile);
 
             AgentSpecializedJob specializedJobCode = new AgentSpecializedJob(profile, jobCode);
@@ -190,10 +232,20 @@ class AgentHomeServiceTest extends IntegrationTestSupport {
     }
 
     private AgentProfile saveAgentProfile(UUID userId, String name, String imageUrl) {
+        User user = userRepository.save(new User(
+                "test-" + UUID.randomUUID() + "@test.com",
+                null,
+                UserType.VALID_AGENT,
+                LoginType.GOOGLE,
+                true
+        ));
+
         AgentProfile profile = new AgentProfile(
                 name, LocalDate.now(), imageUrl, "09:00~18:00",
                 "내비자 사무소", "서울", "강남", "경력사항",
-                "010-1234-1234", userId, "LIC-123", LocalDate.now(), "P-123", "M-123", "한마디");
+                "010-1234-1234",
+                user.getId(),
+                "LIC-123", LocalDate.now(), "P-123", "M-123", "한마디");
         return agentProfileRepository.save(profile);
     }
 }

@@ -73,7 +73,7 @@ public class AgentHomeService {
     // 랜덤 행정사 카드
     @Transactional(readOnly = true)
     public List<AgentCardResponse> getRandomAgentCards(String email) {
-        List<AgentProfile> agents = agentProfileRepository.findRandom12();
+        List<AgentProfile> agents = agentProfileRepository.findRandom12ValidAgents();
 
         if (agents.isEmpty()) {
             throw new AgentException(ResponseStatus.AGENT_CARD_NOT_FOUND);
