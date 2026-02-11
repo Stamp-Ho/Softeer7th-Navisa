@@ -12,8 +12,17 @@ import java.util.UUID;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long>, ChatRoomRepositoryQueryDsl {
 
-    @Query("SELECT c FROM ChatRoom c WHERE c.agentProfile.id = :agentId AND c.foreignerProfile.id = :foreignerId")
-    Optional<ChatRoom> findByAgentIdAndForeignerId(UUID agentId, UUID foreignerId);
+    @Query(value = """
+        SELECT * FROM chat_room c
+        WHERE c.agent_id = :agentId 
+          AND c.foreigner_id = :foreignerId
+        ORDER BY c.chat_room_id DESC
+        LIMIT 1
+    """, nativeQuery = true)
+    Optional<ChatRoom> findByAgentIdAndForeignerId(
+            @Param("agentId") UUID agentId,
+            @Param("foreignerId") UUID foreignerId
+    );
 
     @Query("SELECT c.id FROM ChatRoom c WHERE c.foreignerProfile.id = :foreignerProfileId")
     List<Long> findAllIdsByForeignerProfileId(UUID foreignerProfileId);

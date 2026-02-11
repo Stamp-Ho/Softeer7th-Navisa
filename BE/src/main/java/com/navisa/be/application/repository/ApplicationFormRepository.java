@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,4 +36,19 @@ public interface ApplicationFormRepository extends JpaRepository<VisaApplication
 
     @EntityGraph(attributePaths = {"agentProfile"})
     Optional<VisaApplicationForm> findWithAgentProfileById(UUID id);
+
+    // exportedAt의 날짜 부분이 targetDate와 일치하는 완료된 서류 조회
+    @Query(value = """
+        SELECT f FROM VisaApplicationForm f
+        JOIN FETCH f.foreignerProfile fp
+        JOIN FETCH f.agentProfile ap
+        WHERE f.isDone = true
+          AND f.exportedAt IS NOT NULL
+          AND f.mailSentAt IS NULL
+          AND CAST(f.exportedAt AS date) = :targetDate
+    """)
+    List<VisaApplicationForm> findAllByExportedDate(@Param("targetDate") LocalDate targetDate);
+
+    // 특정 외국인의 비자 신청서 중 가장 최근 생성된 1건 조회
+    Optional<VisaApplicationForm> findFirstByForeignerProfile_UserIdOrderByCreatedAtDesc(UUID userId);
 }

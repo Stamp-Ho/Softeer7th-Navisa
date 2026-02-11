@@ -8,17 +8,23 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static java.lang.Boolean.TRUE;
 
 @Entity
 @Table(name = "visa_application_form")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class VisaApplicationForm extends BaseEntity {
 
     @Id
@@ -27,7 +33,7 @@ public class VisaApplicationForm extends BaseEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "agent_id", nullable = false)
+    @JoinColumn(name = "agent_id", nullable = true)
     private AgentProfile agentProfile;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,10 +44,16 @@ public class VisaApplicationForm extends BaseEntity {
     private String profileObjectKey;
 
     @Column(name = "is_done", nullable = false)
-    private Boolean isDone = false;
+    private boolean isDone = false;
 
-    @Column(name = "is_once_exported", nullable = false)
-    private Boolean isOnceExported;
+    @Column(name = "is_finished", nullable = false)
+    private boolean isFinished = false;
+
+    @Column(name = "exported_at")
+    private LocalDateTime exportedAt;
+
+    @Column(name = "mail_sent_at")
+    private LocalDateTime mailSentAt;
 
     @Column(name = "total_count")
     private Integer totalCount = 0;
@@ -95,7 +107,6 @@ public class VisaApplicationForm extends BaseEntity {
         this.foreignerProfile = foreignerProfile;
         this.jobCode = jobCode;
         this.isDone = isDone;
-        this.isOnceExported = false;
         this.totalCount = totalCount;
         this.currentStep = currentStep;
     }
@@ -104,32 +115,88 @@ public class VisaApplicationForm extends BaseEntity {
         this.totalCount = totalCount;
         this.currentStep = currentStep;
 
+        if (sections == null) return;
+
         for (Map<String, Object> section : sections) {
-            Number sectionIdNum = (Number) section.get("sectionId");
-            if (sectionIdNum == null)
+            Object sectionIdObj = section.get("sectionId");
+            if (!(sectionIdObj instanceof Number sectionIdNum)) {
                 continue;
+            }
+
             int sectionId = sectionIdNum.intValue();
+            Map<String, Object> dataToSave = new HashMap<>(section);
+            dataToSave.remove("sectionId");
 
             switch (sectionId) {
-                case 1 -> this.personalDetail = section;
-                case 2 -> this.passportInformation = section;
-                case 3 -> this.contactInformation = section;
-                case 4 -> this.maritalStatusAndFamilyDetails = section;
-                case 5 -> this.education = section;
-                case 6 -> this.employment = section;
-                case 7 -> this.visitInformation = section;
-                case 8 -> this.helpInformation = section;
-                case 9 -> this.inviteInformation = section;
+                case 1 -> this.personalDetail = dataToSave;
+                case 2 -> this.passportInformation = dataToSave;
+                case 3 -> this.contactInformation = dataToSave;
+                case 4 -> this.maritalStatusAndFamilyDetails = dataToSave;
+                case 5 -> this.education = dataToSave;
+                case 6 -> this.employment = dataToSave;
+                case 7 -> this.visitInformation = dataToSave;
+                case 8 -> this.helpInformation = dataToSave;
+                case 9 -> this.inviteInformation = dataToSave;
+                default -> log.warn("정의되지 않은 sectionId 입니다: {}", sectionId);
             }
         }
     }
 
-    public void updateStatus(Boolean isDone) {
+    public void updateStatus(boolean isDone) {
         this.isDone = isDone;
+        if (TRUE.equals(isDone) && this.exportedAt == null) {
+            this.exportedAt = LocalDateTime.now();
+        }
     }
 
     // 외국인 이미지 업데이트 메서드
     public void updateProfileImage(String profileObjectKey) {
         this.profileObjectKey = profileObjectKey;
+    }
+
+    // 수임 종료 처리 메서드
+    public void updateFinish(boolean isFinished) {
+        this.isFinished = isFinished;
+    }
+
+    // 행정사 확인 이메일 발송 시간 업데이트 메서드
+    public void recordMailSentTime() {
+        this.mailSentAt = LocalDateTime.now();
+    }
+
+    private static Map<String, Object> copySection(Map<String, Object> section) {
+        if (section == null) return null;
+        return new HashMap<>(section); // 새로운 Map 객체를 생성하여 데이터만 복사
+    }
+
+    // 기존 데이터를 기반으로 새 신청서 생성 메서드
+    public static VisaApplicationForm createRenewalForm(VisaApplicationForm oldForm) {
+        VisaApplicationForm nextForm = new VisaApplicationForm();
+
+        // 초기화가 필요한 필드
+        nextForm.agentProfile = null;
+        nextForm.isDone = false;
+        nextForm.isFinished = false;
+        nextForm.exportedAt = null;
+        nextForm.mailSentAt = null;
+
+        // 기존 값 유지 필드
+        nextForm.foreignerProfile = oldForm.getForeignerProfile();
+        nextForm.jobCode = oldForm.getJobCode();
+        nextForm.totalCount = oldForm.getTotalCount();
+        nextForm.currentStep = oldForm.getCurrentStep();
+        nextForm.profileObjectKey = oldForm.getProfileObjectKey();
+
+        nextForm.personalDetail = copySection(oldForm.getPersonalDetail());
+        nextForm.passportInformation = copySection(oldForm.getPassportInformation());
+        nextForm.contactInformation = copySection(oldForm.getContactInformation());
+        nextForm.maritalStatusAndFamilyDetails = copySection(oldForm.getMaritalStatusAndFamilyDetails());
+        nextForm.education = copySection(oldForm.getEducation());
+        nextForm.employment = copySection(oldForm.getEmployment());
+        nextForm.visitInformation = copySection(oldForm.getVisitInformation());
+        nextForm.helpInformation = copySection(oldForm.getHelpInformation());
+        nextForm.inviteInformation = copySection(oldForm.getInviteInformation());
+
+        return nextForm;
     }
 }

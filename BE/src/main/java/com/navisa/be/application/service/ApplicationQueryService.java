@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -55,10 +54,10 @@ public class ApplicationQueryService {
                 .map(form -> new RecentVisaFormsResponse(
                         form.getId(),
                         form.getForeignerProfile().getNickname(),
-                        form.getIsDone(),
+                        form.isDone(),
                         form.getCurrentStep(),
                         form.getProfileObjectKey(),
-                        form.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy. MM. dd"))
+                        form.getUpdatedAt()
                 ))
                 .toList();
     }
@@ -83,8 +82,6 @@ public class ApplicationQueryService {
         UUID lastElementId = contentVisaApplicationFormProjections.isEmpty()
                 ? null
                 : contentVisaApplicationFormProjections.get(contentVisaApplicationFormProjections.size() - 1).id();
-
-
 
         return new SliceResponse<>(
                 contentVisaApplicationFormProjections.stream().map(
@@ -112,8 +109,8 @@ public class ApplicationQueryService {
         return new VisaApplicationDetailResponse(
                 form.getId(),
                 form.getProfileObjectKey(),
-                form.getIsDone(),
-                form.getUpdatedAt().toString(),
+                form.isDone(),
+                form.getUpdatedAt(),
                 form.getTotalCount(),
                 form.getCurrentStep(),
                 sections
@@ -137,8 +134,8 @@ public class ApplicationQueryService {
         return new VisaApplicationDetailResponse(
                 form.getId(),
                 form.getProfileObjectKey(),
-                form.getIsDone(),
-                form.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy. MM. dd")),
+                form.isDone(),
+                form.getUpdatedAt(),
                 form.getTotalCount(),
                 form.getCurrentStep(),
                 mergeSections(form)
@@ -146,18 +143,28 @@ public class ApplicationQueryService {
     }
 
     private List<Map<String, Object>> mergeSections(VisaApplicationForm form) {
-        return Stream.of(
-                        form.getPersonalDetail(),
-                        form.getPassportInformation(),
-                        form.getContactInformation(),
-                        form.getMaritalStatusAndFamilyDetails(),
-                        form.getEducation(),
-                        form.getEmployment(),
-                        form.getVisitInformation(),
-                        form.getHelpInformation(),
-                        form.getInviteInformation()
-                )
-                .map(section -> section != null ? section : Collections.<String, Object>emptyMap())
-                .toList();
+        List<Map<String, Object>> sections = new ArrayList<>();
+
+        addSectionWithId(sections, form.getPersonalDetail(), 1);
+        addSectionWithId(sections, form.getPassportInformation(), 2);
+        addSectionWithId(sections, form.getContactInformation(), 3);
+        addSectionWithId(sections, form.getMaritalStatusAndFamilyDetails(), 4);
+        addSectionWithId(sections, form.getEducation(), 5);
+        addSectionWithId(sections, form.getEmployment(), 6);
+        addSectionWithId(sections, form.getVisitInformation(), 7);
+        addSectionWithId(sections, form.getHelpInformation(), 8);
+        addSectionWithId(sections, form.getInviteInformation(), 9);
+
+        return sections;
+    }
+
+    private void addSectionWithId(List<Map<String, Object>> list, Map<String, Object> data, int id) {
+        if (data == null || data.isEmpty()) {
+            list.add(Map.of("sectionId", id));
+        } else {
+            Map<String, Object> responseMap = new HashMap<>(data);
+            responseMap.put("sectionId", id);
+            list.add(responseMap);
+        }
     }
 }

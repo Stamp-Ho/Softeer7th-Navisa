@@ -74,7 +74,7 @@ public class AgentReviewService {
         VisaApplicationForm form = applicationFormRepository.findCurrentAppFormNative(foreignerProfile.getId(), request.agentId())
                 .orElseThrow(() -> new AgentException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));
 
-        if (!form.getIsOnceExported()) {
+        if (!form.isDone()) {
             throw new AgentException(ResponseStatus.NOT_ALLOWED_TO_REVIEW);
         }
 

@@ -9,44 +9,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Component
 public class VisaApplicationFormTestFixture {
 
     private final ApplicationFormRepository applicationFormRepository;
 
-    public VisaApplicationForm createVisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile, JobCode jobCode, boolean isOnceExported) {
-        return createVisaApplicationForm(agentProfile, foreignerProfile, jobCode, isOnceExported, null);
-    }
-
     public VisaApplicationForm createVisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
-                                                         JobCode jobCode, boolean isOnceExported, String profileObjectKey) {
-        VisaApplicationForm form = new VisaApplicationForm(
-                agentProfile,
-                foreignerProfile,
-                jobCode,
-                false,
-                150,
-                110);
-        ReflectionTestUtils.setField(form, "isOnceExported", isOnceExported);
-        if (profileObjectKey != null) {
-            form.updateProfileImage(profileObjectKey);
-        }
-        return applicationFormRepository.save(form);
-    }
-
-    public VisaApplicationForm createVisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
-                                                         JobCode jobCode, boolean isDone, int currentStep, String profileObjectKey) {
+                                                         JobCode jobCode, boolean isDone) {
         VisaApplicationForm form = new VisaApplicationForm(
                 agentProfile,
                 foreignerProfile,
                 jobCode,
                 isDone,
                 150,
-                currentStep);
-        if (profileObjectKey != null) {
-            form.updateProfileImage(profileObjectKey);
+                0);
+
+        if (isDone) {
+            ReflectionTestUtils.setField(form, "exportedAt", LocalDateTime.now());
         }
+
         return applicationFormRepository.save(form);
     }
 }

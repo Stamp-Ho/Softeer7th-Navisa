@@ -1,0 +1,1 @@
+ALTER TABLE public.visa_application_form ADD COLUMN mail_sent_at TIMESTAMP;

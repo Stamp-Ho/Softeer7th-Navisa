@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -84,7 +85,7 @@ class ApplicationQueryControllerTest {
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
 
         RecentVisaFormsResponse summary = new RecentVisaFormsResponse(
-                UUID.randomUUID(), "Nick Judy", false, 105, "img.png", "2025. 06. 21"
+                UUID.randomUUID(), "Nick Judy", false, 105, "img.png", LocalDateTime.now()
         );
         given(applicationQueryService.getRecentVisaForms(email)).willReturn(List.of(summary));
 
@@ -103,7 +104,7 @@ class ApplicationQueryControllerTest {
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
 
         VisaApplicationDetailResponse response = new VisaApplicationDetailResponse(
-                UUID.randomUUID(), "img.png", false, "2026-02-09", 150, 10, List.of(Collections.emptyMap())
+                UUID.randomUUID(), "img.png", false, LocalDateTime.now(), 150, 10, List.of(Collections.emptyMap())
         );
         given(applicationQueryService.getLatestVisaFormForForeigner(email)).willReturn(response);
 
@@ -122,7 +123,7 @@ class ApplicationQueryControllerTest {
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
 
         VisaApplicationDetailResponse response = new VisaApplicationDetailResponse(
-                formId, "img.png", false, "2026. 02. 10", 150, 80, List.of(Collections.emptyMap())
+                formId, "img.png", false, LocalDateTime.now(), 150, 80, List.of(Collections.emptyMap())
         );
         given(applicationQueryService.getVisaFormForAgent(eq(email), eq(formId))).willReturn(response);
 

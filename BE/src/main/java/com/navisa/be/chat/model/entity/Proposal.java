@@ -35,4 +35,8 @@ public class Proposal extends BaseEntity {
         this.chatRoom = chatRoom;
         this.senderId = senderId;
     }
+
+    public void updateStatus(ProposalStatus status) {
+        this.status = status;
+    }
 }

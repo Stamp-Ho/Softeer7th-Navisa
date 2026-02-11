@@ -57,6 +57,8 @@ public enum ResponseStatus {
     PROPOSAL_NOT_FOUND(404, "존재하지 않는 수임제안입니다"),
     REVIEW_ALREADY_EXISTS(400, "리뷰가 이미 존재합니다"),
     FORBIDDEN_ACCESS(403, "허용되지 않는 접근입니다"),
+    FINISH_CONDITION_NOT_MET(400, "메일이 발송된 지 3일이 지나야 강제 종료가 가능합니다"),
+    ALREADY_FINISHED(400, "이미 종료된 건입니다"),
     CHATROOM_NOT_FOUND(404, "존재하지 않는 채팅방입니다"),
     INVALID_CHATTING_SESSION(401, "채팅 세션가 올바르지 않습니다"),
 

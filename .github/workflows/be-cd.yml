@@ -117,6 +117,8 @@ jobs:
               -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
               -e AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }} \
               -e AWS_CLOUDFRONT_DOMAIN=${{ secrets.AWS_CLOUDFRONT_DOMAIN }} \
+              -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
+              -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
               --restart unless-stopped \
               navisa-spring-app
             

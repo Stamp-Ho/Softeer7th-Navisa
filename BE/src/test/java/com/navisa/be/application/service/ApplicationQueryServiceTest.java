@@ -82,11 +82,14 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         // given
         for (int i = 1; i <= 7; i++) {
             ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(UUID.randomUUID(), null));
-            VisaApplicationForm form = visaApplicationFormFixture.createVisaApplicationForm(
-                    defaultAgent, foreigner, defaultJobCode, false, 10 + i, null);
 
+            VisaApplicationForm form = visaApplicationFormFixture.createVisaApplicationForm(
+                    defaultAgent, foreigner, defaultJobCode, false);
+
+            ReflectionTestUtils.setField(form, "currentStep", 10 + i);
             ReflectionTestUtils.setField(form, "updatedAt", LocalDateTime.now().minusDays(10 - i));
 
+            visaApplicationFormRepository.save(form);
             em.flush();
         }
         em.clear();
@@ -96,8 +99,8 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
 
         // then
         assertThat(result).hasSize(6);
-        assertThat(result.get(0).currentStep()).isEqualTo(17); // 가장 최근 (i=7)
-        assertThat(result.get(1).currentStep()).isEqualTo(16); // 두 번째 (i=6)
+        assertThat(result.get(0).currentStep()).isEqualTo(17);
+        assertThat(result.get(1).currentStep()).isEqualTo(16);
         assertThat(result.get(0).lastModifiedAt()).isNotNull();
     }
 
@@ -107,8 +110,8 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         // given
         for (int i = 1; i <= 2; i++) {
             ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(UUID.randomUUID(), null));
-            visaApplicationFormFixture.createVisaApplicationForm(
-                    defaultAgent, foreigner, defaultJobCode, false, 50 + i, null);
+            VisaApplicationForm form = visaApplicationFormFixture.createVisaApplicationForm(
+                    defaultAgent, foreigner, defaultJobCode, false);
         }
 
         // when
@@ -137,19 +140,24 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         String email = "foreigner@test.com";
         User user = saveUser(email, UserType.FILLED_FOREIGNER);
 
-        ForeignerProfile foreigner = new ForeignerProfile(user.getId(), ForeignerSearchStatus.REQUESTING);
-        foreignerProfileRepository.save(foreigner);
+        ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(user.getId(), ForeignerSearchStatus.REQUESTING));
 
         String profileImageKey = "visa/photos/my-photo.png";
 
-        // 두 개의 신청서 생성 (생성 시간을 다르게 하여 최신순 확인)
-        VisaApplicationForm oldForm = visaApplicationFormFixture.createVisaApplicationForm(
-                defaultAgent, foreigner, defaultJobCode, false, 50, null);
-        VisaApplicationForm latestForm = visaApplicationFormFixture.createVisaApplicationForm(
-                defaultAgent, foreigner, defaultJobCode, true, 150, profileImageKey);
+        // 오래된 서류 (종료됨)
+        VisaApplicationForm oldFinishedForm = visaApplicationFormFixture.createVisaApplicationForm(defaultAgent, foreigner, defaultJobCode, true);
+        ReflectionTestUtils.setField(oldFinishedForm, "isFinished", true);
+        ReflectionTestUtils.setField(oldFinishedForm, "createdAt", LocalDateTime.now().minusDays(10));
 
-        ReflectionTestUtils.setField(oldForm, "createdAt", LocalDateTime.now().minusDays(1));
-        ReflectionTestUtils.setField(latestForm, "createdAt", LocalDateTime.now());
+        // 최신 서류
+        VisaApplicationForm currentForm = visaApplicationFormFixture.createVisaApplicationForm(defaultAgent, foreigner, defaultJobCode, true);
+
+        ReflectionTestUtils.setField(currentForm, "totalCount", 150);
+        ReflectionTestUtils.setField(currentForm, "currentStep", 150); // filledCount 검증용
+        ReflectionTestUtils.setField(currentForm, "profileObjectKey", profileImageKey);
+        ReflectionTestUtils.setField(currentForm, "createdAt", LocalDateTime.now());
+
+        visaApplicationFormRepository.saveAll(List.of(oldFinishedForm, currentForm));
 
         em.flush();
         em.clear();
@@ -159,6 +167,7 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
 
         // then
         assertThat(result).isNotNull();
+        assertThat(result.applicationFormId()).isEqualTo(currentForm.getId());
         assertThat(result.totalCount()).isEqualTo(150);
         assertThat(result.filledCount()).isEqualTo(150);
         assertThat(result.foreignerProfileImgUrl()).isEqualTo(profileImageKey);
@@ -188,7 +197,10 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(foreignerUser.getId(), ForeignerSearchStatus.REQUESTING));
 
         VisaApplicationForm form = visaApplicationFormFixture.createVisaApplicationForm(
-                defaultAgent, foreigner, defaultJobCode, false, 80, null);
+                defaultAgent, foreigner, defaultJobCode, false);
+
+        ReflectionTestUtils.setField(form, "currentStep", 80);
+        visaApplicationFormRepository.saveAndFlush(form); // DB에 즉시 반영
 
         em.flush();
         em.clear();
@@ -199,7 +211,7 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         // then
         assertThat(result).isNotNull();
         assertThat(result.applicationFormId()).isEqualTo(form.getId());
-        assertThat(result.filledCount()).isEqualTo(80);
+        assertThat(result.filledCount()).isEqualTo(80); // 이제 80으로 정상 조회됩니다.
     }
 
     @DisplayName("다른 행정사가 담당하는 비자 신청서를 조회하려고 하면 FORBIDDEN 예외가 발생한다.")
@@ -217,7 +229,7 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
 
         // 2번 행정사의 신청서 생성
         VisaApplicationForm form = visaApplicationFormFixture.createVisaApplicationForm(
-                ownerAgent, foreigner, jobCode, false, 10, null);
+                ownerAgent, foreigner, jobCode, false);
 
         em.flush();
         em.clear();
@@ -254,8 +266,11 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
             boolean isDone = (i % 2 == 0);
 
             VisaApplicationForm form = visaApplicationFormFixture.createVisaApplicationForm(
-                    defaultAgent, foreigner, defaultJobCode, isDone, 10 + i,
-                    "visa/profile/dummy.png");
+                    defaultAgent, foreigner, defaultJobCode, isDone);
+
+            ReflectionTestUtils.setField(form, "currentStep", 10 + i);
+            ReflectionTestUtils.setField(form, "profileObjectKey", "visa/profile/dummy.png");
+            visaApplicationFormRepository.save(form);
 
             em.flush();
 
@@ -274,8 +289,10 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
                 .save(new ForeignerProfile(UUID.randomUUID(), null));
 
         // 필터링 제외 확인용 (완료 상태, 다른 행정사)
-        visaApplicationFormFixture.createVisaApplicationForm(
-                otherAgent, otherForeigner, defaultJobCode, true, 100, "visa/profile/other.png");
+        VisaApplicationForm otherForm = visaApplicationFormFixture.createVisaApplicationForm(
+                otherAgent, otherForeigner, defaultJobCode, true);
+        ReflectionTestUtils.setField(otherForm, "currentStep", 100);
+        visaApplicationFormRepository.save(otherForm);
 
         em.flush();
         em.clear();
