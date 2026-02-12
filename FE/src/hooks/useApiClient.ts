@@ -7,7 +7,7 @@ const BASEURL = "https://api.navisa.site";
 let refreshPromise: Promise<any> | null;
 const useApiClient = () => {
   const navigate = useNavigate();
-  const { accessToken, setAccessToken } = useAuth();
+  const { accessToken, setAccessToken, setUserId, setUserType } = useAuth();
   const apiClient: apiClientType = async <T = any>(
     url: string,
     options: FetchOptions,
@@ -112,6 +112,9 @@ const useApiClient = () => {
 
       if (res.status === 401) {
         alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
+        setUserId("");
+        setUserType("NOT_AUTHED");
+        window.localStorage.removeItem("userId");
         navigate("/", { replace: false });
         throw new Error("refresh token 시간 만료");
       }

@@ -1,5 +1,5 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import Radio from "../common/Radio";
+import FormRadio from "./inputComponents/FormRadio";
 import Tag from "../common/Tag";
 import CheckBox from "../common/CheckBox";
 import type { FormSection, inputFieldType } from "../../types/formType";
@@ -25,7 +25,7 @@ const FormField = ({
 
   const isFieldDisabled = useWatch({
     control: methods.control,
-    name: `${sectionIdx}.${fieldIdx}.disabled`,
+    name: `${sectionIdx}.sectionData.${fieldIdx}.disabled`,
   });
   useEffect(() => {
     if (isFieldDisabled) {
@@ -50,7 +50,7 @@ const FormField = ({
         });
       });
 
-      methods.unregister(`${sectionIdx}.${fieldIdx}.values`);
+      methods.unregister(`${sectionIdx}.sectionData.${fieldIdx}.values`);
     }
   }, [isFieldDisabled]);
   return (
@@ -59,10 +59,11 @@ const FormField = ({
         <div className="mb-4">
           {addIndex && (
             <Tag
-              type={false ? "small_fill_violet_max" : "small_fill_gray_dark"}
+              type={"small_fill_gray_dark"} //false ? "small_fill_violet_max" :"small_fill_gray_dark"
               className="w-fit mb-2"
             >
-              {sectionIdx + 1}-{fieldIdx + 1}
+              {sectionIdx + 1}-
+              {startsWithImage && sectionIdx === 0 ? fieldIdx : fieldIdx + 1}
             </Tag>
           )}
           <h4 className="title-l-semibold flex flex-row gap-1 items-center">
@@ -75,13 +76,24 @@ const FormField = ({
             </h5>
           )}
           {inputField.canInputBlocked && (
-            <Radio options={["예", "아니오"]} className=" mt-3 w-56.5" />
+            <Controller
+              name={`${sectionIdx}.sectionData.${fieldIdx}.disabled`}
+              control={methods.control}
+              render={({ field }) => (
+                <FormRadio
+                  value={field.value} // 불리언 값
+                  setValue={field.onChange} // 클릭 시 실행
+                  options={[false, true]}
+                  className=" mt-3 w-56.5"
+                />
+              )}
+            />
           )}
         </div>
         {inputField.disableToggleDescription && (
           <div className="ml-auto mr-3">
             <Controller
-              name={`${sectionIdx}.${fieldIdx}.disabled`}
+              name={`${sectionIdx}.sectionData.${fieldIdx}.disabled`}
               control={methods.control}
               render={({ field }) => (
                 <CheckBox
@@ -102,7 +114,6 @@ const FormField = ({
             fieldIdx={fieldIdx}
             inputLine={inputLine}
             inputLineIdx={inputLineIdx}
-            startsWithImage={startsWithImage}
             setFormStruct={setFormStruct}
             key={`inputLine_${sectionIdx}_${inputLineIdx}`}
           />

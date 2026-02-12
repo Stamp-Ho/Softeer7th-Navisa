@@ -30,6 +30,7 @@ export type input = {
   changeRow?: boolean;
   isRequired?: boolean;
   disableTargets?: { true: number[]; false: number[] };
+  disableNextField?: boolean;
 };
 type formInputType =
   | "text"

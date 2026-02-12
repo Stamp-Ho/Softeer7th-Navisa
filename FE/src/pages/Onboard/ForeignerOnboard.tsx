@@ -28,7 +28,6 @@ const ForeignerOnboard = () => {
   const [isGettingOffer, setIsGettingOffer] = useState(true);
   //@ts-ignore
   const onSubmit = (data) => {
-    console.log(data);
     const param = {
       nationIdList: getLeafValues(data[0][0]),
       languageIdList: getLeafValues(data[0][1]),

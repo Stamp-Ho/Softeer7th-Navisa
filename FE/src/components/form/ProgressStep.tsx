@@ -23,7 +23,6 @@ const ProgressStep = ({
     name: [targetLabel],
     control,
   });
-  // console.log(targetData)
   const { totalCount, filledCount } = calculateOnlyInputs(targetData);
 
   const status =
@@ -33,7 +32,7 @@ const ProgressStep = ({
         ? "empty"
         : "inProgress";
 
-  const leafIndex = fieldIndex ?? sectionIndex;
+  const leafIndex = fieldIndex >= 0 ? fieldIndex : sectionIndex;
   return (
     <>
       <div className="flex flex-row gap-3 items-center body-l-medium cursor-pointer">

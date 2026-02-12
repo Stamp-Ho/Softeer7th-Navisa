@@ -4,11 +4,13 @@ import { useFormContext } from "react-hook-form";
 
 const ImageUploadInput = ({
   placeholder = "",
+  imageUrl,
   imageFile,
   setImageFile,
 }: {
   placeholder: string;
   isAgent?: boolean;
+  imageUrl?: string;
   imageFile: File | undefined;
   setImageFile: React.Dispatch<React.SetStateAction<File | undefined>>;
 }) => {
@@ -39,14 +41,21 @@ const ImageUploadInput = ({
       alert("JPG, JPEG, PNG 형식의 이미지만 업로드 가능합니다.");
       return;
     }
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
     let image = window.URL.createObjectURL(file);
-    setValue("0.0.values.0.image", true);
+    setValue("0.sectionData.0.values.0", true);
     setImagePreview(image);
     setImageFile(file);
   };
+
   useEffect(() => {
-    register("0.0.values.0.image");
-    setValue("0.0.values.0.image", "");
+    return () => {
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
+  useEffect(() => {
+    register("0.sectionData.0.values.0");
+    setValue("0.sectionData.0.values.0", "");
   }, []);
 
   return (
@@ -64,9 +73,9 @@ const ImageUploadInput = ({
           accept="image/png, image/jpeg, image/jpg"
         />
 
-        {imageFile !== undefined ? (
+        {imageFile !== undefined || imageUrl ? (
           <img
-            src={imagePreview} // 업로드된 이미지 미리보기
+            src={imagePreview || `https://cloudfront.navisa.site/${imageUrl}`} // 업로드된 이미지 미리보기
             alt="profile"
             className="w-full h-full object-cover"
           />

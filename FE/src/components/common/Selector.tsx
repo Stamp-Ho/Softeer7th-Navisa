@@ -19,7 +19,6 @@ const Selector = ({
   const disableTarget = (index: number) => {
     const parentName = name.split(".")[0];
 
-    console.log(`${parentName}.${parentName}.disabled`);
     if (index > 0) {
       disableTargets.true.forEach((id) => {
         const fieldPath = `${parentName}.${id}.disabled`;

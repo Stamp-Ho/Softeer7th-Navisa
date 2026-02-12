@@ -24,7 +24,6 @@ const ForeignerOnboardWidget = ({
   return (
     <div className="w-fit ml-4 left-0 mt-19.75 flex flex-row">
       <div className="flex flex-col w-92 gap-5 ">
-        <button type="submit">테스트</button>
         <Button type="primary" className="shadow">
           저장
         </Button>

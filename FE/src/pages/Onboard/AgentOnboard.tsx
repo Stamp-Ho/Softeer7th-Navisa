@@ -31,8 +31,6 @@ const AgentOnboard = () => {
 
   //@ts-ignore
   const onSubmit = async (data) => {
-    console.log(data);
-
     if (imageFile === undefined) {
       alert("프로필 이미지가 없습니다");
       return;
@@ -80,7 +78,6 @@ const AgentOnboard = () => {
         additionalHistory: data[2][3].values[0].additionalHistory,
       },
     };
-    console.log(param);
     updateProfileMutation.mutate(param);
     alert("등록 시도함!");
   };

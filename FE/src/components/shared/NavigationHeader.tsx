@@ -36,6 +36,9 @@ const NavigationHeader = () => {
       ? "text-text-base"
       : "text-text-sub";
 
+  const isUserCanAccessDoc = ["VALID_AGENT", "FILLED_FOREIGNER"].includes(
+    userType,
+  );
   return (
     <header
       className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${hasScroll && "ml-1 mr-3"}`}
@@ -73,10 +76,17 @@ const NavigationHeader = () => {
               <IcMessage />
               상담 메세지
             </Link>
-            <div className="flex flex-row items-center gap-2.25 mr-spacing-1100 body-l-semibold text-text-base cursor-pointer">
+            <Link
+              to={userType === "VALID_AGENT" ? "/documents" : "/document"}
+              onClick={(e) => {
+                if (!isUserCanAccessDoc) e.preventDefault();
+              }}
+              className={`flex flex-row items-center gap-2.25 mr-spacing-1100 body-l-semibold text-text-base
+                ${isUserCanAccessDoc ? " cursor-pointer" : " opacity-50 cursor-not-allowed"}`}
+            >
               <IcFile />
               비자서류 작성
-            </div>
+            </Link>
             <a className="cursor-pointer">
               <IcUserProfile />
             </a>

@@ -31,6 +31,24 @@ export interface RecentVisaFormsResponse {
   foreignerProfileImgUrl: string;
   lastModifiedAt: string;
 }
+export interface ApplicationFormResponse {
+  applicationFormId: string;
+  foreignerProfileImgUrl: string;
+  isDone: boolean;
+  updatedAt: string;
+  totalCount: number;
+  filledCount: number;
+  sections: Record<string, any>[];
+}
+export interface ApplicationFormRequest {
+  totalCount: number;
+  filledCount: number;
+  sections: any[];
+}
+export interface PostApplicationFormResponse {
+  visaFormId: string;
+  updatedAt: string;
+}
 
 // 스토리지
 export interface IssuePresignedUrlRequest {

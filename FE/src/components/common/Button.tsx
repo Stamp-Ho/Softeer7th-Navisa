@@ -7,10 +7,11 @@ interface ButtonProps {
     | "grayLine"
     | "gray"
     | "violetLine"
-    | "brightViolet";
+    | "brightViolet"
+    | "skeleton";
   size?: "tiny" | "small" | "medium" | "large" | "giant";
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
 }
@@ -25,7 +26,10 @@ const Button = ({
 }: ButtonProps) => {
   const getButtonStyle = () => {
     if (disabled) return "bg-gray-200 text-white cursor-not-allowed";
-    return "cursor-pointer " + (styles[type] || styles.lightGray);
+    return (
+      (type === "skeleton" ? "cursor-default " : "cursor-pointer ") +
+      (styles[type] || styles.lightGray)
+    );
   };
 
   return (
@@ -50,9 +54,10 @@ const styles = {
   lightGray: "bg-gray-50 text-text-base outline outline-border-light",
   primary: "bg-button-primary-bg text-text-inverse",
   grayLine: "bg-transparent outline outline-border-normal",
-  gray: "bg-gray-200 text-white rounded-[8px]",
+  gray: "bg-gray-200 text-white ",
   violetLine: "bg-violet-50 text-primary outline outline-violet-500",
   brightViolet: "bg-violet-50 text-primary",
+  skeleton: "bg-gray-100 ",
 };
 
 const sizes = {

@@ -1,6 +1,11 @@
 import type { BaseResponse } from "../types/common";
 import type { apiClientType } from "../../hooks/useApiClient";
-import type { RecentVisaFormsResponse } from "../types/etc";
+import type {
+  ApplicationFormRequest,
+  ApplicationFormResponse,
+  PostApplicationFormResponse,
+  RecentVisaFormsResponse,
+} from "../types/etc";
 
 // homeService.ts
 export const homeService = {
@@ -26,11 +31,33 @@ export const infoService = {
 
 // visaService.ts
 export const visaService = {
-  getRecentForms: (api: apiClientType, accessToken: string) =>
+  getRecentForms: (api: apiClientType) =>
     api.get<BaseResponse<RecentVisaFormsResponse[]>>(
-      "/api/visa-forms/recent-applications",
-      undefined,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+      "/api/application-forms/recent-applications",
+    ),
+  getApplicationForm: (api: apiClientType, formId: string) =>
+    api.get<BaseResponse<ApplicationFormResponse>>(
+      `/api/application-forms/agent/${formId}`,
+    ),
+  getForeignerMyForm: (api: apiClientType) =>
+    api.get<BaseResponse<ApplicationFormResponse>>(
+      `/api/application-forms/foreigner`,
+    ),
+  postApplicationForm: (
+    api: apiClientType,
+    formId: string,
+    data: ApplicationFormRequest,
+  ) =>
+    api.post<BaseResponse<PostApplicationFormResponse>>(
+      `/api/application-forms/${formId}`,
+      data,
+    ),
+  postApplicationFormImage: (api: apiClientType, formId: string, key: string) =>
+    api.post<BaseResponse<Record<string, string>>>(
+      `/api/application-forms/${formId}/image`,
+      {
+        profileObjectKey: key,
+      },
     ),
 };
 

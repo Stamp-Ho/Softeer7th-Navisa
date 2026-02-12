@@ -16,7 +16,6 @@ const FormInputLine = ({
   fieldIdx = 0,
   inputLine,
   inputLineIdx,
-  startsWithImage = false,
   setFormStruct,
 }: {
   inputField: inputFieldType;
@@ -24,40 +23,34 @@ const FormInputLine = ({
   fieldIdx: number;
   inputLine: inputLineType;
   inputLineIdx: number;
-  startsWithImage: boolean;
   setFormStruct: React.Dispatch<React.SetStateAction<FormSection[]>>;
 }) => {
   const { control, getValues, setValue } = useFormContext();
 
   const isFieldDisabled = useWatch({
     control,
-    name: `${sectionIdx}.${fieldIdx}.disabled`,
+    name: `${sectionIdx}.sectionData.${fieldIdx}.disabled`,
   });
 
   // 줄 추가
   const handleAddField = () => {
-    const subjectiveFieldIndex =
-      startsWithImage && sectionIdx === 0 ? fieldIdx + 1 : fieldIdx;
     setFormStruct((prev) => {
       // 1. 전체 구조 깊은 복사 (중첩 구조이므로 중요!)
       const newStruct = JSON.parse(JSON.stringify(prev));
+      const targetField = newStruct[sectionIdx].fields[fieldIdx];
 
       const newLine = {
-        ...newStruct[sectionIdx].fields[subjectiveFieldIndex].inputLines[0],
+        ...JSON.parse(JSON.stringify(targetField.inputLines[0])),
         rowId: Date.now(), // 고유 키 추가
       };
-      newStruct[sectionIdx].fields[subjectiveFieldIndex].inputLines.push(
-        newLine,
-      );
+      targetField.inputLines.push(newLine);
       return newStruct;
     });
   };
 
   // 줄 삭제
   const handleSubtractField = () => {
-    const subjectiveFieldIndex =
-      startsWithImage && sectionIdx === 0 ? fieldIdx + 1 : fieldIdx;
-    const path = `${sectionIdx}.${subjectiveFieldIndex}.values`; // 감시 중인 배열 경로
+    const path = `${sectionIdx}.sectionData.${fieldIdx}.values`; // 감시 중인 배열 경로
     const currentValues = getValues(path);
 
     // 1. 데이터 배열에서 해당 인덱스 삭제
@@ -70,8 +63,7 @@ const FormInputLine = ({
     });
     setFormStruct((prev) => {
       const newStruct = JSON.parse(JSON.stringify(prev));
-      const targetLines =
-        newStruct[sectionIdx].fields[subjectiveFieldIndex].inputLines;
+      const targetLines = newStruct[sectionIdx].fields[fieldIdx].inputLines;
 
       if (targetLines.length <= 1) return prev; // 최소 한 줄은 남기기
       targetLines.splice(inputLineIdx, 1); // 해당 인덱스 삭제
@@ -104,8 +96,7 @@ const FormInputLine = ({
     !inputField.addButtonAtFirstLine &&
     inputField.addButtonAtBelowLines &&
     inputLineIdx === inputField.inputLines.length - 1;
-
-  const colSpans = Array.from({ length: 9 }).map((_, i) => `col-span-${i + 1}`);
+  //Array.from({ length: 9 }).map((_, i) => `col-span-${i + 1}`);
   return (
     <div
       className="grid grid-cols-9 items-end gap-x-3 gap-y-6"
@@ -132,7 +123,7 @@ const FormInputLine = ({
             btnAfterThisInput = SubsBtn;
           }
         }
-        const inputLabel = `${sectionIdx}.${fieldIdx}.values.${inputLine.rowId ?? inputLineIdx}.${input.requestBodyName ?? inputIdx}`;
+        const inputLabel = `${sectionIdx}.sectionData.${fieldIdx}.values.${inputLine.rowId ?? inputLineIdx}.${input.requestBodyName ?? inputIdx}`;
 
         return (
           <React.Fragment key={`field_${inputIdx}`}>
@@ -173,3 +164,15 @@ const FormInputLine = ({
   );
 };
 export default FormInputLine;
+
+const colSpans = [
+  "col-span-1",
+  "col-span-2",
+  "col-span-3",
+  "col-span-4",
+  "col-span-5",
+  "col-span-6",
+  "col-span-7",
+  "col-span-8",
+  "col-span-9",
+];

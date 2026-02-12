@@ -1,9 +1,7 @@
-const Radio = ({
-  value = -1,
-  onChange = (_a: number) => {},
-  className = "",
-  options = [""],
-}) => {
+import { useState } from "react";
+
+const Radio = ({ className = "", options = [""] }) => {
+  const [value, setValue] = useState(-1);
   return (
     <div className={`h-14 flex flex-row ${className}`}>
       {options.map((opt, index) => (
@@ -14,7 +12,7 @@ const Radio = ({
             w-full flex items-center justify-center
             ${index === value ? "border-violet-200 bg-violet-50 text-primary z-0" : "text-text-sub  bg-white border-border-normal"}
           `}
-          onClick={() => onChange(index)}
+          onClick={() => setValue(index)}
         >
           {opt}
         </div>

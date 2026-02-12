@@ -17,6 +17,7 @@ export const editDocumentData: FormSection[] = [
                   "흰색 바탕에 모자를 쓰지 않은 정면 사진으로 촬영일로부터 6개월이 경과하지 않아야 함",
                 inputType: "image",
                 colSpan: 9,
+                requestBodyName: "profileImageUrl",
               },
             ],
           },
@@ -449,6 +450,7 @@ export const editDocumentData: FormSection[] = [
               {
                 inputType: "radio",
                 options: ["기혼", "이혼", "미혼"],
+                disableNextField: true,
               },
             ],
           },
@@ -504,13 +506,16 @@ export const editDocumentData: FormSection[] = [
         label: "자녀 유무",
         description: "Does the applicant have children?",
         getMany: false,
+        canInputBlocked: true,
         inputLines: [
           {
             inputs: [
               {
-                inputType: "radio",
-                colSpan: 2,
-                options: ["있음", "없음"],
+                inputType: "text",
+                inputDescription: "자녀 수",
+                englishDescription: "Number of Children",
+                colSpan: 3,
+                changeRow: true,
               },
             ],
           },
@@ -913,10 +918,10 @@ export const editDocumentData: FormSection[] = [
         description:
           "Did the applicant receive assistance in completing this form?",
         getMany: false,
+        canInputBlocked: true,
         inputLines: [
           {
             inputs: [
-              { inputType: "radio", colSpan: 2, options: ["예", "아니오"] },
               {
                 inputType: "text",
                 inputDescription: "성명",
@@ -956,10 +961,10 @@ export const editDocumentData: FormSection[] = [
         label: "초청인/초청회사",
         description: "Is there anyone inviting the applicant for the visa?",
         getMany: false,
+        canInputBlocked: true,
         inputLines: [
           {
             inputs: [
-              { inputType: "radio", options: ["예", "아니오"] },
               {
                 inputType: "text",
                 colSpan: 6,

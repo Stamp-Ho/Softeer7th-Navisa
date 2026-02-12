@@ -2,6 +2,8 @@ import React from "react";
 import type { FormSection } from "../../types/formType";
 import ProgressStep from "./ProgressStep";
 import Tag from "../common/Tag";
+import { calculateOnlyInputs } from "./utils/formUtils";
+import { useWatch } from "react-hook-form";
 
 const ProgressStepWidget = ({
   title,
@@ -9,7 +11,6 @@ const ProgressStepWidget = ({
   currentSectionId = 0,
   onSectionClick = (_a: number) => {},
   stepBySection = false,
-  elementBeforeSteps,
   elementAfterSteps,
 }: {
   title: string;
@@ -20,6 +21,7 @@ const ProgressStepWidget = ({
   elementBeforeSteps?: React.ReactNode;
   elementAfterSteps?: React.ReactNode;
 }) => {
+  const formInputs = useWatch();
   const fieldsPerSections = formData.flatMap(
     (section) => section.fields.length,
   );
@@ -31,12 +33,16 @@ const ProgressStepWidget = ({
     }
     return result;
   };
+  const { totalCount, filledCount } = calculateOnlyInputs(formInputs);
   return (
     <div className="shadow py-7 px-5 rounded-[20px] bg-white flex flex-col gap-5">
-      {elementBeforeSteps}
       <h3 className="title-s-bold flex flex-row gap-2">
         {title} 항목 현황
-        {stepBySection && <Tag type="small_fill_gray">{105}/138칸</Tag>}
+        {stepBySection && (
+          <Tag type="small_fill_gray">
+            {filledCount}/{totalCount}칸
+          </Tag>
+        )}
       </h3>
       {stepBySection ? (
         <div className="flex flex-col">

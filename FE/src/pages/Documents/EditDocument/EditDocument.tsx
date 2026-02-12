@@ -1,200 +1,197 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavisaForm from "../../../components/form/NavisaForm";
-import Button from "../../../components/common/Button";
-import ProgressStepWidget from "../../../components/form/ProgressStepWidget";
-import {
-  IcArrowUp,
-  IcDot,
-  IcDownload,
-  IcFile2,
-  IcGraduationThick,
-  IcLuggageThick,
-  IcMessage,
-  IcPassport,
-  IcPlus,
-} from "../../../assets/icon/StratisUi";
-import { useState } from "react";
+import { IcDot } from "../../../assets/icon/StratisUi";
 import { useDocumentScroll } from "./hooks/useDocumentScroll";
 import { editDocumentData } from "./constants";
+import { FormProvider, useForm } from "react-hook-form";
+import EditDocumentWidget from "./EditDocumentWidget";
+import { useEffect, useRef, useState } from "react";
+import { useApplicationFormQuery } from "../../../api/hooks/useApplicationFormQuery";
+import { useApplicationFormMutation } from "../../../api/hooks/useApplicationFormMutation";
+import { calculateOnlyInputs } from "../../../components/form/utils/formUtils";
+import { useUploadFormImage } from "../../../api/hooks/useUploadFormImage";
+import { useForeignerMyFormQuery } from "../../../api/hooks/useForeignerMyFormQuery";
 
-const informationMessage = [
-  "신청인은 사실에 근거하여 빠짐없이 정확하게 신청서를 작성하여야 합니다.",
-  "신청서상의 모든 질문에 대한 답변은 한글 또는 영문으로 기재하여야 합니다.",
-  "선택사항은 해당 칸을 선택하시길 바랍니다.",
-  "‘기타'를 선택한 경우, 상세내용을 기재하시기 바랍니다.",
-];
 const EditDocument = () => {
+  const navigate = useNavigate();
+  const { uploadFormImage } = useUploadFormImage();
   const { documentId } = useParams<{ documentId: string }>();
+
+  const agentQuery = useApplicationFormQuery(documentId ?? "", !!documentId);
+  const foreignerQuery = useForeignerMyFormQuery(!documentId);
+
+  const data = documentId ? agentQuery.data : foreignerQuery.data;
+  const isLoading = agentQuery.isLoading || foreignerQuery.isLoading;
+  const isError = agentQuery.isError || foreignerQuery.isError;
+
+  const postForm = useApplicationFormMutation(
+    data?.applicationFormId ?? documentId ?? "",
+    () => {
+      alert("저장되었습니다.");
+    },
+  );
+  const methods = useForm();
 
   const {
     scrollRef,
     handleScroll,
+    currentSectionIndex,
     goToSection,
     goTop,
-    currentSectionIndex,
     getMaskStyle,
   } = useDocumentScroll();
 
-  const [addedPassport, setAddedPassport] = useState(false);
-  const [addedDegree, setAddedDegree] = useState(false);
-  const [addedResume, setAddedResume] = useState(false);
+  const [imageFile, setImageFile] = useState<File | undefined>(undefined);
+  const [imageUrl, setImageUrl] = useState("");
+  const [formLayout, setFormLayout] = useState(editDocumentData);
 
-  const elementBeforeSteps = (
-    <>
-      <div>
-        <h4>서류 파일 업로드 {documentId}</h4>
-        <h5>
-          서류를 업로드하면, AI가 서류에 포함된 정보를 추출해 신청서 항목의
-          빈칸을 자동으로 채워줘요.
-        </h5>
-      </div>
-      <div className="flex flex-col gap-3">
-        <Button
-          type={addedPassport ? "brightViolet" : "grayLine"}
-          size="small"
-          className="flex justify-start items-center px-4 gap-1.5"
-          onClick={() => setAddedPassport((prev) => !prev)}
-        >
-          <IcPassport isActive={addedPassport} />
-          <div className="mr-auto">
-            {addedPassport ? (
-              <div className="flex flex-col items-start">
-                <h5 className="caption-s-regular text-gray-400">여권 사본</h5>
-                <a className="body-l-semiboid -mt-0.5">{"여권사본.png"}</a>
-              </div>
-            ) : (
-              <>여권 사본 추가하기</>
-            )}
-          </div>
-          <IcPlus color="black" />
-        </Button>
-        <Button
-          type={addedDegree ? "brightViolet" : "grayLine"}
-          size="small"
-          className="flex justify-start items-center px-4 gap-1.5"
-          onClick={() => setAddedDegree((prev) => !prev)}
-        >
-          <IcGraduationThick isActive={addedDegree} />
-          <div className="mr-auto">
-            {addedDegree ? (
-              <div className="flex flex-col items-start">
-                <h5 className="caption-s-regular text-gray-400">학위 증명서</h5>
-                <a className="body-l-semiboid -mt-0.5">{"학위증명서.png"}</a>
-              </div>
-            ) : (
-              <>학위 증명서 추가하기</>
-            )}
-          </div>
-          <IcPlus color="black" />
-        </Button>
-        <Button
-          type={addedResume ? "brightViolet" : "grayLine"}
-          size="small"
-          className="flex justify-start items-center px-4 gap-1.5"
-          onClick={() => setAddedResume((prev) => !prev)}
-        >
-          <IcLuggageThick isActive={addedResume} />
-          <div className="mr-auto">
-            {addedResume ? (
-              <div className="flex flex-col items-start">
-                <h5 className="caption-s-regular text-gray-400">이력서</h5>
-                <a className="body-l-semiboid -mt-0.5">{"이력서.png"}</a>
-              </div>
-            ) : (
-              <>이력서 추가하기</>
-            )}
-          </div>
-          <IcPlus color="black" />
-        </Button>
-      </div>
-      <div className="w-full pt-px -my-1 bg-border-normal" />
-    </>
-  );
-  const elementAfterSteps = (
-    <>
-      <div className="w-full pt-px -mb-1 bg-border-normal" />
-      <div className="grid grid-cols-2 gap-3">
-        <Button
-          type="grayLine"
-          className="flex items-center justify-center gap-2"
-        >
-          <IcFile2 /> PDF 미리보기
-        </Button>
-        <Button
-          type="grayLine"
-          className="flex items-center justify-center gap-2"
-        >
-          <IcDownload /> PDF 다운로드
-        </Button>
-      </div>
-    </>
-  );
+  const goBack = () => {
+    navigate("/", { replace: false });
+  };
 
+  const compareLocalAndServerData = () => {
+    //주소가 잘못되었거나 데이터를 받아오지 못한 경우, 뒤로가기
+    if (isError || !data) {
+      goBack();
+      return;
+    }
+    // 서버 데이터와 로컬 데이터 중 최근 저장된 데이터로 폼 초기화
+    let fresherData = data;
+    const localRawData = window.localStorage.getItem(data.applicationFormId);
+    if (localRawData && !data.isDone) {
+      try {
+        const localData = JSON.parse(localRawData);
+        const localTime = new Date(localData.updatedAt).getTime();
+        const serverTime = new Date(data.updatedAt).getTime();
+        fresherData = localTime > serverTime ? localData : data;
+      } catch {
+        // localStorage 데이터 손상 시 서버 데이터 사용
+        window.localStorage.removeItem(data.applicationFormId);
+      }
+    }
+
+    // 이미지 URL이 있으면 이미지를 입력한것으로 처리
+    const dataToApply = structuredClone(fresherData.sections);
+    if (data.foreignerProfileImgUrl !== null)
+      dataToApply[0].sectionData[0].values = [true];
+
+    // inputLine(추가 입력)을 적용하여 초기 폼 구조에 line 추가
+    const newStruct = structuredClone(editDocumentData);
+    Object.values(dataToApply).forEach((section, sectionIndex) => {
+      //@ts-ignore
+      section.sectionData.forEach(
+        (field: Record<string, any>, fieldIndex: number) => {
+          const targetField = newStruct[sectionIndex].fields[fieldIndex];
+          const tempField = field?.values ?? [];
+          for (let i = 1; i < tempField.length; i++) {
+            const newLine = {
+              ...JSON.parse(JSON.stringify(targetField.inputLines[0])),
+              rowId: i,
+            };
+            console.log(
+              `${sectionIndex}섹션 ${fieldIndex}에 ${i}번째 inputline추가!`,
+            );
+            targetField.inputLines.push(newLine);
+          }
+        },
+      );
+    });
+    setFormLayout(newStruct);
+    setImageUrl(data.foreignerProfileImgUrl || "");
+    methods.reset(dataToApply);
+  };
+
+  const hasInitialized = useRef(false);
+  useEffect(() => {
+    if (isLoading || hasInitialized.current) return;
+    hasInitialized.current = true;
+    compareLocalAndServerData();
+  }, [isLoading]);
+
+  const onSubmit = (formData: Record<number, any>) => {
+    const { totalCount, filledCount } = calculateOnlyInputs(formData);
+
+    if (imageFile !== undefined && data?.applicationFormId) {
+      uploadFormImage(data?.applicationFormId ?? documentId, imageFile);
+    }
+    const formValues = Object.values(formData);
+    const params = {
+      totalCount,
+      filledCount,
+      sections: formValues.map((section, i) => ({
+        sectionId: i + 1,
+        sectionData: section.sectionData.map((field: Record<string, any>) => ({
+          ...field,
+          values: Object.values(field.values),
+        })),
+      })),
+    };
+    console.log(params);
+    postForm.mutate(params);
+  };
+  const onError = (errors: any) => {
+    console.log("유효성 검사 실패:", errors);
+    alert("필수 입력 항목을 모두 채워주세요.");
+  };
+  if (isLoading) return <>loading...</>;
+  if (!data || isError) return <>오류가 발생했습니다</>;
   return (
-    <div className="flex flex-row overflow-y-auto w-fit">
-      <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className={`w-284 overflow-auto scrollbar-hide ${getMaskStyle()}`}
-        style={{ height: "calc(100vh - 100px)" }}
+    <FormProvider {...methods}>
+      <form
+        className="flex flex-row overflow-y-auto w-fit"
+        onSubmit={methods.handleSubmit(onSubmit, onError)}
       >
-        <div className="flex flex-col pb-15 pt-2.5">
-          <h2 className="headline-m-bold text-text-base mb-3">
-            비자 신청서 작성 (사증발급인정신청서)
-          </h2>
-          <a className="body-l-medium text-text-base mb-5">
-            직접 빈칸에 입력하거나 '서류 파일 업로드'를 통해 AI의 도움을
-            받아보세요.
-          </a>
-          <ul className="flex flex-col bg-green-bright body-l-medium text-green-vivid gap-1.5 rounded-[20px] py-7 px-5.25">
-            {informationMessage.map((text, idx) => (
-              <li
-                className="flex flex-row items-center gap-0.5"
-                key={`inform_${idx}`}
-              >
-                <IcDot size={16} color="var(--green-vivid)" />
-                {text}
-              </li>
-            ))}
-          </ul>
-          <NavisaForm
-            formData={editDocumentData}
-            addIndex={true}
-            startsWithImage={true}
-          />
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className={`w-284 overflow-auto scrollbar-hide ${getMaskStyle()}`}
+          style={{ height: "calc(100vh - 100px)" }}
+        >
+          <div className="flex flex-col pb-15 pt-12">
+            <h2 className="headline-m-bold text-text-base mb-3">
+              비자 신청서 작성 (사증발급인정신청서)
+            </h2>
+            <a className="body-l-medium text-text-base mb-5">
+              서류에 자필로 작성하는 대신, 직접 빈칸에 입력하여 편하게
+              사증발급인정신청서를 작성해보세요
+            </a>
+            <ul className="flex flex-col bg-green-bright body-l-medium text-green-vivid gap-1.5 rounded-[20px] py-7 px-5.25">
+              {informationMessage.map((text, idx) => (
+                <li
+                  className="flex flex-row items-center gap-0.5"
+                  key={`inform_${idx}`}
+                >
+                  <IcDot size={16} color="var(--green-vivid)" />
+                  {text}
+                </li>
+              ))}
+            </ul>
+            <NavisaForm
+              formData={formLayout}
+              addIndex={true}
+              startsWithImage={true}
+              imageUrl={imageUrl}
+              imageFile={imageFile}
+              setImageFile={setImageFile}
+            />
+          </div>
         </div>
-      </div>
-      <div className="w-fit ml-4 left-0 mt-7 flex flex-row">
-        <div className="flex flex-col w-92 gap-5 ">
-          <Button type="primary" className="drop-shadow-[0_0_7px_#6860A040]">
-            저장
-          </Button>
-          <ProgressStepWidget
-            title="신청서"
-            formData={editDocumentData}
-            currentSectionId={currentSectionIndex}
-            onSectionClick={goToSection}
-            stepBySection={true}
-            elementBeforeSteps={elementBeforeSteps}
-            elementAfterSteps={elementAfterSteps}
-          />
-        </div>
-        <div className="flex flex-col self-end">
-          <button
-            className="m-4 mt-auto rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-white w-16 h-16 flex items-center justify-center"
-            onClick={goTop}
-          >
-            <IcArrowUp size={20} />
-          </button>
-          <button
-            className="m-4 mt-auto rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-black w-16 h-16 flex items-center justify-center"
-            onClick={() => {}}
-          >
-            <IcMessage color="white" />
-          </button>
-        </div>
-      </div>
-    </div>
+        <EditDocumentWidget
+          editDocumentData={editDocumentData}
+          currentSectionIndex={currentSectionIndex}
+          goToSection={goToSection}
+          goTop={goTop}
+          documentId={data?.applicationFormId ?? documentId ?? ""}
+        />
+      </form>
+    </FormProvider>
   );
 };
 export default EditDocument;
+
+const informationMessage = [
+  "본 서비스는 신청서 작성 편의를 위한 보조 수단에 불과하며, 신청서에 기재된 내용의 정확성 및 법적 책임은 전적으로 작성자에게 있습니다.",
+  "신청서의 모든 질문에 대한 답변은 한글 또는 영문으로 작성해야 하며, 누락된 항목은 신청인이 자필로 작성해야 합니다.",
+  "행정사가 ‘내보내기’를 완료한 즉시 비자가 신청된 것으로 간주하며, 2주 후 의뢰의 완료 여부를 문의합니다.",
+  "화면에 보이지 않는 선택지는 내보내기 후 자필로 입력하시길 바랍니다.",
+];

@@ -28,6 +28,7 @@ type TagType =
   | "small_line"
   | "small_fill_icon"
   | "large_violet_off"
+  | "large_violet_off_bold"
   | "large_white_off"
   | "large_gray_off"
   | "large_violet_on_alarm"
@@ -36,7 +37,7 @@ type TagType =
 
 interface TagProps {
   as?: React.ElementType;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   type?: TagType;
   className?: string;
 }
@@ -64,6 +65,8 @@ const TAG_STYLES: Record<TagType, string> = {
     "bg-green-50 text-green-800 h-[25px] rounded-[20px] px-2 caption-l-medium",
   large_violet_off:
     "bg-violet-50-transpar text-violet-500 h-[44px] rounded-[20px] px-2 body-l-semibold",
+  large_violet_off_bold:
+    "bg-violet-50-transpar text-violet-500 h-[44px] rounded-[20px] px-2 body-l-bold",
   large_white_off: "bg-white h-[44px] rounded-[20px] px-2 body-l-semibold",
   large_gray_off:
     "bg-gray-100 text-text-base h-[44px] rounded-[8px] px-2 body-l-semibold",

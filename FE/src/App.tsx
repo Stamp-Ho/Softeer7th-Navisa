@@ -39,6 +39,7 @@ function App() {
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/documents" element={<Documents />} />
             <Route path="/document/:documentId" element={<EditDocument />} />
+            <Route path="/document" element={<EditDocument />} />
           </Routes>
         </div>
       </LocaleContextProvider>
