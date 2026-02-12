@@ -144,7 +144,7 @@ public class ChatRoomServiceFacade {
         validateChatRoomOwnership(user, chatRoom);
 
         chatRoomCommandService.updateStatus(chatRoom);
-        proposalService.updateStatusByChatRoomId(chatRoom.getId());
+        proposalService.updateStatusByChatRoomId(chatRoom.getId(), ProposalStatus.REJECTED);
         applicationCommandService.updateAgentProfileConnection(chatRoom);
     }
 

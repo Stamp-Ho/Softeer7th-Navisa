@@ -39,7 +39,7 @@ public class MessageHandlingController {
 
         log.debug("request {}", request);
 
-        chatServiceFacade.saveAndPublishMessage(senderId, request);
+        chatServiceFacade.saveAndPublishMessage(senderId, request, null);
 
         log.info("SEND 처리 완료");
     }

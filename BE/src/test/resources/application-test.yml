@@ -2,6 +2,8 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/test # IntegrationTestSupport에서 동적으로 덮어씌워짐
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
 
   data:
     redis:
@@ -19,9 +21,7 @@ spring:
         use_sql_comments: true
 
   flyway:
-    enabled: true
-    baseline-on-migrate: true
-    baseline-version: 0
+    enabled: false
 
 logging:
   level:

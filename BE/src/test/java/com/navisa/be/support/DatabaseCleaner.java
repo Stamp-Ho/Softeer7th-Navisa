@@ -6,6 +6,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.metamodel.EntityType;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,16 +22,16 @@ public class DatabaseCleaner implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        // @Table 어노테이션이 명시적으로 붙은 엔티티만 필터링
         tableNames = entityManager.getMetamodel().getEntities().stream()
                 .map(EntityType::getJavaType)
+                .filter(javaType -> !javaType.getName().contains("$"))
                 .filter(javaType -> javaType.getAnnotation(Table.class) != null)
                 .map(javaType -> javaType.getAnnotation(Table.class).name())
-                .filter(name -> !name.isEmpty()) // name 속성이 비어있지 않은 것만
+                .filter(name -> !name.isEmpty())
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void execute() {
         entityManager.flush();
         

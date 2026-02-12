@@ -18,9 +18,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDate;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -64,17 +62,11 @@ class StorageControllerTest extends IntegrationTestSupport {
         String accessToken = jwtProvider.createAccessToken("email");
 
         // when & then
-
-        // objectKey가 기대하는 값인지 확인하기 위해 생성
-        LocalDate now = LocalDate.now();
-        String datePath = String.format("%d/%02d/%02d", now.getYear(), now.getMonthValue(), now.getDayOfMonth());
-
         mockMvc.perform(post("/api/storage/presigned-url")
                         .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.result.url").value("https://test-bucket.s3.amazonaws.com/test"))
-                        .andExpect(jsonPath("$.result.objectKey").value(containsString(datePath)));
+                        .andExpect(jsonPath("$.result.url").value("https://test-bucket.s3.amazonaws.com/test"));
     }
 }

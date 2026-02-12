@@ -100,7 +100,7 @@ class ChatRoomCommandServiceTest extends IntegrationTestSupport {
         // when & then
         assertThatThrownBy(() -> chatRoomCommandService.create(request, agentuser.getEmail()))
                 .isInstanceOf(ChatRoomException.class)
-                .hasMessage(ResponseStatus.CHATROOM_ALREADY_EXIST.getMessage());
+                .hasMessage(ResponseStatus.CHATROOM_ALREADY_EXISTS.getMessage());
     }
 
 }

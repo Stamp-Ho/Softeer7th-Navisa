@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.net.URL;
-import java.time.LocalDate;
 
 import com.navisa.be.storage.model.enums.StorageLocation;
 import com.navisa.be.storage.dto.request.IssuePresignedUrlRequest;
@@ -65,7 +64,7 @@ class AwsS3StorageServiceTest {
         IssuePresignedUrlResponse response = awsS3StorageService.issuePresignedUrl(request);
         // then
         assertThat(response.url()).contains(url);
-        assertThat(response.objectKey()).startsWith(directory + "/" + objectKeyRoot + "/" + LocalDate.now().getYear());
+        assertThat(response.objectKey()).startsWith(directory + "/" + objectKeyRoot);
         verify(s3Presigner, times(1)).presignPutObject(any(PutObjectPresignRequest.class));
     }
 
@@ -138,7 +137,7 @@ class AwsS3StorageServiceTest {
     void getPresignedUrl_fromS3_shouldReturnUrl_whenValidRequest() throws Exception {
         // given
         ImageSize size = ImageSize.ORIGIN;
-        String objectKey = "foreigner-identity/origin/2024/01/01/test-uuid.jpg";
+        String objectKey = "foreigner-identity/origin/test-uuid.jpg";
         String expectedUrl = "https://test-bucket.s3.amazonaws.com/" + objectKey;
 
         PresignedGetObjectRequest mockPresignedRequest = mock(PresignedGetObjectRequest.class);
@@ -173,7 +172,7 @@ class AwsS3StorageServiceTest {
         // given
         ImageSize size = ImageSize.ORIGIN;
         // StorageLocation.AGENT_PROFILE_IMAGE.getDirectory()는 "agent-profile"
-        String agentProfileKey = "agent-profile/origin/2024/01/01/test-uuid.jpg";
+        String agentProfileKey = "agent-profile/origin/test-uuid.jpg";
 
         // when & then
         assertThatThrownBy(() -> awsS3StorageService.getPresignedUrlFromS3(size, agentProfileKey))
@@ -187,7 +186,7 @@ class AwsS3StorageServiceTest {
     void getPresignedUrl_fromS3_shouldThrowException_whenS3ExceptionOccurs() {
         // given
         ImageSize size = ImageSize.ORIGIN;
-        String objectKey = "foreigner-identity/origin/2024/01/01/test-uuid.jpg";
+        String objectKey = "foreigner-identity/origin/test-uuid.jpg";
 
         when(s3Presigner.presignGetObject((GetObjectPresignRequest) any()))
                 .thenThrow(software.amazon.awssdk.services.s3.model.S3Exception.builder()

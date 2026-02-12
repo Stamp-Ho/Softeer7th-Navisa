@@ -1,7 +1,7 @@
 package com.navisa.be.support;
 
 import com.navisa.be.support.config.MockAwsConfig;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -40,7 +40,7 @@ public abstract class IntegrationTestSupport {
     @Autowired
     DatabaseCleaner databaseCleaner;
 
-    @AfterEach
+    @BeforeEach
     void cleanupDatabase() {
         databaseCleaner.execute();
     }

@@ -30,7 +30,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
@@ -42,7 +41,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @Transactional
 class ForeignerServiceFacadeTest extends IntegrationTestSupport {
@@ -180,10 +178,8 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
         Nationality nationality = nationalityRepository.save(new Nationality(null, "USA"));
 
         // JobCode 데이터 준비 (2개만 저장 -> 3개 미만이므로 예외 발생 예상)
-        jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J001", "Job 1",
-                new float[512], null));
-        jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J002", "Job 2",
-                new float[512], null));
+        jobCodeRepository.save(new JobCode(null, "J001", "Job 1", new float[512], null));
+        jobCodeRepository.save(new JobCode(null, "J002", "Job 2", new float[512], null));
 
         ForeignerRegisterRequest request = ForeignerFixture.createForeignerRegisterRequest(
                 List.of(nationality.getId()),

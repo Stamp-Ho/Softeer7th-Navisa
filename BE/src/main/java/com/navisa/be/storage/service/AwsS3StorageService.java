@@ -154,16 +154,9 @@ public class AwsS3StorageService implements StorageService {
     }
 
     private String generateObjectKey(StorageLocation location, String extension) {
-        LocalDate now = LocalDate.now();
         String uuid = UUID.randomUUID().toString();
 
-        String datePath = String.format(
-                "%d/%02d/%02d",
-                now.getYear(),
-                now.getMonthValue(),
-                now.getDayOfMonth());
-
-        return String.format("%s/" + ImageSize.ORIGIN.getPath() + "/%s/%s.%s", location.getDirectory(), datePath, uuid,
+        return String.format("%s/" + ImageSize.ORIGIN.getPath() + "/%s.%s", location.getDirectory(), uuid,
                 extension);
     }
 }

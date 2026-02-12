@@ -52,6 +52,8 @@ public enum ResponseStatus {
     REVIEWED_AGENT_NOT_FOUND(404, "해당 리뷰와 연결된 행정사 프로필 정보를 찾을 수 없습니다."),
     AGENT_NOT_APPROVED(403, "승인되지 않은 행정사입니다."),
     NOT_FOUND_MATCHER_FOREIGNER(404, "조건에 맞는 새로운 의뢰인이 없습니다. 전문 분야를 추가하여 새로운 외국인을 찾아보세요."),
+    NOT_FOUND_CHATROOM(404, "채팅방을 찾을 수 없습니다"),
+    NOT_FOUND_PROPOSAL(404, "수임 제안을 찾을 수 없습니다."),
     AGENT_NOT_FOUND(404, "행정사 프로필 정보를 찾을 수 없습니다."),
     NOT_ALLOWED_TO_REVIEW(400, "1차 내보내기 전에는 리뷰를 작성할 수 없습니다"),
     VISA_APP_FORM_NOT_FOUND(404, "비자신청서를 찾을 수 없습니다"),
@@ -60,11 +62,12 @@ public enum ResponseStatus {
     FORBIDDEN_ACCESS(403, "허용되지 않는 접근입니다"),
     FINISH_CONDITION_NOT_MET(400, "메일이 발송된 지 3일이 지나야 강제 종료가 가능합니다"),
     ALREADY_FINISHED(400, "이미 종료된 건입니다"),
+    CHATROOM_NOT_FOUND(404, "존재하지 않는 채팅방입니다"),
     INVALID_CHATTING_SESSION(401, "채팅 세션가 올바르지 않습니다"),
     REVIEW_NOT_FOUND(404, "존재하지 않는 리뷰 정보입니다."),
     FEEDBACK_ALREADY_EXISTS(400, "이미 해당 리뷰에 대한 피드백이 등록되었습니다."),
-    CHATROOM_ALREADY_EXIST(400, "이미 채팅방이 존재합니다"),
-    NOT_FOUND_CHATROOM(404, "채팅방을 찾을 수 없습니다"),
+    CHATROOM_ALREADY_EXISTS(400, "이미 채팅방이 존재합니다"),
+    PROPOSAL_ALREADY_EXISTS(400, "해당 수임 제안이 존재합니다."),
 
     /**
      * 서버 에러 (500번대)

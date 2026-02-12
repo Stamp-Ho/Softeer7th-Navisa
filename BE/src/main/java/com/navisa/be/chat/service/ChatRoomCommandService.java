@@ -53,7 +53,7 @@ public class ChatRoomCommandService {
 
         // 방이 있으면 예외
         if (chatRoomQueryService.existsByAgentIdAndForeignerId(agentProfile.getId(), foreignerProfile.getId())) {
-            throw new ChatRoomException(ResponseStatus.CHATROOM_ALREADY_EXIST);
+            throw new ChatRoomException(ResponseStatus.CHATROOM_ALREADY_EXISTS);
         }
 
         // 방을 생성
@@ -64,7 +64,7 @@ public class ChatRoomCommandService {
         }
         catch (DataIntegrityViolationException e) {
             log.warn("채팅방 동시 생성 시도 발생: agent={}, foreigner={}", agentProfile.getId(), foreignerProfile.getId());
-            throw new ChatRoomException(ResponseStatus.CHATROOM_ALREADY_EXIST);
+            throw new ChatRoomException(ResponseStatus.CHATROOM_ALREADY_EXISTS);
         }
 
         // 메시지를 저장

@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.UUID;
 
@@ -24,21 +27,30 @@ public class ChatServiceFacade {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ChatRoomQueryService chatRoomQueryService;
 
-    public void saveAndPublishMessage(UUID senderId, ChatMessageRequest request) {
-        ChatRoom chatRoom = chatRoomQueryService.findByIdWithProfiles(request.roomId());
-        UUID senderProfileId = getSenderProfileId(chatRoom, senderId);
-        ChatMessage chatMessage = chatMessageService.create(chatRoom, senderProfileId, request);
+    @Transactional
+    public void saveAndPublishMessage(UUID senderId, ChatMessageRequest request, ChatRoom chatRoom) {
+        final ChatRoom finalChatRoom = (chatRoom != null)
+                ? chatRoom
+                : chatRoomQueryService.findByIdWithProfiles(request.roomId());
+        UUID senderProfileId = getSenderProfileId(finalChatRoom, senderId);
+        ChatMessage chatMessage = chatMessageService.create(finalChatRoom, senderProfileId, request);
 
-        // 송신자의 채널에 에코
-        log.debug("senderId {}", senderId);
-        ChatMessageResponse echoResponse = ChatMessageResponse.entityToDto(chatMessage, request, senderId);
-        redisTemplate.convertAndSend("user:ch:" + senderId, echoResponse);
+        // Redis 발행은 트랜잭션 커밋 후 실행
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                // 송신자의 채널에 에코
+                log.debug("senderId {}", senderId);
+                ChatMessageResponse echoResponse = ChatMessageResponse.entityToDto(chatMessage, request, senderId);
+                redisTemplate.convertAndSend("user:ch:" + senderId, echoResponse);
 
-        // 수신자의 채널에 발행
-        UUID receiverId = getReceiverId(senderId, chatRoom);
-        log.debug("receiverId {}", receiverId);
-        ChatMessageResponse response = ChatMessageResponse.entityToDto(chatMessage, request, receiverId);
-        redisTemplate.convertAndSend("user:ch:" + receiverId, response);
+                // 수신자의 채널에 발행
+                UUID receiverId = getReceiverId(senderId, finalChatRoom);
+                log.debug("receiverId {}", receiverId);
+                ChatMessageResponse response = ChatMessageResponse.entityToDto(chatMessage, request, receiverId);
+                redisTemplate.convertAndSend("user:ch:" + receiverId, response);
+            }
+        });
     }
 
     private UUID getSenderProfileId(ChatRoom chatRoom, UUID senderId) {
