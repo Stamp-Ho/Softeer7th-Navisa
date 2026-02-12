@@ -9,6 +9,7 @@ public record VisaApplicationCardResponse(
         UUID applicationFormId,
         String title,
         Integer currentStep,
+        Integer totalCount,
         String foreignerProfileImgUrl,
         LocalDateTime lastModifiedAt
 ) {
@@ -17,6 +18,7 @@ public record VisaApplicationCardResponse(
                 projection.id(),
                 projection.nickname(),
                 projection.currentStep(),
+                projection.totalCount(),
                 profileImgUrl,
                 projection.updatedAt()
         );

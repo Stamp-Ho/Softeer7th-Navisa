@@ -39,6 +39,7 @@ public class ApplicationFormRepositoryImpl implements ApplicationFormRepositoryQ
                         visaApplicationForm.id,
                         foreignerProfile.nickname,
                         visaApplicationForm.currentStep,
+                        visaApplicationForm.totalCount,
                         visaApplicationForm.profileObjectKey,
                         visaApplicationForm.updatedAt
                 ))

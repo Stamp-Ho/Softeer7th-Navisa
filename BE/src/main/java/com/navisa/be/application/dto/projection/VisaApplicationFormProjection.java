@@ -7,6 +7,7 @@ public record VisaApplicationFormProjection(
         UUID id,
         String nickname,
         Integer currentStep,
+        Integer totalCount,
         String profileObjectKey,
         LocalDateTime updatedAt
 ) {

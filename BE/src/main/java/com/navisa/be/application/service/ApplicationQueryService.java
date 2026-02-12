@@ -105,9 +105,13 @@ public class ApplicationQueryService {
 
         List<Map<String, Object>> sections = mergeSections(form);
 
+        String profileImgUrl = (form.getProfileObjectKey() != null)
+                ? awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, form.getProfileObjectKey())
+                : null;
+
         return new VisaApplicationDetailResponse(
                 form.getId(),
-                form.getProfileObjectKey(),
+                profileImgUrl,
                 form.isDone(),
                 form.getUpdatedAt(),
                 form.getTotalCount(),
@@ -130,9 +134,13 @@ public class ApplicationQueryService {
             throw new ApplicationException(ResponseStatus.FORBIDDEN);
         }
 
+        String profileImgUrl = (form.getProfileObjectKey() != null)
+                ? awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, form.getProfileObjectKey())
+                : null;
+
         return new VisaApplicationDetailResponse(
                 form.getId(),
-                form.getProfileObjectKey(),
+                profileImgUrl,
                 form.isDone(),
                 form.getUpdatedAt(),
                 form.getTotalCount(),

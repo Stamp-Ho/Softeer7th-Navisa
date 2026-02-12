@@ -195,11 +195,13 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         User foreignerUser = saveUser("foreigner@test.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(foreignerUser.getId(), ForeignerSearchStatus.REQUESTING));
 
+        String dummyObjectKey = "visa/profile/dummy.png";
         VisaApplicationForm form = visaApplicationFormFixture.createVisaApplicationForm(
                 defaultAgent, foreigner, defaultJobCode, false);
 
         ReflectionTestUtils.setField(form, "currentStep", 80);
-        visaApplicationFormRepository.saveAndFlush(form); // DB에 즉시 반영
+        ReflectionTestUtils.setField(form, "profileObjectKey", dummyObjectKey);
+        visaApplicationFormRepository.saveAndFlush(form);
 
         em.flush();
         em.clear();
@@ -210,14 +212,17 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         // then
         assertThat(result).isNotNull();
         assertThat(result.applicationFormId()).isEqualTo(form.getId());
-        assertThat(result.filledCount()).isEqualTo(80); // 이제 80으로 정상 조회됩니다.
+        assertThat(result.filledCount()).isEqualTo(80);
+
+        assertThat(result.foreignerProfileImgUrl()).contains("http");
+        assertThat(result.sections()).hasSize(9);
     }
 
     @DisplayName("다른 행정사가 담당하는 비자 신청서를 조회하려고 하면 FORBIDDEN 예외가 발생한다.")
     @Test
     void getVisaFormForAgent_Forbidden_Fail() {
         // given
-        // 1번 행정사 (조회 시도자) - defaultAgent 사용
+        // 1번 행정사 (조회 시도자)
         // 2번 행정사 (실제 담당자)
         User ownerUser = saveUser("owner@test.com", UserType.VALID_AGENT);
         AgentProfile ownerAgent = saveAgentProfile(ownerUser.getId());
@@ -268,6 +273,7 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
                     defaultAgent, foreigner, defaultJobCode, isDone);
 
             ReflectionTestUtils.setField(form, "currentStep", 10 + i);
+            ReflectionTestUtils.setField(form, "totalCount", 50);
             ReflectionTestUtils.setField(form, "profileObjectKey", "visa/profile/dummy.png");
             visaApplicationFormRepository.save(form);
 
@@ -309,6 +315,9 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         assertThat(response.content().get(0).currentStep()).isEqualTo(10 + 10);
         assertThat(response.content().get(1).currentStep()).isEqualTo(10 + 8);
         assertThat(response.content().get(2).currentStep()).isEqualTo(10 + 6);
+        assertThat(response.content().get(0).totalCount()).isEqualTo(50);
+        assertThat(response.content().get(1).totalCount()).isEqualTo(50);
+        assertThat(response.content().get(2).totalCount()).isEqualTo(50);
     }
 
     @DisplayName("행정사는 자신에게 배정되지 않은 비자 신청서를 목록 조회에서 볼 수 없다.")
@@ -324,8 +333,9 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
                 .save(new ForeignerProfile(UUID.randomUUID(), null));
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수활동", null, null));
 
-        visaApplicationFormRepository
-                .save(new VisaApplicationForm(otherAgent, otherForeigner, jobCode, false, 150, 50));
+        visaApplicationFormRepository.save(
+                new VisaApplicationForm(otherAgent, otherForeigner, jobCode, false, 150, 50)
+        );
 
         em.flush();
         em.clear();
