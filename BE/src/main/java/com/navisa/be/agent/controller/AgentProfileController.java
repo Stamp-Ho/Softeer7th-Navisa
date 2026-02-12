@@ -1,9 +1,6 @@
 package com.navisa.be.agent.controller;
 
-import com.navisa.be.agent.dto.request.AgentCardRequest;
-import com.navisa.be.agent.dto.request.CreateAgentReviewRequest;
-import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
-import com.navisa.be.agent.dto.request.RegisterAgentProfileRequest;
+import com.navisa.be.agent.dto.request.*;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.GetJobCodeListResponse;
 import com.navisa.be.agent.service.*;
@@ -93,6 +90,18 @@ public class AgentProfileController {
     public BaseResponse<Void> createAgentReview(@Valid @RequestBody CreateAgentReviewRequest request,
                                                 @Parameter(hidden = true) @LoginUser String loginUserEmail){
         agentReviewService.createAgentReview(loginUserEmail, request);
+        return new BaseResponse<>(null);
+    }
+
+    @Operation(
+            summary = "외국인의 행정사 피드백 등록 API",
+            description = "리뷰 작성 후, 해당 계약 건에 대해 구체적인 피드백 내용을 등록합니다."
+    )
+    @HasUserType(UserType.FILLED_FOREIGNER)
+    @PostMapping("/feedback")
+    public BaseResponse<Void> createAgentFeedback(@Valid @RequestBody CreateAgentFeedbackRequest request,
+                                                  @Parameter(hidden = true) @LoginUser String loginUserEmail) {
+        agentReviewService.createAgentFeedback(loginUserEmail, request.content());
         return new BaseResponse<>(null);
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
@@ -18,14 +19,18 @@ public class VisaApplicationFormTestFixture {
     private final ApplicationFormRepository applicationFormRepository;
 
     public VisaApplicationForm createVisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
-                                                         JobCode jobCode, boolean isDone) {
+                                                                 JobCode jobCode, boolean isDone) {
         VisaApplicationForm form = new VisaApplicationForm(
                 agentProfile,
                 foreignerProfile,
                 jobCode,
                 isDone,
                 150,
-                0);
+                10);
+
+        Map<String, Object> mockData = Map.of("name", "John Doe", "birth", "1990-01-01");
+        ReflectionTestUtils.setField(form, "personalDetail", mockData);
+        ReflectionTestUtils.setField(form, "passportInformation", Map.of("passportNo", "M1234567"));
 
         if (isDone) {
             ReflectionTestUtils.setField(form, "exportedAt", LocalDateTime.now());

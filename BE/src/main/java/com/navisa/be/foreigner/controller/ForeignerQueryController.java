@@ -7,12 +7,8 @@ import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.common.dto.response.BaseResponse;
 import com.navisa.be.common.dto.response.SliceResponse;
 import com.navisa.be.foreigner.dto.request.ForeignerCardRequest;
-import com.navisa.be.foreigner.dto.response.ForeignerCardExtensionResponse;
+import com.navisa.be.foreigner.dto.response.*;
 import com.navisa.be.foreigner.dto.request.FindForeignerDetailCommand;
-import com.navisa.be.foreigner.dto.response.FindForeignerDetailResponse;
-import com.navisa.be.foreigner.dto.response.ForeignerCardResponse;
-import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
-import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.foreigner.service.ForeignerServiceFacade;
 import com.navisa.be.user.model.enums.UserType;
@@ -90,5 +86,16 @@ public class ForeignerQueryController {
         FindForeignerDetailCommand request = new FindForeignerDetailCommand(loginUserEmail, foreignerId);
         FindForeignerDetailResponse response = foreignerQueryService.findForeignerDetail(request);
         return new BaseResponse<>(response);
+    }
+
+    @Operation(
+            summary = "외국인 진행 상태 조회",
+            description = "현재 로그인한 외국인의 매칭, 리뷰 작성, 피드백 작성 및 수임 완료 상태를 리스트로 조회합니다."
+    )
+    @HasUserType({UserType.FILLED_FOREIGNER})
+    @GetMapping("/progress")
+    public BaseResponse<ForeignerProgressResponse> getForeignerProgress(
+            @Parameter(hidden = true) @LoginUser String email) {
+        return new BaseResponse<>(foreignerQueryService.getForeignerProgress(email));
     }
 }

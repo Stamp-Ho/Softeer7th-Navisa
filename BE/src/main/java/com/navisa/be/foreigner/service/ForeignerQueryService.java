@@ -1,8 +1,14 @@
 package com.navisa.be.foreigner.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.agent.model.entity.AgentReview;
 import com.navisa.be.agent.repository.AgentProfileRepository;
+import com.navisa.be.agent.repository.AgentReviewRepository;
 import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.application.repository.ApplicationFormRepository;
+import com.navisa.be.chat.model.entity.Proposal;
+import com.navisa.be.chat.model.enums.ProposalStatus;
+import com.navisa.be.chat.repository.ProposalRepository;
 import com.navisa.be.common.dto.request.SliceRequest;
 import com.navisa.be.common.dto.response.SliceResponse;
 import com.navisa.be.chat.model.entity.ChatRoom;
@@ -14,13 +20,9 @@ import com.navisa.be.foreigner.dto.ForeignerCardQueryDto;
 import com.navisa.be.foreigner.dto.ForeignerCareerDto;
 import com.navisa.be.foreigner.dto.ForeignerEducationDto;
 import com.navisa.be.foreigner.dto.ForeignerExpectedCompanyDto;
-import com.navisa.be.foreigner.dto.response.ForeignerCardExtensionResponse;
+import com.navisa.be.foreigner.dto.response.*;
 import com.navisa.be.foreigner.dto.*;
 import com.navisa.be.foreigner.dto.request.FindForeignerDetailCommand;
-import com.navisa.be.foreigner.dto.response.FindForeignerDetailResponse;
-import com.navisa.be.foreigner.dto.response.ForeignerCardResponse;
-import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
-import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
 import com.navisa.be.foreigner.exception.ForeignerException;
 import com.navisa.be.foreigner.model.entity.*;
 import com.navisa.be.foreigner.model.enums.EducationDegreeLevel;
@@ -34,6 +36,7 @@ import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
 import com.navisa.be.user.service.UserQueryService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +61,9 @@ public class ForeignerQueryService {
     private final AgentProfileQueryService agentProfileQueryService;
     private final AgentProfileRepository agentProfileRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ProposalRepository proposalRepository;
+    private final AgentReviewRepository agentReviewRepository;
+    private final ApplicationFormRepository applicationFormRepository;
 
     public ForeignerQueryResponse findForeignerTotalInfo(UUID userId) {
         ForeignerProfile profile = foreignerProfileRepository.findByUserIdWithNationalitiesAndLanguages(userId)
@@ -250,5 +256,35 @@ public class ForeignerQueryService {
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
 
         return profile.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public ForeignerProgressResponse getForeignerProgress(String email) {
+        User user = userQueryService.findByEmail(email);
+
+        ForeignerProfile profile = foreignerProfileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+
+        List<Proposal> latestProposalOpt = proposalRepository.findLatestMatchedProposal(
+                profile.getId(),
+                List.of(ProposalStatus.MATCHED, ProposalStatus.COMPLETED),
+                PageRequest.of(0, 1)
+        );
+
+        // 매칭된 제안이 없는 경우 모두 false 반환
+        if (latestProposalOpt.isEmpty()) {
+            return new ForeignerProgressResponse(false, false, false, false, null);
+        }
+
+        Proposal proposal = latestProposalOpt.get(0);
+
+        UUID matchedAgentId = proposal.getChatRoom().getAgentProfile().getId();
+
+        Optional<AgentReview> reviewOpt = agentReviewRepository.findByProposalId(proposal.getId());
+        boolean isReview = reviewOpt.isPresent();
+        boolean isFeedback = reviewOpt.map(r -> r.getFeedbackContent() != null).orElse(false);
+        boolean isFinished = applicationFormRepository.existsByForeignerProfileIdAndAgentProfileIdAndIsFinishedTrue(profile.getId(), matchedAgentId);
+
+        return new ForeignerProgressResponse(isReview, isFeedback, isFinished, true, proposal.getChatRoom().getId());
     }
 }

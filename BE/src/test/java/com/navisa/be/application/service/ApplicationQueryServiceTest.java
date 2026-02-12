@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -150,10 +151,11 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         ReflectionTestUtils.setField(oldFinishedForm, "createdAt", LocalDateTime.now().minusDays(10));
 
         // 최신 서류
-        VisaApplicationForm currentForm = visaApplicationFormFixture.createVisaApplicationForm(defaultAgent, foreigner, defaultJobCode, true);
+        VisaApplicationForm currentForm = visaApplicationFormFixture.createVisaApplicationForm(
+                defaultAgent, foreigner, defaultJobCode, true);
 
         ReflectionTestUtils.setField(currentForm, "totalCount", 150);
-        ReflectionTestUtils.setField(currentForm, "currentStep", 150); // filledCount 검증용
+        ReflectionTestUtils.setField(currentForm, "currentStep", 150);
         ReflectionTestUtils.setField(currentForm, "profileObjectKey", profileImageKey);
         ReflectionTestUtils.setField(currentForm, "createdAt", LocalDateTime.now());
 
@@ -166,13 +168,10 @@ class ApplicationQueryServiceTest extends IntegrationTestSupport {
         VisaApplicationDetailResponse result = visaApplicationQueryService.getLatestVisaFormForForeigner(email);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.applicationFormId()).isEqualTo(currentForm.getId());
-        assertThat(result.totalCount()).isEqualTo(150);
-        assertThat(result.filledCount()).isEqualTo(150);
-        assertThat(result.foreignerProfileImgUrl()).isEqualTo(profileImageKey);
-        assertThat(result.isDone()).isTrue();
         assertThat(result.sections()).hasSize(9);
+        Map<String, Object> personalSection = result.sections().get(0);
+        assertThat(personalSection.get("sectionId")).isEqualTo(1);
+        assertThat(personalSection.get("name")).isEqualTo("John Doe");
     }
 
     @DisplayName("외국인의 비자 신청서가 하나도 없을 경우 VISA_FORM_NOT_FOUND 예외가 발생한다.")

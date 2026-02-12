@@ -51,4 +51,8 @@ public class AgentReview extends BaseEntity {
         this.foreignerProfileId = foreignerProfileId;
         this.proposalId = proposalId;
     }
+
+    public void updateFeedback(String content) {
+        this.feedbackContent = content;
+    }
 }

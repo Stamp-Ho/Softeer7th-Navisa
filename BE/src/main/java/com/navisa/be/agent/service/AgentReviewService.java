@@ -14,6 +14,7 @@ import com.navisa.be.application.model.entity.VisaApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.entity.Proposal;
+import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.chat.repository.ProposalRepository;
 import com.navisa.be.common.model.enums.ResponseStatus;
@@ -26,6 +27,7 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,5 +128,33 @@ public class AgentReviewService {
                 relativeRatios
         );
         eventPublisher.publishEvent(reviewCreatedSpecializedJobEvent);
+    }
+
+    @Transactional
+    public void createAgentFeedback(String email, String content) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AgentException(ResponseStatus.USER_INVALID));
+
+        ForeignerProfile profile = foreignerProfileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_FOREIGNER));
+
+        List<Proposal> proposals = proposalRepository.findLatestMatchedProposal(
+                profile.getId(),
+                List.of(ProposalStatus.MATCHED, ProposalStatus.COMPLETED),
+                PageRequest.of(0, 1)
+        );
+
+        Proposal proposal = proposals.stream()
+                .findFirst()
+                .orElseThrow(() -> new AgentException(ResponseStatus.PROPOSAL_NOT_FOUND));
+
+        AgentReview agentReview = agentReviewRepository.findByProposalId(proposal.getId())
+                .orElseThrow(() -> new AgentException(ResponseStatus.REVIEW_NOT_FOUND));
+
+        if (agentReview.getFeedbackContent() != null) {
+            throw new AgentException(ResponseStatus.FEEDBACK_ALREADY_EXISTS);
+        }
+
+        agentReview.updateFeedback(content);
     }
 }

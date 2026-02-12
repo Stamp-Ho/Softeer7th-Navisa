@@ -52,6 +52,8 @@ public interface ApplicationFormRepository extends JpaRepository<VisaApplication
     // 특정 외국인의 비자 신청서 중 가장 최근 생성된 1건 조회
     Optional<VisaApplicationForm> findFirstByForeignerProfile_UserIdOrderByCreatedAtDesc(UUID userId);
 
+    boolean existsByForeignerProfileIdAndAgentProfileIdAndIsFinishedTrue(UUID foreignerProfileId, UUID agentProfileId);
+
     Optional<VisaApplicationForm> findFirstByAgentProfileIdAndForeignerProfileIdOrderByCreatedAtDesc(
             UUID agentProfileId, UUID foreignerProfileId);
 }

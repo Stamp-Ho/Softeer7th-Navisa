@@ -230,4 +230,70 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         assertThat(riaList.get(1)).isEqualTo(0.3);
         assertThat(riaList.get(2)).isEqualTo(0.1);
     }
+
+    @Test
+    @DisplayName("외국인은 행정사에 대한 피드백(텍스트) 등록에 성공한다")
+    void createAgentFeedback_shouldSucceed() {
+        // given
+        User foreignerUser = userTestFixture.createUser("foreigner_feedback@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        User agentUser = userTestFixture.createUser("agent_feedback@test.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent Name", "Seoul", agentUser.getId());
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        var proposal = proposalTestFixture.createProposal(chatRoom, foreignerUser.getId(), ProposalStatus.MATCHED);
+
+        AgentReview review = new AgentReview(agentProfile.getId(), foreignerProfile.getId(), proposal.getId());
+        agentReviewRepository.save(review);
+
+        String feedbackContent = "상담이 매우 구체적이고 전문적이어서 큰 도움이 되었습니다.";
+
+        // when
+        agentReviewService.createAgentFeedback(foreignerUser.getEmail(), feedbackContent);
+
+        // then
+        AgentReview updatedReview = agentReviewRepository.findByProposalId(proposal.getId()).orElseThrow();
+        assertThat(updatedReview.getFeedbackContent()).isEqualTo(feedbackContent);
+    }
+
+    @Test
+    @DisplayName("피드백 등록 시, 해당 제안서에 대한 리뷰가 존재하지 않으면 예외가 발생한다")
+    void createAgentFeedback_shouldThrowException_whenReviewNotFound() {
+        // given
+        User foreignerUser = userTestFixture.createUser("no_review@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        User agentUser = userTestFixture.createUser("agent_no_review@test.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent Name", "Seoul", agentUser.getId());
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        proposalTestFixture.createProposal(chatRoom, foreignerUser.getId(), ProposalStatus.MATCHED);
+
+        // when & then
+        assertThatThrownBy(() -> agentReviewService.createAgentFeedback(foreignerUser.getEmail(), "내용"))
+                .isInstanceOf(AgentException.class);
+    }
+
+    @Test
+    @DisplayName("이미 피드백이 등록된 리뷰에 다시 피드백을 등록하려 하면 예외가 발생한다")
+    void createAgentFeedback_shouldThrowException_whenFeedbackAlreadyExists() {
+        // given
+        User foreignerUser = userTestFixture.createUser("already_feedback@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        User agentUser = userTestFixture.createUser("agent_already@test.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent Name", "Seoul", agentUser.getId());
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        var proposal = proposalTestFixture.createProposal(chatRoom, foreignerUser.getId(), ProposalStatus.MATCHED);
+
+        AgentReview review = new AgentReview(agentProfile.getId(), foreignerProfile.getId(), proposal.getId());
+        review.updateFeedback("Existing feedback content");
+        agentReviewRepository.save(review);
+
+        // when & then
+        assertThatThrownBy(() -> agentReviewService.createAgentFeedback(foreignerUser.getEmail(), "New feedback content"))
+                .isInstanceOf(AgentException.class);
+    }
 }

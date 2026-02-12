@@ -62,6 +62,8 @@ public enum ResponseStatus {
     ALREADY_FINISHED(400, "이미 종료된 건입니다"),
     CHATROOM_NOT_FOUND(404, "존재하지 않는 채팅방입니다"),
     INVALID_CHATTING_SESSION(401, "채팅 세션가 올바르지 않습니다"),
+    REVIEW_NOT_FOUND(404, "존재하지 않는 리뷰 정보입니다."),
+    FEEDBACK_ALREADY_EXISTS(400, "이미 해당 리뷰에 대한 피드백이 등록되었습니다."),
 
     /**
      * 서버 에러 (500번대)

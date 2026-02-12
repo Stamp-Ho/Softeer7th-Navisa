@@ -158,12 +158,15 @@ public class ApplicationQueryService {
     }
 
     private void addSectionWithId(List<Map<String, Object>> list, Map<String, Object> data, int id) {
-        if (data == null || data.isEmpty()) {
-            list.add(Map.of("sectionId", id));
+        Map<String, Object> sectionMap;
+
+        if (data == null) {
+            sectionMap = new HashMap<>();
         } else {
-            Map<String, Object> responseMap = new HashMap<>(data);
-            responseMap.put("sectionId", id);
-            list.add(responseMap);
+            sectionMap = new HashMap<>(data);
         }
+
+        sectionMap.put("sectionId", id);
+        list.add(sectionMap);
     }
 }
