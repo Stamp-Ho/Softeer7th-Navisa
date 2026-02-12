@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-
 public interface ForeignerNationalityRepository extends JpaRepository<ForeignerNationality, Long> {
 
     @Query("SELECT fn FROM ForeignerNationality fn WHERE fn.foreignerProfile.id = :foreignerId")

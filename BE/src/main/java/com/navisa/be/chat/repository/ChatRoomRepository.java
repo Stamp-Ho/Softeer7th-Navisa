@@ -37,4 +37,12 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long>, ChatR
     Optional<ChatRoom> findByIdWithProfiles(@Param("roomId") Long roomId);
 
     boolean existsByAgentProfileIdAndForeignerProfileId(UUID agentId, UUID foreignerId);
+
+    @Query("SELECT cr FROM ChatRoom cr " +
+            "JOIN FETCH cr.agentProfile " +
+            "JOIN FETCH cr.foreignerProfile fp " +
+            "LEFT JOIN FETCH fp.foreignerNationalities fn " +
+            "LEFT JOIN FETCH fn.nationality " +
+            "WHERE cr.id = :roomId")
+    Optional<ChatRoom> findByIdWithParticipantsInfo(@Param("roomId") Long roomId);
 }

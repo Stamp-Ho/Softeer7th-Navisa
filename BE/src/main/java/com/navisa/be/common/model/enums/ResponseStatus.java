@@ -33,7 +33,7 @@ public enum ResponseStatus {
     INVALID_NATIONALITY(400, "잘못된 Nationality id 정보입니다."),
     INVALID_LANGUAGE(400, "잘못된 Language id 정보입니다."),
     INVALID_CHATMESSAGE(400, "존재하지 않는 채팅 메세지 정보입니다."),
-    INVALID_CHATROOM(400, "존재하지 않는 채팅 방 정보입니다."),
+    INVALID_CHATROOM(400, "존재하지 않는 채팅방 정보입니다."),
     STORAGE_UNSUPPORTED_CONTENT_TYPE(400, "지원하지 않는 파일 타입입니다"),
     STORAGE_UNSUPPORTED_USAGE(400, "지원되지 않는 용도의 요청입니다"),
     ILLEGAL_SUBSCRIBE_DESTINATION(400, "WS 구독 경로와 맞지 않는 요청입니다."),
@@ -60,11 +60,11 @@ public enum ResponseStatus {
     FORBIDDEN_ACCESS(403, "허용되지 않는 접근입니다"),
     FINISH_CONDITION_NOT_MET(400, "메일이 발송된 지 3일이 지나야 강제 종료가 가능합니다"),
     ALREADY_FINISHED(400, "이미 종료된 건입니다"),
-    CHATROOM_NOT_FOUND(404, "존재하지 않는 채팅방입니다"),
     INVALID_CHATTING_SESSION(401, "채팅 세션가 올바르지 않습니다"),
     REVIEW_NOT_FOUND(404, "존재하지 않는 리뷰 정보입니다."),
     FEEDBACK_ALREADY_EXISTS(400, "이미 해당 리뷰에 대한 피드백이 등록되었습니다."),
     CHATROOM_ALREADY_EXIST(400, "이미 채팅방이 존재합니다"),
+    NOT_FOUND_CHATROOM(404, "채팅방을 찾을 수 없습니다"),
 
     /**
      * 서버 에러 (500번대)

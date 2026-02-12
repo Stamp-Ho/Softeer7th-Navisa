@@ -2,7 +2,9 @@ package com.navisa.be.chat.controller;
 
 import com.navisa.be.chat.dto.response.ChatMessageCountResponse;
 import com.navisa.be.chat.dto.response.ChatRoomCardResponse;
+import com.navisa.be.chat.dto.response.GetChatRoomParticipantsInfoResponse;
 import com.navisa.be.chat.service.ChatMessageServiceFacade;
+import com.navisa.be.chat.service.ChatRoomQueryService;
 import com.navisa.be.chat.service.ChatRoomServiceFacade;
 import com.navisa.be.common.annotation.HasUserType;
 import com.navisa.be.common.annotation.LoginUser;
@@ -15,10 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/chatrooms")
 @RestController
@@ -28,6 +27,7 @@ public class ChatRoomQueryController {
 
     private final ChatRoomServiceFacade chatRoomServiceFacade;
     private final ChatMessageServiceFacade chatMessageServiceFacade;
+    private final ChatRoomQueryService chatRoomQueryService;
 
     @GetMapping
     @HasUserType({UserType.FILLED_FOREIGNER, UserType.VALID_AGENT})
@@ -59,5 +59,18 @@ public class ChatRoomQueryController {
 
         ChatMessageCountResponse content = chatMessageServiceFacade.findMatchedNonReadCountByUserEmail(email);
         return new BaseResponse<>(content);
+    }
+
+    @HasUserType({UserType.VALID_AGENT, UserType.FILLED_FOREIGNER})
+    @PostMapping("/{roomId}/participants-info")
+    @Operation(
+            summary = "특정 채팅방 참여자 정보 조회",
+            description = "특정 채팅방에 참여하는 유저들의 정보를 조회할 수 있는 API입니다. 관련 노션 링크 : https://www.notion.so/bside/305220202735808aa3f7eb052902d4fc?source=copy_link "
+    )
+    public BaseResponse<GetChatRoomParticipantsInfoResponse> getChatRoomParticipantsInfo(
+            @PathVariable Long roomId,
+            @Parameter(hidden = true) @LoginUser String loginUserEmail
+    ) {
+        return new BaseResponse<>(chatRoomQueryService.findParticipantsInfoById(roomId, loginUserEmail));
     }
 }

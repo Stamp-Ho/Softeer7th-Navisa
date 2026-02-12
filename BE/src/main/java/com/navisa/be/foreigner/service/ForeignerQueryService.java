@@ -27,10 +27,7 @@ import com.navisa.be.foreigner.exception.ForeignerException;
 import com.navisa.be.foreigner.model.entity.*;
 import com.navisa.be.foreigner.model.enums.EducationDegreeLevel;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
-import com.navisa.be.foreigner.repository.ForeignerCareersRepository;
-import com.navisa.be.foreigner.repository.ForeignerEducationRepository;
-import com.navisa.be.foreigner.repository.ForeignerExpectedCompanyRepository;
-import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
+import com.navisa.be.foreigner.repository.*;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
@@ -64,6 +61,7 @@ public class ForeignerQueryService {
     private final ProposalRepository proposalRepository;
     private final AgentReviewRepository agentReviewRepository;
     private final ApplicationFormRepository applicationFormRepository;
+    private final ForeignerNationalityRepository foreignerNationalityRepository;
 
     public ForeignerQueryResponse findForeignerTotalInfo(UUID userId) {
         ForeignerProfile profile = foreignerProfileRepository.findByUserIdWithNationalitiesAndLanguages(userId)
@@ -291,5 +289,17 @@ public class ForeignerQueryService {
     public ForeignerProfile findById(UUID id) {
         return foreignerProfileRepository.findById(id)
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+    }
+
+    public ForeignerExpectedCompany findExpectedCompanyByForeignerProfileId(UUID foreignerProfileId) {
+            return foreignerExpectedCompanyRepository
+                .findByForeignerId(foreignerProfileId)
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER_EXPECTEDCOMPANY));
+    }
+
+    public List<Nationality> findNationalitiesByForeignerProfileId(UUID foreignerProfileId) {
+        return foreignerNationalityRepository.findByForeignerProfileId(foreignerProfileId).stream()
+                .map(ForeignerNationality::getNationality)
+                .toList();
     }
 }
