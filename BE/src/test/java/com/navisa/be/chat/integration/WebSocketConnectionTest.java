@@ -2,7 +2,6 @@ package com.navisa.be.chat.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navisa.be.chat.dto.message.ChatMessageResponse;
@@ -26,7 +25,6 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 
-@Sql(scripts = "/cleanup.sql", executionPhase = AFTER_TEST_METHOD)
 class WebSocketConnectionTest extends WebSocketIntegrationTestSupport {
 
     @Autowired

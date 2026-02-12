@@ -1,4 +1,4 @@
-package com.navisa.be.chat.controller;
+package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
@@ -6,12 +6,8 @@ import com.navisa.be.chat.dto.message.ChatMessageResponse;
 import com.navisa.be.chat.exception.WebSocketConnectionException;
 import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
-import com.navisa.be.chat.service.ChatMessageService;
-import com.navisa.be.chat.service.ChatRoomQueryService;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
-import com.navisa.be.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

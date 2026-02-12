@@ -141,4 +141,9 @@ public class AgentProfileQueryService {
     public boolean existsByUserId(UUID userId) {
         return agentProfileRepository.existsByUserId(userId);
     }
+
+    public AgentProfile findById(UUID id) {
+        return agentProfileRepository.findById(id)
+                .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_AGENT));
+    }
 }

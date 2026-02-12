@@ -2,6 +2,7 @@ package com.navisa.be.chat.controller;
 
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.exception.WebSocketConnectionException;
+import com.navisa.be.chat.service.ChatServiceFacade;
 import com.navisa.be.common.model.enums.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +17,12 @@ import java.util.UUID;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class ChatController {
+public class MessageHandlingController {
 
     private final ChatServiceFacade chatServiceFacade;
 
     @MessageMapping("/chat/message") // 클라이언트가 /pub/chat/message로 보낼 때 매칭
-    public void handleMessage(@Payload ChatMessageRequest request, StompHeaderAccessor headerAccessor) {
+    public void handleChatMessage(@Payload ChatMessageRequest request, StompHeaderAccessor headerAccessor) {
         log.info("SEND 컨트롤러 진입 - roomId: {}", request.roomId());
 
         // 세션에서 저장해둔 userId 추출

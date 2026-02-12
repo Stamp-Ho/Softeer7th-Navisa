@@ -287,4 +287,9 @@ public class ForeignerQueryService {
 
         return new ForeignerProgressResponse(isReview, isFeedback, isFinished, true, proposal.getChatRoom().getId());
     }
+
+    public ForeignerProfile findById(UUID id) {
+        return foreignerProfileRepository.findById(id)
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+    }
 }

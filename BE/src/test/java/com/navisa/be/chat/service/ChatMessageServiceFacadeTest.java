@@ -119,25 +119,28 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
     @DisplayName("Agent 이메일로 매칭된(메시지가 있는) 방의 수를 조회한다")
     void findMatchedNonReadCountByUserEmail() {
         // given
-        User foreignerUser = userTestFixture.createUser("f@test.com", UserType.FILLED_FOREIGNER);
         User agentUser = userTestFixture.createUser("a@test.com", UserType.VALID_AGENT);
-
-        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Addr",
                 agentUser.getId());
 
+        User foreignerUser1 = userTestFixture.createUser("f1@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile1 = foreignerProfileTestFixture.createForeignerProfile(foreignerUser1);
+
+        User foreignerUser2 = userTestFixture.createUser("f2@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile2 = foreignerProfileTestFixture.createForeignerProfile(foreignerUser2);
+
         // 매칭된 방 (메시지 있음)
-        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile,
+        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile1, agentProfile,
                 ChatRoomStatus.DEFAULT,
                 ZonedDateTime.now());
         Proposal proposal1 = new Proposal(chatRoom1, agentProfile.getId());
         ReflectionTestUtils.setField(proposal1, "status", ProposalStatus.MATCHED);
         proposalRepository.save(proposal1);
 
-        chatRoomTestFixture.createChatMessage(chatRoom1, foreignerProfile.getId(), "Hello", false);
+        chatRoomTestFixture.createChatMessage(chatRoom1, foreignerProfile1.getId(), "Hello", false);
 
         // 매칭 안된 방 (메시지 없음)
-        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
+        chatRoomTestFixture.createChatRoom(foreignerProfile2, agentProfile, ChatRoomStatus.DEFAULT,
                 ZonedDateTime.now());
 
         // when

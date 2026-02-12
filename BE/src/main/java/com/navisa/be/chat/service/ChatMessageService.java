@@ -3,12 +3,14 @@ package com.navisa.be.chat.service;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
+import com.navisa.be.chat.model.enums.MessageType;
 import com.navisa.be.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -21,5 +23,9 @@ public class ChatMessageService {
     @Transactional
     public ChatMessage create(ChatRoom chatRoom, UUID senderId, ChatMessageRequest request) {
         return chatMessageRepository.save(request.dtoToEntity(chatRoom, senderId));
+    }
+
+    public ChatMessage create(ChatRoom chatRoom, UUID senderId, String content, ZonedDateTime sentAt){
+        return chatMessageRepository.save(new ChatMessage(chatRoom, MessageType.TEXT, content, senderId, sentAt));
     }
 }

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 
 import java.util.UUID;
@@ -16,9 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
-@Sql(scripts = "/cleanup.sql", executionPhase = AFTER_TEST_METHOD)
 class WebSocketSessionManagementTest extends WebSocketIntegrationTestSupport {
 
     @Test

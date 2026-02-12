@@ -12,7 +12,15 @@ import lombok.NoArgsConstructor;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "chat_room")
+@Table(
+        name = "chat_room",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_agent_foreigner",
+                        columnNames = {"agent_id", "foreigner_id"}
+                )
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatRoom extends BaseEntity {

@@ -56,4 +56,8 @@ public class ChatRoomQueryService {
                 .orElseThrow(() -> new ChatRoomException(ResponseStatus.INVALID_CHATROOM))
                 .getAgentProfile().getId().equals(agentProfile.getId());
     }
+
+    public boolean existsByAgentIdAndForeignerId(UUID agentId, UUID foreignerId) {
+        return chatRoomRepository.existsByAgentProfileIdAndForeignerProfileId(agentId, foreignerId);
+    }
 }

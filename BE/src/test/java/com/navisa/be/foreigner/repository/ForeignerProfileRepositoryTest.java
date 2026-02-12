@@ -3,8 +3,6 @@ package com.navisa.be.foreigner.repository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
-import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
-import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
 import com.navisa.be.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
