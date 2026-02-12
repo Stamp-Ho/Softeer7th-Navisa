@@ -12,7 +12,7 @@ export const useRecentVisaFormsQuery = () => {
     queryKey: ["recentVisaForms", userId],
     queryFn: async () => {
       if (!accessToken) throw new Error("No access token");
-      const res = await visaService.getRecentForms(apiClient, accessToken);
+      const res = await visaService.getRecentForms(apiClient);
       return res.result;
     },
     enabled: !!accessToken,
