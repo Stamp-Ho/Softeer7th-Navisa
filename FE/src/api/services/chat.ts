@@ -5,6 +5,7 @@ import type {
   ChatRoomResponse,
 } from "../types/chat";
 import type { BaseResponse, PageResponse } from "../types/common";
+import type { Send } from "../websocket/types";
 
 export const chatService = {
   // 채팅방 목록 조회 (필터: unread | matched)
@@ -52,4 +53,25 @@ export const chatService = {
       { headers: { Authorization: `Bearer ${accessToken}` } },
     );
   },
+
+  postProposal: (api: apiClientType, roomId: number, data: Send) =>
+    api.post<BaseResponse<string>>(`/api/chatroom/${roomId}/proposal`, data),
+
+  postRejected: (api: apiClientType, roomId: number, data: Send) =>
+    api.post<BaseResponse<string>>(
+      `/api/chatroom/${roomId}/proposal/rejected`,
+      data,
+    ),
+
+  postAccepted: (api: apiClientType, roomId: number, data: Send) =>
+    api.post<BaseResponse<string>>(
+      `/api/chatroom/${roomId}/proposal/accepted`,
+      data,
+    ),
+
+  postCanceled: (api: apiClientType, roomId: number, data: Send) =>
+    api.post<BaseResponse<string>>(
+      `/api/chatroom/${roomId}/proposal/canceled`,
+      data,
+    ),
 };

@@ -1,4 +1,4 @@
-import { useChatSender } from "../../../../api/hooks/useChatSender";
+import { usePostProposalCanceled } from "../../../../api/hooks/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
 type ProposalParams = {
@@ -7,7 +7,8 @@ type ProposalParams = {
 };
 
 const ChatModalCancel = ({ onAnswer, roomId }: ProposalParams) => {
-  const { sendChat } = useChatSender();
+  const { mutate: sendProposalCanceled } = usePostProposalCanceled(roomId);
+
   return (
     <div className="flex flex-col gap-8 items-center w-full">
       <div className="flex flex-col gap-2 items-center">
@@ -23,7 +24,7 @@ const ChatModalCancel = ({ onAnswer, roomId }: ProposalParams) => {
         size="large"
         className="w-full"
         onClick={() => {
-          sendChat(roomId, "CANCELED", "CANCELED");
+          sendProposalCanceled();
           onAnswer(0);
         }}
       >

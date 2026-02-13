@@ -1,4 +1,4 @@
-import { useChatSender } from "../../../../api/hooks/useChatSender";
+import { usePostProposal } from "../../../../api/hooks/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
 type ProposalParams = {
@@ -7,7 +7,7 @@ type ProposalParams = {
 };
 
 const ChatModalProposal = ({ onAnswer, roomId }: ProposalParams) => {
-  const { sendChat } = useChatSender();
+  const { mutate: sendProposal } = usePostProposal(roomId);
 
   return (
     <div className="flex flex-col gap-8 items-center w-full">
@@ -24,7 +24,7 @@ const ChatModalProposal = ({ onAnswer, roomId }: ProposalParams) => {
         size="large"
         className="w-full"
         onClick={() => {
-          sendChat(roomId, "PROPOSAL", "PROPOSAL");
+          sendProposal();
           onAnswer(0);
         }}
       >

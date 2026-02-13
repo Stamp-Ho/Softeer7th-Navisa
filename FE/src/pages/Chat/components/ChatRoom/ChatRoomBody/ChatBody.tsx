@@ -65,13 +65,9 @@ const ChatBody = ({
     if (!userId || roomMessages.length === 0) return;
 
     const lastMessage = roomMessages[roomMessages.length - 1];
-    console.log(lastMessage);
     if (!lastMessage?.messageId) return;
 
     const byMe = lastMessage.senderId === userId;
-    console.log(lastMessage.senderId);
-    console.log(userId);
-    console.log(byMe);
     if (byMe) return;
 
     // 중복 방지
@@ -171,7 +167,7 @@ const ChatBody = ({
               {!group[0].isSentByMe &&
                 (isAgent ? (
                   <div className="flex flex-row justify-center items-center w-[56px] h-[56px] rounded-full bg-violet-25 title-l-bold text-violet-500">
-                    {opponentName[0]}
+                    {opponentName[0] ?? "?"}
                   </div>
                 ) : (
                   <img

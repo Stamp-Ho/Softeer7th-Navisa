@@ -1,4 +1,7 @@
-import { useChatSender } from "../../../../api/hooks/useChatSender";
+import {
+  usePostProposalAccepted,
+  usePostProposalRejected,
+} from "../../../../api/hooks/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
 type ProposalParams = {
@@ -7,7 +10,8 @@ type ProposalParams = {
 };
 
 const ChatModalReply = ({ onAnswer, roomId }: ProposalParams) => {
-  const { sendChat } = useChatSender();
+  const { mutate: sendProposalRejected } = usePostProposalRejected(roomId);
+  const { mutate: sendProposalAccepted } = usePostProposalAccepted(roomId);
 
   return (
     <div className="flex flex-col gap-8 items-center w-full">
@@ -25,7 +29,7 @@ const ChatModalReply = ({ onAnswer, roomId }: ProposalParams) => {
           size="large"
           className="w-full"
           onClick={() => {
-            sendChat(roomId, "REJECTED", "REJECTED");
+            sendProposalRejected();
             onAnswer(0);
           }}
         >
@@ -36,7 +40,7 @@ const ChatModalReply = ({ onAnswer, roomId }: ProposalParams) => {
           size="large"
           className="w-full"
           onClick={() => {
-            sendChat(roomId, "ACCEPTED", "ACCEPTED");
+            sendProposalAccepted();
             onAnswer(0);
           }}
         >
