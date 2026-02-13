@@ -11,11 +11,10 @@ spring:
 
   flyway:
     enabled: true
-    repair-on-migrate: true    # 체크섬 재기록 허용
-    validate-on-migrate: false
     schemas: public
+    baseline-on-migrate: true
     clean-disabled: true # 실수를 방지하기 위해 clean 기능 비활성화
-    #validate-on-migrate: true # 체크섬을 비교하여 기존 파일 변경 시 에러 발생
+    validate-on-migrate: true # 체크섬을 비교하여 기존 파일 변경 시 에러 발생
     locations: classpath:db/migration
     connect-retries: 3
 
