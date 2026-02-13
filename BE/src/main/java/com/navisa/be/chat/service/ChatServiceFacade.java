@@ -41,13 +41,13 @@ public class ChatServiceFacade {
             public void afterCommit() {
                 // 송신자의 채널에 에코
                 log.debug("senderId {}", senderId);
-                ChatMessageResponse echoResponse = ChatMessageResponse.entityToDto(chatMessage, request, senderId);
+                ChatMessageResponse echoResponse = ChatMessageResponse.entityToDto(chatMessage, request, senderProfileId, senderId);
                 redisTemplate.convertAndSend("user:ch:" + senderId, echoResponse);
 
                 // 수신자의 채널에 발행
                 UUID receiverId = getReceiverId(senderId, finalChatRoom);
                 log.debug("receiverId {}", receiverId);
-                ChatMessageResponse response = ChatMessageResponse.entityToDto(chatMessage, request, receiverId);
+                ChatMessageResponse response = ChatMessageResponse.entityToDto(chatMessage, request, senderProfileId, receiverId);
                 redisTemplate.convertAndSend("user:ch:" + receiverId, response);
             }
         });

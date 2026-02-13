@@ -15,14 +15,12 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 
 class WebSocketConnectionTest extends WebSocketIntegrationTestSupport {
@@ -56,6 +54,7 @@ class WebSocketConnectionTest extends WebSocketIntegrationTestSupport {
                 123L,
                 1L,
                 UUID.randomUUID(),
+                user.getId(),
                 user.getId(),
                 "Test Message Content",
                 MessageType.TEXT,

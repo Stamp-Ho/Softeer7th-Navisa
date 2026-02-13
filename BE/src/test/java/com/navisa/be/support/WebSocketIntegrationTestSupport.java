@@ -55,11 +55,9 @@ public abstract class WebSocketIntegrationTestSupport extends IntegrationTestSup
 
     @BeforeEach
     void setUp() {
+        // HTTP 예비 요청 없이 웹소켓으로 요청
         StandardWebSocketClient standardWebSocketClient = new StandardWebSocketClient();
-        WebSocketTransport webSocketTransport = new WebSocketTransport(standardWebSocketClient);
-        SockJsClient sockJsClient = new SockJsClient(List.of(webSocketTransport));
-
-        stompClient = new WebSocketStompClient(sockJsClient);
+        stompClient = new WebSocketStompClient(standardWebSocketClient);
 
         //  JSON 직렬화/역직렬화를 위한 컨버터 설정
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
