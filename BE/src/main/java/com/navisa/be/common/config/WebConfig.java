@@ -26,7 +26,9 @@ public class WebConfig implements WebMvcConfigurer {
             "/api/home/badge-list",
             "/api/home/feedback",
             "/api/home/badge",
-            "/api/home/guest/agents"
+            "/api/home/guest/agents",
+            "/ws",
+            "/ws/**"
     };
     private final UserTypeCheckInterceptor userTypeCheckInterceptor;
     private final AuthInterceptor authInterceptor;
@@ -36,7 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173", "http://localhost:5174", "https://api.navisa.site", "https://www.navisa.site")
+                .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
