@@ -1,10 +1,13 @@
+import { useChatSender } from "../../../../api/hooks/useChatSender";
 import Button from "../../../../components/common/Button";
 
 type ProposalParams = {
   onAnswer: (num: number) => void;
+  roomId: number;
 };
 
-const ChatModalCancel = ({ onAnswer }: ProposalParams) => {
+const ChatModalCancel = ({ onAnswer, roomId }: ProposalParams) => {
+  const { sendChat } = useChatSender();
   return (
     <div className="flex flex-col gap-8 items-center w-full">
       <div className="flex flex-col gap-2 items-center">
@@ -19,7 +22,10 @@ const ChatModalCancel = ({ onAnswer }: ProposalParams) => {
         type="primary"
         size="large"
         className="w-full"
-        onClick={() => onAnswer(0)}
+        onClick={() => {
+          sendChat(roomId, "CANCELED", "CANCELED");
+          onAnswer(0);
+        }}
       >
         취소하기
       </Button>

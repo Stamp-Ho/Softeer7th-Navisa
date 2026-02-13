@@ -45,12 +45,12 @@ export const RPMessage = () => {
           <path
             d="M10.0808 41.0879L22.9604 30.4482"
             stroke="url(#paint2_linear_2784_28943)"
-            stroke-width="0.933306"
+            strokeWidth="0.933306"
           />
           <path
             d="M45.9197 41.0879L33.0401 30.4482"
             stroke="url(#paint3_linear_2784_28943)"
-            stroke-width="0.933306"
+            strokeWidth="0.933306"
           />
           <path
             d="M26.1227 30.3912L10.0808 15.8901L25.8687 34.4278C26.9866 35.7405 29.014 35.7405 30.1319 34.4278L45.9198 15.8901L29.8779 30.3912C28.8117 31.355 27.1889 31.355 26.1227 30.3912Z"
@@ -358,28 +358,28 @@ export const RPDocument = () => {
           d="M21 21H36"
           stroke="#3E2FA6"
           stroke-opacity="0.5"
-          stroke-width="1.2"
+          strokeWidth="1.2"
           stroke-linecap="round"
         />
         <path
           d="M21 25H36"
           stroke="#3E2FA6"
           stroke-opacity="0.5"
-          stroke-width="1.2"
+          strokeWidth="1.2"
           stroke-linecap="round"
         />
         <path
           d="M21 29H36"
           stroke="#3E2FA6"
           stroke-opacity="0.5"
-          stroke-width="1.2"
+          strokeWidth="1.2"
           stroke-linecap="round"
         />
         <path
           d="M21 33H31"
           stroke="#3E2FA6"
           stroke-opacity="0.5"
-          stroke-width="1.2"
+          strokeWidth="1.2"
           stroke-linecap="round"
         />
       </g>

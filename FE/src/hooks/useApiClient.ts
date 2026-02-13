@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContextProvider";
 
 const BASEURL = "https://api.navisa.site";
+// const BASEURL = "http://192.168.1.22:8080";
 
 let refreshPromise: Promise<any> | null;
 const useApiClient = () => {

@@ -35,7 +35,7 @@ export interface ForeignerCardResponse {
   nationIdList: number[];
   languageIdList: number[];
   jobTitle: string;
-  degreeLevel?: "BELOW_BACHELOR";
+  degreeLevel?: string;
 }
 export interface ForeignerCardRequest {
   jobGroupNameList?: string[];

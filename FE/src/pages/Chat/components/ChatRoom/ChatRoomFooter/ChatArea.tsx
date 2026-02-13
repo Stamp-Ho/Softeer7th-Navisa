@@ -1,11 +1,12 @@
 import { useRef, useEffect } from "react";
+import { useChatSender } from "../../../../../api/hooks/useChatSender";
 
 interface ChatAreaProps {
   className?: string;
   placeholder?: string;
   value: string;
   setValue: (v: string) => void;
-  onSend?: () => void;
+  roomId: number;
 }
 
 const ChatArea = ({
@@ -13,11 +14,13 @@ const ChatArea = ({
   placeholder = "메시지를 입력하세요.",
   value,
   setValue,
-  // onSend,
+  roomId,
 }: ChatAreaProps) => {
   const chatAreaRef = useRef<HTMLTextAreaElement>(null);
+  const isComposing = useRef(false);
+  const { sendChat } = useChatSender();
 
-  // 입력에 따라 높이 자동 조절 (max 4줄)
+  // 높이 자동 조절
   const adjustHeight = () => {
     const ta = chatAreaRef.current;
     if (!ta) return;
@@ -33,21 +36,19 @@ const ChatArea = ({
     adjustHeight();
   }, [value]);
 
-  // Enter / Shift+Enter 로직
+  // Enter / Shift+Enter
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (isComposing.current) return; // 한글 입력 중이면 무시
+
     if (e.key === "Enter") {
-      if (e.shiftKey) {
-        // 줄바꿈 허용
-        return;
-      } else {
-        e.preventDefault();
+      if (e.shiftKey) return; // 줄바꿈 허용
 
-        // 공백만 있으면 전송 방지
-        if (value.trim().length === 0) return;
+      e.preventDefault();
 
-        // onSend(); // 전송 실행
-        setValue(""); // 입력창 초기화
-      }
+      if (value.trim().length === 0) return; // 공백만 있으면 전송 방지
+
+      sendChat(roomId, "TEXT", value);
+      setValue(""); // 입력창 초기화
     }
   };
 
@@ -61,6 +62,8 @@ const ChatArea = ({
       placeholder={placeholder}
       value={value}
       onChange={(e) => setValue(e.target.value)}
+      onCompositionStart={() => (isComposing.current = true)}
+      onCompositionEnd={() => (isComposing.current = false)}
       onKeyDown={handleKeyDown}
       rows={1}
       style={{ overflowY: "auto", minHeight: "48px" }}

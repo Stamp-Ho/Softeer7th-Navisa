@@ -5,13 +5,16 @@ import {
 } from "../../../../../assets/icon/StratisUi";
 import ChatArea from "./ChatArea";
 import Chip from "../../../../../components/common/Chip";
+import { useChatSender } from "../../../../../api/hooks/useChatSender";
 
 type ChatRoomFooterParams = {
   isMatched: boolean;
+  chatRoomId: number;
 };
 
-const ChatRoomFooter = ({ isMatched }: ChatRoomFooterParams) => {
-  const [text, setText] = useState<string>("");
+const ChatRoomFooter = ({ isMatched, chatRoomId }: ChatRoomFooterParams) => {
+  const [message, setMessage] = useState<string>("");
+  const { sendChat } = useChatSender();
 
   return (
     <div className="absolute bottom-8 w-full flex flex-col px-6">
@@ -21,10 +24,16 @@ const ChatRoomFooter = ({ isMatched }: ChatRoomFooterParams) => {
         </div>
       )}
       <div className="flex justify-center w-full  relative">
-        <ChatArea value={text} setValue={setText} />
+        <ChatArea value={message} setValue={setMessage} roomId={chatRoomId} />
         <div className="absolute right-2 top-1/2 -translate-y-1/2">
-          {text.trim().length > 0 ? (
-            <div className="cursor-pointer">
+          {message.trim().length > 0 ? (
+            <div
+              className="cursor-pointer"
+              onClick={() => {
+                sendChat(chatRoomId, "TEXT", message);
+                setMessage("");
+              }}
+            >
               <IcSendActive size="32" />
             </div>
           ) : (

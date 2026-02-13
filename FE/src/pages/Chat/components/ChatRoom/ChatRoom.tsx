@@ -1,15 +1,15 @@
-import { useContext } from "react";
 import type { ChatRoomHeaderData } from "../../../../types/chatRoomTypes";
 import ChatBody from "./ChatRoomBody/ChatBody";
 import ChatRoomFooter from "./ChatRoomFooter/ChatRoomFooter";
 import ChatRoomHeader from "./ChatRoomHeader/ChatRoomHeader";
-import { AuthContext } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContextProvider";
 
 type ChatRoomParams = {
-  // chatRoomId: number | null;
-  // roomStatus: string;
+  chatRoomId: number;
+  isMatched: boolean;
   onClose: () => void;
   onModalAction: (num: number) => void;
+  profileImg: string | null;
 };
 
 // 필요 데이터
@@ -44,117 +44,14 @@ const dummyForeigner = {
   },
 };
 
-// 채팅 내역
-const dummyData = {
-  content: [
-    // TEXT인 경우
-    {
-      messageId: 1025,
-      senderId: "MY_ID",
-      type: "TEXT",
-      content: "안녕하세요, 여권 OCR 데이터 확인했습니다.",
-      createdAt: "2026-02-02T06:40:00",
-      isRead: true,
-    },
-    {
-      messageId: 1026,
-      senderId: "MY_ID",
-      type: "TEXT",
-      content:
-        "안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.",
-      createdAt: "2026-02-02T06:40:00",
-      isRead: true,
-    },
-    {
-      messageId: 1027,
-      senderId: "MY_ID",
-      type: "TEXT",
-      content:
-        "안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.",
-      createdAt: "2026-02-02T06:40:00",
-      isRead: true,
-    },
-    {
-      messageId: 1028,
-      senderId: "MY_ID",
-      type: "TEXT",
-      content:
-        "안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.",
-      createdAt: "2026-02-02T06:40:00",
-      isRead: true,
-    },
-    {
-      messageId: 1029,
-      senderId: "MY_ID",
-      type: "TEXT",
-      content:
-        "안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.",
-      createdAt: "2026-02-03T06:40:00",
-      isRead: true,
-    },
-    {
-      messageId: 1030,
-      senderId: "MY_ID",
-      type: "TEXT",
-      content: "안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, ",
-      createdAt: "2026-02-03T06:40:00",
-      isRead: true,
-    },
-    {
-      messageId: 1031,
-      senderId: "OPPONENT_ID",
-      type: "TEXT",
-      content:
-        "안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.",
-      createdAt: "2026-02-03T06:41:00",
-      isRead: true,
-    },
-    {
-      messageId: 1032,
-      senderId: "OPPONENT_ID",
-      type: "TEXT",
-      content:
-        "안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.안녕하세요, 여권 OCR 데이터 확인했습니다.",
-      createdAt: "2026-02-03T06:41:00",
-      isRead: true,
-    },
-
-    // 시스템 메시지인 경우
-    {
-      messageId: 1033,
-      senderId: "OPPONENT_ID",
-      type: "PROPOSAL",
-      content: "수임 제안서가 도착했습니다.",
-      createdAt: "2026-02-03T07:41:00",
-      isRead: true,
-    },
-    {
-      messageId: 1034,
-      senderId: "OPPONENT_ID",
-      type: "ANSWER",
-      content: "수임 제안서가 도착했습니다.",
-      createdAt: "2026-02-03T06:40:00",
-      isRead: true,
-    },
-  ],
-  pageInfo: {
-    // 페이징 메타 데이터
-    pageNum: 1,
-    pageSize: 10,
-    totalElements: 100,
-    totalPages: 10,
-  },
-};
-
-const isMatched = true; // 특정 채팅 api에 해당 채팅방의 수임상태가 들어나있나? 이건 부모에서 넘겨받을수 있긴한데 api로 받아오는게 맞지 않나?
-
 const ChatRoom = ({
-  /* chatRoomId, roomStatus, */ onClose,
+  chatRoomId,
+  isMatched,
+  onClose,
   onModalAction,
+  profileImg,
 }: ChatRoomParams) => {
-  const context = useContext(AuthContext);
-  if (!context) return null;
-  const { userType } = context;
+  const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
 
   const headerData: ChatRoomHeaderData = isAgent
@@ -170,8 +67,9 @@ const ChatRoom = ({
         onModalAction={onModalAction}
       />
       <ChatBody
+        chatRoomId={chatRoomId}
         onModalAction={onModalAction}
-        chatHistory={dummyData}
+        profileImg={profileImg}
         opponentName={
           isAgent
             ? dummyForeigner.basicInfo.nickname
@@ -183,7 +81,7 @@ const ChatRoom = ({
             : dummyForeigner.basicInfo.nickname
         }
       />
-      <ChatRoomFooter isMatched={isMatched} />
+      <ChatRoomFooter isMatched={isMatched} chatRoomId={chatRoomId} />
     </>
   );
 };
