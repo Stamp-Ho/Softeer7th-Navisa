@@ -1,4 +1,4 @@
-import Selector from "./Selector";
+import FormSelector from "../form/inputComponents/FormSelector";
 
 const DateSelector = ({
   value = "",
@@ -26,14 +26,14 @@ const DateSelector = ({
 
   return (
     <div className="grid grid-cols-3 gap-3">
-      <Selector
+      <FormSelector
         placeholder="YYYY"
         value={year !== "" ? String(subjectiveYear) : ""}
         options={Array.from({ length: 30 }, (_, i) => String(thisYear - i))}
         onChange={(val) => handleDateChange("Y", val)}
         disabled={disabled}
       />
-      <Selector
+      <FormSelector
         placeholder="MM"
         value={month !== "" ? String(Number(month) - 1) : ""}
         options={Array.from({ length: 12 }, (_, i) =>
@@ -42,7 +42,7 @@ const DateSelector = ({
         onChange={(val) => handleDateChange("M", val)}
         disabled={disabled}
       />
-      <Selector
+      <FormSelector
         placeholder="DD"
         value={day !== "" ? String(Number(day) - 1) : ""}
         options={Array.from(

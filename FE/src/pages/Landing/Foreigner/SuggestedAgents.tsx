@@ -4,6 +4,11 @@ import LoadingBar from "../Common/LoadingBar";
 import { useRecommendedAgentQuery } from "../../../api/hooks/useRecommendedAgentQuery";
 
 const SuggestedAgents = () => {
+  const { data, isLoading, isError } = useRecommendedAgentQuery();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [showLoadingBar, setShowLoadingBar] = useState<boolean>(true);
+  const [isTilted, setIsTilted] = useState<boolean>(true);
+  const flyTime = 1000;
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null); // 마지막 빈 div를 위한 ref
 
@@ -33,11 +38,18 @@ const SuggestedAgents = () => {
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (scrollContainer) {
+      const olElement = scrollContainer.childNodes[1] as HTMLElement;
       const onWheel = (event: WheelEvent) => {
-        event.preventDefault();
-        if (Math.abs(event.deltaX) > Math.abs(event.deltaY))
-          scrollContainer.scrollLeft += event.deltaX;
-        else scrollContainer.scrollLeft += event.deltaY;
+        if (!isLoading && !loading && !isError && olElement) {
+          // 1. olElement의 실제 콘텐츠 너비가 컨테이너보다 작거나 같으면 스크롤 방지
+          if (olElement.scrollWidth <= scrollContainer.clientWidth) {
+            return; // 아무것도 하지 않음
+          }
+          event.preventDefault();
+          if (Math.abs(event.deltaX) > Math.abs(event.deltaY))
+            scrollContainer.scrollLeft += event.deltaX;
+          else scrollContainer.scrollLeft += event.deltaY;
+        }
       };
 
       scrollContainer.addEventListener("wheel", onWheel);
@@ -69,12 +81,6 @@ const SuggestedAgents = () => {
     );
   };
 
-  const { data, isLoading, isError } = useRecommendedAgentQuery();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [showLoadingBar, setShowLoadingBar] = useState<boolean>(true);
-  const [isTilted, setIsTilted] = useState<boolean>(true);
-  const flyTime = 1000;
-
   useEffect(() => {
     const startLoading = () => {
       setLoading(true);
@@ -82,19 +88,24 @@ const SuggestedAgents = () => {
       setIsTilted(true);
     };
 
-    const finishLoading = () => {
+    const finishLoading = async () => {
+      const delay = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms));
+      // 1. 로딩 바 숨기기
       setShowLoadingBar(false);
-      setTimeout(() => {
-        setLoading(false);
-        setTimeout(() => {
-          setIsTilted(false);
-        }, flyTime);
-      }, 750);
+
+      // 2. 750ms 대기 후 로딩 상태 해제
+      await delay(750);
+      setLoading(false);
+
+      // 3. flyTime만큼 대기 후 기울기 복구
+      await delay(flyTime);
+      setIsTilted(false);
     };
 
     startLoading();
     if (!isLoading) {
-      finishLoading();
+      setTimeout(() => finishLoading(), 2000);
     }
   }, [isLoading]);
 

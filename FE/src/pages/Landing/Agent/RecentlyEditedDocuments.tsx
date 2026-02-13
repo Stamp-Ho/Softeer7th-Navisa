@@ -6,13 +6,20 @@ import { useRecentVisaFormsQuery } from "../../../api/hooks/useRecentVisaFormsQu
 const RecentlyEditedDocuments = () => {
   const { data, isLoading, isError } = useRecentVisaFormsQuery();
   if (isLoading) return <div>로딩중...</div>;
-  const dataToRender = isError
-    ? Array.from({ length: 6 }).map((_, index) => (
-        <DocumentCard key={`doc_${index}`} />
-      ))
-    : data?.map((doc, index) => (
+  const dataToRender = isError ? (
+    Array.from({ length: 6 }).map((_, index) => (
+      <DocumentCard key={`doc_${index}`} />
+    ))
+  ) : (
+    <>
+      {data?.map((doc, index) => (
         <DocumentCard key={`doc_${index}`} document={doc} />
-      ));
+      ))}
+      {Array.from({ length: 5 - (data?.length || 0) }).map((_, index) => (
+        <DocumentCard key={`doc_${index}`} />
+      ))}
+    </>
+  );
 
   return (
     <section className="w-full flex flex-col relative gap-5 mt-12">

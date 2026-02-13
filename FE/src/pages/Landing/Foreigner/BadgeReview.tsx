@@ -7,11 +7,12 @@ const BadgeReview = () => {
   const [selectedBadge, setSelectedBadge] = useState<number>(0);
   const { data, isLoading, isError } = useAgentBadgeReviewQuery(selectedBadge);
 
-  if (isLoading) return <div>로딩중...</div>;
-
-  const dataToRender = isError
-    ? Array.from({ length: 10 }).map((_, idx) => <BadgeReviewCard key={idx} />)
-    : data?.map((review, idx) => <BadgeReviewCard key={idx} review={review} />);
+  const dataToRender =
+    isError || isLoading
+      ? Array.from({ length: 4 }).map((_, idx) => <BadgeReviewCard key={idx} />)
+      : data?.map((review, idx) => (
+          <BadgeReviewCard key={idx} review={review} />
+        ));
 
   return (
     <div className="flex flex-col mt-17">

@@ -18,7 +18,9 @@ const ProgressStep = ({
 }) => {
   const { control } = useFormContext();
   const targetLabel =
-    fieldIndex >= 0 ? `${sectionIndex}.${fieldIndex}` : `${sectionIndex}`;
+    fieldIndex >= 0
+      ? `${sectionIndex}.sectionData.${fieldIndex}`
+      : `${sectionIndex}.sectionData`;
   const targetData = useWatch({
     name: [targetLabel],
     control,

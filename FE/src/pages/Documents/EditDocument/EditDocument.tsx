@@ -5,7 +5,7 @@ import { useDocumentScroll } from "./hooks/useDocumentScroll";
 import { editDocumentData } from "./constants";
 import { FormProvider, useForm } from "react-hook-form";
 import EditDocumentWidget from "./EditDocumentWidget";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useApplicationFormQuery } from "../../../api/hooks/useApplicationFormQuery";
 import { useApplicationFormMutation } from "../../../api/hooks/useApplicationFormMutation";
 import { calculateOnlyInputs } from "../../../components/form/utils/formUtils";
@@ -44,6 +44,7 @@ const EditDocument = () => {
   const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const [imageUrl, setImageUrl] = useState("");
   const [formLayout, setFormLayout] = useState(editDocumentData);
+  const [initializing, setInitializing] = useState(true);
 
   const goBack = () => {
     navigate("/", { replace: false });
@@ -63,14 +64,18 @@ const EditDocument = () => {
         const localData = JSON.parse(localRawData);
         const localTime = new Date(localData.updatedAt).getTime();
         const serverTime = new Date(data.updatedAt).getTime();
+
+        //fresherData = localData.updatedAt > data?.updatedAt ? localData : data;
         fresherData = localTime > serverTime ? localData : data;
       } catch {
         // localStorage 데이터 손상 시 서버 데이터 사용
         window.localStorage.removeItem(data.applicationFormId);
       }
     }
+    console.log(fresherData.sections);
 
     // 이미지 URL이 있으면 이미지를 입력한것으로 처리
+    //const dataToApply = structuredClone(Object.values(fresherData.sections));
     const dataToApply = structuredClone(fresherData.sections);
     if (data.foreignerProfileImgUrl !== null)
       dataToApply[0].sectionData[0].values = [true];
@@ -99,12 +104,11 @@ const EditDocument = () => {
     setFormLayout(newStruct);
     setImageUrl(data.foreignerProfileImgUrl || "");
     methods.reset(dataToApply);
+    setInitializing(false);
   };
 
-  const hasInitialized = useRef(false);
   useEffect(() => {
-    if (isLoading || hasInitialized.current) return;
-    hasInitialized.current = true;
+    if (isLoading) return;
     compareLocalAndServerData();
   }, [isLoading]);
 
@@ -133,7 +137,7 @@ const EditDocument = () => {
     console.log("유효성 검사 실패:", errors);
     alert("필수 입력 항목을 모두 채워주세요.");
   };
-  if (isLoading) return <>loading...</>;
+  if (isLoading || initializing) return <>loading...</>;
   if (!data || isError) return <>오류가 발생했습니다</>;
   return (
     <FormProvider {...methods}>

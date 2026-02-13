@@ -19,6 +19,7 @@ const Tag = ({
 export default Tag;
 
 type TagType =
+  | "tiny_skeleton"
   | "small_fill"
   | "small_fill_violet_max"
   | "small_fill_gray"
@@ -47,6 +48,7 @@ const BASE_STYLE = "flex flex-row justify-center items-center";
 
 const TAG_STYLES: Record<TagType, string> = {
   default: "",
+  tiny_skeleton: "bg-gray-100 h-[15px] rounded-[8px] px-2",
   small_fill:
     "bg-violet-50 text-primary h-[25px] rounded-[20px] px-2 caption-l-medium",
   small_fill_violet_max:

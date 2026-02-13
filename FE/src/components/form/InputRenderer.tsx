@@ -1,10 +1,10 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import type { input } from "../../types/formType";
-import Selector from "../common/Selector";
 import DateSelector from "../common/DateSelector";
 import { useEffect } from "react";
 import TimeRangePicker from "./inputComponents/TimeRangePicker";
 import FormRadio from "./inputComponents/FormRadio";
+import FormSelector from "./inputComponents/FormSelector";
 
 const InputRenderer = ({
   input,
@@ -17,7 +17,7 @@ const InputRenderer = ({
   maxLength?: number;
   className?: string;
 }) => {
-  const { unregister, control, setValue, getValues } = useFormContext();
+  const { control, setValue, getValues } = useFormContext();
   const fieldLabels = inputLabel.split(".");
 
   const isInputDisabled = useWatch({
@@ -28,6 +28,7 @@ const InputRenderer = ({
     control,
     name: `${fieldLabels[0]}.sectionData.${fieldLabels[2]}.disabled`,
   });
+
   const isDisabled = isInputDisabled || isFieldDisabled;
   useEffect(() => {
     // 현재 값이 없을 때만 초기값 설정 (기존 값을 덮어쓰지 않기 위함)
@@ -35,6 +36,7 @@ const InputRenderer = ({
       const currentValue = getValues(inputLabel);
       if (currentValue === undefined) {
         // 렌더링 직후 즉시 빈 문자열로 초기화
+
         setValue(inputLabel, "", { shouldValidate: false });
       }
     }
@@ -43,9 +45,8 @@ const InputRenderer = ({
   useEffect(() => {
     if (isDisabled) {
       setValue(inputLabel, undefined, { shouldValidate: false });
-      unregister(inputLabel);
     }
-  }, [isDisabled, inputLabel, setValue, unregister]);
+  }, [isDisabled, inputLabel, setValue]);
 
   const isInputRequired = input.isRequired && !isDisabled;
 
@@ -77,7 +78,7 @@ const InputRenderer = ({
           control={control}
           rules={{ required: isInputRequired }}
           render={({ field }) => (
-            <Selector
+            <FormSelector
               {...field}
               options={input.options}
               placeholder={input.placeholder}

@@ -87,9 +87,9 @@ const NavigationHeader = () => {
               <IcFile />
               비자서류 작성
             </Link>
-            <a className="cursor-pointer">
+            <Link to={`/profile`} className="cursor-pointer">
               <IcUserProfile />
-            </a>
+            </Link>
           </div>
         ) : (
           <div className="flex flex-row items-center body-l-semibold text-gray-800 gap-5 ">

@@ -23,7 +23,7 @@ const ServiceReviewModal = ({ reviewHandler }: ServiceReviewModalParams) => {
         <div className="title-l-semibold text-text-base">
           비자 발급 과정에서 느낀 점을 남겨주세요.
         </div>
-        <div className="mt-5 bg-gray-50 rounded-lg p-4 h-[346px] flex flex-col">
+        <div className="mt-5 bg-gray-50 rounded-lg p-4 h-86.5 flex flex-col">
           <textarea
             className="w-full flex-1 resize-none outline-none placeholder:text-text-sub"
             placeholder="예) 설명이 이해하기 쉬웠어요. 진행 상황을 계속 안내해줘서 안심됐어요."
@@ -47,7 +47,7 @@ const ServiceReviewModal = ({ reviewHandler }: ServiceReviewModalParams) => {
         <Button
           type="primary"
           size="large"
-          className="w-full mt-10 mb-[39px]"
+          className="w-full mt-10 mb-9.75"
           disabled={false}
           onClick={() => reviewHandler(0)}
         >

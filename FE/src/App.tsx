@@ -12,6 +12,7 @@ import Documents from "./pages/Documents/Documents";
 import EditDocument from "./pages/Documents/EditDocument/EditDocument";
 import { AuthContextProvider } from "./contexts/AuthContextProvider";
 import { LocaleContextProvider } from "./contexts/LocaleContextProvider";
+import MyProfile from "./pages/Profile/MyProfile";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/search/:targetType" element={<Search />} />
+              <Route path="/profile" element={<MyProfile />} />
               <Route
                 path="/profile/foreigner/:foreignerId"
                 element={<ProfileOfForeigner />}

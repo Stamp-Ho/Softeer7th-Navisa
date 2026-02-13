@@ -57,7 +57,7 @@ const ChatArea = ({
       ref={chatAreaRef}
       className={`focus:outline-gray-300 focus:outline-2 
         flex flex-row items-center scrollbar-hide
-         pl-6 pr-12 py-3 w-[832px] bg-background-sub rounded-[24px]
+         pl-6 pr-12 py-3 w-208 bg-background-sub rounded-6
          resize-none ${className}`}
       placeholder={placeholder}
       value={value}

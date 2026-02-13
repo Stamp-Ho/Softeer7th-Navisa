@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext, type feUserType } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
+  const navigate = useNavigate();
   const [userType, setUserType] = useState<feUserType>(() => {
     const savedUserType = localStorage.getItem("userType");
     return savedUserType ? JSON.parse(savedUserType) : null;
@@ -20,6 +22,8 @@ export const AuthContextProvider = ({
     setAccessToken("");
     setUserId("");
     setUserType("NOT_AUTHED");
+    navigate("/");
+    localStorage.clear();
   };
 
   // 2. 유저 상태가 바뀔 때마다 로컬 스토리지 업데이트

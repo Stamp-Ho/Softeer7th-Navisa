@@ -4,8 +4,11 @@ import Button from "../common/Button";
 import Tag from "../common/Tag";
 import type { RecentVisaFormsResponse } from "../../api/types/etc";
 import { formatToLocalTime } from "../../utils/formatToLocalTime";
+import { useResizeImage } from "../../hooks/useResizeImage";
+import { useEffect } from "react";
 
 const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
+  const { resizeImage, imageSize, loadingImage } = useResizeImage();
   if (!document) return skeletonUI();
   const lastModifiedAtLocalTime = formatToLocalTime(document.lastModifiedAt);
 
@@ -13,17 +16,30 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
     lastModifiedAtLocalTime.slice(0, 12) +
     " · " +
     lastModifiedAtLocalTime.slice(14, 19);
+
+  useEffect(() => {
+    resizeImage(
+      "https://cloudfront.navisa.site/" + document.foreignerProfileImgUrl,
+      75,
+      105,
+    );
+  }, [document]);
+  if (loadingImage) return skeletonUI();
   return (
     <div className="flex flex-row w-full h-fit p-4 gap-3 bg-white rounded-[10px] shadow">
       {document.foreignerProfileImgUrl ? (
-        <div className="w-18.75 h-26.25 overflow-hidden rounded-xl flex outline outline-border-normal">
-          <img
-            src={
-              "https://cloudfront.navisa.site/" +
-              document.foreignerProfileImgUrl
-            }
-            alt="외국인 프로필 사진"
-          />
+        <div className="w-18.75 h-26.25 overflow-hidden rounded-xl flex items-center justify-center outline outline-border-normal">
+          <div>
+            <img
+              src={
+                "https://cloudfront.navisa.site/" +
+                document.foreignerProfileImgUrl
+              }
+              width={imageSize.width}
+              height={imageSize.height}
+              alt="외국인 프로필 사진"
+            />
+          </div>
         </div>
       ) : (
         <div className="w-18.75 h-26.25 rounded-xl bg-gray-100" />

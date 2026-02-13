@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { IcDot, IcPlus } from "../../../assets/icon/StratisUi";
 import { useFormContext } from "react-hook-form";
+import { useResizeImage } from "../../../hooks/useResizeImage";
 
 const ImageUploadInput = ({
   placeholder = "",
@@ -14,6 +15,7 @@ const ImageUploadInput = ({
   imageFile: File | undefined;
   setImageFile: React.Dispatch<React.SetStateAction<File | undefined>>;
 }) => {
+  const { resizeImage, imageSize, loadingImage } = useResizeImage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { register, setValue } = useFormContext();
   const [imagePreview, setImagePreview] = useState("");
@@ -57,7 +59,10 @@ const ImageUploadInput = ({
     register("0.sectionData.0.values.0");
     setValue("0.sectionData.0.values.0", "");
   }, []);
-
+  useEffect(() => {
+    (imageFile !== undefined || imageUrl) &&
+      resizeImage(imagePreview || imageUrl || "", 75, 105);
+  }, [imagePreview, imageUrl]);
   return (
     <div className="grid-cols-3 flex flex-row gap-5">
       <div
@@ -73,12 +78,16 @@ const ImageUploadInput = ({
           accept="image/png, image/jpeg, image/jpg"
         />
 
-        {imageFile !== undefined || imageUrl ? (
-          <img
-            src={imagePreview || `https://cloudfront.navisa.site/${imageUrl}`} // 업로드된 이미지 미리보기
-            alt="profile"
-            className="w-full h-full object-cover"
-          />
+        {(!loadingImage && imageFile !== undefined) || imageUrl ? (
+          <div>
+            <img
+              src={imagePreview || imageUrl} // 업로드된 이미지 미리보기
+              alt="profile"
+              width={imageSize.width}
+              height={imageSize.height}
+              className="w-full h-full object-cover"
+            />
+          </div>
         ) : (
           <div>
             <IcPlus />

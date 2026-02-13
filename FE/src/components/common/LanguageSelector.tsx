@@ -6,7 +6,7 @@ const LanguageSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
   const flagStyle = "w-8 h-8 border border-gray-200 rounded-full";
   return (
-    <div className="z-100 border border-gray-200 cursor-pointer rounded-3xl bg-white h-fit p-2 pr-4 flex flex-col gap-3 ">
+    <div className="z-30 border border-gray-200 cursor-pointer rounded-3xl bg-white h-fit p-2 pr-4 flex flex-col gap-3 ">
       <div
         className="flex flex-row items-center gap-2"
         onClick={() => setIsOpen(!isOpen)}

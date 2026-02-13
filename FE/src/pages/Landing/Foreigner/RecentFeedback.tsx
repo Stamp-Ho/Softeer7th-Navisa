@@ -3,21 +3,21 @@ import RecentFeedbackCard from "./RecentFeedbackCard";
 
 const RecentFeedback = () => {
   const { data, isLoading, isError } = useRecentAgentFeedbackQuery();
-  if (isLoading) return <div>로당중...</div>;
 
-  const dataToRender = isError ? (
-    <>
-      {Array.from({ length: 3 }).map((_, idx) => (
-        <RecentFeedbackCard key={idx} />
-      ))}
-    </>
-  ) : (
-    <>
-      {data?.map((feedback, idx) => (
-        <RecentFeedbackCard key={idx} feedback={feedback} />
-      ))}
-    </>
-  );
+  const dataToRender =
+    isLoading || isError ? (
+      <>
+        {Array.from({ length: 3 }).map((_, idx) => (
+          <RecentFeedbackCard key={idx} />
+        ))}
+      </>
+    ) : (
+      <>
+        {data?.map((feedback, idx) => (
+          <RecentFeedbackCard key={idx} feedback={feedback} />
+        ))}
+      </>
+    );
 
   return (
     <div className="flex flex-col mt-17">

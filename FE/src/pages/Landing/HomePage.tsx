@@ -1,39 +1,22 @@
-import { useContext } from "react";
 import BannerBackground from "../../components/shared/BannerBackground";
 import ForeignerBanner from "./Foreigner/ForeignerBanner";
 import SuggestedAgents from "./Foreigner/SuggestedAgents";
 import SuggestedForeigners from "./Agent/SuggestedForeigner";
 import RecentlyEditedDocuments from "./Agent/RecentlyEditedDocuments";
 import ExploreJobs from "./Common/ExploreJobs";
-import { AuthContext } from "../../contexts/AuthContext";
 import RecommendPanel from "./Foreigner/RecommendPanel";
 import RecentFeedback from "./Foreigner/RecentFeedback";
 import BadgeReview from "./Foreigner/BadgeReview";
+import { useAuth } from "../../contexts/AuthContextProvider";
+import Footer from "./Footer";
 
 const HomePage = () => {
-  const context = useContext(AuthContext);
-  if (!context) return null;
-  const { userType, setUserType, logOut, userId, accessToken } = context;
+  const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
 
   return (
     <>
       <BannerBackground />
-      {/* 유저상태 테스트용 */}
-      <div className="flex flex-row gap-2 cursor-pointer">
-        <div onClick={() => setUserType("VALID_AGENT")}>인증행정사</div>
-        <div onClick={() => setUserType("INVALID_AGENT")}>비인증행정사</div>
-        <div onClick={() => setUserType("FILLED_FOREIGNER")}>등록외국인</div>
-        <div onClick={() => setUserType("UNFILLED_FOREIGNER")}>
-          미등록외국인
-        </div>
-        <div onClick={logOut}>미로그인</div>
-        <div>
-          {" "}
-          {userType}, {userId}
-        </div>
-        <div className=" 0 overflow-hidden">{accessToken}</div>
-      </div>
       {isAgent ? (
         <>
           <RecentlyEditedDocuments />
@@ -49,6 +32,7 @@ const HomePage = () => {
       <ExploreJobs isAgent={isAgent} />
       <BadgeReview />
       <RecentFeedback />
+      <Footer />
     </>
   );
 };
