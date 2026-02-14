@@ -32,7 +32,7 @@ public class ChatRoomCommandService {
     private final AgentProfileQueryService agentProfileQueryService;
     private final ForeignerQueryService foreignerQueryService;
     private final UserQueryService userQueryService;
-    private final ChatMessageService chatMessageService;
+    private final ChatMessageCommandService chatMessageCommandService;
     private final ChatRoomQueryService chatRoomQueryService;
 
     public void updateStatus(ChatRoom chatRoom) {
@@ -69,7 +69,7 @@ public class ChatRoomCommandService {
 
         // 메시지를 저장
         UUID senderId = (loginUser.getUserType() == UserType.VALID_AGENT) ? agentProfile.getId() : foreignerProfile.getId();
-        chatMessageService.create(chatRoom, senderId, request.content(), request.sendAt());
+        chatMessageCommandService.create(chatRoom, senderId, request.content(), request.sendAt());
 
         return new CreateChatRoomResponse(chatRoom.getId());
     }

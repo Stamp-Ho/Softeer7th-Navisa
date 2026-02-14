@@ -88,7 +88,7 @@ public class ProposalService {
         dbAction.accept(room, profileId);
 
         // Redis Pub/Sub 발행 (DB 트랜잭션과 분리되어 실행됨)
-        chatServiceFacade.saveAndPublishMessage(user.getId(), request, room);
+        chatServiceFacade.saveAndPublishChatMessage(user.getId(), request, room);
     }
 
     private UUID getProfileId(User user) {

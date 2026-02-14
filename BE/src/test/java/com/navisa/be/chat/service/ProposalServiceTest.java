@@ -63,8 +63,8 @@ class ProposalServiceTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentProp", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
+                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
 
         ChatMessageRequest request = new ChatMessageRequest(
                 chatRoom.getId(),
@@ -84,7 +84,9 @@ class ProposalServiceTest extends IntegrationTestSupport {
         assertThat(proposal.getSenderId()).isEqualTo(agentProfile.getId()); // Sender ID는 Profile ID
 
         // 2. ChatServiceFacade 호출 시 User ID가 전달되었는지 확인 (중요)
-        verify(chatServiceFacade).saveAndPublishMessage(eq(agentUser.getId()), any(ChatMessageRequest.class),
+        verify(chatServiceFacade).saveAndPublishChatMessage(
+                eq(agentUser.getId()),
+                any(ChatMessageRequest.class),
                 any(ChatRoom.class));
     }
 
@@ -99,8 +101,8 @@ class ProposalServiceTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentMatch", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
+                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
         proposalRepository.save(new Proposal(chatRoom, agentProfile.getId())); // 초기 상태 PROPOSED
 
         ChatMessageRequest request = new ChatMessageRequest(
@@ -118,7 +120,8 @@ class ProposalServiceTest extends IntegrationTestSupport {
         Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom).orElseThrow();
         assertThat(proposal.getStatus()).isEqualTo(ProposalStatus.MATCHED);
 
-        verify(chatServiceFacade).saveAndPublishMessage(eq(foreignerUser.getId()), any(ChatMessageRequest.class),
+        verify(chatServiceFacade).saveAndPublishChatMessage(eq(foreignerUser.getId()),
+                any(ChatMessageRequest.class),
                 any(ChatRoom.class));
     }
 
@@ -133,8 +136,8 @@ class ProposalServiceTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentReject", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
+                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
         proposalRepository.save(new Proposal(chatRoom, agentProfile.getId()));
 
         ChatMessageRequest request = new ChatMessageRequest(
@@ -152,7 +155,9 @@ class ProposalServiceTest extends IntegrationTestSupport {
         Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom).orElseThrow();
         assertThat(proposal.getStatus()).isEqualTo(ProposalStatus.REJECTED);
 
-        verify(chatServiceFacade).saveAndPublishMessage(eq(foreignerUser.getId()), any(ChatMessageRequest.class),
+        verify(chatServiceFacade).saveAndPublishChatMessage(
+                eq(foreignerUser.getId()),
+                any(ChatMessageRequest.class),
                 any(ChatRoom.class));
     }
 
@@ -167,10 +172,10 @@ class ProposalServiceTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentCancel", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
+                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
         Proposal proposal = new Proposal(chatRoom, agentProfile.getId());
-        ReflectionTestUtils.setField(proposal,"status", ProposalStatus.MATCHED);
+        ReflectionTestUtils.setField(proposal, "status", ProposalStatus.MATCHED);
         proposalRepository.save(proposal);
 
         ChatMessageRequest request = new ChatMessageRequest(
@@ -188,7 +193,9 @@ class ProposalServiceTest extends IntegrationTestSupport {
         Proposal findProposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom).orElseThrow();
         assertThat(findProposal.getStatus()).isEqualTo(ProposalStatus.CANCELED);
 
-        verify(chatServiceFacade).saveAndPublishMessage(eq(agentUser.getId()), any(ChatMessageRequest.class),
+        verify(chatServiceFacade).saveAndPublishChatMessage(
+                eq(agentUser.getId()),
+                any(ChatMessageRequest.class),
                 any(ChatRoom.class));
     }
 
@@ -203,8 +210,8 @@ class ProposalServiceTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentFail", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
+                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
 
         User otherUser = userTestFixture.createUser("other_agent@test.com", UserType.VALID_AGENT);
         agentProfileTestFixture.createAgentProfile("OtherAgent", "Address", otherUser.getId());
@@ -217,7 +224,8 @@ class ProposalServiceTest extends IntegrationTestSupport {
                 ZonedDateTime.now());
 
         // when & then
-        assertThatThrownBy(() -> proposalService.createProposal(otherUser.getEmail(), chatRoom.getId(), request))
+        assertThatThrownBy(
+                () -> proposalService.createProposal(otherUser.getEmail(), chatRoom.getId(), request))
                 .isInstanceOf(ChatRoomException.class)
                 .hasMessageContaining(ResponseStatus.NOT_ALLOWED_TO_ACCESS_CHATROOM.getMessage());
     }

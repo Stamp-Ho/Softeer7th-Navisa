@@ -16,7 +16,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ChatMessageService {
+public class ChatMessageCommandService {
 
     private final ChatMessageRepository chatMessageRepository;
 
@@ -27,5 +27,10 @@ public class ChatMessageService {
 
     public ChatMessage create(ChatRoom chatRoom, UUID senderId, String content, ZonedDateTime sentAt){
         return chatMessageRepository.save(new ChatMessage(chatRoom, MessageType.TEXT, content, senderId, sentAt));
+    }
+
+    @Transactional
+    public void updateReadStatusBeforeChatMessageSentAt(Long chatMessageId, UUID profileId, Long chatRoomId) {
+        chatMessageRepository.updateReadStatusBeforeChatMessageSentAt(chatMessageId, profileId, chatRoomId);
     }
 }

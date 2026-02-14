@@ -5,10 +5,10 @@ import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.repository.querydsl.ChatMessageRepositoryQueryDsl;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,4 +33,21 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long>,
             "GROUP BY cm.chatRoom.id")
     List<ChatMessageNonReadCountProjection> findCountByChatRoomIn(
             @Param("chatRooms") List<ChatRoom> chatRooms, @Param("profileId") UUID profileId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+        UPDATE ChatMessage m
+            SET m.isReadByOther = true
+            WHERE m.chatRoom.id = :chatRoomId
+              AND m.senderId != :profileId
+              AND m.isReadByOther = false
+              AND (m.createdAt, m.id) <= (
+                  SELECT m2.createdAt, m2.id
+                  FROM ChatMessage m2
+                  WHERE m2.id = :chatMessageId
+              )
+    """)
+    void updateReadStatusBeforeChatMessageSentAt(@Param("chatMessageId") Long chatMessageId,
+                                                 @Param("profileId") UUID profileId,
+                                                 @Param("chatRoomId") Long chatRoomId);
 }

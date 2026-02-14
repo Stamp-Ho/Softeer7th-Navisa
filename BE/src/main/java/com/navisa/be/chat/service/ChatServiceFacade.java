@@ -23,31 +23,66 @@ import java.util.UUID;
 @Service
 public class ChatServiceFacade {
 
-    private final ChatMessageService chatMessageService;
+    private final ChatMessageCommandService chatMessageCommandService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ChatRoomQueryService chatRoomQueryService;
 
     @Transactional
-    public void saveAndPublishMessage(UUID senderId, ChatMessageRequest request, ChatRoom chatRoom) {
+    public void saveAndPublishChatMessage(UUID senderId, ChatMessageRequest request, ChatRoom chatRoom) {
         final ChatRoom finalChatRoom = (chatRoom != null)
                 ? chatRoom
                 : chatRoomQueryService.findByIdWithProfiles(request.roomId());
-        UUID senderProfileId = getSenderProfileId(finalChatRoom, senderId);
-        ChatMessage chatMessage = chatMessageService.create(finalChatRoom, senderProfileId, request);
+        ChatMessage chatMessage = chatMessageCommandService.create(
+                finalChatRoom, getSenderProfileId(finalChatRoom, senderId), request);
 
         // Redis 발행은 트랜잭션 커밋 후 실행
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
                 // 송신자의 채널에 에코
-                log.debug("senderId {}", senderId);
-                ChatMessageResponse echoResponse = ChatMessageResponse.entityToDto(chatMessage, request, senderProfileId, senderId);
+                log.debug("{} senderId {}", request.type(), senderId);
+                ChatMessageResponse echoResponse = ChatMessageResponse.entityToDto(chatMessage, request, senderId, senderId);
                 redisTemplate.convertAndSend("user:ch:" + senderId, echoResponse);
 
                 // 수신자의 채널에 발행
                 UUID receiverId = getReceiverId(senderId, finalChatRoom);
-                log.debug("receiverId {}", receiverId);
-                ChatMessageResponse response = ChatMessageResponse.entityToDto(chatMessage, request, senderProfileId, receiverId);
+                log.debug("{} receiverId {}", request.type(), receiverId);
+                ChatMessageResponse response = ChatMessageResponse.entityToDto(chatMessage, request, senderId, receiverId);
+                redisTemplate.convertAndSend("user:ch:" + receiverId, response);
+            }
+        });
+    }
+
+    @Transactional
+    public void saveAndPublishReadEventMessage(UUID senderId, ChatMessageRequest request) {
+        ChatRoom findChatRoom = chatRoomQueryService.findByIdWithProfiles(request.roomId());
+
+        if (request.content() == null || request.content().isBlank()) {
+            throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
+        }
+
+        long lastReadMessageId;
+        try {
+            lastReadMessageId = Long.parseLong(request.content());
+        } catch (NumberFormatException e) {
+            throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
+        }
+        
+        chatMessageCommandService.updateReadStatusBeforeChatMessageSentAt
+                (lastReadMessageId, getSenderProfileId(findChatRoom, senderId), findChatRoom.getId());
+
+        // 송신자의 채널에 에코
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                log.debug("READ senderId : {}", senderId);
+                ChatMessageResponse echoResponse = ChatMessageResponse.createReadEventMessage(request, senderId, senderId, findChatRoom.getId());
+                redisTemplate.convertAndSend("user:ch:" + senderId, echoResponse);
+
+                // 수신자의 채널에 발행
+                UUID receiverId = getReceiverId(senderId, findChatRoom);
+                log.debug("READ receiverId : {}", receiverId);
+                ChatMessageResponse response = ChatMessageResponse.createReadEventMessage(request, senderId, receiverId, findChatRoom.getId());
                 redisTemplate.convertAndSend("user:ch:" + receiverId, response);
             }
         });
@@ -63,7 +98,7 @@ public class ChatServiceFacade {
         throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
     }
 
-    private static UUID getReceiverId(UUID senderId, ChatRoom chatRoom) {
+    private UUID getReceiverId(UUID senderId, ChatRoom chatRoom) {
         if(chatRoom.getAgentProfile().getUserId().equals(senderId)){
             ForeignerProfile foreignerProfile = chatRoom.getForeignerProfile();
             return foreignerProfile.getUserId();

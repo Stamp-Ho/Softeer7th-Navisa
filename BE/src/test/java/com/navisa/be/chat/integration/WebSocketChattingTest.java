@@ -3,6 +3,7 @@ package com.navisa.be.chat.integration;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.dto.message.ChatMessageResponse;
+import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.chat.model.enums.MessageType;
@@ -49,9 +50,10 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
         User foreignerUser = userTestFixture.createUser("foreigner@example.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
+                ZonedDateTime.now());
 
-        //  두 사용자 모두 연결
+        // 두 사용자 모두 연결
         String agentToken = jwtProvider.createAccessToken(agentUser.getEmail());
         String foreignerToken = jwtProvider.createAccessToken(foreignerUser.getEmail());
         StompSession agentSession = connectSession(agentToken);
@@ -82,8 +84,7 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
                 UUID.randomUUID(),
                 "수임 제안합니다.",
                 MessageType.PROPOSAL,
-                ZonedDateTime.now()
-        );
+                ZonedDateTime.now());
         agentSession.send("/pub/chat/message", request);
 
         // then 외국인이 메시지를 받았는지 확인
@@ -108,8 +109,9 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
         StompHeaders connectHeaders = new StompHeaders();
         connectHeaders.add("Authorization", "Bearer " + token);
         return stompClient
-                .connectAsync(String.format(URL, port), new WebSocketHttpHeaders(), connectHeaders, new StompSessionHandlerAdapter() {
-                })
+                .connectAsync(String.format(URL, port), new WebSocketHttpHeaders(), connectHeaders,
+                        new StompSessionHandlerAdapter() {
+                        })
                 .get(20, TimeUnit.SECONDS);
     }
 
@@ -127,8 +129,7 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
                 foreignerProfile,
                 agentProfile,
                 ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now()
-        );
+                ZonedDateTime.now());
 
         String agentToken = jwtProvider.createAccessToken(agentUser.getEmail());
 
@@ -149,8 +150,7 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
                 UUID.randomUUID(),
                 "멀티 세션 테스트 메시지입니다.",
                 MessageType.TEXT,
-                ZonedDateTime.now()
-        );
+                ZonedDateTime.now());
         agentSession1.send("/pub/chat/message", request);
 
         // then: 메시지를 보낸 세션1과 대기 중이던 세션2 모두 메시지를 받아야 함
@@ -165,6 +165,56 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
 
         agentSession1.disconnect();
         agentSession2.disconnect();
+    }
+
+    @Test
+    @DisplayName("외국인이 메시지를 읽음 처리하면, 상대방(행정사)에게 읽음 이벤트가 전송된다")
+    void testReadEvent_ForeignerReadsMessage_AgentReceivesNotification() throws Exception {
+        // given
+        User agentUser = userTestFixture.createUser("agent_read@example.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("박행정", "서울시", agentUser.getId());
+        User foreignerUser = userTestFixture.createUser("foreigner_read@example.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
+                ZonedDateTime.now());
+
+        // 메시지 생성 (읽지 않은 상태)
+        ChatMessage msg1 = chatRoomTestFixture.createChatMessage(chatRoom,
+                agentProfile.getId(), "Hello", false);
+
+        // WebSocket 연결
+        String agentToken = jwtProvider.createAccessToken(agentUser.getEmail());
+        String foreignerToken = jwtProvider.createAccessToken(foreignerUser.getEmail());
+        StompSession agentSession = connectSession(agentToken);
+        StompSession foreignerSession = connectSession(foreignerToken);
+
+        // 행정사가 자신의 채널 구독 (읽음 이벤트 수신 대기)
+        CompletableFuture<ChatMessageResponse> agentFuture = new CompletableFuture<>();
+        agentSession.subscribe("/user/chat/subscribe", new CustomFrameHandler(agentFuture));
+
+        // 구독이 완전히 설정될 때까지 대기
+        Thread.sleep(1000);
+
+        // when 외국인이 읽음 이벤트 전송
+        ChatMessageRequest request = new ChatMessageRequest(
+                chatRoom.getId(),
+                UUID.randomUUID(),
+                String.valueOf(msg1.getId()), // 마지막으로 읽은 메시지 ID
+                MessageType.READ,
+                ZonedDateTime.now());
+        foreignerSession.send("/pub/room/message/read", request);
+
+        // then 행정사가 읽음 이벤트를 수신하는지 확인
+        ChatMessageResponse response = agentFuture.get(10, TimeUnit.SECONDS);
+
+        assertThat(response).isNotNull();
+        assertThat(response.type()).isEqualTo(MessageType.READ);
+        assertThat(response.content()).isEqualTo(String.valueOf(msg1.getId()));
+        assertThat(response.roomId()).isEqualTo(chatRoom.getId());
+
+        agentSession.disconnect();
+        foreignerSession.disconnect();
     }
 
     /**
