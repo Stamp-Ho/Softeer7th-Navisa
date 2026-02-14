@@ -1,14 +1,15 @@
-import { useContext } from "react";
 import AlarmBadge from "../../../../assets/icon/AlarmBadge";
 import Tag from "../../../../components/common/Tag";
-import { AuthContext } from "../../../../contexts/AuthContext";
 import CalcLastChattedAt from "../../../../utils/CalcLastChattedAt";
+import { type ChatRoomStatus } from "../hooks/useChatRoom";
+import { useAuth } from "../../../../contexts/AuthContextProvider";
+import { IcPin } from "../../../../assets/icon/StratisUi";
 
 type ChatRoomCardParams = {
   chatRoomId: number;
   profileImgUrl: string;
   opponentName: string;
-  roomStatus: string;
+  roomStatus: ChatRoomStatus;
   lastMessage: string;
   noneRead: number;
   lastChattedAt: string;
@@ -23,10 +24,7 @@ const ChatRoomCard = ({
   noneRead,
   lastChattedAt,
 }: ChatRoomCardParams) => {
-  const context = useContext(AuthContext);
-  if (!context) return null;
-  const { userType } = context;
-
+  const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
 
   return (
@@ -51,7 +49,8 @@ const ChatRoomCard = ({
             <span className="flex flex-row items-center gap-3 title-s-semibold text-text-base">
               {opponentName}
               {roomStatus === "MATCHED" ? (
-                <Tag type="small_fill_icon" className="w-[83px]">
+                <Tag type="small_fill_icon" className="min-w-[83px]">
+                  <IcPin size="14" />
                   수임 확정
                 </Tag>
               ) : roomStatus === "PROPOSED" ? (

@@ -4,17 +4,18 @@ import Button from "../../../../../components/common/Button";
 import Chip from "../../../../../components/common/Chip";
 import AgentHeaderInfo from "./AgentHeaderInfo";
 import ForeignerHeaderInfo from "./ForeignerHeaderInfo";
+import type { ChatRoomStatus } from "../../hooks/useChatRoom";
 
 type HeaderParams = {
   headerData: ChatRoomHeaderData;
-  isMatched: boolean;
+  roomStatus: ChatRoomStatus;
   onClose: () => void;
   onModalAction: (num: number) => void;
 };
 
 const ChatRoomHeader = ({
   headerData,
-  isMatched,
+  roomStatus,
   onClose,
   onModalAction,
 }: HeaderParams) => {
@@ -30,9 +31,8 @@ const ChatRoomHeader = ({
               <AgentHeaderInfo data={headerData.data} />
             )}
           </div>
-
           <div className="flex flex-row">
-            {isMatched ? (
+            {roomStatus === "MATCHED" ? (
               <div onClick={() => onModalAction(2)}>
                 <Chip type="chips_square_cancel" className="mr-3" />
               </div>

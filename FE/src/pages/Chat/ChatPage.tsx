@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ChatRoomList from "./components/ChatList/ChatRoomList";
 import Envelope from "../../assets/Envelope";
 import ChatRoom from "./components/ChatRoom/ChatRoom";
@@ -13,14 +13,18 @@ import {
 } from "../../api/queries/useChatUnreadCountQuery";
 import { useChatRoomsQuery } from "../../api/queries/useChatRoomsQuery";
 import { useAuth } from "../../contexts/AuthContextProvider";
+import { useWebSocket } from "../../contexts/WebSocketContext";
+import { deriveStatusFromMessageType } from "./components/utils/getChatStatus";
+import type { ChatRoomStatus } from "./components/hooks/useChatRoom";
 
 const ChatPage = () => {
   const [selectedChatRoomId, setSelectedChatRoomId] = useState<number>(-1);
   const [selectedTab, setSelectedTab] = useState<ChatRoomFilter>("all");
   const [viewMessageModal, setViewMessageModal] = useState<number>(0);
   const [reviewModal, setReviewModal] = useState<number>(0);
-  const [isMatched, setIsMatched] = useState<boolean>(false);
   const [opponentImg, setOpponentImg] = useState<string | null>(null);
+
+  const { messages: socketMessages } = useWebSocket(); // 전역 웹소켓 메시지 구독
 
   // ======== Auth ========
   const { userType } = useAuth();
@@ -49,16 +53,51 @@ const ChatPage = () => {
     isError: isChatRoomsError,
   } = useChatRoomsQuery(selectedTab);
 
+  const syncedChatRooms = useMemo(() => {
+    return chatRooms.map((room) => {
+      // 해당 방에 대한 새로운 소켓 메시지들 필터링
+      const roomSocketMsgs = socketMessages.filter(
+        (m) => Number(m.roomId) === room.chatRoomId,
+      );
+
+      if (roomSocketMsgs.length === 0) return room;
+
+      // 가장 최신 소켓 메시지를 기준으로 방 정보 업데이트
+      const latestMsg = roomSocketMsgs[roomSocketMsgs.length - 1];
+
+      // 수임 관련 메시지만 필터링
+      const PROPOSAL_TYPES = new Set([
+        "ACCEPTED",
+        "CANCELED",
+        "PROPOSAL",
+        "REJECTED",
+      ]);
+      const proposalMsgs = roomSocketMsgs.filter((m) =>
+        PROPOSAL_TYPES.has(m.type),
+      );
+
+      return {
+        ...room,
+        // 마지막 메시지 갱신
+        lastMessage: latestMsg.content,
+        lastChattedAt: latestMsg.createdAt,
+        // 실시간 수임 상태 반영
+        roomStatus:
+          proposalMsgs.length > 0
+            ? deriveStatusFromMessageType(
+                proposalMsgs[proposalMsgs.length - 1].type,
+                room.roomStatus as ChatRoomStatus,
+              )
+            : room.roomStatus,
+      };
+    });
+  }, [chatRooms, socketMessages]);
+
   const isChatExist = chatRooms.length > 0;
 
   const onModalAction = (num: number) => setViewMessageModal(num);
-  const onSelectChat = (
-    id: number,
-    matched: boolean,
-    profileImg: string | null,
-  ) => {
+  const onSelectChat = (id: number, profileImg: string | null) => {
     setSelectedChatRoomId(id);
-    setIsMatched(matched);
     setOpponentImg(profileImg);
   };
   const onCloseChat = () => {
@@ -67,14 +106,7 @@ const ChatPage = () => {
   };
   const reviewHandler = (num: number) => setReviewModal(num);
 
-  // if (!isFileReady) return <NoChatView isFileReady={isFileReady} />;
-
-  // if (isChatRoomsLoading)
-  //   return <div className="px-3 text-gray-500">로딩 중...</div>;
-
-  // if (!isChatExist) return <NoChatView isFileReady={isFileReady} />;
-
-  if (!isFileReady || !isChatExist)
+  if (!isFileReady || (!isChatExist && selectedTab === "all"))
     return <NoChatView isFileReady={isFileReady} />;
 
   return (
@@ -150,13 +182,12 @@ const ChatPage = () => {
           {/* ===== 목록 (에러면 chatRooms 안 넘김 = 더미 사용) ===== */}
           {!isChatRoomsLoading && (
             <ChatRoomList
-              chatRooms={isChatRoomsError ? [] : chatRooms}
+              chatRooms={isChatRoomsError ? [] : syncedChatRooms}
               onSelectChat={onSelectChat}
               selectedChatRoomId={selectedChatRoomId}
             />
           )}
         </div>
-
         {/* ===== 오른쪽: 채팅창 ===== */}
         {selectedTab === "unread" &&
         unreadCount === 0 &&
@@ -181,7 +212,6 @@ const ChatPage = () => {
                 <div className="w-full pt-10"></div>
                 <ChatRoom
                   chatRoomId={selectedChatRoomId}
-                  isMatched={isMatched}
                   onClose={onCloseChat}
                   onModalAction={onModalAction}
                   profileImg={opponentImg}

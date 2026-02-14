@@ -7,12 +7,13 @@ let stompClient: Client | null = null;
 export const connectWebSocket = (
   token: string,
   onMessage: (msg: Message) => void,
+  onConnectionChange?: (connected: boolean) => void,
 ) => {
   if (stompClient?.active) return stompClient;
 
   stompClient = new Client({
     webSocketFactory: () => new WebSocket("wss://api.navisa.site/ws"),
-    // webSocketFactory: () => new WebSocket("ws://192.168.1.22:8080/ws"),
+    // webSocketFactory: () => new WebSocket("ws://121.172.219.115:15533/ws"),
 
     connectHeaders: { Authorization: `Bearer ${token}` },
 
@@ -20,6 +21,7 @@ export const connectWebSocket = (
 
     onConnect: () => {
       console.log("WebSocket Connected");
+      onConnectionChange?.(true);
       stompClient?.subscribe("/user/chat/subscribe", (frame) => {
         try {
           const message: Message = JSON.parse(frame.body);
@@ -36,6 +38,7 @@ export const connectWebSocket = (
 
     onWebSocketClose: () => {
       console.warn("WebSocket closed");
+      onConnectionChange?.(false);
     },
   });
 
@@ -49,15 +52,35 @@ export const disconnectWebSocket = async () => {
 };
 
 export const sendMessageToServer = (payload: Send) => {
-  if (!stompClient || !stompClient.active) {
-    console.error("STOMP Client not connected");
+  if (!stompClient) {
+    console.warn("STOMP client is null");
     return;
   }
-  const des =
+
+  if (!stompClient.connected) {
+    console.warn("STOMP not connected yet. message skipped.");
+    return;
+  }
+
+  const destination =
     payload.type === "READ" ? "/pub/room/message/read" : "/pub/chat/message";
 
   stompClient.publish({
-    destination: des,
+    destination,
     body: JSON.stringify(payload),
   });
 };
+
+// export const sendMessageToServer = (payload: Send) => {
+//   if (!stompClient || !stompClient.active) {
+//     console.error("STOMP Client not connected");
+//     return;
+//   }
+//   const des =
+//     payload.type === "READ" ? "/pub/room/message/read" : "/pub/chat/message";
+
+//   stompClient.publish({
+//     destination: des,
+//     body: JSON.stringify(payload),
+//   });
+// };

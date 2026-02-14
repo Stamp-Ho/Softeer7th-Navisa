@@ -6,19 +6,20 @@ import {
 import ChatArea from "./ChatArea";
 import Chip from "../../../../../components/common/Chip";
 import { useChatSender } from "../../../../../api/websocket/useChatSender";
+import type { ChatRoomStatus } from "../../hooks/useChatRoom";
 
 type ChatRoomFooterParams = {
-  isMatched: boolean;
+  roomStatus: ChatRoomStatus;
   chatRoomId: number;
 };
 
-const ChatRoomFooter = ({ isMatched, chatRoomId }: ChatRoomFooterParams) => {
+const ChatRoomFooter = ({ roomStatus, chatRoomId }: ChatRoomFooterParams) => {
   const [message, setMessage] = useState<string>("");
   const { sendChat } = useChatSender();
 
   return (
     <div className="absolute bottom-8 w-full flex flex-col px-6">
-      {isMatched && (
+      {roomStatus === "MATCHED" && (
         <div className="w-fit mb-3">
           <Chip type="chips_square_form_view" />
         </div>

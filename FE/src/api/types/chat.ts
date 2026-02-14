@@ -3,7 +3,13 @@ export interface ChatRoomResponse {
   chatRoomId: number;
   profileImgUrl: string | null;
   opponentName: string;
-  roomStatus: string;
+  roomStatus:
+    | "DEFAULT"
+    | "PROPOSED"
+    | "MATCHED"
+    | "REJECTED"
+    | "BLOCKED"
+    | "CANCELED";
   lastMessage: string;
   noneReadCount: number;
   lastChattedAt: string;

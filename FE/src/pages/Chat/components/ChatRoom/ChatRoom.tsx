@@ -3,10 +3,10 @@ import ChatBody from "./ChatRoomBody/ChatBody";
 import ChatRoomFooter from "./ChatRoomFooter/ChatRoomFooter";
 import ChatRoomHeader from "./ChatRoomHeader/ChatRoomHeader";
 import { useAuth } from "../../../../contexts/AuthContextProvider";
+import { useChatRoom } from "../hooks/useChatRoom";
 
 type ChatRoomParams = {
   chatRoomId: number;
-  isMatched: boolean;
   onClose: () => void;
   onModalAction: (num: number) => void;
   profileImg: string | null;
@@ -46,13 +46,13 @@ const dummyForeigner = {
 
 const ChatRoom = ({
   chatRoomId,
-  isMatched,
   onClose,
   onModalAction,
   profileImg,
 }: ChatRoomParams) => {
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
+  const { chatStatus } = useChatRoom(chatRoomId, false);
 
   const headerData: ChatRoomHeaderData = isAgent
     ? { type: "FOREIGNER", data: dummyForeigner }
@@ -62,7 +62,7 @@ const ChatRoom = ({
     <>
       <ChatRoomHeader
         headerData={headerData}
-        isMatched={isMatched}
+        roomStatus={chatStatus}
         onClose={onClose}
         onModalAction={onModalAction}
       />
@@ -81,7 +81,7 @@ const ChatRoom = ({
             : dummyForeigner.basicInfo.nickname
         }
       />
-      <ChatRoomFooter isMatched={isMatched} chatRoomId={chatRoomId} />
+      <ChatRoomFooter roomStatus={chatStatus} chatRoomId={chatRoomId} />
     </>
   );
 };

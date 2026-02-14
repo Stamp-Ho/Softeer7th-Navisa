@@ -10,6 +10,7 @@ import { useAuth } from "./AuthContextProvider";
 type WebSocketContextType = {
   messages: Message[];
   sendMessage: (payload: Send) => void;
+  isConnected: boolean;
 };
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
@@ -20,32 +21,36 @@ export const WebSocketProvider = ({
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { accessToken, userId } = useAuth();
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     if (!accessToken) return;
 
-    // connectWebSocket(accessToken, (msg: Message) => {
-    //   setMessages((prev) => [...prev, msg]);
-    // });
-    connectWebSocket(accessToken, (msg: Message) => {
-      setMessages((prev) => {
-        // READ 수신 처리(읽음처리)
-        if (msg.type === "READ") {
-          return prev.map((m) => {
-            if (
-              m.roomId === msg.roomId &&
-              m.senderId === userId // 내가 보낸 메시지
-            ) {
-              return { ...m, isRead: true };
-            }
-            return m;
-          });
-        }
+    connectWebSocket(
+      accessToken,
+      (msg: Message) => {
+        setMessages((prev) => {
+          // READ 수신 처리(읽음처리)
+          if (msg.type === "READ") {
+            return prev.map((m) => {
+              if (
+                m.roomId === msg.roomId &&
+                m.senderId === userId // 내가 보낸 메시지
+              ) {
+                return { ...m, isRead: true };
+              }
+              return m;
+            });
+          }
 
-        // 일반 메시지 수신
-        return [...prev, { ...msg, isRead: false }];
-      });
-    });
+          // 일반 메시지 수신
+          return [...prev, { ...msg, isRead: false }];
+        });
+      },
+      (connected: boolean) => {
+        setIsConnected(connected);
+      },
+    );
 
     return () => {
       disconnectWebSocket();
@@ -57,7 +62,7 @@ export const WebSocketProvider = ({
   };
   return (
     <WebSocketContext.Provider
-      value={{ messages, sendMessage: handleSendMessage }}
+      value={{ messages, sendMessage: handleSendMessage, isConnected }}
     >
       {children}
     </WebSocketContext.Provider>

@@ -3,54 +3,13 @@ import ChatRoomCard from "./ChatRoomCard";
 import type { ChatRoomResponse } from "../../../../api/types/chat";
 
 type ChatRoomListProps = {
-  chatRooms?: ChatRoomResponse[];
-  onSelectChat: (
-    id: number,
-    matched: boolean,
-    profileImg: string | null,
-  ) => void;
+  chatRooms: ChatRoomResponse[];
+  onSelectChat: (id: number, profileImg: string | null) => void;
   selectedChatRoomId: number | null;
 };
 
-const dummyData: ChatRoomResponse[] = [
-  {
-    chatRoomId: 0,
-    profileImgUrl: "https://placehold.co/80x80",
-    opponentName: "전체 채팅방",
-    roomStatus: "DEFAULT",
-    lastMessage:
-      "메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 메시지 보냅니다 ",
-    noneReadCount: 100,
-    lastChattedAt: "2026-02-10T08:00:55.896Z",
-    proposed: true,
-    proposalMatched: true,
-  },
-  {
-    chatRoomId: 2,
-    profileImgUrl: "https://placehold.co/80x80",
-    opponentName: "전체 채팅방",
-    roomStatus: "PROPOSED",
-    lastMessage: "메시지 보냅니다 메시지 보냅니다 메시지 보냅니다...",
-    noneReadCount: 2,
-    lastChattedAt: "2026-02-10T08:00:55.896Z",
-    proposed: true,
-    proposalMatched: true,
-  },
-  {
-    chatRoomId: 3,
-    profileImgUrl: "https://placehold.co/80x80",
-    opponentName: "전체 채팅방",
-    roomStatus: "MATCHED",
-    lastMessage: "메시지 보냅니다 메시지 보냅니다 메시지 보냅니다...",
-    noneReadCount: 2,
-    lastChattedAt: "2026-02-10T08:00:55.896Z",
-    proposed: true,
-    proposalMatched: true,
-  },
-];
-
 const ChatRoomList = ({
-  chatRooms = dummyData,
+  chatRooms,
   onSelectChat,
   selectedChatRoomId,
 }: ChatRoomListProps) => {
@@ -91,13 +50,7 @@ const ChatRoomList = ({
               : ""
           }
           key={data.chatRoomId}
-          onClick={() =>
-            onSelectChat(
-              data.chatRoomId,
-              data.proposalMatched,
-              data.profileImgUrl,
-            )
-          }
+          onClick={() => onSelectChat(data.chatRoomId, data.profileImgUrl)}
         >
           <ChatRoomCard
             chatRoomId={data.chatRoomId}

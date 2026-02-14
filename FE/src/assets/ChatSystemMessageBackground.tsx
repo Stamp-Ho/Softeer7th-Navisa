@@ -7,7 +7,7 @@ const ChatSystemMessageBackground = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_845_54392)">
+      <g clipPath="url(#clip0_845_54392)">
         <rect
           width="368"
           height="140"
@@ -256,9 +256,9 @@ const ChatSystemMessageBackground = () => {
           width="1250.1"
           height="341.1"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -277,9 +277,9 @@ const ChatSystemMessageBackground = () => {
           width="233.687"
           height="233.687"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -344,8 +344,8 @@ const ChatSystemMessageBackground = () => {
           y2="70"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#8D7EED" />
-          <stop offset="1" stop-color="#54D7D5" />
+          <stop stopColor="#8D7EED" />
+          <stop offset="1" stopColor="#54D7D5" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_845_54392"
@@ -355,8 +355,8 @@ const ChatSystemMessageBackground = () => {
           y2="33.9973"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#D4CDFF" />
-          <stop offset="1" stop-color="#C7FCFF" />
+          <stop stopColor="#D4CDFF" />
+          <stop offset="1" stopColor="#C7FCFF" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_845_54392"
@@ -366,8 +366,8 @@ const ChatSystemMessageBackground = () => {
           y2="124.166"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stop-color="#B3A8FF" />
-          <stop offset="1" stop-color="#71CCEB" />
+          <stop offset="0.5" stopColor="#B3A8FF" />
+          <stop offset="1" stopColor="#71CCEB" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_845_54392"
@@ -377,8 +377,8 @@ const ChatSystemMessageBackground = () => {
           y2="121.146"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7E99F1" />
-          <stop offset="1" stop-color="#B0A4FF" stop-opacity="0" />
+          <stop stopColor="#7E99F1" />
+          <stop offset="1" stopColor="#B0A4FF" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_845_54392"
@@ -388,8 +388,8 @@ const ChatSystemMessageBackground = () => {
           y2="145.621"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7E99F1" />
-          <stop offset="1" stop-color="#B0A4FF" stop-opacity="0" />
+          <stop stopColor="#7E99F1" />
+          <stop offset="1" stopColor="#B0A4FF" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_845_54392"
@@ -399,8 +399,8 @@ const ChatSystemMessageBackground = () => {
           y2="124.729"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E2FA6" />
-          <stop offset="1" stop-color="#9FAEFE" />
+          <stop stopColor="#3E2FA6" />
+          <stop offset="1" stopColor="#9FAEFE" />
         </linearGradient>
         <clipPath id="clip0_845_54392">
           <rect width="368" height="140" fill="white" />

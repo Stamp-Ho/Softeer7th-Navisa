@@ -624,7 +624,7 @@ export const IcPencilLine = ({ color = "", size = "24" }) => {
   );
 };
 
-export const IcPin = ({ color = "", size = "24" }) => {
+export const IcPin = ({ color = "var(--primary)", size = "24" }) => {
   return (
     <svg
       width={size}
