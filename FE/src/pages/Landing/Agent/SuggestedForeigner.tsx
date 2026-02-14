@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
-import { useRecommendedForeignerQuery } from "../../../api/hooks/useRecommendedForeignerQuery";
-import RecommendedForeignerCard from "../../../components/shared/RecommendedForeignerCard";
+import { useRecommendedForeignerQuery } from "../../../api/queries/useRecommendedForeignerQuery";
+import RecommendedForeignerCard from "../../../components/domain/RecommendedForeignerCard";
 
 const SuggestedForeigners = () => {
   const scrollRef = useRef<HTMLDivElement>(null);

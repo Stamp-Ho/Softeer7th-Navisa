@@ -3,9 +3,9 @@ import Education from "./Education";
 import Languages from "./Languages";
 import Career from "./Career";
 import ExpectedCompany from "./ExpectedCompany";
-import BannerBackground from "../../../components/shared/BannerBackground";
+import BannerBackground from "../../../components/layout/BannerBackground";
 import { useParams } from "react-router-dom";
-import { useForeignerProfileDetailQuery } from "../../../api/hooks/useForeignerProfileDetailQuery";
+import { useForeignerProfileDetailQuery } from "../../../api/queries/useForeignerProfileDetailQuery";
 
 function ProfileOfForeigner() {
   const { foreignerId } = useParams();

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import BadgeChip from "./BadgeChip";
 import BadgeReviewCard from "./BadgeReviewCard";
-import { useAgentBadgeReviewQuery } from "../../../api/hooks/useAgentBadgeReviewQuery";
+import { useAgentBadgeReviewQuery } from "../../../api/queries/useAgentBadgeReviewQuery";
 
 const BadgeReview = () => {
   const [selectedBadge, setSelectedBadge] = useState<number>(0);

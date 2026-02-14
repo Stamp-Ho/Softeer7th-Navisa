@@ -1,4 +1,4 @@
-import AgentBlogCard from "../../../components/shared/AgentBlodCard";
+import AgentBlogCard from "../../../components/domain/AgentBlodCard";
 
 type AgentBlog = {
   blogId: number;

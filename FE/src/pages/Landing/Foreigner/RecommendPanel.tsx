@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   RPDocument,
   RPMessage,
@@ -6,8 +6,18 @@ import {
 } from "../../../assets/icon/RecommendPanelIcon";
 import { IcPencilLine } from "../../../assets/icon/StratisUi";
 import Button from "../../../components/common/Button";
+import { useAuth } from "../../../contexts/AuthContextProvider";
 
 const RecommendPanel = () => {
+  const { userType } = useAuth();
+  const navigate = useNavigate();
+  const handleClick = () => {
+    if (userType === "NOT_AUTHED") {
+      alert("먼저 로그인해 주세요");
+    } else {
+      navigate("/onboard/foreigner");
+    }
+  };
   return (
     <section className="flex flex-row mt-7 p-10 border-[1.5px] border-violet-200 rounded-2xl">
       {recommendations.map((rec) => (
@@ -16,12 +26,15 @@ const RecommendPanel = () => {
           {rec.message}
         </div>
       ))}
-      <Link to="onboard/foreigner" className="ml-auto mt-auto">
-        <Button type="primary" size="large" className="w-58 gap-2">
-          내 요건 등록하러가기
-          <IcPencilLine color="white" />
-        </Button>
-      </Link>
+      <Button
+        type="primary"
+        size="large"
+        className="w-58 gap-2 ml-auto mt-auto"
+        onClick={handleClick}
+      >
+        내 요건 등록하러가기
+        <IcPencilLine color="white" />
+      </Button>
     </section>
   );
 };

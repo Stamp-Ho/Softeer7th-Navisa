@@ -5,7 +5,7 @@ import {
 } from "../../../../../assets/icon/StratisUi";
 import ChatArea from "./ChatArea";
 import Chip from "../../../../../components/common/Chip";
-import { useChatSender } from "../../../../../api/hooks/useChatSender";
+import { useChatSender } from "../../../../../api/websocket/useChatSender";
 
 type ChatRoomFooterParams = {
   isMatched: boolean;

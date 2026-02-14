@@ -6,11 +6,11 @@ import { editDocumentData } from "./constants";
 import { FormProvider, useForm } from "react-hook-form";
 import EditDocumentWidget from "./EditDocumentWidget";
 import { useEffect, useState } from "react";
-import { useApplicationFormQuery } from "../../../api/hooks/useApplicationFormQuery";
-import { useApplicationFormMutation } from "../../../api/hooks/useApplicationFormMutation";
+import { useApplicationFormQuery } from "../../../api/queries/useApplicationFormQuery";
+import { useApplicationFormMutation } from "../../../api/mutations/useApplicationFormMutation";
 import { calculateOnlyInputs } from "../../../components/form/utils/formUtils";
-import { useUploadFormImage } from "../../../api/hooks/useUploadFormImage";
-import { useForeignerMyFormQuery } from "../../../api/hooks/useForeignerMyFormQuery";
+import { useUploadFormImage } from "../../../api/fetchHooks/useUploadFormImage";
+import { useForeignerMyFormQuery } from "../../../api/queries/useForeignerMyFormQuery";
 
 const EditDocument = () => {
   const navigate = useNavigate();
@@ -76,7 +76,7 @@ const EditDocument = () => {
 
     // 이미지 URL이 있으면 이미지를 입력한것으로 처리
     //const dataToApply = structuredClone(Object.values(fresherData.sections));
-    const dataToApply = structuredClone(fresherData.sections);
+    const dataToApply = { ...fresherData.sections };
     if (data.foreignerProfileImgUrl !== null)
       dataToApply[0].sectionData[0].values = [true];
 

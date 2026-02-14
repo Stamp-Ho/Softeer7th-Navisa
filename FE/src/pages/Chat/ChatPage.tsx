@@ -10,8 +10,8 @@ import ChatRoomTabButton from "./components/ChatRoom/ChatRoomTabButton";
 import {
   useChatMatchedUnreadCount,
   useChatUnreadCount,
-} from "../../api/hooks/useChatUnreadCountQuery";
-import { useChatRoomsQuery } from "../../api/hooks/useChatRoomsQuery";
+} from "../../api/queries/useChatUnreadCountQuery";
+import { useChatRoomsQuery } from "../../api/queries/useChatRoomsQuery";
 import { useAuth } from "../../contexts/AuthContextProvider";
 
 const ChatPage = () => {

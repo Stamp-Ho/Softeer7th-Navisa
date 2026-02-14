@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Tag from "../../components/common/Tag";
-import DocumentCard from "../../components/shared/DocumentCard";
-import GrayBackground from "../../components/shared/GrayBackground";
+import DocumentCard from "../../components/domain/DocumentCard";
+import GrayBackground from "../../components/layout/GrayBackground";
 import type { RecentVisaFormsResponse } from "../../api/types/etc";
-import { useRecentApplicationsQuery } from "../../api/hooks/useRecentApplicationsQuery";
+import { useRecentApplicationsQuery } from "../../api/queries/useRecentApplicationsQuery";
 
 const Documents = () => {
   const { data, isLoading, isError } = useRecentApplicationsQuery();

@@ -1,4 +1,4 @@
-import { usePostProposalCanceled } from "../../../../api/hooks/useMatchingMutation";
+import { usePostProposalCanceled } from "../../../../api/mutations/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
 type ProposalParams = {

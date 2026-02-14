@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { IcArrows } from "../../../assets/icon/StratisUi";
-import DocumentCard from "../../../components/shared/DocumentCard";
-import { useRecentVisaFormsQuery } from "../../../api/hooks/useRecentVisaFormsQuery";
+import DocumentCard from "../../../components/domain/DocumentCard";
+import { useRecentVisaFormsQuery } from "../../../api/queries/useRecentVisaFormsQuery";
 
 const RecentlyEditedDocuments = () => {
   const { data, isLoading, isError } = useRecentVisaFormsQuery();

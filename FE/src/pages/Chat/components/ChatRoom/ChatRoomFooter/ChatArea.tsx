@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { useChatSender } from "../../../../../api/hooks/useChatSender";
+import { useChatSender } from "../../../../../api/websocket/useChatSender";
 
 interface ChatAreaProps {
   className?: string;

@@ -1,4 +1,4 @@
-import BannerBackground from "../../components/shared/BannerBackground";
+import BannerBackground from "../../components/layout/BannerBackground";
 import ForeignerBanner from "./Foreigner/ForeignerBanner";
 import SuggestedAgents from "./Foreigner/SuggestedAgents";
 import SuggestedForeigners from "./Agent/SuggestedForeigner";

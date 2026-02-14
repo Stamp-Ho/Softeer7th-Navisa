@@ -4,7 +4,7 @@ import Button from "../common/Button";
 import Modal from "../common/Modal";
 import { IcCheckBroken } from "../../assets/icon/StratisUi";
 import TextInput from "../common/TextInput";
-import { useLoginMutation } from "../../api/hooks/useLoginMutation";
+import { useLoginMutation } from "../../api/mutations/useLoginMutation";
 
 const LoginModal = ({
   onClose = () => {},

@@ -11,7 +11,7 @@ import type {
   SearchAgentCardType,
   SearchForeignerCardType,
 } from "../../types/Cards";
-import { useSearchInfiniteQuery } from "../../api/hooks/useSearchInfiniteQuery";
+import { useSearchInfiniteQuery } from "../../api/queries/useSearchInfiniteQuery";
 import { jobList } from "../../constants/job";
 import { regionList } from "../../constants/regions";
 

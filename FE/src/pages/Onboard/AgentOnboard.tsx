@@ -3,12 +3,12 @@ import NavisaForm from "../../components/form/NavisaForm";
 import { languageList } from "../../constants/language";
 import type { FormSection } from "../../types/formType";
 import { useNavigate } from "react-router-dom";
-import { useAgentProfileMutation } from "../../api/hooks/useAgentProfileMutation";
+import { useAgentProfileMutation } from "../../api/mutations/useAgentProfileMutation";
 import { useOnboardScroll } from "./hooks/useOnboardScroll";
 import AgentOnboardWidget from "./AgentOnboardWidget";
 import { getLeafValues } from "../../components/form/utils/formUtils";
 import { jobCodeList, jobCodeList_Codes } from "../../constants/job";
-import { useUploadImage } from "../../api/hooks/useUploadImage";
+import { useUploadImage } from "../../api/fetchHooks/useUploadImage";
 import { useState } from "react";
 
 const AgentOnboard = () => {

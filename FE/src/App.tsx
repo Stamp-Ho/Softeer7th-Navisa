@@ -1,6 +1,6 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import NavigationHeader from "./components/shared/NavigationHeader";
+import NavigationHeader from "./components/layout/NavigationHeader";
 import HomePage from "./pages/Landing/HomePage";
 import ChatPage from "./pages/Chat/ChatPage";
 import Search from "./pages/Search/Search";

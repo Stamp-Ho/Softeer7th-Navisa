@@ -1,5 +1,5 @@
 import Button from "../../components/common/Button";
-import BannerBackground from "../../components/shared/BannerBackground";
+import BannerBackground from "../../components/layout/BannerBackground";
 import { useAuth } from "../../contexts/AuthContextProvider";
 
 const MyProfile = () => {

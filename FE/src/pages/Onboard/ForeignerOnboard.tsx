@@ -5,7 +5,7 @@ import type { FormSection } from "../../types/formType";
 import ForeignerOnboardWidget from "./ForeignerOnboardWidget";
 import { useOnboardScroll } from "./hooks/useOnboardScroll";
 import { nationList } from "../../constants/nations";
-import { useForiengerProfileMutation } from "../../api/hooks/useForeignerProfileMutation";
+import { useForiengerProfileMutation } from "../../api/mutations/useForeignerProfileMutation";
 import { useNavigate } from "react-router-dom";
 import { getLeafValues } from "../../components/form/utils/formUtils";
 import { DegreeLevelList } from "../../api/types/common";

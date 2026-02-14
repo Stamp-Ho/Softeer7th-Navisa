@@ -1,4 +1,4 @@
-import { usePostProposal } from "../../../../api/hooks/useMatchingMutation";
+import { usePostProposal } from "../../../../api/mutations/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
 type ProposalParams = {

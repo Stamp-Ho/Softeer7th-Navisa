@@ -1,7 +1,7 @@
 import {
   usePostProposalAccepted,
   usePostProposalRejected,
-} from "../../../../api/hooks/useMatchingMutation";
+} from "../../../../api/mutations/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
 type ProposalParams = {

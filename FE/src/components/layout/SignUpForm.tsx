@@ -1,6 +1,6 @@
 import TextInput from "../common/TextInput";
 import Button from "../common/Button";
-import { useSignUpMutation } from "../../api/hooks/useSignUpMutation";
+import { useSignUpMutation } from "../../api/mutations/useSignUpMutation";
 import CheckBox from "../common/CheckBox";
 import CheckLine from "../common/CheckLine";
 import { useForm } from "react-hook-form";

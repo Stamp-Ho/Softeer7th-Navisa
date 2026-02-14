@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
-import AgentCard from "../../../components/shared/AgentCard";
+import AgentCard from "../../../components/domain/AgentCard";
 import LoadingBar from "../Common/LoadingBar";
-import { useRecommendedAgentQuery } from "../../../api/hooks/useRecommendedAgentQuery";
+import { useRecommendedAgentQuery } from "../../../api/queries/useRecommendedAgentQuery";
 
 const SuggestedAgents = () => {
   const { data, isLoading, isError } = useRecommendedAgentQuery();

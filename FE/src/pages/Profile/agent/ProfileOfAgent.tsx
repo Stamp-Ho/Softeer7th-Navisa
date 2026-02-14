@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import BannerBackground from "../../../components/shared/BannerBackground";
+import BannerBackground from "../../../components/layout/BannerBackground";
 import Languages from "../Foreigner/Languages";
 import AgentBlog from "./AgentBlog";
 import AgentHeader from "./AgentHeader";
@@ -7,7 +7,7 @@ import AgentOffice from "./AgentOffice";
 import AgentProfilePanel from "./AgentProfilePanel";
 import AgentReviewSection from "./AgentReviewSection";
 import AgentSpecialties from "./AgentSpecialties";
-import { useAgentProfileDetailQuery } from "../../../api/hooks/useAgentProfileDetailQuery";
+import { useAgentProfileDetailQuery } from "../../../api/queries/useAgentProfileDetailQuery";
 
 const blog = [
   {

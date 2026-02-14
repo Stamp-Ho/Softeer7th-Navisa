@@ -1,4 +1,4 @@
-import { useRecentAgentFeedbackQuery } from "../../../api/hooks/useRecentAgentFeedbackQuery";
+import { useRecentAgentFeedbackQuery } from "../../../api/queries/useRecentAgentFeedbackQuery";
 import RecentFeedbackCard from "./RecentFeedbackCard";
 
 const RecentFeedback = () => {

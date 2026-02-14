@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { useWebSocket } from "../../contexts/WebSocketContext";
-import type { Send } from "../websocket/types";
+import type { Send } from "./types";
 
 export const useChatSender = () => {
   const { sendMessage } = useWebSocket();

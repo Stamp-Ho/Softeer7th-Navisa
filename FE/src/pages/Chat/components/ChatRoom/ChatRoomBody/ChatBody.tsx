@@ -3,7 +3,7 @@ import Tag from "../../../../../components/common/Tag";
 import CalcChattedTime from "../../../../../utils/CalcChattedTime";
 import ChatSystemMessage from "./ChatSystemMessage";
 import { useAuth } from "../../../../../contexts/AuthContextProvider";
-import { useChatHistoryQuery } from "../../../../../api/hooks/useChatHistoryQuery";
+import { useChatHistoryQuery } from "../../../../../api/queries/useChatHistoryQuery";
 import type { ChatHistoryResponse } from "../../../../../api/types/chat";
 import { useWebSocket } from "../../../../../contexts/WebSocketContext";
 import type { Message } from "../../../../../api/websocket/types";
