@@ -15,7 +15,6 @@ const ChatBubble = ({
   message,
   opponentName,
   myName,
-  isAgent,
   onModalAction,
   showReplyButton,
 }: ChatBubbleProps) => {
