@@ -1,15 +1,14 @@
 package com.navisa.be.foreigner.service;
 
-import com.navisa.be.common.dto.projection.JobCodeSimilarityProjection;
-import com.navisa.be.common.model.entity.Language;
-import com.navisa.be.common.model.entity.Nationality;
+import com.navisa.be.global.common.dto.projection.JobCodeSimilarityProjection;
+import com.navisa.be.global.common.model.entity.Language;
+import com.navisa.be.global.common.model.entity.Nationality;
 import com.navisa.be.foreigner.dto.ForeignerCareerDto;
 import com.navisa.be.foreigner.dto.ForeignerEducationDto;
 import com.navisa.be.foreigner.dto.ForeignerExpectedCompanyDto;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.repository.*;
 import com.navisa.be.foreigner.model.entity.*;
-import com.navisa.be.foreigner.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -170,12 +169,12 @@ public class ForeignerRelationCommandService {
 
         // 1. Long(객체) -> long(기본형) 배열 변환
         long[] jobCodeIdList = projectionList.stream()
-                .mapToLong(JobCodeSimilarityProjection::getId)
+                .mapToLong(JobCodeSimilarityProjection::id)
                 .toArray();
 
         // 2. Double(객체) -> double(기본형) 배열 변환
         double[] similarityList = projectionList.stream()
-                .mapToDouble(JobCodeSimilarityProjection::getSimilarity)
+                .mapToDouble(JobCodeSimilarityProjection::similarity)
                 .toArray();
 
         // 3. Entity 생성 및 저장

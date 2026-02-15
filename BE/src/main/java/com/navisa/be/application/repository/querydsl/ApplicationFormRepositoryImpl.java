@@ -1,9 +1,7 @@
 package com.navisa.be.application.repository.querydsl;
 
 import com.navisa.be.application.dto.projection.VisaApplicationFormProjection;
-import com.navisa.be.application.dto.response.VisaApplicationCardResponse;
-import com.navisa.be.application.model.entity.VisaApplicationForm;
-import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.global.web.request.SliceRequest;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;

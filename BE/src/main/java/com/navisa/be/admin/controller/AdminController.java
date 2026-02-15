@@ -2,8 +2,8 @@ package com.navisa.be.admin.controller;
 
 import com.navisa.be.admin.dto.request.PermitNewAgentRequest;
 import com.navisa.be.admin.service.AdminService;
-import com.navisa.be.common.annotation.HasUserType;
-import com.navisa.be.common.dto.response.BaseResponse;
+import com.navisa.be.global.web.annotation.HasUserType;
+import com.navisa.be.global.web.response.BaseResponse;
 import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

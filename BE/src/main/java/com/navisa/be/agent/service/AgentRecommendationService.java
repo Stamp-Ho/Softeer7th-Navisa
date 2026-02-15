@@ -5,16 +5,15 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.exception.ForeignerException;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
+import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.recommendation.calculator.FinalRecommendationCalculator;
 import com.navisa.be.recommendation.calculator.ReviewBonusCalculator;
 import com.navisa.be.recommendation.calculator.SpecialtyDistributionCalculator;
-import com.navisa.be.storage.model.enums.ImageSize;
-import com.navisa.be.storage.service.AwsCloudfrontService;
-import com.navisa.be.user.model.enums.UserType;
+import com.navisa.be.global.common.model.enums.ImageSize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +24,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class AgentRecommendationService {
 
     private final AgentProfileRepository agentProfileRepository;
@@ -36,9 +35,9 @@ public class AgentRecommendationService {
     private final ReviewBonusCalculator reviewBonusCalculator;
     private final FinalRecommendationCalculator finalCalculator;
     private final AgentSpecializedJobSummaryRepository summaryRepository;
-    private final AwsCloudfrontService awsCloudfrontService;
     private final AgentSpecializedJobService agentSpecializedJobService;
     private final AgentBadgeService agentBadgeService;
+    private final StorageService storageService;
 
     // 맞춤 행정사 추천
     public List<AgentCardResponse> getPersonalizedAgents(UUID foreignerId) {
@@ -105,7 +104,7 @@ public class AgentRecommendationService {
     }
 
     private AgentCardResponse toAgentCardResponse(AgentProfile agent) {
-        String profileUrl = awsCloudfrontService.getImageUrl(ImageSize.SMALL, agent.getProfileObjectKey());
+        String profileUrl = storageService.getImgUrl(ImageSize.SMALL, agent.getProfileObjectKey(), false);
         return AgentCardResponse.of(
                 agent,
                 profileUrl,

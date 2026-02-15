@@ -1,13 +1,12 @@
 package com.navisa.be.foreigner.service;
 
-import com.navisa.be.common.model.entity.Language;
-import com.navisa.be.common.model.entity.Nationality;
-import com.navisa.be.common.repository.LanguageRepository;
-import com.navisa.be.common.repository.NationalityRepository;
+import com.navisa.be.global.common.model.entity.Language;
+import com.navisa.be.global.common.model.entity.Nationality;
+import com.navisa.be.global.common.repository.LanguageRepository;
+import com.navisa.be.global.common.repository.NationalityRepository;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.repository.*;
-import com.navisa.be.foreigner.service.ForeignerCommandService;
 import com.navisa.be.user.repository.UserRepository;
 import com.navisa.be.support.ForeignerFixture;
 import com.navisa.be.support.IntegrationTestSupport;
@@ -24,7 +23,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
-import com.navisa.be.common.dto.projection.JobCodeSimilarityProjection;
+import com.navisa.be.global.common.dto.projection.JobCodeSimilarityProjection;
 
 @Transactional
 class ForeignerCommandServiceTest extends IntegrationTestSupport {
@@ -164,38 +163,9 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
                 .save(new ForeignerProfile(UUID.randomUUID(), ForeignerSearchStatus.REQUESTING));
 
         List<JobCodeSimilarityProjection> projections = List.of(
-                new JobCodeSimilarityProjection() {
-                    @Override
-                    public Long getId() {
-                        return 100L;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return "Job A";
-                    }
-
-                    @Override
-                    public Double getSimilarity() {
-                        return 0.85;
-                    }
-                },
-                new JobCodeSimilarityProjection() {
-                    @Override
-                    public Long getId() {
-                        return 200L;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return "Job B";
-                    }
-
-                    @Override
-                    public Double getSimilarity() {
-                        return 0.75;
-                    }
-                });
+                new JobCodeSimilarityProjection(100L, "Job A", 0.85),
+                new JobCodeSimilarityProjection(200L, "Job B", 0.75)
+        );
 
         // when
         foreignerCommandService.registerCalculatedSimilarity(profile, projections);

@@ -2,7 +2,7 @@ package com.navisa.be.foreigner.model.entity;
 
 import com.navisa.be.foreigner.dto.ForeignerExpectedCompanyDto;
 
-import com.navisa.be.common.model.entity.BaseEntity;
+import com.navisa.be.global.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

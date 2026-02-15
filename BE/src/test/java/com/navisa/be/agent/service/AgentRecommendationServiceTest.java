@@ -5,13 +5,13 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
-import com.navisa.be.common.model.entity.JobCode;
+import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
+import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.recommendation.calculator.FinalRecommendationCalculator;
 import com.navisa.be.recommendation.calculator.ReviewBonusCalculator;
 import com.navisa.be.recommendation.calculator.SpecialtyDistributionCalculator;
-import com.navisa.be.storage.service.AwsCloudfrontService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +54,7 @@ class AgentRecommendationServiceTest {
     private AgentSpecializedJobSummaryRepository summaryRepository;
 
     @Mock
-    private AwsCloudfrontService awsCloudfrontService;
+    private StorageService storageService;
 
     @Mock
     private AgentSpecializedJobService agentSpecializedJobService;
@@ -69,8 +69,8 @@ class AgentRecommendationServiceTest {
         UUID foreignerId = UUID.randomUUID();
 
         ForeignerSimilarity similarity = Mockito.mock(ForeignerSimilarity.class);
-        given(similarity.getJobCodeIdList()).willReturn(new long[]{1L});
-        given(similarity.getSimilarityList()).willReturn(new double[]{1.0});
+        given(similarity.getJobCodeIdList()).willReturn(new long[] { 1L });
+        given(similarity.getSimilarityList()).willReturn(new double[] { 1.0 });
         given(agentSpecializedJobService.getTop2SpecializedJobIds(any())).willReturn(List.of(1L, 2L));
         given(agentBadgeService.getTop2BadgeIds(any())).willReturn(List.of(1L, 2L));
 
@@ -103,13 +103,12 @@ class AgentRecommendationServiceTest {
 
         given(summaryRepository.findAllByAgentIdIn(any())).willReturn(List.of(
                 new AgentSpecializedJobSummary(highId, highJobCode),
-                new AgentSpecializedJobSummary(lowId, lowJobCode)
-        ));
+                new AgentSpecializedJobSummary(lowId, lowJobCode)));
 
         given(distributionCalculator.calculateDistribution(any(Integer.class))).willReturn(1.0);
         given(reviewBonusCalculator.calculateBonusFactor(any(Double.class))).willReturn(1.0);
         given(reviewBonusCalculator.calculateFinalDistribution(any(Double.class), any(Double.class))).willReturn(1.0);
-        given(awsCloudfrontService.getImageUrl(any(), any())).willReturn("url");
+        given(storageService.getImgUrl(any(), any(), any(Boolean.class))).willReturn("url");
 
         // when
         List<AgentCardResponse> result = agentRecommendationService.getPersonalizedAgents(foreignerId);

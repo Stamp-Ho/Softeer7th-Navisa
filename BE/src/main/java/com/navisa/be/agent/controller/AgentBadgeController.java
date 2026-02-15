@@ -2,7 +2,7 @@ package com.navisa.be.agent.controller;
 
 import com.navisa.be.agent.dto.response.BadgeResponse;
 import com.navisa.be.agent.dto.response.HomeAgentBadgeResponse;
-import com.navisa.be.common.dto.response.BaseResponse;
+import com.navisa.be.global.web.response.BaseResponse;
 import com.navisa.be.agent.service.AgentBadgeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

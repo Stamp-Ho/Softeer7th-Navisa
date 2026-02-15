@@ -5,7 +5,7 @@ import com.navisa.be.application.model.entity.VisaApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.application.service.ApplicationCommandService;
 import com.navisa.be.application.service.ApplicationEmailService;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

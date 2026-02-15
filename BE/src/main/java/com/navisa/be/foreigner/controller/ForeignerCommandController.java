@@ -1,9 +1,9 @@
 package com.navisa.be.foreigner.controller;
 
-import com.navisa.be.common.annotation.HasUserType;
-import com.navisa.be.common.annotation.LoginUser;
-import com.navisa.be.common.dto.response.BaseResponse;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.annotation.HasUserType;
+import com.navisa.be.global.web.annotation.LoginUser;
+import com.navisa.be.global.web.response.BaseResponse;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.service.ForeignerServiceFacade;
 import com.navisa.be.user.model.enums.UserType;

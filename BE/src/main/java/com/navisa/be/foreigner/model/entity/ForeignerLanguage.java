@@ -1,7 +1,7 @@
 package com.navisa.be.foreigner.model.entity;
 
-import com.navisa.be.common.model.entity.BaseEntity;
-import com.navisa.be.common.model.entity.Language;
+import com.navisa.be.global.common.model.entity.BaseEntity;
+import com.navisa.be.global.common.model.entity.Language;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

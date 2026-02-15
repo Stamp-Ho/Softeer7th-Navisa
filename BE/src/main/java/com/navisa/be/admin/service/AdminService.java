@@ -2,7 +2,7 @@ package com.navisa.be.admin.service;
 
 import com.navisa.be.admin.dto.request.PermitNewAgentRequest;
 import com.navisa.be.admin.exception.AdminDomainException;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;

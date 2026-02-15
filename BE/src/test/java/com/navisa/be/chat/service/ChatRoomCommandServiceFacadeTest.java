@@ -9,9 +9,10 @@ import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.repository.ProposalRepository;
-import com.navisa.be.common.model.entity.JobCode;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.common.model.entity.JobCode;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
+import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.support.AgentProfileTestFixture;
 import com.navisa.be.support.ChatRoomTestFixture;
 import com.navisa.be.support.ForeignerProfileTestFixture;
@@ -62,7 +63,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
     private ApplicationFormRepository applicationFormRepository;
 
     @Autowired
-    private com.navisa.be.common.repository.JobCodeRepository jobCodeRepository;
+    private JobCodeRepository jobCodeRepository;
 
     @Test
     @DisplayName("채팅방 차단 시 채팅방 상태가 BLOCKED로 변경되고 제안이 REJECTED되며 비자신청서의 담당 행정사가 해제된다")

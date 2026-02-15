@@ -1,7 +1,8 @@
 package com.navisa.be.chat.service;
 
 import com.navisa.be.chat.exception.WebSocketConnectionException;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.global.infra.redis.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;

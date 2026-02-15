@@ -1,7 +1,7 @@
 package com.navisa.be.agent.repository;
 
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
-import com.navisa.be.common.model.entity.JobCode;
+import com.navisa.be.global.common.model.entity.JobCode;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

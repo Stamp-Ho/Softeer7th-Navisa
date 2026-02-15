@@ -1,11 +1,11 @@
 package com.navisa.be.support;
 
-import com.navisa.be.common.model.entity.Language;
-import com.navisa.be.common.model.entity.Nationality;
+import com.navisa.be.global.common.model.entity.Language;
+import com.navisa.be.global.common.model.entity.Nationality;
 import com.navisa.be.foreigner.model.entity.*;
 import com.navisa.be.foreigner.model.enums.EducationDegreeLevel;
-import com.navisa.be.common.repository.LanguageRepository;
-import com.navisa.be.common.repository.NationalityRepository;
+import com.navisa.be.global.common.repository.LanguageRepository;
+import com.navisa.be.global.common.repository.NationalityRepository;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
 import com.navisa.be.foreigner.repository.*;
 import com.navisa.be.user.model.entity.User;

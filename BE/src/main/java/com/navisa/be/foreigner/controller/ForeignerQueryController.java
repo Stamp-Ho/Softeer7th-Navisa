@@ -1,11 +1,11 @@
 package com.navisa.be.foreigner.controller;
 
-import com.navisa.be.common.annotation.HasUserType;
-import com.navisa.be.common.annotation.LoginUser;
-import com.navisa.be.common.annotation.SliceInfo;
-import com.navisa.be.common.dto.request.SliceRequest;
-import com.navisa.be.common.dto.response.BaseResponse;
-import com.navisa.be.common.dto.response.SliceResponse;
+import com.navisa.be.global.web.annotation.HasUserType;
+import com.navisa.be.global.web.annotation.LoginUser;
+import com.navisa.be.global.web.annotation.SliceInfo;
+import com.navisa.be.global.web.request.SliceRequest;
+import com.navisa.be.global.web.response.BaseResponse;
+import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.foreigner.dto.request.ForeignerCardRequest;
 import com.navisa.be.foreigner.dto.response.*;
 import com.navisa.be.foreigner.dto.request.FindForeignerDetailCommand;

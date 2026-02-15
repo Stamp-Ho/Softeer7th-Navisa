@@ -10,12 +10,13 @@ import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomFilterType;
 import com.navisa.be.chat.model.enums.ProposalStatus;
-import com.navisa.be.common.dto.request.SliceRequest;
-import com.navisa.be.common.dto.response.SliceResponse;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.common.service.StorageService;
+import com.navisa.be.global.web.request.SliceRequest;
+import com.navisa.be.global.web.response.SliceResponse;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
-import com.navisa.be.storage.model.enums.ImageSize;
-import com.navisa.be.storage.service.AwsCloudfrontService;
+import com.navisa.be.global.common.model.enums.ImageSize;
+import com.navisa.be.global.infra.aws.AwsCloudfrontClient;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
@@ -37,11 +38,12 @@ public class ChatRoomServiceFacade {
     private final ChatRoomQueryService chatRoomQueryService;
     private final ForeignerQueryService foreignerQueryService;
     private final AgentProfileQueryService agentProfileQueryService;
-    private final AwsCloudfrontService awsCloudfrontService;
+    private final AwsCloudfrontClient awsCloudfrontService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final ProposalService proposalService;
     private final ApplicationCommandService applicationCommandService;
     private final ChatRoomCommandService chatRoomCommandService;
+    private final StorageService storageService;
 
     public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter, SliceRequest<Long> slice) {
         ChatRoomFilterType filterType = ChatRoomFilterType.from(filter);
@@ -117,7 +119,8 @@ public class ChatRoomServiceFacade {
 
     private String getProfileImgUrl(ChatRoom chatRoom, boolean isForeigner) {
         if(isForeigner) {
-            return awsCloudfrontService.getImageUrl(ImageSize.MEDIUM, chatRoom.getAgentProfile().getProfileObjectKey());
+            return storageService.getImgUrl(
+                    ImageSize.MEDIUM, chatRoom.getAgentProfile().getProfileObjectKey(), false);
         }
         return null;
     }

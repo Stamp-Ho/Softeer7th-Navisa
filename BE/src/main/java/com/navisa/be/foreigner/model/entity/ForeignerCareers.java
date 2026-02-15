@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import com.navisa.be.common.model.entity.BaseEntity;
+import com.navisa.be.global.common.model.entity.BaseEntity;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

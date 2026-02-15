@@ -8,7 +8,7 @@ import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.chat.repository.ChatRoomRepository;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.user.model.entity.User;

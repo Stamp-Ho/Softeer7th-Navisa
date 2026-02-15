@@ -1,9 +1,9 @@
 package com.navisa.be.auth.interceptor;
 
 import com.navisa.be.auth.jwt.JwtProvider;
-import com.navisa.be.common.annotation.HasUserType;
-import com.navisa.be.common.annotation.LoginUser;
-import com.navisa.be.common.dto.response.BaseResponse;
+import com.navisa.be.global.web.annotation.HasUserType;
+import com.navisa.be.global.web.annotation.LoginUser;
+import com.navisa.be.global.web.response.BaseResponse;
 import com.navisa.be.support.IntegrationTestSupport;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;

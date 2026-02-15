@@ -5,7 +5,7 @@ import com.navisa.be.chat.dto.projection.ChatMessageNonReadCountProjection;
 import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
-import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.support.AgentProfileTestFixture;
 import com.navisa.be.support.ChatRoomTestFixture;

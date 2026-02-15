@@ -2,7 +2,7 @@ package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.JobCodeDto;
 import com.navisa.be.agent.dto.response.GetJobCodeListResponse;
-import com.navisa.be.common.repository.JobCodeRepository;
+import com.navisa.be.global.common.repository.JobCodeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

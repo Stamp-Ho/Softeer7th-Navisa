@@ -1,6 +1,7 @@
 package com.navisa.be.common.model.entity;
 
-import com.navisa.be.common.config.JpaAuditConfig;
+import com.navisa.be.global.config.JpaAuditConfig;
+import com.navisa.be.global.common.model.entity.BaseEntity;
 import com.navisa.be.support.IntegrationTestSupport;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;

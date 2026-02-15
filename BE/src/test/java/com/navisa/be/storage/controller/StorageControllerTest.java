@@ -2,7 +2,7 @@ package com.navisa.be.storage.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navisa.be.auth.jwt.JwtProvider;
-import com.navisa.be.storage.dto.request.IssuePresignedUrlRequest;
+import com.navisa.be.global.common.dto.request.IssuedPresignedUrlRequest;
 import com.navisa.be.support.IntegrationTestSupport;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,7 @@ class StorageControllerTest extends IntegrationTestSupport {
     @Test
     void issuePresignedUrl_shouldSucceed() throws Exception {
         // given
-        IssuePresignedUrlRequest request = new IssuePresignedUrlRequest("image/jpeg", "agent-profile");
+        IssuedPresignedUrlRequest request = new IssuedPresignedUrlRequest("image/jpeg", "agent-profile");
 
         //s3Presigner가 가짜 URL을 반환하도록 설정
         PresignedPutObjectRequest mockPresignedRequest = mock(PresignedPutObjectRequest.class);

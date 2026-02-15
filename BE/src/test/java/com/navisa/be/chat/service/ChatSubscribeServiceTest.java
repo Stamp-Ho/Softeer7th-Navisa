@@ -1,5 +1,6 @@
 package com.navisa.be.chat.service;
 
+import com.navisa.be.global.infra.redis.RedisSubscriber;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

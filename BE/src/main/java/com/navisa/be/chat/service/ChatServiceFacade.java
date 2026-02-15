@@ -6,7 +6,7 @@ import com.navisa.be.chat.dto.message.ChatMessageResponse;
 import com.navisa.be.chat.exception.WebSocketConnectionException;
 import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

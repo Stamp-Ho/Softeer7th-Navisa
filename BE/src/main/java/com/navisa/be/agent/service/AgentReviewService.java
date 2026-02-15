@@ -17,7 +17,7 @@ import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.chat.repository.ProposalRepository;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;

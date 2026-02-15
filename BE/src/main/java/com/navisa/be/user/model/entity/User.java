@@ -1,14 +1,13 @@
 package com.navisa.be.user.model.entity;
 
-import com.navisa.be.common.model.entity.BaseEntity;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.common.model.entity.BaseEntity;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.exception.UserException;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity

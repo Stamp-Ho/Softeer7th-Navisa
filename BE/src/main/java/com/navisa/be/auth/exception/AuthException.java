@@ -1,7 +1,7 @@
 package com.navisa.be.auth.exception;
 
-import com.navisa.be.common.exception.BaseException;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.error.BaseException;
+import com.navisa.be.global.web.response.ResponseStatus;
 
 public class AuthException extends BaseException {
 

@@ -3,7 +3,7 @@ package com.navisa.be.chat.controller;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.exception.WebSocketConnectionException;
 import com.navisa.be.chat.service.ChatServiceFacade;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;

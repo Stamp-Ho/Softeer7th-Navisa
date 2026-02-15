@@ -2,7 +2,7 @@ package com.navisa.be.foreigner.controller;
 
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.dto.request.FindForeignerDetailCommand;
 import com.navisa.be.foreigner.dto.response.FindForeignerDetailResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerProgressResponse;
@@ -10,6 +10,7 @@ import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
 import com.navisa.be.foreigner.exception.ForeignerException;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.foreigner.service.ForeignerServiceFacade;
+import com.navisa.be.global.web.resolver.LoginUserResolver;
 import com.navisa.be.support.ForeignerFixture;
 import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -49,7 +49,7 @@ class ForeignerQueryControllerTest {
     private JwtProvider jwtProvider;
 
     @MockitoBean
-    private com.navisa.be.common.resolver.LoginUserResolver loginUserResolver;
+    private LoginUserResolver loginUserResolver;
 
     @MockitoBean
     private UserRepository userRepository;

@@ -1,7 +1,7 @@
 package com.navisa.be.agent.model.entity;
 
-import com.navisa.be.common.model.entity.BaseEntity;
-import com.navisa.be.common.model.entity.JobCode;
+import com.navisa.be.global.common.model.entity.BaseEntity;
+import com.navisa.be.global.common.model.entity.JobCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

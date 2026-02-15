@@ -1,8 +1,9 @@
 package com.navisa.be.common.resolver;
 
-import com.navisa.be.common.annotation.SliceInfo;
-import com.navisa.be.common.dto.request.SliceRequest;
-import com.navisa.be.common.exception.BaseException;
+import com.navisa.be.global.web.annotation.SliceInfo;
+import com.navisa.be.global.web.request.SliceRequest;
+import com.navisa.be.global.web.error.BaseException;
+import com.navisa.be.global.web.resolver.SliceInfoArgumentResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

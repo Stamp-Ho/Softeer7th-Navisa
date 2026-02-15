@@ -7,9 +7,9 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentReview;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
-import com.navisa.be.common.model.enums.ResponseStatus;
-import com.navisa.be.storage.model.enums.ImageSize;
-import com.navisa.be.storage.service.AwsCloudfrontService;
+import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.global.common.model.enums.ImageSize;
+import com.navisa.be.global.common.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class AgentHomeService {
     private final AgentReviewRepository agentReviewRepository;
     private final AgentProfileRepository agentProfileRepository;
     private final AgentBadgeService agentBadgeService;
-    private final AwsCloudfrontService awsCloudfrontService;
+    private final StorageService storageService;
 
     // 행정사 후기 사례 최신순 3개 조회
     public List<FeedbackResponse> getLatestFeedbacks() {
@@ -57,7 +57,8 @@ public class AgentHomeService {
                         throw new AgentException(ResponseStatus.REVIEWED_AGENT_NOT_FOUND);
                     }
 
-                    String profileUrl = awsCloudfrontService.getImageUrl(ImageSize.SMALL, profile.getProfileObjectKey());
+                    String profileUrl = storageService.getImgUrl(
+                            ImageSize.SMALL, profile.getProfileObjectKey(), false);
 
                     return new FeedbackResponse(
                             review.getId(),
@@ -84,7 +85,8 @@ public class AgentHomeService {
 
         return agents.stream()
                 .map(agent -> {
-                    String profileUrl = awsCloudfrontService.getImageUrl(ImageSize.MEDIUM, agent.getProfileObjectKey());
+                    String profileUrl = storageService.getImgUrl(
+                            ImageSize.MEDIUM, agent.getProfileObjectKey(), false);
 
                     // 로그인 시에만 JobCode 명칭 리스트 추출
                     List<Long> specialityIds = null;

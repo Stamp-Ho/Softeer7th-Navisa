@@ -17,7 +17,7 @@ import com.navisa.be.agent.model.entity.AgentBadge;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.Badge;
-import com.navisa.be.common.model.entity.JobCode;
+import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.agent.dto.request.CreateAgentReviewRequest;
 import com.navisa.be.agent.model.enums.BadgeName;

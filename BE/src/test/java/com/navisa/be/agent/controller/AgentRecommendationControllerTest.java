@@ -5,7 +5,7 @@ import com.navisa.be.auth.interceptor.AuthInterceptor;
 import com.navisa.be.auth.interceptor.UserTypeCheckInterceptor;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
-import com.navisa.be.common.resolver.LoginUserResolver;
+import com.navisa.be.global.web.resolver.LoginUserResolver;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;

@@ -1,13 +1,12 @@
 package com.navisa.be.agent.controller;
 
-import com.navisa.be.agent.controller.AgentHomeController;
 import com.navisa.be.agent.dto.response.FeedbackResponse;
 import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.service.AgentHomeService;
 import com.navisa.be.auth.jwt.JwtProvider;
-import com.navisa.be.common.resolver.LoginUserResolver;
+import com.navisa.be.global.web.resolver.LoginUserResolver;
 import com.navisa.be.auth.service.AuthService;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

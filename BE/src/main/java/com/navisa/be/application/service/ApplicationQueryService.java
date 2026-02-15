@@ -9,13 +9,13 @@ import com.navisa.be.application.dto.response.VisaApplicationDetailResponse;
 import com.navisa.be.application.exception.ApplicationException;
 import com.navisa.be.application.model.entity.VisaApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.common.dto.request.SliceRequest;
-import com.navisa.be.common.dto.response.SliceResponse;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.common.service.StorageService;
+import com.navisa.be.global.web.request.SliceRequest;
+import com.navisa.be.global.web.response.SliceResponse;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
-import com.navisa.be.storage.model.enums.ImageSize;
-import com.navisa.be.storage.service.AwsS3StorageService;
+import com.navisa.be.global.common.model.enums.ImageSize;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
@@ -34,7 +34,7 @@ public class ApplicationQueryService {
     private final ForeignerProfileRepository foreignerProfileRepository;
     private final UserQueryService userQueryService;
     private final AgentProfileQueryService agentProfileQueryService;
-    private final AwsS3StorageService awsS3StorageService;
+    private final StorageService storageService;
 
     // 행정사의 최근 수정 문서 조회
     public List<RecentVisaFormsResponse> getRecentVisaForms(String email) {
@@ -86,7 +86,7 @@ public class ApplicationQueryService {
                 contentVisaApplicationFormProjections.stream().map(
                         projection -> VisaApplicationCardResponse.projectionToDto(
                                 projection,
-                                awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, projection.profileObjectKey())
+                                storageService.getImgUrl(ImageSize.MEDIUM, projection.profileObjectKey(), true)
                         )).toList(),
                 existsNext,
                 lastElementId);
@@ -106,7 +106,7 @@ public class ApplicationQueryService {
         List<Map<String, Object>> sections = mergeSections(form);
 
         String profileImgUrl = (form.getProfileObjectKey() != null)
-                ? awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, form.getProfileObjectKey())
+                ? storageService.getImgUrl(ImageSize.MEDIUM, form.getProfileObjectKey(), true)
                 : null;
 
         return new VisaApplicationDetailResponse(
@@ -135,7 +135,7 @@ public class ApplicationQueryService {
         }
 
         String profileImgUrl = (form.getProfileObjectKey() != null)
-                ? awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, form.getProfileObjectKey())
+                ? storageService.getImgUrl(ImageSize.MEDIUM, form.getProfileObjectKey(), true)
                 : null;
 
         return new VisaApplicationDetailResponse(

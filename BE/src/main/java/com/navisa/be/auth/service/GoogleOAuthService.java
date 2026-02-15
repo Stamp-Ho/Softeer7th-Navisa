@@ -1,7 +1,7 @@
 package com.navisa.be.auth.service;
 
 import com.navisa.be.auth.exception.AuthException;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;

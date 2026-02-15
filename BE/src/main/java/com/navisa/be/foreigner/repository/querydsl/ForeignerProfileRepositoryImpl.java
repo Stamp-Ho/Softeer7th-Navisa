@@ -1,6 +1,6 @@
 package com.navisa.be.foreigner.repository.querydsl;
 
-import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.foreigner.dto.ForeignerCardQueryDto;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.navisa.be.common.model.entity.QLanguage.language;
-import static com.navisa.be.common.model.entity.QNationality.nationality;
 import static com.navisa.be.foreigner.model.entity.QForeignerLanguage.foreignerLanguage;
 import static com.navisa.be.foreigner.model.entity.QForeignerNationality.foreignerNationality;
 import static com.navisa.be.foreigner.model.entity.QForeignerProfile.foreignerProfile;
 import static com.navisa.be.foreigner.model.entity.QForeignerSimilarity.foreignerSimilarity;
+import static com.navisa.be.global.common.model.entity.QLanguage.language;
+import static com.navisa.be.global.common.model.entity.QNationality.nationality;
 
 @RequiredArgsConstructor
 public class ForeignerProfileRepositoryImpl implements ForeignerProfileRepositoryQueryDsl {

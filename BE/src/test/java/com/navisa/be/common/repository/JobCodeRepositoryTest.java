@@ -1,7 +1,8 @@
 package com.navisa.be.common.repository;
 
-import com.navisa.be.common.dto.projection.JobCodeSimilarityProjection;
-import com.navisa.be.common.model.entity.JobCode;
+import com.navisa.be.global.common.dto.projection.JobCodeSimilarityProjection;
+import com.navisa.be.global.common.model.entity.JobCode;
+import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,17 +55,17 @@ class JobCodeRepositoryTest extends IntegrationTestSupport {
         assertThat(result).hasSize(3);
 
         // 1순위: Software Engineer (Sim 1.0)
-        assertThat(result.get(0).getName()).isEqualTo("Software Engineer");
-        assertThat(result.get(0).getSimilarity()).isCloseTo(1.0, offset(0.001));
+        assertThat(result.get(0).name()).isEqualTo("Software Engineer");
+        assertThat(result.get(0).similarity()).isCloseTo(1.0, offset(0.001));
 
         // 2순위: Data Scientist (Sim ~0.707)
-        assertThat(result.get(1).getName()).isEqualTo("Data Scientist");
-        assertThat(result.get(1).getSimilarity()).isCloseTo(0.707, offset(0.001));
+        assertThat(result.get(1).name()).isEqualTo("Data Scientist");
+        assertThat(result.get(1).similarity()).isCloseTo(0.707, offset(0.001));
 
         // 3순위: Project Manager OR Chef (둘 다 Sim 0.0, 순서 보장 안됨. 하지만 Top 3에는 들어야 함)
         // Anti-Job은 Sim -1.0이라서 제외되어야 함
-        assertThat(result.get(2).getSimilarity()).isCloseTo(0.0, offset(0.001));
-        assertThat(result.get(2).getName()).isIn("Project Manager", "Chef");
+        assertThat(result.get(2).similarity()).isCloseTo(0.0, offset(0.001));
+        assertThat(result.get(2).name()).isIn("Project Manager", "Chef");
     }
 
     private void saveJobCode(String code, String name, Consumer<float[]> vectorCustomizer) {

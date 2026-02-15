@@ -2,7 +2,7 @@ package com.navisa.be.chat.repository.querydsl;
 
 import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.enums.ProposalStatus;
-import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.global.web.request.SliceRequest;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

@@ -3,7 +3,7 @@ package com.navisa.be.admin.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navisa.be.admin.dto.request.PermitNewAgentRequest;
 import com.navisa.be.auth.jwt.JwtProvider;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.support.IntegrationTestSupport;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;

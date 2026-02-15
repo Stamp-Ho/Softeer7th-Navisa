@@ -1,14 +1,10 @@
 package com.navisa.be.chat.service;
 
-import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.chat.dto.projection.ChatMessageNonReadCountProjection;
-import com.navisa.be.chat.exception.ChatMessageException;
 import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.repository.ChatMessageRepository;
-import com.navisa.be.common.dto.request.SliceRequest;
-import com.navisa.be.common.model.enums.ResponseStatus;
-import com.navisa.be.foreigner.model.entity.ForeignerProfile;
+import com.navisa.be.global.web.request.SliceRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -3,7 +3,7 @@ package com.navisa.be.chat.repository;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
-import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.support.AgentProfileTestFixture;
 import com.navisa.be.support.ChatRoomTestFixture;

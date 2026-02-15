@@ -1,9 +1,9 @@
 package com.navisa.be.info.service;
 
-import com.navisa.be.common.model.entity.Language;
-import com.navisa.be.common.repository.LanguageRepository;
-import com.navisa.be.info.dto.response.GetLanguageListResponse;
-import com.navisa.be.info.service.LanguageService;
+import com.navisa.be.global.common.model.entity.Language;
+import com.navisa.be.global.common.repository.LanguageRepository;
+import com.navisa.be.global.common.dto.response.LanguageListResponse;
+import com.navisa.be.global.common.service.LanguageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ class LanguageServiceTest {
         Mockito.when(languageRepository.findAllByOrderByIdAsc()).thenReturn(entities);
 
         // when
-        GetLanguageListResponse response = languageService.getLanguageList();
+        LanguageListResponse response = languageService.getLanguageList();
 
         // then
         assertThat(response.languageList()).hasSize(2);
@@ -49,7 +49,7 @@ class LanguageServiceTest {
         Mockito.when(languageRepository.findAllByOrderByIdAsc()).thenReturn(entities);
 
         // when
-        GetLanguageListResponse response = languageService.getLanguageList();
+        LanguageListResponse response = languageService.getLanguageList();
 
         // then
         assertThat(response.languageList()).hasSize(0);

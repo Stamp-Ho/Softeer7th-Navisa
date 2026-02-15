@@ -11,12 +11,13 @@ import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.repository.ChatRoomRepository;
-import com.navisa.be.common.dto.request.SliceRequest;
-import com.navisa.be.common.dto.response.SliceResponse;
+import com.navisa.be.global.common.service.StorageService;
+import com.navisa.be.global.web.request.SliceRequest;
+import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
-import com.navisa.be.storage.model.enums.ImageSize;
-import com.navisa.be.storage.service.AwsCloudfrontService;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.common.model.enums.ImageSize;
+import com.navisa.be.global.infra.aws.AwsCloudfrontClient;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
@@ -40,12 +41,13 @@ public class AgentProfileQueryService {
     private final AgentProfileRepository agentProfileRepository;
     private final AgentBadgeService agentBadgeService;
     private final AgentSpecializedJobService agentSpecializedJobService;
-    private final AwsCloudfrontService awsCloudfrontService;
+    private final AwsCloudfrontClient awsCloudfrontService;
     private final AgentBadgeSummaryRepository agentBadgeSummaryRepository;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final AgentReviewRepository agentReviewRepository;
     private final ForeignerProfileRepository foreignerProfileRepository;
+    private final StorageService storageService;
 
     public SliceResponse<AgentCardResponse, UUID> findAgentProfileCardsBasedOnFilter(
             AgentCardQueryDto dto, SliceRequest<UUID> slice, UserType requestUserType) {
@@ -74,9 +76,10 @@ public class AgentProfileQueryService {
 
         List<AgentCardResponse> content = contentProfiles.stream()
                 .map(agent -> {
-                        String profileUrl = awsCloudfrontService.getImageUrl(
+                        String profileUrl = storageService.getImgUrl(
                                 ImageSize.SMALL,
-                                agent.getProfileObjectKey()
+                                agent.getProfileObjectKey(),
+                                false
                         );
 
                         return AgentCardResponse.of(
@@ -110,7 +113,9 @@ public class AgentProfileQueryService {
 
         User agentUser = userRepository.findById(agentProfile.getUserId())
                 .orElseThrow(() -> new AgentException(ResponseStatus.USER_INVALID));
-        String agentProfileImageUrl = awsCloudfrontService.getImageUrl(ImageSize.MEDIUM, agentProfile.getProfileObjectKey());
+        String agentProfileImageUrl = storageService.getImgUrl(
+                ImageSize.MEDIUM, agentProfile.getProfileObjectKey(), false);
+
         // 보는 사람이 외국인이면 채팅방 정보 제공
         User loginUser = userRepository.findByEmail(loginUserEmail)
                 .orElseThrow(() -> new AgentException(ResponseStatus.USER_INVALID));

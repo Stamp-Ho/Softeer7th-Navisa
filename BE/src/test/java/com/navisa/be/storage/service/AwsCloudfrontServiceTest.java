@@ -1,32 +1,25 @@
 package com.navisa.be.storage.service;
 
-import com.navisa.be.common.model.enums.ResponseStatus;
-import com.navisa.be.storage.exception.StorageDomainException;
-import com.navisa.be.storage.model.enums.ImageSize;
-import com.navisa.be.storage.service.AwsCloudfrontService;
-import com.navisa.be.storage.service.AwsS3StorageService;
+import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.global.common.exception.StorageException;
+import com.navisa.be.global.infra.aws.AwsCloudfrontClient;
+import com.navisa.be.global.common.model.enums.ImageSize;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AwsCloudfrontServiceTest {
 
     @InjectMocks
-    private AwsCloudfrontService awsCloudfrontService;
-
-    @Mock
-    private AwsS3StorageService awsS3StorageService;
+    private AwsCloudfrontClient awsCloudfrontService;
 
     private static final String CLOUDFRONT_DOMAIN = "test-domain.cloudfront.net";
 
@@ -42,12 +35,11 @@ class AwsCloudfrontServiceTest {
         // given
         ImageSize size = ImageSize.MEDIUM;
         String objectKey = "agent-profile/origin/2024/01/01/uuid.jpg";
-        String expectedFinalKey = "agent-profile/resize/medium/2024/01/01/uuid.webp";
-
-        when(awsS3StorageService.convertToFinalKey(eq(size), eq(objectKey))).thenReturn(expectedFinalKey);
+        // ImageSize.convertToFinalKey는 실제 static 메서드를 사용
+        String expectedFinalKey = ImageSize.convertToFinalKey(size, objectKey);
 
         // when
-        String result = awsCloudfrontService.getImageUrl(size, objectKey);
+        String result = awsCloudfrontService.getCloudfrontImageUrl(size, objectKey);
 
         // then
         assertThat(result).isEqualTo("https://" + CLOUDFRONT_DOMAIN + "/" + expectedFinalKey);
@@ -61,8 +53,8 @@ class AwsCloudfrontServiceTest {
         String invalidObjectKey = null;
 
         // when & then
-        assertThatThrownBy(() -> awsCloudfrontService.getImageUrl(size, invalidObjectKey))
-                .isInstanceOf(StorageDomainException.class)
+        assertThatThrownBy(() -> awsCloudfrontService.getCloudfrontImageUrl(size, invalidObjectKey))
+                .isInstanceOf(StorageException.class)
                 .extracting("status")
                 .isEqualTo(ResponseStatus.INVALID_S3_OBJECT_KEY);
     }
@@ -75,8 +67,8 @@ class AwsCloudfrontServiceTest {
         String invalidObjectKey = "";
 
         // when & then
-        assertThatThrownBy(() -> awsCloudfrontService.getImageUrl(size, invalidObjectKey))
-                .isInstanceOf(StorageDomainException.class)
+        assertThatThrownBy(() -> awsCloudfrontService.getCloudfrontImageUrl(size, invalidObjectKey))
+                .isInstanceOf(StorageException.class)
                 .extracting("status")
                 .isEqualTo(ResponseStatus.INVALID_S3_OBJECT_KEY);
     }
@@ -89,7 +81,7 @@ class AwsCloudfrontServiceTest {
         String objectKey = "agent-profile/origin/2024/01/01/uuid.jpg";
 
         // when & then
-        assertThatThrownBy(() -> awsCloudfrontService.getImageUrl(size, objectKey))
+        assertThatThrownBy(() -> awsCloudfrontService.getCloudfrontImageUrl(size, objectKey))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("size는 null일 수 없습니다.");
     }

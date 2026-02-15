@@ -1,7 +1,9 @@
 package com.navisa.be.common.infrastructure.client;
 
-import com.navisa.be.common.exception.BaseException;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.error.BaseException;
+import com.navisa.be.global.infra.embedding.GeminiEmbeddingRequestType;
+import com.navisa.be.global.infra.embedding.GeminiTextEmbeddingClient;
+import com.navisa.be.global.web.response.ResponseStatus;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;

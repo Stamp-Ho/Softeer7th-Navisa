@@ -1,8 +1,8 @@
 package com.navisa.be.application.service;
 
 import com.navisa.be.application.dto.response.VisaApplicationCardResponse;
-import com.navisa.be.common.dto.request.SliceRequest;
-import com.navisa.be.common.dto.response.SliceResponse;
+import com.navisa.be.global.web.request.SliceRequest;
+import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.application.dto.response.RecentVisaFormsResponse;
@@ -10,9 +10,9 @@ import com.navisa.be.application.dto.response.VisaApplicationDetailResponse;
 import com.navisa.be.application.exception.ApplicationException;
 import com.navisa.be.application.model.entity.VisaApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.common.model.entity.JobCode;
-import com.navisa.be.common.model.enums.ResponseStatus;
-import com.navisa.be.common.repository.JobCodeRepository;
+import com.navisa.be.global.common.model.entity.JobCode;
+import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;

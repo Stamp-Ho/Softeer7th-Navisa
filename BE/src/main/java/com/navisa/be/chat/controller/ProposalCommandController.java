@@ -2,9 +2,9 @@ package com.navisa.be.chat.controller;
 
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.service.ProposalService;
-import com.navisa.be.common.annotation.HasUserType;
-import com.navisa.be.common.annotation.LoginUser;
-import com.navisa.be.common.dto.response.BaseResponse;
+import com.navisa.be.global.web.annotation.HasUserType;
+import com.navisa.be.global.web.annotation.LoginUser;
+import com.navisa.be.global.web.response.BaseResponse;
 import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

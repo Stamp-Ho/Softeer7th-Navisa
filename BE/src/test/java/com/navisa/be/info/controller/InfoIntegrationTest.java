@@ -2,8 +2,8 @@ package com.navisa.be.info.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navisa.be.auth.jwt.JwtProvider;
-import com.navisa.be.common.model.entity.Language;
-import com.navisa.be.common.repository.LanguageRepository;
+import com.navisa.be.global.common.model.entity.Language;
+import com.navisa.be.global.common.repository.LanguageRepository;
 import com.navisa.be.support.IntegrationTestSupport;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;

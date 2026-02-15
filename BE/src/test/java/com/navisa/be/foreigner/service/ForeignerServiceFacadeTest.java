@@ -1,23 +1,23 @@
 package com.navisa.be.foreigner.service;
 
-import com.navisa.be.common.dto.request.SliceRequest;
-import com.navisa.be.common.dto.response.SliceResponse;
-import com.navisa.be.common.infrastructure.client.GeminiTextEmbeddingClient;
-import com.navisa.be.common.model.entity.JobCode;
-import com.navisa.be.common.model.entity.Language;
-import com.navisa.be.common.model.entity.Nationality;
-import com.navisa.be.common.repository.LanguageRepository;
-import com.navisa.be.common.repository.NationalityRepository;
-import com.navisa.be.common.exception.BaseException;
-import com.navisa.be.common.model.enums.ResponseStatus;
-import com.navisa.be.common.repository.JobCodeRepository;
+import com.navisa.be.global.web.request.SliceRequest;
+import com.navisa.be.global.web.response.SliceResponse;
+import com.navisa.be.global.infra.embedding.GeminiTextEmbeddingClient;
+import com.navisa.be.global.common.model.entity.JobCode;
+import com.navisa.be.global.common.model.entity.Language;
+import com.navisa.be.global.common.model.entity.Nationality;
+import com.navisa.be.global.common.repository.LanguageRepository;
+import com.navisa.be.global.common.repository.NationalityRepository;
+import com.navisa.be.global.web.error.BaseException;
+import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.foreigner.dto.request.ForeignerCardRequest;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.dto.response.ForeignerCardExtensionResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
-import com.navisa.be.info.model.entity.JobGroup;
+import com.navisa.be.global.common.model.entity.JobGroup;
 import com.navisa.be.support.AgentProfileTestFixture;
 import com.navisa.be.support.ForeignerFixture;
 import com.navisa.be.support.ForeignerProfileTestFixture;
@@ -86,11 +86,11 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
         Nationality nationality = nationalityRepository.save(new Nationality(null, "USA"));
 
         // JobCode 데이터 준비 (3개 이상)
-        jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J001", "Job 1",
+        jobCodeRepository.save(new JobCode(null, "J001", "Job 1",
                 new float[512], null));
-        jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J002", "Job 2",
+        jobCodeRepository.save(new JobCode(null, "J002", "Job 2",
                 new float[512], null));
-        jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J003", "Job 3",
+        jobCodeRepository.save(new JobCode(null, "J003", "Job 3",
                 new float[512], null));
 
         ForeignerRegisterRequest request = ForeignerFixture.createForeignerRegisterRequest(
@@ -130,11 +130,11 @@ class ForeignerServiceFacadeTest extends IntegrationTestSupport {
         Nationality nationality = nationalityRepository.save(new Nationality(null, "USA"));
 
         // JobCode 데이터 준비
-        jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J001", "Job 1",
+        jobCodeRepository.save(new JobCode(null, "J001", "Job 1",
                 new float[512], null));
-        jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J002", "Job 2",
+        jobCodeRepository.save(new JobCode(null, "J002", "Job 2",
                 new float[512], null));
-        jobCodeRepository.save(new com.navisa.be.common.model.entity.JobCode(null, "J003", "Job 3",
+        jobCodeRepository.save(new JobCode(null, "J003", "Job 3",
                 new float[512], null));
 
         ForeignerRegisterRequest request = ForeignerFixture.createForeignerRegisterRequest(

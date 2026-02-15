@@ -2,8 +2,7 @@ package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.JobCodeDto;
 import com.navisa.be.agent.dto.response.GetJobCodeListResponse;
-import com.navisa.be.common.repository.JobCodeRepository;
-import com.navisa.be.agent.service.JobCodeService;
+import com.navisa.be.global.common.repository.JobCodeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

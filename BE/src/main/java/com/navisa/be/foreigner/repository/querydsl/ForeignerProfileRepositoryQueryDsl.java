@@ -1,6 +1,6 @@
 package com.navisa.be.foreigner.repository.querydsl;
 
-import com.navisa.be.common.dto.request.SliceRequest;
+import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.foreigner.dto.ForeignerCardQueryDto;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 

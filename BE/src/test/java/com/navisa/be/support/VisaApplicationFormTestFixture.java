@@ -3,7 +3,7 @@ package com.navisa.be.support;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.application.model.entity.VisaApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.common.model.entity.JobCode;
+import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

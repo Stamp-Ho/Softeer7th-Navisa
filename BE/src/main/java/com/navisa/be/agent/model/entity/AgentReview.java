@@ -1,11 +1,10 @@
 package com.navisa.be.agent.model.entity;
 
-import com.navisa.be.common.model.entity.BaseEntity;
+import com.navisa.be.global.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 

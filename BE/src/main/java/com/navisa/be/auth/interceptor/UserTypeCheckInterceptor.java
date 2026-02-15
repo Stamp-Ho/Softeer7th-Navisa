@@ -2,8 +2,8 @@ package com.navisa.be.auth.interceptor;
 
 import com.navisa.be.auth.exception.AuthException;
 import com.navisa.be.auth.service.AuthService;
-import com.navisa.be.common.annotation.HasUserType;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.annotation.HasUserType;
+import com.navisa.be.global.web.response.ResponseStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

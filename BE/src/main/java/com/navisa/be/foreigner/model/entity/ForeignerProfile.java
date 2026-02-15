@@ -1,12 +1,11 @@
 package com.navisa.be.foreigner.model.entity;
 
-import com.navisa.be.common.model.entity.BaseEntity;
+import com.navisa.be.global.common.model.entity.BaseEntity;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
 import com.navisa.be.foreigner.model.enums.RandomNickname;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;

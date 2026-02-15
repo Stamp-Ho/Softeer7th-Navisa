@@ -12,7 +12,7 @@ import com.navisa.be.auth.exception.AuthException;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.model.entity.RefreshToken;
 import com.navisa.be.auth.repository.RefreshTokenRepository;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.service.ForeignerCommandService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;

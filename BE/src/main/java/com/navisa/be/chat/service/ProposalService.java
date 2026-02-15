@@ -9,7 +9,7 @@ import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.repository.ProposalRepository;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;

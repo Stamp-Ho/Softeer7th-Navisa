@@ -2,7 +2,7 @@ package com.navisa.be.common.service;
 
 import com.navisa.be.agent.service.AgentBadgeService;
 import com.navisa.be.agent.dto.response.BadgeResponse;
-import com.navisa.be.common.exception.BaseException;
+import com.navisa.be.global.web.error.BaseException;
 import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.model.enums.BadgeName;
 import com.navisa.be.agent.repository.BadgeRepository;

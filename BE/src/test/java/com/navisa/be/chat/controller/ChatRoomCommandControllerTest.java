@@ -9,8 +9,8 @@ import com.navisa.be.chat.dto.request.CreateChatRoomRequest;
 import com.navisa.be.chat.dto.response.CreateChatRoomResponse;
 import com.navisa.be.chat.service.ChatRoomCommandService;
 import com.navisa.be.chat.service.ChatRoomServiceFacade;
-import com.navisa.be.common.model.enums.ResponseStatus;
-import com.navisa.be.common.resolver.LoginUserResolver;
+import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.global.web.resolver.LoginUserResolver;
 
 import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;

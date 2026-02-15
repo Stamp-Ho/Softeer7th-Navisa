@@ -2,7 +2,7 @@ package com.navisa.be.chat.model.entity;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
-import com.navisa.be.common.model.entity.BaseEntity;
+import com.navisa.be.global.common.model.entity.BaseEntity;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

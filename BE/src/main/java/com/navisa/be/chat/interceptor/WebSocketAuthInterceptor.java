@@ -3,7 +3,7 @@ package com.navisa.be.chat.interceptor;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.chat.exception.WebSocketConnectionException;
 import com.navisa.be.chat.model.entity.ChatUserPrincipal;
-import com.navisa.be.common.model.enums.ResponseStatus;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
