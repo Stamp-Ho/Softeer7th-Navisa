@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/chatrooms")
@@ -31,11 +32,18 @@ public class ChatRoomQueryController {
 
     @GetMapping
     @HasUserType({UserType.FILLED_FOREIGNER, UserType.VALID_AGENT})
-    @Operation(summary = "채팅방 목록 조회", description = "로그인한 사용자의 채팅방 목록을 페이징하여 조회합니다.")
-    public BaseResponse<SliceResponse<ChatRoomCardResponse, Long>> getChatRooms(
-            @SliceInfo(size = 10, max = 10) SliceRequest<Long> slice,
-            @Parameter(description = "필터", example = "unread | matched") @RequestParam(required = false) String filter,
+    @Operation(
+            summary = "채팅방 목록 조회",
+            description = "로그인한 사용자의 채팅방 목록을 페이징하여 조회합니다.",
+            parameters = {
+                    @Parameter(name = "lastElementId", description = "마지막으로 조회한 채팅방 ID (첫 페이지는 생략)", schema = @io.swagger.v3.oas.annotations.media.Schema(type = "integer", format = "int64")),
+                    @Parameter(name = "size", description = "페이지 크기 (기본값: 10, 최대: 10)", schema = @io.swagger.v3.oas.annotations.media.Schema(type = "integer"))
 
+            }
+    )
+    public BaseResponse<SliceResponse<ChatRoomCardResponse, Long>> getChatRooms(
+            @ParameterObject @SliceInfo(size = 10, max = 10) SliceRequest<Long> slice,
+            @Parameter(description = "필터", example = "unread | matched") @RequestParam(required = false) String filter,
             @Parameter(hidden = true) @LoginUser String email) {
 
         return new BaseResponse<>(chatRoomServiceFacade.findAllChatRoomsByNoOffset(email, filter, slice));
@@ -69,8 +77,7 @@ public class ChatRoomQueryController {
     )
     public BaseResponse<GetChatRoomParticipantsInfoResponse> getChatRoomParticipantsInfo(
             @PathVariable Long roomId,
-            @Parameter(hidden = true) @LoginUser String loginUserEmail
-    ) {
+            @Parameter(hidden = true) @LoginUser String loginUserEmail) {
         return new BaseResponse<>(chatRoomQueryService.findParticipantsInfoById(roomId, loginUserEmail));
     }
 }

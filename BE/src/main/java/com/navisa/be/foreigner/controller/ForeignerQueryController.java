@@ -14,8 +14,10 @@ import com.navisa.be.foreigner.service.ForeignerServiceFacade;
 import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,35 +66,38 @@ public class ForeignerQueryController {
 
     @Operation(
             summary = "외국인 프로필 필터 검색 API",
-            description = "직무, 지역, 언어 필터를 기반으로 외국인 목록을 조회합니다. No-Offset 방식의 Slice 페이징을 지원합니다."
+            description = "직무, 지역, 언어 필터를 기반으로 외국인 목록을 조회합니다. No-Offset 방식의 Slice 페이징을 지원합니다.",
+            parameters = {
+                @Parameter(name = "lastElementId", description = "마지막으로 조회한 외국인 ID (첫 페이지는 생략)", schema = @Schema(type = "string", format = "uuid")),
+                @Parameter(name = "size", description = "페이지 크기 (기본값: 16, 최대: 16)", schema = @Schema(type = "integer"))
+            }
     )
     @HasUserType({ UserType.VALID_AGENT })
     @GetMapping("/cards")
     public BaseResponse<SliceResponse<ForeignerCardExtensionResponse, UUID>> findForeignerProfileCardsBasedOnFilter(
-            @ModelAttribute ForeignerCardRequest request,
-            @Parameter(description = "페이징 정보 (lastElementId: 마지막으로 본 외국인 ID, size: 페이지 크기)") @SliceInfo(max = 16) SliceRequest<UUID> slice) {
+            @Parameter(description = "필터 조건 (jobGroupNameList, nationIdList, languageIdList - 콤마로 구분)", example = """
+                    {
+                      "jobGroupNameList": "",
+                      "nationIdList": "",
+                      "languageIdList": "1,3"
+                    }""") @ModelAttribute ForeignerCardRequest request,
+            @Parameter(description = "페이징 정보 (lastElementId, size)") @ParameterObject @SliceInfo(max = 16) SliceRequest<UUID> slice) {
 
         return new BaseResponse<>(foreignerServiceFacade.findForeignerProfileCardsBasedOnFilter(request, slice));
     }
 
-    @Operation(
-            summary = "행정사의 외국인 상세 조회",
-            description = "승인된 행정사 회원이 외국인을 상세 조회할 때 사용되는 API입니다. 노션 링크 : https://www.notion.so/bside/3a3e1b2a8c7947d0be4c828e2df64bb9?source=copy_link"
-    )
+    @Operation(summary = "행정사의 외국인 상세 조회", description = "승인된 행정사 회원이 외국인을 상세 조회할 때 사용되는 API입니다. 노션 링크 : https://www.notion.so/bside/3a3e1b2a8c7947d0be4c828e2df64bb9?source=copy_link")
     @GetMapping("/{foreignerId}")
-    @HasUserType({UserType.VALID_AGENT})
+    @HasUserType({ UserType.VALID_AGENT })
     public BaseResponse<FindForeignerDetailResponse> findForeignerDetail(@PathVariable UUID foreignerId,
-                                                                         @Parameter(hidden = true) @LoginUser String loginUserEmail) {
+            @Parameter(hidden = true) @LoginUser String loginUserEmail) {
         FindForeignerDetailCommand request = new FindForeignerDetailCommand(loginUserEmail, foreignerId);
         FindForeignerDetailResponse response = foreignerQueryService.findForeignerDetail(request);
         return new BaseResponse<>(response);
     }
 
-    @Operation(
-            summary = "외국인 진행 상태 조회",
-            description = "현재 로그인한 외국인의 매칭, 리뷰 작성, 피드백 작성 및 수임 완료 상태를 리스트로 조회합니다."
-    )
-    @HasUserType({UserType.FILLED_FOREIGNER})
+    @Operation(summary = "외국인 진행 상태 조회", description = "현재 로그인한 외국인의 매칭, 리뷰 작성, 피드백 작성 및 수임 완료 상태를 리스트로 조회합니다.")
+    @HasUserType({ UserType.FILLED_FOREIGNER })
     @GetMapping("/progress")
     public BaseResponse<ForeignerProgressResponse> getForeignerProgress(
             @Parameter(hidden = true) @LoginUser String email) {

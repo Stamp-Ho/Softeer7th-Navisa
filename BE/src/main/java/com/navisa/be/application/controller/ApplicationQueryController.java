@@ -13,8 +13,10 @@ import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +27,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Visa Application Query", description = "비자 신청서 조회 API")
 public class ApplicationQueryController {
-
 
     private final ApplicationQueryService applicationQueryService;
 
@@ -59,12 +60,19 @@ public class ApplicationQueryController {
         return new BaseResponse<>(response);
     }
 
-    @Operation(summary = "행정사용 비자 신청서 전체 조회(필터 가능)", description = "행정사가 수임했던 비자 신청서들을 조회합니다.")
+    @Operation(
+            summary = "행정사용 비자 신청서 전체 조회(필터 가능)",
+            description = "행정사가 수임했던 비자 신청서들을 조회합니다.",
+            parameters = {
+                    @Parameter(name = "lastElementId", description = "마지막으로 조회한 신청서 ID (첫 페이지는 생략)", schema = @Schema(type = "string", format = "uuid")),
+                    @Parameter(name = "size", description = "페이지 크기 (기본값: 18, 최대: 18)", schema = @Schema(type = "integer"))
+            }
+    )
     @GetMapping()
     @HasUserType(UserType.VALID_AGENT)
     public BaseResponse<SliceResponse<VisaApplicationCardResponse, UUID>> getVisaFormsForAgent(
             @Parameter(hidden = true) @LoginUser String email,
-            @SliceInfo(size = 18, max = 18) SliceRequest<UUID> slice,
+            @ParameterObject @SliceInfo(size = 18, max = 18) SliceRequest<UUID> slice,
             @RequestParam(required = false) Boolean complete) {
 
         return new BaseResponse<>(applicationQueryService.findVisaFormsByFilter(email, slice, complete));
