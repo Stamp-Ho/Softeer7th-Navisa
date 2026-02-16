@@ -39,7 +39,7 @@ const ChatPage = () => {
     isError: isUnreadError,
   } = useChatUnreadCount();
   const unreadCount = unreadCountData?.count ?? 0;
-
+  console.log(unreadCount);
   const {
     data: matchedUnreadCountData,
     isLoading: isMatchedUnreadLoading,
