@@ -168,26 +168,30 @@ jobs:
             # ==========================================
             echo "Switching Nginx traffic to $TARGET_PORT..."
 
-            # 1. 현재 설정 백업 (old container 포트 정보 보존)
-            sudo cp /etc/nginx/conf.d/service-url.inc /etc/nginx/conf.d/service-url.inc.bak
+            # 1. 현재 설정 백업
+            sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 
-            # 2. 새로운 포트로 설정 변경
-            echo "set \$service_url http://127.0.0.1:$TARGET_PORT;" | sudo tee /etc/nginx/conf.d/service-url.inc
+            # 2. 새로운 설정 파일 적용 (Repo에서 가져온 최신 nginx.conf)
+            sudo cp ~/navisa-dev/docs/infra/nginx.conf /etc/nginx/nginx.conf
 
-            # 3. Nginx 문법 검사
+            # 3. 포트 설정 변경 (sed로 upstream 포트 수정)
+            # server 127.0.0.1:xxxx; 패턴을 찾아 $TARGET_PORT로 변경
+            sudo sed -i "s/server 127.0.0.1:[0-9]*;/server 127.0.0.1:$TARGET_PORT;/g" /etc/nginx/nginx.conf
+
+            # 4. Nginx 문법 검사
             if ! sudo nginx -t; then
               echo "❌ Nginx config test failed! Rolling back..."
-              # 백업 복원 (old container 포트로 되돌림)
-              sudo mv /etc/nginx/conf.d/service-url.inc.bak /etc/nginx/conf.d/service-url.inc
+              # 백업 복원
+              sudo mv /etc/nginx/nginx.conf.bak /etc/nginx/nginx.conf
               sudo systemctl reload nginx
               # 새 컨테이너 정리
               docker stop $TARGET_NAME && docker rm $TARGET_NAME
               exit 1
             fi
 
-            # 4. 검증 성공 시 트래픽 전환
+            # 5. 검증 성공 시 트래픽 전환
             sudo systemctl reload nginx
-            sudo rm -f /etc/nginx/conf.d/service-url.inc.bak
+            sudo rm -f /etc/nginx/nginx.conf.bak
             echo "Traffic successfully switched."
 
             # ==========================================

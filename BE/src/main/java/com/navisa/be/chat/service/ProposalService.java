@@ -126,14 +126,15 @@ public class ProposalService {
     public void updateStatusByChatRoomId(Long id, ProposalStatus updatedStatus) {
         Proposal proposal = proposalRepository.findFirstByChatRoom_IdOrderByIdDesc(id).orElse(null);
 
-        if (proposal == null) { // 다른 호출로직에서는 만약 제안이 없다면 예외를 터뜨리지 말아야 함
-            return;
+        if (proposal == null // 만약 제안이 없거나 거절/취소로 완료된 상태에서 변경 시도를 할 경우 예외를 터뜨림
+                || proposal.getStatus().equals(ProposalStatus.REJECTED)
+                || proposal.getStatus().equals(ProposalStatus.CANCELED)) {
+            throw new ProposalException(ResponseStatus.BAD_REQUEST, "현재 제안이 없거나 거절/취소로 완료된 상태입니다.");
         }
 
         if ((updatedStatus.equals(ProposalStatus.MATCHED)
                 || updatedStatus.equals(ProposalStatus.REJECTED))
-            && !proposal.getStatus().equals(ProposalStatus.PROPOSED)
-        ) {
+                && !proposal.getStatus().equals(ProposalStatus.PROPOSED)) {
             throw new ProposalException(ResponseStatus.BAD_REQUEST,
                     "PROPOSED가 아닌 제안은 MATCHED, REJECTED로 변경하지 못합니다.");
         }
@@ -145,5 +146,40 @@ public class ProposalService {
 
         proposal.updateStatus(updatedStatus);
         proposalRepository.save(proposal);
+    }
+
+    /**
+     * 채팅방 차단 시 제안 상태를 변경합니다.
+     * - PROPOSED 상태 → REJECTED로 변경
+     * - MATCHED 상태 → CANCELED로 변경
+     * - 제안이 없거나 이미 REJECTED/CANCELED 상태인 경우 아무 작업도 하지 않습니다.
+     */
+    @Transactional
+    public void updateProposalOnBlock(Long chatRoomId) {
+        Proposal proposal = proposalRepository.findFirstByChatRoom_IdOrderByIdDesc(chatRoomId)
+                .orElse(null);
+
+        // 제안이 없으면 아무것도 하지 않음
+        if (proposal == null) {
+            return;
+        }
+
+        ProposalStatus currentStatus = proposal.getStatus();
+
+        // 이미 완료된 상태면 아무것도 하지 않음
+        if (currentStatus == ProposalStatus.REJECTED || currentStatus == ProposalStatus.CANCELED) {
+            return;
+        }
+
+        // PROPOSED → REJECTED
+        if (currentStatus == ProposalStatus.PROPOSED) {
+            proposal.updateStatus(ProposalStatus.REJECTED);
+            proposalRepository.save(proposal);
+        }
+        // MATCHED → CANCELED
+        else if (currentStatus == ProposalStatus.MATCHED) {
+            proposal.updateStatus(ProposalStatus.CANCELED);
+            proposalRepository.save(proposal);
+        }
     }
 }

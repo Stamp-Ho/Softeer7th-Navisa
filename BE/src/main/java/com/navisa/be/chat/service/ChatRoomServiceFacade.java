@@ -16,7 +16,6 @@ import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.global.common.model.enums.ImageSize;
-import com.navisa.be.global.infra.aws.AwsCloudfrontClient;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
@@ -38,14 +37,14 @@ public class ChatRoomServiceFacade {
     private final ChatRoomQueryService chatRoomQueryService;
     private final ForeignerQueryService foreignerQueryService;
     private final AgentProfileQueryService agentProfileQueryService;
-    private final AwsCloudfrontClient awsCloudfrontService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final ProposalService proposalService;
     private final ApplicationCommandService applicationCommandService;
     private final ChatRoomCommandService chatRoomCommandService;
     private final StorageService storageService;
 
-    public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter, SliceRequest<Long> slice) {
+    public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter,
+            SliceRequest<Long> slice) {
         ChatRoomFilterType filterType = ChatRoomFilterType.from(filter);
 
         User user = userQueryService.findByEmail(email);
@@ -57,7 +56,8 @@ public class ChatRoomServiceFacade {
                 : agentProfileQueryService.findByUserId(user.getId()).getId();
 
         // 2. 채팅방 목록 조회 (ExistsNext 확인을 위해 Repository에서 slice.size() + 1개를 가져와야 함)
-        List<ChatRoom> chatRoomList = chatRoomQueryService.findChatRoomByProfileId(profileId, slice, isForeigner, filterType);
+        List<ChatRoom> chatRoomList = chatRoomQueryService.findChatRoomByProfileId(profileId, slice, isForeigner,
+                filterType);
 
         if (chatRoomList.isEmpty())
             return new SliceResponse<>(List.of(), false, null);
@@ -67,13 +67,13 @@ public class ChatRoomServiceFacade {
 
         List<Long> contentChatRoomIds = contentChatRooms.stream().map(ChatRoom::getId).toList();
 
-        Map<Long, String> lastMessageMap = chatMessageQueryService.findAllLastChatMessageByChatRoomIn(contentChatRoomIds)
+        Map<Long, String> lastMessageMap = chatMessageQueryService
+                .findAllLastChatMessageByChatRoomIn(contentChatRoomIds)
                 .stream()
                 .collect(Collectors.toMap(
                         message -> message.getChatRoom().getId(),
                         ChatMessage::getContent,
-                        (existing, replacement) -> existing
-                ));
+                        (existing, replacement) -> existing));
 
         boolean allMatched = contentChatRooms.stream()
                 .map(ChatRoom::getId)
@@ -88,44 +88,44 @@ public class ChatRoomServiceFacade {
                 .collect(Collectors.toMap(
                         ChatMessageNonReadCountProjection::getId,
                         ChatMessageNonReadCountProjection::getCount,
-                        (existing, replacement) -> existing
-                ));
+                        (existing, replacement) -> existing));
 
-        Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap = proposalService.findByChatRoomIn(contentChatRooms)
+        Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap = proposalService
+                .findByChatRoomIn(contentChatRooms)
                 .stream()
                 .collect(Collectors.toMap(
                         ChatRoomProposalStatusProjection::getChatRoomId,
                         Function.identity(),
-                        (existing, replacement) -> existing
-                ));
+                        (existing, replacement) -> existing));
 
         // 3. 응답 DTO 변환 (상대방 프로필 정보 매핑)
         List<ChatRoomCardResponse> responses = contentChatRooms.stream()
                 .map(chatRoom -> ChatRoomCardResponse.toDto(
-                                chatRoom,
-                                getProfileImgUrl(chatRoom, isForeigner),
-                                lastMessageMap.get(chatRoom.getId()),
-                                nonReadCountMap.getOrDefault(chatRoom.getId(), 0L),
-                                isForeigner,
-                                hasReceivedProposal(chatRoom, profileId, proposalStatusMap),
-                                isProposalMatched(chatRoom, proposalStatusMap)
-                        )
-                ).toList();
+                        chatRoom,
+                        getProfileImgUrl(chatRoom, isForeigner),
+                        lastMessageMap.get(chatRoom.getId()),
+                        nonReadCountMap.getOrDefault(chatRoom.getId(), 0L),
+                        isForeigner,
+                        hasReceivedProposal(chatRoom, profileId, proposalStatusMap),
+                        isProposalMatched(chatRoom, proposalStatusMap)))
+                .toList();
 
-        Long lastElementId = contentChatRooms.isEmpty() ? null : contentChatRooms.get(contentChatRooms.size() - 1).getId();
+        Long lastElementId = contentChatRooms.isEmpty() ? null
+                : contentChatRooms.get(contentChatRooms.size() - 1).getId();
 
         return new SliceResponse<>(responses, existsNext, lastElementId);
     }
 
     private String getProfileImgUrl(ChatRoom chatRoom, boolean isForeigner) {
-        if(isForeigner) {
+        if (isForeigner) {
             return storageService.getImgUrl(
                     ImageSize.MEDIUM, chatRoom.getAgentProfile().getProfileObjectKey(), false);
         }
         return null;
     }
 
-    private boolean hasReceivedProposal(ChatRoom chatRoom, UUID profileId, Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {
+    private boolean hasReceivedProposal(ChatRoom chatRoom, UUID profileId,
+            Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {
         if (!proposalStatusMap.containsKey(chatRoom.getId())) {
             return false;
         }
@@ -134,20 +134,22 @@ public class ChatRoomServiceFacade {
         return !projection.getSenderId().equals(profileId) && projection.getStatus() == ProposalStatus.PROPOSED;
     }
 
-    private  boolean isProposalMatched(ChatRoom chatRoom, Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {
-        return proposalStatusMap.containsKey(chatRoom.getId()) && proposalStatusMap.get(chatRoom.getId()).getStatus() == ProposalStatus.MATCHED;
+    private boolean isProposalMatched(ChatRoom chatRoom,
+            Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {
+        return proposalStatusMap.containsKey(chatRoom.getId())
+                && proposalStatusMap.get(chatRoom.getId()).getStatus() == ProposalStatus.MATCHED;
     }
 
     @Transactional
     public void updateBlockStatusToEntity(String email, Long chatRoomId) {
         User user = userQueryService.findByEmail(email);
-        
+
         ChatRoom chatRoom = chatRoomQueryService.findByIdWithProfiles(chatRoomId);
 
         validateChatRoomOwnership(user, chatRoom);
 
         chatRoomCommandService.updateStatus(chatRoom);
-        proposalService.updateStatusByChatRoomId(chatRoom.getId(), ProposalStatus.REJECTED);
+        proposalService.updateProposalOnBlock(chatRoom.getId());
         applicationCommandService.updateAgentProfileConnection(chatRoom);
     }
 
