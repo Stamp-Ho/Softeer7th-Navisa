@@ -1,12 +1,12 @@
 package com.navisa.be.agent.controller;
 
 import com.navisa.be.agent.service.AgentRecommendationService;
+import com.navisa.be.agent.service.AgentSuggestionService;
 import com.navisa.be.auth.interceptor.AuthInterceptor;
 import com.navisa.be.auth.interceptor.UserTypeCheckInterceptor;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.global.web.resolver.LoginUserResolver;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class AgentRecommendationControllerTest {
     private AgentRecommendationService agentRecommendationService;
 
     @MockitoBean
-    private ForeignerQueryService foreignerQueryService;
+    private AgentSuggestionService agentSuggestionService;
 
     @MockitoBean
     private JwtProvider jwtProvider;
@@ -67,8 +67,7 @@ class AgentRecommendationControllerTest {
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(userTypeCheckInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-        given(foreignerQueryService.getForeignerIdByEmail(mockEmail)).willReturn(foreignerId);
-        given(agentRecommendationService.getPersonalizedAgents(foreignerId)).willReturn(List.of());
+        given(agentRecommendationService.getPersonalizedAgents(mockEmail)).willReturn(List.of());
 
         // when & then
         mockMvc.perform(get("/api/home/user/agent")

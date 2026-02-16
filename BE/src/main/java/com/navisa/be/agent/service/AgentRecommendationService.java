@@ -5,11 +5,9 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
-import com.navisa.be.global.web.response.ResponseStatus;
-import com.navisa.be.foreigner.exception.ForeignerException;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
-import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
 import com.navisa.be.global.common.service.StorageService;
+import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.recommendation.calculator.FinalRecommendationCalculator;
 import com.navisa.be.recommendation.calculator.ReviewBonusCalculator;
 import com.navisa.be.recommendation.calculator.SpecialtyDistributionCalculator;
@@ -29,8 +27,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AgentRecommendationService {
 
+    private final ForeignerQueryService foreignerQueryService;
     private final AgentProfileRepository agentProfileRepository;
-    private final ForeignerSimilarityRepository foreignerSimilarityRepository;
     private final SpecialtyDistributionCalculator distributionCalculator;
     private final ReviewBonusCalculator reviewBonusCalculator;
     private final FinalRecommendationCalculator finalCalculator;
@@ -40,9 +38,11 @@ public class AgentRecommendationService {
     private final StorageService storageService;
 
     // 맞춤 행정사 추천
-    public List<AgentCardResponse> getPersonalizedAgents(UUID foreignerId) {
-        ForeignerSimilarity similarity = foreignerSimilarityRepository.findByForeignerId(foreignerId)
-                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+    public List<AgentCardResponse> getPersonalizedAgents(String email) {
+
+        UUID foreignerId = foreignerQueryService.getForeignerIdByEmail(email);
+
+        ForeignerSimilarity similarity = foreignerQueryService.findSimilarityByForeignerId(foreignerId);
 
         List<AgentProfile> profiles = agentProfileRepository.findAllValidAgentProfiles();
 

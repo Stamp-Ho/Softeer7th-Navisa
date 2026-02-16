@@ -1,8 +1,7 @@
 package com.navisa.be.agent.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navisa.be.agent.dto.LicenseInfoDto;
-import com.navisa.be.agent.dto.request.RegisterAgentProfileRequest;
+import com.navisa.be.agent.dto.request.AgentProfileRegistrationRequest;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.model.enums.BadgeName;
@@ -34,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @Transactional
-class AgentProfileIntegrationTest extends IntegrationTestSupport {
+class AgentIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private MockMvc mockMvc;
@@ -67,7 +66,7 @@ class AgentProfileIntegrationTest extends IntegrationTestSupport {
         JobCode jobCode = agentProfileTestFixture.createJobCode("코드1", "직무1");
         Language lang = agentProfileTestFixture.createLanguage("언어");
 
-        RegisterAgentProfileRequest request = AgentFixture.createRegisterAgentProfileRequest(List.of(jobCode.getId()), List.of(lang.getId()), new LicenseInfoDto("자격증 번호",
+        AgentProfileRegistrationRequest request = AgentFixture.createAgentProfileRegistrationRequest(List.of(jobCode.getId()), List.of(lang.getId()), new AgentProfileRegistrationRequest.LicenseInfoDto("자격증 번호",
                 LocalDate.now(),
                 "Page-10",
                 null));
@@ -85,7 +84,7 @@ class AgentProfileIntegrationTest extends IntegrationTestSupport {
     @DisplayName("에이전트 프로필 등록 요청의 필드가 null이면 400에러를 반환한다")
     void registerAgentProfile_shouldReturnBadRequest_whenRequestConsistOfNull() throws Exception {
         // given
-        RegisterAgentProfileRequest request = AgentFixture.getRegisterAgentProfileRequestConsistingOfNull();
+        AgentProfileRegistrationRequest request = AgentFixture.getAgentProfileRegistrationRequestConsistingOfNull();
 
         String accessToken = jwtProvider.createAccessToken("email");
 

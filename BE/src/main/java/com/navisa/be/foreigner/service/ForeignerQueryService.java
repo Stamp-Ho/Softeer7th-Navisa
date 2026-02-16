@@ -4,7 +4,7 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentReview;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
-import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.model.enums.ProposalStatus;
@@ -37,10 +37,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,13 +52,14 @@ public class ForeignerQueryService {
     private final ForeignerExpectedCompanyRepository foreignerExpectedCompanyRepository;
     private final UserRepository userRepository;
     private final UserQueryService userQueryService;
-    private final AgentProfileQueryService agentProfileQueryService;
+    private final AgentProfileCrudService agentProfileQueryService;
     private final AgentProfileRepository agentProfileRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ProposalRepository proposalRepository;
     private final AgentReviewRepository agentReviewRepository;
     private final ApplicationFormRepository applicationFormRepository;
     private final ForeignerNationalityRepository foreignerNationalityRepository;
+    private final ForeignerSimilarityRepository foreignerSimilarityRepository;
 
     public ForeignerQueryResponse findForeignerTotalInfo(UUID userId) {
         ForeignerProfile profile = foreignerProfileRepository.findByUserIdWithNationalitiesAndLanguages(userId)
@@ -165,12 +163,12 @@ public class ForeignerQueryService {
 
         return new SliceResponse<>(
                 contentProfiles.stream()
-                    .map(fp ->
-                            ForeignerCardExtensionResponse.of(
-                                    fp,
-                                    expectedCompanyMap.get(fp.getId()),
-                                    educationMap.get(fp.getId())))
-                    .toList(),
+                        .map(fp ->
+                                ForeignerCardExtensionResponse.of(
+                                        fp,
+                                        expectedCompanyMap.get(fp.getId()),
+                                        educationMap.get(fp.getId())))
+                        .toList(),
                 existsNext,
                 lastElementId);
     }
@@ -292,7 +290,7 @@ public class ForeignerQueryService {
     }
 
     public ForeignerExpectedCompany findExpectedCompanyByForeignerProfileId(UUID foreignerProfileId) {
-            return foreignerExpectedCompanyRepository
+        return foreignerExpectedCompanyRepository
                 .findByForeignerId(foreignerProfileId)
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER_EXPECTEDCOMPANY));
     }
@@ -301,5 +299,24 @@ public class ForeignerQueryService {
         return foreignerNationalityRepository.findByForeignerProfileId(foreignerProfileId).stream()
                 .map(ForeignerNationality::getNationality)
                 .toList();
+    }
+
+    public ForeignerProfile findByEmail(String loginUserEmail) {
+        User loginUser = userRepository.findByEmail(loginUserEmail)
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.USER_INVALID));
+
+        ForeignerProfile foreignerProfile = foreignerProfileRepository.findByUserId(loginUser.getId())
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+
+        return foreignerProfile;
+    }
+
+    public List<ForeignerProfile> findAllById(List<UUID> foreignerIds) {
+        return foreignerProfileRepository.findAllById(foreignerIds);
+    }
+
+    public ForeignerSimilarity findSimilarityByForeignerId(UUID foreignerId) {
+        return foreignerSimilarityRepository.findByForeignerId(foreignerId)
+                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
     }
 }

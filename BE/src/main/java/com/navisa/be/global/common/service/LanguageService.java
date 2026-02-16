@@ -21,4 +21,12 @@ public class LanguageService {
                 .toList();
         return new LanguageListResponse(dtoList);
     }
+
+    public List<Language> findAllById(List<Long> languageIds) {
+        return languageRepository.findAllById(languageIds);
+    }
+
+    public long countByIdIn(List<Long> languageIds) {
+        return languageRepository.countByIdIn(languageIds);
+    }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BadgeSummaryService {
+public class AgentBadgeSummaryService {
 
     private final AgentBadgeSummaryRepository summaryRepository;
     private final BadgeRepository badgeRepository;

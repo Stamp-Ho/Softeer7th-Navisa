@@ -9,6 +9,7 @@ import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
 import com.navisa.be.global.common.service.StorageService;
+import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.recommendation.calculator.FinalRecommendationCalculator;
 import com.navisa.be.recommendation.calculator.ReviewBonusCalculator;
 import com.navisa.be.recommendation.calculator.SpecialtyDistributionCalculator;
@@ -34,6 +35,9 @@ class AgentRecommendationServiceTest {
 
     @InjectMocks
     private AgentRecommendationService agentRecommendationService;
+
+    @Mock
+    private ForeignerQueryService foreignerQueryService;
 
     @Mock
     private AgentProfileRepository agentProfileRepository;
@@ -66,7 +70,9 @@ class AgentRecommendationServiceTest {
     @DisplayName("사용자의 관심도와 행정사의 전문 분야 점수를 합산하여 추천 순위대로 정렬된다")
     void getPersonalizedAgents_SortingTest() {
         // given
+        String email = "email";
         UUID foreignerId = UUID.randomUUID();
+        given(foreignerQueryService.getForeignerIdByEmail(any())).willReturn(foreignerId);
 
         ForeignerSimilarity similarity = Mockito.mock(ForeignerSimilarity.class);
         given(similarity.getJobCodeIdList()).willReturn(new long[] { 1L });
@@ -93,7 +99,7 @@ class AgentRecommendationServiceTest {
         given(lowAgent.getProfileObjectKey()).willReturn("low-profile-key");
 
         given(agentProfileRepository.findAllValidAgentProfiles()).willReturn(List.of(lowAgent, highAgent));
-        given(foreignerSimilarityRepository.findByForeignerId(foreignerId)).willReturn(Optional.of(similarity));
+        given(foreignerQueryService.findSimilarityByForeignerId(foreignerId)).willReturn(similarity);
 
         given(finalCalculator.calculateFinalGradeByLongId(any(), any())).willAnswer(invocation -> {
             Map<Long, Double> saMap = invocation.getArgument(0);
@@ -111,7 +117,7 @@ class AgentRecommendationServiceTest {
         given(storageService.getImgUrl(any(), any(), any(Boolean.class))).willReturn("url");
 
         // when
-        List<AgentCardResponse> result = agentRecommendationService.getPersonalizedAgents(foreignerId);
+        List<AgentCardResponse> result = agentRecommendationService.getPersonalizedAgents(email);
 
         // then
         assertThat(result).hasSize(2);

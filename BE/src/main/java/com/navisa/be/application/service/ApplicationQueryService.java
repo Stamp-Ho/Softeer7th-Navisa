@@ -1,7 +1,7 @@
 package com.navisa.be.application.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.application.dto.projection.VisaApplicationFormProjection;
 import com.navisa.be.application.dto.response.RecentVisaFormsResponse;
 import com.navisa.be.application.dto.response.VisaApplicationCardResponse;
@@ -33,7 +33,7 @@ public class ApplicationQueryService {
     private final ApplicationFormRepository visaApplicationFormRepository;
     private final ForeignerProfileRepository foreignerProfileRepository;
     private final UserQueryService userQueryService;
-    private final AgentProfileQueryService agentProfileQueryService;
+    private final AgentProfileCrudService agentProfileQueryService;
     private final StorageService storageService;
 
     // 행정사의 최근 수정 문서 조회
@@ -176,5 +176,10 @@ public class ApplicationQueryService {
 
         sectionMap.put("sectionId", id);
         list.add(sectionMap);
+    }
+
+    public VisaApplicationForm findCurrentApplicationForm(UUID foreignerId, UUID agentId) {
+        return visaApplicationFormRepository.findCurrentAppFormNative(foreignerId, agentId)
+                .orElseThrow(() -> new ApplicationException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));
     }
 }

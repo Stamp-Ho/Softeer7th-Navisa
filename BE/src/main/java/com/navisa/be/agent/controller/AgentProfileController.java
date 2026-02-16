@@ -2,10 +2,11 @@ package com.navisa.be.agent.controller;
 
 import com.navisa.be.agent.dto.request.*;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
-import com.navisa.be.agent.dto.response.GetJobCodeListResponse;
+import com.navisa.be.agent.dto.response.JobCodeListResponse;
 import com.navisa.be.agent.service.*;
+import com.navisa.be.global.common.service.JobCodeService;
 import com.navisa.be.global.web.annotation.HasUserType;
-import com.navisa.be.agent.dto.response.GetAgentDetailResponse;
+import com.navisa.be.agent.dto.response.AgentDetailResponse;
 import com.navisa.be.global.web.annotation.LoginUser;
 import com.navisa.be.global.web.annotation.SliceInfo;
 import com.navisa.be.global.web.request.SliceRequest;
@@ -23,27 +24,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Tag(name = "Agent Profile", description = "행정사 프로필 API")
+@Tag(name = "Agent Profile", description = "행정사 프로필 등록 및 탐색 관련 API")
 @RequiredArgsConstructor
 @RequestMapping("/api/agent")
 @RestController
 public class AgentProfileController {
 
-    private final AgentProfileCommandService agentProfileCommandService;
+    private final AgentProfileRegistrationService agentProfileRegistrationService;
+    private final AgentProfileSearchService agentProfileSearchService;
     private final JobCodeService jobCodeService;
-    private final AgentProfileServiceFacade agentProfileServiceFacade;
-    private final AgentProfileQueryService agentProfileQueryService;
-    private final AgentReviewService agentReviewService;
 
     @Operation(
             summary = "행정사 프로필 등록 API",
-            description = "행정사가 프로필을 등록하기 위해서 사용하는 API입니다. 추가적인 정보는 https://www.notion.so/bside/15443d2553684a4fb58c43a38c54a6af?source=copy_link를 참고해주세요"
+            description = "행정사가 프로필을 등록하기 위해서 사용하는 API입니다."
     )
     @PostMapping("/profile")
-    public BaseResponse<Void> registerAgentProfile(@Valid @RequestBody RegisterAgentProfileRequest request,
+    public BaseResponse<Void> registerAgentProfile(@Valid @RequestBody AgentProfileRegistrationRequest request,
                                                    @Parameter(hidden = true) @LoginUser String loginUserEmail) {
-        RegisterAgentProfileCommand command = new RegisterAgentProfileCommand(request, loginUserEmail);
-        agentProfileCommandService.registerAgentProfile(command);
+        agentProfileRegistrationService.registerAgentProfile(request, loginUserEmail);
         return new BaseResponse<>(null);
     }
 
@@ -67,52 +65,28 @@ public class AgentProfileController {
             @Parameter(description = "페이징 정보 (lastElementId, size)") @ParameterObject @SliceInfo(max = 16) SliceRequest<UUID> slice,
             @Parameter(hidden = true) @LoginUser String email) {
 
-        return new BaseResponse<>(agentProfileServiceFacade.findAgentProfileCardsBasedOnFilter(request, slice, email));
+        return new BaseResponse<>(agentProfileSearchService.findAgentProfileCardsBasedOnFilter(request, slice, email));
     }
 
     @Operation(
             summary = "행정사 프로필 등록 중 직무코드 리스트 조회 API",
-            description = "행정사가 프로필 등록 과정에서 직무코드 목록을 조회할 때 사용하는 API입니다. 추가적인 정보는 https://www.notion.so/bside/2fa22020273580268a2ec408b30182af?source=copy_link를 참고해주세요"
+            description = "행정사가 프로필 등록 과정에서 직무코드 목록을 조회할 때 사용하는 API입니다."
     )
     @GetMapping("/register-form/jobcodes")
-    public BaseResponse<GetJobCodeListResponse> getJobCodeList() {
-        GetJobCodeListResponse response = jobCodeService.getJobCodeList();
+    public BaseResponse<JobCodeListResponse> getJobCodeList(){
+        JobCodeListResponse response = jobCodeService.getJobCodeList();
         return new BaseResponse<>(response);
     }
 
     @Operation(
             summary = "외국인과 행정사의 행정사 상세 조회 API",
-            description = "외국인과 행정사가 특정 행정사를 상세 조회하는 API입니다. 추가적인 정보는 https://www.notion.so/bside/2fb22020273580059241f9d855571532?source=copy_link를 참고해주세요"
+            description = "외국인과 행정사가 특정 행정사를 상세 조회하는 API입니다"
     )
     @HasUserType({UserType.VALID_AGENT, UserType.FILLED_FOREIGNER})
     @GetMapping("/{agentId}")
-    public BaseResponse<GetAgentDetailResponse> getAgentDetail(@PathVariable("agentId") UUID agentId,
-                                                               @Parameter(hidden = true) @LoginUser String loginUserEmail) {
-        GetAgentDetailResponse response = agentProfileQueryService.getAgentDetail(loginUserEmail, agentId);
+    public BaseResponse<AgentDetailResponse> getAgentDetail(@PathVariable("agentId") UUID agentId,
+                                                            @Parameter(hidden = true) @LoginUser String loginUserEmail){
+        AgentDetailResponse response = agentProfileSearchService.getAgentDetail(loginUserEmail, agentId);
         return new BaseResponse<>(response);
-    }
-
-    @Operation(
-            summary = "외국인의 행정사 리뷰 작성 API",
-            description = "외국인이 특정 행정사에게 리뷰를 작성할 때 사용하는 API입니다. 추가적인 정보는 https://www.notion.so/bside/2ef22020273581d18476d1b8c10eb041?source=copy_link를 참고해주세요"
-    )
-    @HasUserType(UserType.FILLED_FOREIGNER)
-    @PostMapping("/reviews")
-    public BaseResponse<Void> createAgentReview(@Valid @RequestBody CreateAgentReviewRequest request,
-                                                @Parameter(hidden = true) @LoginUser String loginUserEmail) {
-        agentReviewService.createAgentReview(loginUserEmail, request);
-        return new BaseResponse<>(null);
-    }
-
-    @Operation(
-            summary = "외국인의 행정사 피드백 등록 API",
-            description = "리뷰 작성 후, 해당 계약 건에 대해 구체적인 피드백 내용을 등록합니다."
-    )
-    @HasUserType(UserType.FILLED_FOREIGNER)
-    @PostMapping("/feedback")
-    public BaseResponse<Void> createAgentFeedback(@Valid @RequestBody CreateAgentFeedbackRequest request,
-                                                  @Parameter(hidden = true) @LoginUser String loginUserEmail) {
-        agentReviewService.createAgentFeedback(loginUserEmail, request.content());
-        return new BaseResponse<>(null);
     }
 }

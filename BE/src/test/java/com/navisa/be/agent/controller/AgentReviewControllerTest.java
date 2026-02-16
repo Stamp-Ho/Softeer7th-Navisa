@@ -2,7 +2,10 @@ package com.navisa.be.agent.controller;
 
 import com.navisa.be.agent.dto.response.FeedbackResponse;
 import com.navisa.be.agent.exception.AgentException;
-import com.navisa.be.agent.service.AgentHomeService;
+import com.navisa.be.agent.service.AgentBadgeService;
+import com.navisa.be.agent.service.AgentReviewService;
+import com.navisa.be.auth.interceptor.AuthInterceptor;
+import com.navisa.be.auth.interceptor.UserTypeCheckInterceptor;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.global.web.resolver.LoginUserResolver;
 import com.navisa.be.auth.service.AuthService;
@@ -23,28 +26,37 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AgentHomeController.class)
-class AgentHomeControllerTest {
-
-    @MockitoBean
-    private UserRepository userRepository;
-
-    @MockitoBean
-    private AuthService authService;
+@WebMvcTest(AgentReviewController.class)
+class AgentReviewControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private AgentHomeService agentHomeService;
+    private AgentReviewService agentReviewService;
+
+    @MockitoBean
+    private AgentBadgeService agentBadgeService;
 
     @MockitoBean
     private JwtProvider jwtProvider;
 
     @MockitoBean
+    private AuthService authService;
+
+    @MockitoBean
+    private UserRepository userRepository;
+
+    @MockitoBean
+    private AuthInterceptor authInterceptor;
+
+    @MockitoBean
+    private UserTypeCheckInterceptor userTypeCheckInterceptor;
+
+    @MockitoBean
     private LoginUserResolver loginUserResolver;
 
-    @DisplayName("행정사 블로그 사례 최신순 조회 시 200 OK와 리스트를 반환한다.")
+    @DisplayName("행정사 후기 사례 최신순 조회 시 200 OK와 리스트를 반환한다.")
     @Test
     void getLatestAgentReviews_Success() throws Exception {
         // given
@@ -57,7 +69,7 @@ class AgentHomeControllerTest {
                         "https://image.com/1"
                 )
         );
-        given(agentHomeService.getLatestFeedbacks()).willReturn(responses);
+        given(agentReviewService.getLatestFeedbacks()).willReturn(responses);
 
         // when & then
         mockMvc.perform(get("/api/home/feedback"))
@@ -67,11 +79,11 @@ class AgentHomeControllerTest {
                         .value("테스트 리뷰 1"));
     }
 
-    @DisplayName("등록된 블로그 사례가 없을 때 404 에러 응답을 반환한다.")
+    @DisplayName("등록된 후기 사례가 없을 때 404 에러 응답을 반환한다.")
     @Test
     void getLatestAgentReviews_NotFound() throws Exception {
         // given
-        given(agentHomeService.getLatestFeedbacks())
+        given(agentReviewService.getLatestFeedbacks())
                 .willThrow(new AgentException(ResponseStatus.AGENT_REVIEW_NOT_FOUND));
 
         // when & then

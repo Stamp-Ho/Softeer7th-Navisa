@@ -1,6 +1,6 @@
 package com.navisa.be.agent.repository.querydsl;
 
-import com.navisa.be.agent.dto.AgentCardQueryDto;
+import com.navisa.be.agent.dto.request.AgentCardQueryDto;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.global.web.request.SliceRequest;
 

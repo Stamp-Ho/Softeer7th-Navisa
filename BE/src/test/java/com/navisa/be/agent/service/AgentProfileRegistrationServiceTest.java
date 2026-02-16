@@ -1,6 +1,6 @@
 package com.navisa.be.agent.service;
 
-import com.navisa.be.agent.dto.request.RegisterAgentProfileCommand;
+import com.navisa.be.agent.dto.request.AgentProfileRegistrationRequest;
 import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentLanguageRepository;
@@ -28,10 +28,10 @@ import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
-class AgentProfileCommandServiceTest extends IntegrationTestSupport {
+class AgentProfileRegistrationServiceTest extends IntegrationTestSupport {
 
     @Autowired
-    private AgentProfileCommandService agentProfileCommandService;
+    private AgentProfileRegistrationService agentProfileRegistrationService;
 
     @Autowired
     private UserRepository userRepository;
@@ -80,22 +80,21 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
         List<Long> selectedLangIds = List.of(languages.get(0).getId(), languages.get(1).getId());
 
         // validateCommand를 통과하는 요청
-        RegisterAgentProfileCommand command = AgentFixture.createRegisterAgentProfileCommand(
-                scrivenerUser.getEmail(),
+        AgentProfileRegistrationRequest request = AgentFixture.createAgentProfileRegistrationRequest(
                 selectedJobCodeIds,
                 selectedLangIds,
                 "2024-행정-1234",
                 null);
 
         // when
-        AgentProfile result = agentProfileCommandService.registerAgentProfile(command);
+        AgentProfile result = agentProfileRegistrationService.registerAgentProfile(request, scrivenerUser.getEmail());
 
         // then
         assertAll(
                 () -> Assertions.assertNotNull(result.getId()),
-                () -> Assertions.assertEquals(command.basicInfo().officeName(), result.getOfficeName()),
+                () -> Assertions.assertEquals(request.basicInfo().officeName(), result.getOfficeName()),
                 () -> Assertions.assertEquals(scrivenerUser.getId(), result.getUserId()),
-                () -> Assertions.assertEquals(command.basicInfo().businessTime(), result.getBusinessTime()),
+                () -> Assertions.assertEquals(request.basicInfo().businessTime(), result.getBusinessTime()),
                 () -> {
                     // 전문 직무 저장 확인
                     long mappingCount = specializedJobCodeRepository.countByAgentProfile(result);
@@ -114,15 +113,14 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
         // given
 
         // validateCommand에서 예외가 발생하는 요청
-        RegisterAgentProfileCommand command = AgentFixture.createRegisterAgentProfileCommand(
-                scrivenerUser.getEmail(),
+        AgentProfileRegistrationRequest request = AgentFixture.createAgentProfileRegistrationRequest(
                 List.of(jobCodes.get(0).getId()),
                 List.of(languages.get(0).getId()),
                 "LICENSE-123",
                 "MGMT-999");
 
         // when & then
-        assertThrows(AgentException.class, () -> agentProfileCommandService.registerAgentProfile(command));
+        assertThrows(AgentException.class, () -> agentProfileRegistrationService.registerAgentProfile(request, scrivenerUser.getEmail()));
     }
 
     @Test
@@ -132,15 +130,14 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
 
         // 존재하지 않는 id
         List<Long> invalidIds = List.of(999L);
-        RegisterAgentProfileCommand command = AgentFixture.createRegisterAgentProfileCommand(
-                scrivenerUser.getEmail(),
+        AgentProfileRegistrationRequest request = AgentFixture.createAgentProfileRegistrationRequest(
                 invalidIds,
                 List.of(languages.get(0).getId()),
                 "L-1",
                 null);
 
         // when & then
-        assertThrows(AgentException.class, () -> agentProfileCommandService.registerAgentProfile(command));
+        assertThrows(AgentException.class, () -> agentProfileRegistrationService.registerAgentProfile(request, scrivenerUser.getEmail()));
     }
 
     @Test
@@ -150,14 +147,13 @@ class AgentProfileCommandServiceTest extends IntegrationTestSupport {
 
         // 존재하지 않는 id
         List<Long> invalidIds = List.of(999L);
-        RegisterAgentProfileCommand command = AgentFixture.createRegisterAgentProfileCommand(
-                scrivenerUser.getEmail(),
+        AgentProfileRegistrationRequest request = AgentFixture.createAgentProfileRegistrationRequest(
                 List.of(jobCodes.get(0).getId()),
                 invalidIds,
                 "L-1",
                 null);
 
         // when & then
-        assertThrows(AgentException.class, () -> agentProfileCommandService.registerAgentProfile(command));
+        assertThrows(AgentException.class, () -> agentProfileRegistrationService.registerAgentProfile(request, scrivenerUser.getEmail()));
     }
 }

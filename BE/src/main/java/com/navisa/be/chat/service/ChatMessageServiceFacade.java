@@ -1,7 +1,7 @@
 package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.chat.dto.response.ChatMessageCountResponse;
 import com.navisa.be.chat.dto.response.ChatMessageSimpleResponse;
 import com.navisa.be.chat.exception.ChatMessageException;
@@ -27,7 +27,7 @@ public class ChatMessageServiceFacade {
 
     private final UserQueryService userQueryService;
     private final ForeignerQueryService foreignerQueryService;
-    private final AgentProfileQueryService agentProfileQueryService;
+    private final AgentProfileCrudService agentProfileQueryService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final ChatRoomQueryService chatRoomQueryService;
 

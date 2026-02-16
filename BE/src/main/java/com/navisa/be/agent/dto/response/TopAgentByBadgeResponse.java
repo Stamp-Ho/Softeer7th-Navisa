@@ -3,7 +3,7 @@ package com.navisa.be.agent.dto.response;
 import java.util.List;
 import java.util.UUID;
 
-public record HomeAgentBadgeResponse(
+public record TopAgentByBadgeResponse(
         Long reviewId,
         String reviewerInitial, // 마스킹 적용한 이름
         String reviewContent,

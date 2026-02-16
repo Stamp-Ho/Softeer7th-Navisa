@@ -1,6 +1,6 @@
 package com.navisa.be.chat.service;
 
-import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.application.service.ApplicationCommandService;
 import com.navisa.be.chat.dto.projection.ChatMessageNonReadCountProjection;
 import com.navisa.be.chat.dto.projection.ChatRoomProposalStatusProjection;
@@ -36,7 +36,7 @@ public class ChatRoomServiceFacade {
     private final UserQueryService userQueryService;
     private final ChatRoomQueryService chatRoomQueryService;
     private final ForeignerQueryService foreignerQueryService;
-    private final AgentProfileQueryService agentProfileQueryService;
+    private final AgentProfileCrudService agentProfileCrudService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final ProposalService proposalService;
     private final ApplicationCommandService applicationCommandService;
@@ -53,7 +53,7 @@ public class ChatRoomServiceFacade {
         // 1. 자신의 프로필 ID 조회
         UUID profileId = isForeigner
                 ? foreignerQueryService.findByUserId(user.getId()).getId()
-                : agentProfileQueryService.findByUserId(user.getId()).getId();
+                : agentProfileCrudService.findByUserId(user.getId()).getId();
 
         // 2. 채팅방 목록 조회 (ExistsNext 확인을 위해 Repository에서 slice.size() + 1개를 가져와야 함)
         List<ChatRoom> chatRoomList = chatRoomQueryService.findChatRoomByProfileId(profileId, slice, isForeigner,
@@ -156,7 +156,7 @@ public class ChatRoomServiceFacade {
     private void validateChatRoomOwnership(User user, ChatRoom chatRoom) {
         UUID profileId = user.getUserType().equals(UserType.FILLED_FOREIGNER)
                 ? foreignerQueryService.findByUserId(user.getId()).getId()
-                : agentProfileQueryService.findByUserId(user.getId()).getId(); // 프로필 ID를 먼저 추출
+                : agentProfileCrudService.findByUserId(user.getId()).getId(); // 프로필 ID를 먼저 추출
 
         boolean isParticipant = user.getUserType().equals(UserType.FILLED_FOREIGNER)
                 ? chatRoom.getForeignerProfile().getId().equals(profileId)

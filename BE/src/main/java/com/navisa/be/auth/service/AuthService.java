@@ -1,7 +1,6 @@
 package com.navisa.be.auth.service;
 
-import com.navisa.be.agent.service.AgentProfileCommandService;
-import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.auth.dto.request.GoogleLoginRequest;
 import com.navisa.be.auth.dto.request.LoginRequest;
 import com.navisa.be.auth.dto.request.SignupRequest;
@@ -39,8 +38,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final AgentProfileCommandService agentProfileCommandService;
-    private final AgentProfileQueryService agentProfileQueryService;
+    private final AgentProfileCrudService agentProfileCrudService;
     private final ForeignerCommandService foreignerCommandService;
 
     // 구글 로그인
@@ -193,8 +191,8 @@ public class AuthService {
     private void syncAgentActivityIfPresent(User user) {
         if (user.getUserType() == UserType.VALID_AGENT) {
             // 프로필이 존재하는 경우에만 활동 정보를 동기화
-            if (agentProfileQueryService.existsByUserId(user.getId())) {
-                agentProfileCommandService.syncAgentLoginActivity(user.getId());
+            if (agentProfileCrudService.existsByUserId(user.getId())) {
+                agentProfileCrudService.syncAgentLoginActivity(user.getId());
             }
         }
 

@@ -1,6 +1,6 @@
 package com.navisa.be.chat.service;
 
-import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.dto.projection.ChatRoomProposalStatusProjection;
 import com.navisa.be.chat.exception.ChatRoomException;
@@ -8,6 +8,7 @@ import com.navisa.be.chat.exception.ProposalException;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.model.enums.ProposalStatus;
+import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.chat.repository.ProposalRepository;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.service.ForeignerQueryService;
@@ -15,6 +16,7 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +32,10 @@ public class ProposalService {
     private final ProposalRepository proposalRepository;
     private final UserQueryService userQueryService;
     private final ForeignerQueryService foreignerQueryService;
-    private final AgentProfileQueryService agentProfileQueryService;
+    private final AgentProfileCrudService agentProfileQueryService;
     private final ChatRoomQueryService chatRoomQueryService;
     private final ChatServiceFacade chatServiceFacade;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Transactional(readOnly = true)
     public List<ChatRoomProposalStatusProjection> findByChatRoomIn(Collection<ChatRoom> contentChatRooms) {
@@ -181,5 +184,32 @@ public class ProposalService {
             proposal.updateStatus(ProposalStatus.CANCELED);
             proposalRepository.save(proposal);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Proposal findLatestProposalByAgentIdAndForeignerId(UUID agentId, UUID foreignerId) {
+        ChatRoom chatRoom = chatRoomRepository.findByAgentIdAndForeignerId(agentId, foreignerId)
+                .orElseThrow(() -> new ProposalException(ResponseStatus.NOT_FOUND_CHATROOM));
+
+        Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom)
+                .orElseThrow(() -> new ProposalException(ResponseStatus.PROPOSAL_NOT_FOUND));
+
+        return proposal;
+    }
+
+    public Proposal findOngoingOneByForeignerId(UUID foreignerId) {
+        // TODO :: 외국인이 리뷰를 남겨야할 수임 제안을 찾을 때, matched나 completed만으로 해도 되나? 특정 행정사에 대해서 matched나 completed를 찾아야 하지 않나?
+
+        List<Proposal> proposals = proposalRepository.findLatestMatchedProposal(
+                foreignerId,
+                List.of(ProposalStatus.MATCHED, ProposalStatus.COMPLETED),
+                PageRequest.of(0, 1)
+        );
+
+        Proposal proposal = proposals.stream()
+                .findFirst()
+                .orElseThrow(() -> new ProposalException(ResponseStatus.PROPOSAL_NOT_FOUND));
+
+        return proposal;
     }
 }

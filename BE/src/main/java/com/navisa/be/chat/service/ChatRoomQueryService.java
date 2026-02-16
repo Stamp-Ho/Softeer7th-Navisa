@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -88,10 +89,10 @@ public class ChatRoomQueryService {
         }
 
         // 행정사는 외국인의 정보를 조회
-        if(loginUser.getUserType() == UserType.VALID_AGENT){
+        if (loginUser.getUserType() == UserType.VALID_AGENT) {
             ForeignerProfile foreignerProfile = chatRoom.getForeignerProfile();
             ForeignerExpectedCompany expectedCompany = foreignerQueryService.findExpectedCompanyByForeignerProfileId(foreignerProfile.getId());
-            List<Long> nationalityIds  = foreignerProfile.getForeignerNationalities().stream()
+            List<Long> nationalityIds = foreignerProfile.getForeignerNationalities().stream()
                     .map(ForeignerNationality::getNationality)
                     .map(Nationality::getId)
                     .toList();
@@ -107,5 +108,9 @@ public class ChatRoomQueryService {
                 agentProfile,
                 top2BadgeIds
         );
+    }
+
+    public Optional<ChatRoom> findByAgentIdAndForeignerId(UUID agentId, UUID foreignerId) {
+        return chatRoomRepository.findByAgentIdAndForeignerId(agentId, foreignerId);
     }
 }

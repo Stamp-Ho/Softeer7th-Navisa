@@ -1,7 +1,7 @@
 package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.chat.dto.request.CreateChatRoomRequest;
 import com.navisa.be.chat.dto.response.CreateChatRoomResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
@@ -29,7 +29,7 @@ import java.util.UUID;
 public class ChatRoomCommandService {
 
     private final ChatRoomRepository chatRoomRepository;
-    private final AgentProfileQueryService agentProfileQueryService;
+    private final AgentProfileCrudService agentProfileQueryService;
     private final ForeignerQueryService foreignerQueryService;
     private final UserQueryService userQueryService;
     private final ChatMessageCommandService chatMessageCommandService;

@@ -4,7 +4,7 @@ import com.navisa.be.agent.event.ReviewCreatedSpecializedJobEvent;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
-import com.navisa.be.global.common.repository.JobCodeRepository;
+import com.navisa.be.global.common.service.JobCodeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,13 +21,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SpecializedJobSummaryServiceTest {
+class AgentSpecializedJobSummaryServiceTest {
 
     @InjectMocks
-    private SpecializedJobSummaryService specializedJobSummaryService;
+    private AgentSpecializedJobSummaryService specializedJobSummaryService;
 
     @Mock
-    private JobCodeRepository jobCodeRepository;
+    private JobCodeService jobCodeService;
 
     @Mock
     private AgentSpecializedJobSummaryRepository agentSpecializedJobSummaryRepository;
@@ -49,7 +49,7 @@ class SpecializedJobSummaryServiceTest {
         ReflectionTestUtils.setField(jobCode1, "id", 1L);
         ReflectionTestUtils.setField(jobCode2, "id", 2L);
 
-        when(jobCodeRepository.findAllById(jobIds)).thenReturn(List.of(jobCode1, jobCode2));
+        when(jobCodeService.findAllById(jobIds)).thenReturn(List.of(jobCode1, jobCode2));
 
         // Case 1: Existing summary for jobCode1
         AgentSpecializedJobSummary existingSummary = mock(AgentSpecializedJobSummary.class);

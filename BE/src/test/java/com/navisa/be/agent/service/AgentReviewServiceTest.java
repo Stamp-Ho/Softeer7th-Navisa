@@ -1,36 +1,46 @@
 package com.navisa.be.agent.service;
 
+import com.navisa.be.agent.dto.request.CreateAgentReviewRequest;
+import com.navisa.be.agent.dto.response.FeedbackResponse;
 import com.navisa.be.agent.event.ReviewCreatedBadgeEvent;
 import com.navisa.be.agent.event.ReviewCreatedSpecializedJobEvent;
 import com.navisa.be.agent.exception.AgentException;
+import com.navisa.be.agent.model.entity.AgentBadge;
+import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.agent.model.entity.AgentReview;
+import com.navisa.be.agent.model.entity.Badge;
+import com.navisa.be.agent.model.enums.BadgeName;
+import com.navisa.be.agent.repository.AgentBadgeRepository;
+import com.navisa.be.agent.repository.AgentProfileRepository;
+import com.navisa.be.agent.repository.AgentReviewRepository;
+import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.chat.model.enums.ProposalStatus;
+import com.navisa.be.foreigner.exception.ForeignerException;
+import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
+import com.navisa.be.global.common.model.entity.JobCode;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.support.*;
 import com.navisa.be.user.model.entity.User;
+import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.agent.repository.AgentBadgeRepository;
-import com.navisa.be.agent.repository.AgentReviewRepository;
-import com.navisa.be.agent.model.entity.AgentReview;
-import com.navisa.be.agent.model.entity.AgentBadge;
-import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.model.entity.Badge;
-import com.navisa.be.global.common.model.entity.JobCode;
-import com.navisa.be.chat.model.entity.ChatRoom;
-import com.navisa.be.agent.dto.request.CreateAgentReviewRequest;
-import com.navisa.be.agent.model.enums.BadgeName;
+import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -42,6 +52,15 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private AgentReviewService agentReviewService;
+
+    @Autowired
+    private AgentReviewRepository agentReviewRepository;
+
+    @Autowired
+    private AgentProfileRepository agentProfileRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private UserTestFixture userTestFixture;
@@ -63,9 +82,6 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private AgentBadgeRepository agentBadgeRepository;
-
-    @Autowired
-    private AgentReviewRepository agentReviewRepository;
 
     @Autowired
     private ApplicationEvents events;
@@ -106,7 +122,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         CreateAgentReviewRequest request = new CreateAgentReviewRequest(Arrays.asList(badge.getId()), agentProfile.getId());
 
         // when
-        agentReviewService.createAgentReview(foreignerUser.getEmail(), request);
+        agentReviewService.registerAgentReview(foreignerUser.getEmail(), request);
 
         // then
 
@@ -149,8 +165,8 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         CreateAgentReviewRequest request = new CreateAgentReviewRequest(Arrays.asList(badge.getId()), agentProfile.getId());
 
         // when & then
-        assertThatThrownBy(() -> agentReviewService.createAgentReview(agentUser.getEmail(), request))
-                .isInstanceOf(AgentException.class);
+        assertThatThrownBy(() -> agentReviewService.registerAgentReview(agentUser.getEmail(), request))
+                .isInstanceOf(ForeignerException.class);
     }
 
     @Test
@@ -178,10 +194,10 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile, foreignerProfile, jobCode, true);
 
         CreateAgentReviewRequest request = new CreateAgentReviewRequest(Arrays.asList(badge.getId()), agentProfile.getId());
-        agentReviewService.createAgentReview(foreignerUser.getEmail(), request);
+        agentReviewService.registerAgentReview(foreignerUser.getEmail(), request);
 
         // when & then
-        assertThatThrownBy(() -> agentReviewService.createAgentReview(foreignerUser.getEmail(), request))
+        assertThatThrownBy(() -> agentReviewService.registerAgentReview(foreignerUser.getEmail(), request))
                 .isInstanceOf(AgentException.class);
     }
 
@@ -215,7 +231,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         CreateAgentReviewRequest request = new CreateAgentReviewRequest(List.of(badge.getId()), agentProfile.getId());
 
         // When
-        agentReviewService.createAgentReview(foreignerUser.getEmail(), request);
+        agentReviewService.registerAgentReview(foreignerUser.getEmail(), request);
 
         // Then
         ReviewCreatedSpecializedJobEvent jobEvent = events.stream(ReviewCreatedSpecializedJobEvent.class)
@@ -295,5 +311,48 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         // when & then
         assertThatThrownBy(() -> agentReviewService.createAgentFeedback(foreignerUser.getEmail(), "New feedback content"))
                 .isInstanceOf(AgentException.class);
+    }
+
+    @DisplayName("최신순으로 등록된 행정사 리뷰 3개를 조회하고 작성자 정보를 매핑한다.")
+    @Test
+    void getLatestFeedbacks_Success() {
+        // given
+        UUID mockForeignerUserId = UUID.randomUUID();
+
+        User user = userTestFixture.createUser("test@test.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("김행정", "서울", user.getId());
+
+        for (int i = 1; i <= 5; i++) {
+            AgentReview review = new AgentReview(
+                    agentProfile.getId(),
+                    mockForeignerUserId,
+                    (long) i,
+                    "피드백 내용 " + i,
+                    new double[] { 0.8, 0.9 });
+
+            agentReviewRepository.save(review);
+
+            ReflectionTestUtils.setField(review, "createdAt", LocalDateTime.now().plusSeconds(i));
+            agentReviewRepository.saveAndFlush(review);
+        }
+
+        // when
+        List<FeedbackResponse> result = agentReviewService.getLatestFeedbacks();
+
+        // then
+        assertThat(result).hasSize(3);
+        assertThat(result.get(0).feedbackContent()).isEqualTo("피드백 내용 5");
+        assertThat(result.get(0).writerName()).isEqualTo("김행정");
+    }
+
+    @DisplayName("등록된 리뷰가 하나도 없을 경우 AGENT_REVIEW_NOT_FOUND 예외가 발생한다.")
+    @Test
+    void getLatestFeedbacks_NotFound() {
+        // given (리뷰를 저장하지 않음)
+
+        // when & then
+        assertThatThrownBy(() -> agentReviewService.getLatestFeedbacks())
+                .isInstanceOf(AgentException.class)
+                .hasMessageContaining(ResponseStatus.AGENT_REVIEW_NOT_FOUND.getMessage());
     }
 }

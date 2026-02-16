@@ -1,7 +1,6 @@
 package com.navisa.be.auth.service;
 
-import com.navisa.be.agent.service.AgentProfileCommandService;
-import com.navisa.be.agent.service.AgentProfileQueryService;
+import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.auth.dto.request.GoogleLoginRequest;
 import com.navisa.be.auth.dto.request.LoginRequest;
 import com.navisa.be.auth.dto.request.LogoutRequest;
@@ -60,10 +59,7 @@ class AuthServiceTest {
     private HttpServletResponse response;
 
     @Mock
-    private AgentProfileCommandService agentProfileCommandService;
-
-    @Mock
-    private AgentProfileQueryService agentProfileQueryService;
+    private AgentProfileCrudService agentProfileCrudService;
 
     @Test
     @DisplayName("회원가입 성공: 유저 정보가 저장되고 토큰이 발급된다")
@@ -249,13 +245,13 @@ class AuthServiceTest {
         given(userRepository.findByEmail(email)).willReturn(Optional.of(agent));
         given(jwtProvider.createAccessToken(anyString())).willReturn("at");
         given(jwtProvider.createRefreshToken(anyString())).willReturn("rt");
-        given(agentProfileQueryService.existsByUserId(agent.getId())).willReturn(true);
+        given(agentProfileCrudService.existsByUserId(agent.getId())).willReturn(true);
 
         // when
         authService.login(request, response);
 
         // then
-        verify(agentProfileCommandService, times(1)).syncAgentLoginActivity(agent.getId());
+        verify(agentProfileCrudService, times(1)).syncAgentLoginActivity(agent.getId());
     }
 
     @Test
@@ -277,7 +273,7 @@ class AuthServiceTest {
         authService.login(request, response);
 
         // then
-        verify(agentProfileCommandService, never()).syncAgentLoginActivity(any());
+        verify(agentProfileCrudService, never()).syncAgentLoginActivity(any());
     }
 
     @Test
@@ -293,7 +289,7 @@ class AuthServiceTest {
         User agent = User.createGoogleUser(email, UserType.VALID_AGENT);
         given(userRepository.findByEmail(email)).willReturn(Optional.of(agent));
 
-        given(agentProfileQueryService.existsByUserId(any())).willReturn(true);
+        given(agentProfileCrudService.existsByUserId(any())).willReturn(true);
 
         given(jwtProvider.createAccessToken(anyString())).willReturn("at");
         given(jwtProvider.createRefreshToken(anyString())).willReturn("rt");
@@ -302,6 +298,6 @@ class AuthServiceTest {
         authService.googleLogin(request, response);
 
         // then
-        verify(agentProfileCommandService, times(1)).syncAgentLoginActivity(any());
+        verify(agentProfileCrudService, times(1)).syncAgentLoginActivity(any());
     }
 }

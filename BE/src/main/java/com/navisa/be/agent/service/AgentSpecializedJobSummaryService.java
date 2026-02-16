@@ -4,7 +4,7 @@ import com.navisa.be.agent.event.ReviewCreatedSpecializedJobEvent;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
-import com.navisa.be.global.common.repository.JobCodeRepository;
+import com.navisa.be.global.common.service.JobCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -14,15 +14,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SpecializedJobSummaryService {
+public class AgentSpecializedJobSummaryService {
 
-    private final JobCodeRepository jobCodeRepository;
+    private final JobCodeService jobCodeService;
     private final AgentSpecializedJobSummaryRepository agentSpecializedJobSummaryRepository;
 
     @Transactional
     @EventListener
     public void updateBadgeSummary(ReviewCreatedSpecializedJobEvent event) {
-        List<JobCode> jobCodes = jobCodeRepository.findAllById(event.specializedJobIds());
+        List<JobCode> jobCodes = jobCodeService.findAllById(event.specializedJobIds());
 
         for (JobCode jobCode : jobCodes) {
             AgentSpecializedJobSummary summary = agentSpecializedJobSummaryRepository.findByAgentIdAndJobCode(event.agentId(), jobCode)

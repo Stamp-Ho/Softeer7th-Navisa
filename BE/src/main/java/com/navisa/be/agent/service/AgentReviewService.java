@@ -1,101 +1,105 @@
 package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.request.CreateAgentReviewRequest;
+import com.navisa.be.agent.dto.response.FeedbackResponse;
+import com.navisa.be.agent.dto.response.ReviewReliabilityResponse;
 import com.navisa.be.agent.event.ReviewCreatedBadgeEvent;
 import com.navisa.be.agent.event.ReviewCreatedSpecializedJobEvent;
 import com.navisa.be.agent.exception.AgentException;
-import com.navisa.be.agent.model.entity.AgentBadge;
+import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentReview;
 import com.navisa.be.agent.model.entity.Badge;
-import com.navisa.be.agent.repository.AgentBadgeRepository;
+import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
 import com.navisa.be.agent.repository.BadgeRepository;
 import com.navisa.be.application.model.entity.VisaApplicationForm;
-import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.chat.model.entity.ChatRoom;
+import com.navisa.be.application.service.ApplicationQueryService;
 import com.navisa.be.chat.model.entity.Proposal;
-import com.navisa.be.chat.model.enums.ProposalStatus;
-import com.navisa.be.chat.repository.ChatRoomRepository;
-import com.navisa.be.chat.repository.ProposalRepository;
-import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.chat.service.ProposalService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
-import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
-import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
-import com.navisa.be.recommendation.calculator.ReviewReliabilityCalculator;
-import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.repository.UserRepository;
+import com.navisa.be.foreigner.service.ForeignerQueryService;
+import com.navisa.be.global.common.model.enums.ImageSize;
+import com.navisa.be.global.common.service.StorageService;
+import com.navisa.be.global.web.response.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class AgentReviewService {
 
-    private final ChatRoomRepository chatRoomRepository;
-    private final UserRepository userRepository;
-    private final ForeignerProfileRepository foreignerProfileRepository;
-    private final ProposalRepository proposalRepository;
     private final AgentReviewRepository agentReviewRepository;
+    private final AgentProfileRepository agentProfileRepository;
+    private final StorageService storageService;
+    private final ForeignerQueryService foreignerQueryService;
+    private final ProposalService proposalService;
+    private final AgentReviewCrudService agentReviewCrudService;
     private final ApplicationEventPublisher eventPublisher;
-    private final AgentBadgeRepository agentBadgeRepository;
     private final BadgeRepository badgeRepository;
-    private final ForeignerSimilarityRepository foreignerSimilarityRepository;
-    private final ApplicationFormRepository applicationFormRepository;
-    private final ReviewReliabilityCalculator reliabilityCalculator;
+    private final ApplicationQueryService applicationQueryService;
+    private final ReviewReliabilityService reviewReliabilityService;
 
-    @Transactional
-    public void createAgentReview(String loginUserEmail, CreateAgentReviewRequest request) {
-        User loginUser = userRepository.findByEmail(loginUserEmail)
-                .orElseThrow(() -> new AgentException(ResponseStatus.USER_INVALID));
+    // 행정사 후기 사례 최신순 3개 조회
+    @Transactional(readOnly = true)
+    public List<FeedbackResponse> getLatestFeedbacks() {
+        List<AgentReview> reviews = agentReviewRepository.findTop3ValidFeedbacks(PageRequest.of(0, 3));
 
-        ForeignerProfile foreignerProfile = foreignerProfileRepository.findByUserId(loginUser.getId())
-                .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_FOREIGNER));
-
-        ChatRoom chatRoom = chatRoomRepository.findByAgentIdAndForeignerId(request.agentId(), foreignerProfile.getId())
-                .orElseThrow(() -> new AgentException(ResponseStatus.PROPOSAL_NOT_FOUND));
-
-        Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom)
-                .orElseThrow(() -> new AgentException(ResponseStatus.PROPOSAL_NOT_FOUND));
-
-        // 리뷰가 존재하는지 여부를 확인
-        if (agentReviewRepository.existsByProposalId(proposal.getId())) {
-            throw new AgentException(ResponseStatus.REVIEW_ALREADY_EXISTS);
+        if (reviews.isEmpty()) {
+            throw new AgentException(ResponseStatus.AGENT_REVIEW_NOT_FOUND);
         }
 
-        // 첫번째 내보내기 여부 확인
-        VisaApplicationForm form = applicationFormRepository.findCurrentAppFormNative(foreignerProfile.getId(), request.agentId())
-                .orElseThrow(() -> new AgentException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));
+        List<UUID> profileIds = reviews.stream()
+                .map(AgentReview::getAgentProfileId)
+                .distinct()
+                .toList();
 
-        if (!form.isDone()) {
-            throw new AgentException(ResponseStatus.NOT_ALLOWED_TO_REVIEW);
-        }
+        Map<UUID, AgentProfile> profileMap = agentProfileRepository.findAllById(profileIds)
+                .stream()
+                .collect(Collectors.toMap(AgentProfile::getId, Function.identity()));
+
+        return reviews.stream()
+                .map(review -> {
+                    AgentProfile profile = profileMap.get(review.getAgentProfileId());
+
+                    if (profile == null) {
+                        throw new AgentException(ResponseStatus.REVIEWED_AGENT_NOT_FOUND);
+                    }
+
+                    String profileUrl = storageService.getImgUrl(ImageSize.SMALL, profile.getProfileObjectKey(), false);
+
+                    return new FeedbackResponse(
+                            review.getId(),
+                            review.getFeedbackContent(),
+                            profile.getId(),
+                            profile.getName(),
+                            profileUrl
+                    );
+                })
+                .toList();
+    }
+
+    public void registerAgentReview(String loginUserEmail, CreateAgentReviewRequest request) {
+        ForeignerProfile foreignerProfile = foreignerQueryService.findByEmail(loginUserEmail);
+
+        Proposal proposal = proposalService.findLatestProposalByAgentIdAndForeignerId(request.agentId(), foreignerProfile.getId());
+
+        validateProposal(proposal);
+        validateApplicationForm(request, foreignerProfile);
 
         // 뱃지가 모두 존재하는지 확인
         Set<Long> requestedIds = new HashSet<>(request.badgeIdList());
         List<Badge> badges = badgeRepository.findAllByIdIn(requestedIds.stream().toList());
-        if (badges.size() < requestedIds.size()) {
-            throw new AgentException(ResponseStatus.BADGE_NOT_FOUND);
-        }
+        validateBadges(badges, requestedIds);
 
-        // 리뷰를 저장
-        AgentReview agentReview = new AgentReview(request.agentId(), foreignerProfile.getId(), proposal.getId());
-        agentReviewRepository.save(agentReview);
-
-        // 리뷰 뱃지를 저장
-        List<AgentBadge> agentBadges = badges.stream()
-                .map(badge -> new AgentBadge(badge, agentReview))
-                .toList();
-        agentBadgeRepository.saveAll(agentBadges);
+        agentReviewCrudService.createAgentReview(request.agentId(), foreignerProfile.getId(), proposal.getId(), badges);
 
         // 뱃지 summary 업데이트를 위한 이벤트 발행
         ReviewCreatedBadgeEvent reviewCreatedBadgeEvent = new ReviewCreatedBadgeEvent(
@@ -105,56 +109,44 @@ public class AgentReviewService {
         eventPublisher.publishEvent(reviewCreatedBadgeEvent);
 
         // Step 4-1: 행정사 특화 분야 추천을 위한 상대 신뢰도(ria) 계산
-        ForeignerSimilarity similarity = foreignerSimilarityRepository.findByForeignerId(foreignerProfile.getId())
-                .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_FOREIGNER));
-
-        // 상위 3개 데이터 추출
-        List<Long> allJobCodeIds = Arrays.stream(similarity.getJobCodeIdList()).boxed().toList();
-        List<Double> allSimilarities = Arrays.stream(similarity.getSimilarityList()).boxed().toList();
-
-        int topLimit = Math.min(3, allSimilarities.size());
-        List<Long> top3JobIds = allJobCodeIds.subList(0, topLimit);
-        List<Double> top3Similarities = allSimilarities.subList(0, topLimit);
-
-        // r_i,a = w_i,a / Σ(w_i,k) 계산
-        List<Double> relativeRatios = top3Similarities.stream()
-                .map(targetW -> reliabilityCalculator.calculateRelativeRatio(targetW, top3Similarities))
-                .collect(Collectors.toList());
+        ReviewReliabilityResponse result = reviewReliabilityService.getReviewReliability(foreignerProfile);
 
         // Step 4-2 처리를 위한 이벤트 발행 (ria 리스트 포함)
         ReviewCreatedSpecializedJobEvent reviewCreatedSpecializedJobEvent = new ReviewCreatedSpecializedJobEvent(
                 request.agentId(),
-                top3JobIds,
-                relativeRatios
+                result.top3JobIds(),
+                result.relativeRatios()
         );
         eventPublisher.publishEvent(reviewCreatedSpecializedJobEvent);
     }
 
-    @Transactional
-    public void createAgentFeedback(String email, String content) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AgentException(ResponseStatus.USER_INVALID));
-
-        ForeignerProfile profile = foreignerProfileRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new AgentException(ResponseStatus.INVALID_FOREIGNER));
-
-        List<Proposal> proposals = proposalRepository.findLatestMatchedProposal(
-                profile.getId(),
-                List.of(ProposalStatus.MATCHED, ProposalStatus.COMPLETED),
-                PageRequest.of(0, 1)
-        );
-
-        Proposal proposal = proposals.stream()
-                .findFirst()
-                .orElseThrow(() -> new AgentException(ResponseStatus.PROPOSAL_NOT_FOUND));
-
-        AgentReview agentReview = agentReviewRepository.findByProposalId(proposal.getId())
-                .orElseThrow(() -> new AgentException(ResponseStatus.REVIEW_NOT_FOUND));
-
-        if (agentReview.getFeedbackContent() != null) {
-            throw new AgentException(ResponseStatus.FEEDBACK_ALREADY_EXISTS);
+    private void validateProposal(Proposal proposal) {
+        // 리뷰가 존재하는지 여부를 확인
+        if (agentReviewCrudService.existsByProposalId(proposal.getId())) {
+            throw new AgentException(ResponseStatus.REVIEW_ALREADY_EXISTS);
         }
+    }
 
-        agentReview.updateFeedback(content);
+    private void validateApplicationForm(CreateAgentReviewRequest request, ForeignerProfile foreignerProfile) {
+        // 첫번째 내보내기 여부 확인
+        VisaApplicationForm form = applicationQueryService.findCurrentApplicationForm(foreignerProfile.getId(), request.agentId());
+
+        if (!form.isDone()) {
+            throw new AgentException(ResponseStatus.NOT_ALLOWED_TO_REVIEW);
+        }
+    }
+
+    private void validateBadges(List<Badge> badges, Set<Long> requestedIds) {
+        if (badges.size() < requestedIds.size()) {
+            throw new AgentException(ResponseStatus.BADGE_NOT_FOUND);
+        }
+    }
+
+    public void createAgentFeedback(String email, String content) {
+        ForeignerProfile foreignerProfile = foreignerQueryService.findByEmail(email);
+
+        Proposal proposal = proposalService.findOngoingOneByForeignerId(foreignerProfile.getId());
+
+        agentReviewCrudService.updateAgentFeedback(proposal.getId(), content);
     }
 }
