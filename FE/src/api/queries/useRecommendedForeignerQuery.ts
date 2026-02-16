@@ -6,16 +6,14 @@ import type { ForeignerCardResponse } from "../types/foreigner";
 
 export const useRecommendedForeignerQuery = () => {
   const { apiClient } = useApiClient();
-  const { userId, accessToken } = useAuth();
+  const { userId } = useAuth();
 
   return useQuery<ForeignerCardResponse[]>({
     queryKey: ["recommendedForeigners", userId],
     queryFn: async () => {
-      const res = await foreignerService.getRecommendedForeigners(
-        apiClient,
-        accessToken,
-      );
+      const res = await foreignerService.getRecommendedForeigners(apiClient);
       return res.result;
     },
+    retry: false, // 에러 시 재시도 금지
   });
 };

@@ -14,7 +14,6 @@ import { AuthContextProvider } from "./contexts/AuthContextProvider";
 import { LocaleContextProvider } from "./contexts/LocaleContextProvider";
 import MyProfile from "./pages/Profile/MyProfile";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
-
 function App() {
   return (
     <AuthContextProvider>

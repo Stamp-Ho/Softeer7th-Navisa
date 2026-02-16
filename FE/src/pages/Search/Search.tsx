@@ -28,16 +28,15 @@ const Search = () => {
         regionList: searchParams
           .getAll("region")
           .map((id) => regionList[Number(id)]),
-        languageList: searchParams.getAll("language"),
+        languageIdList: searchParams.getAll("language").map((id) => Number(id)),
       }
     : {
         jobGroupNameList: searchParams
           .getAll("job")
           .map((id) => jobList[Number(id)]),
         nationIdList: searchParams.getAll("nation"),
-        languageList: searchParams.getAll("language"),
+        languageIdList: searchParams.getAll("language").map((id) => Number(id)),
       };
-  //const filterParams = Object.fromEntries(searchParams.entries());
 
   // 2. 통합 훅 사용 (중복 코드 제거)
   const {
@@ -46,16 +45,16 @@ const Search = () => {
     isFetchingNextPage,
     status,
   } = //, hasNextPage
-    useSearchInfiniteQuery(targetType, params);
+    useSearchInfiniteQuery(targetType || null, params);
 
-  //@ts-ignore
-  const allItems = data?.pages.flatMap((page) => page.content) ?? [];
-
-  const { scrollRef, handleScroll, searchResultStyle, goTop } =
-    useSearchScroll(fetchNextPage);
+  const { scrollRef, handleScroll, searchResultStyle, goTop } = useSearchScroll(
+    () => fetchNextPage(),
+  );
 
   const Filter = isAgent ? SearchAgentFilter : SearchforeignerFilter;
 
+  //@ts-ignore
+  const allItems = data?.pages.flatMap((page) => page.result.content) ?? [];
   const renderCards = () => {
     if (status === "pending") return <div>로딩 중...</div>;
     if (allItems.length === 0) return <div>검색 결과가 없습니다.</div>;
@@ -88,9 +87,9 @@ const Search = () => {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className={`grid mt-9 gap-4 overflow-auto scrollbar-hide
+        className={`grid mt-9 p-4 -m-4 pb-10 gap-4 h-fit min-h-150 overflow-auto scrollbar-hide
             ${isAgent ? "grid-cols-3" : "grid-cols-4"} ${searchResultStyle()}`}
-        style={{ height: "calc(100vh - 340px)" }}
+        style={{ maxHeight: "calc(100vh - 350px)" }}
       >
         {renderCards()}
 
@@ -99,7 +98,12 @@ const Search = () => {
           <div className="col-span-full text-center">추가 로딩 중...</div>
         )}
       </div>
-      <GoTopFloating onClick={goTop} className="absolute -right-21 bottom-3" />
+      {allItems.length > 12 && (
+        <GoTopFloating
+          onClick={goTop}
+          className="absolute -right-21 bottom-3"
+        />
+      )}
     </>
   );
 };

@@ -26,7 +26,7 @@ export const useResizeImage = () => {
 
       let originalWidth = img.naturalWidth;
       let originalHeight = img.naturalHeight;
-      if (originalWidth * maxHeight < originalHeight * maxWidth) {
+      if (originalWidth / maxWidth < originalHeight / maxHeight) {
         resultHeight = (originalHeight * maxWidth) / originalWidth;
         resultWidth = maxWidth;
       } else {

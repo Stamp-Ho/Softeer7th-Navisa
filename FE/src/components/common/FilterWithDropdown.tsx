@@ -45,7 +45,7 @@ const FilterWithDropdown = ({
         className={`px-7 py-5 border border-border-normal rounded-lg bg-background-default
           flex flex-row items-center body-l-semibold gap-2 cursor-pointer
         ${isActive ? "bg-violet-25 text-primary border-primary" : "text-text-base"}`}
-        onClick={isOpen ? onClose : onClick}
+        onClick={onClick}
       >
         <FilterIcon />
         {selectedIds.length === 0

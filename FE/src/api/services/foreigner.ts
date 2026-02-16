@@ -6,14 +6,8 @@ export const foreignerService = {
   getProfile: (api: apiClientType) =>
     api.get<BaseResponse<T.ForeignerRegisterRequest>>("/api/foreigner/profile"),
 
-  updateProfile: (
-    api: apiClientType,
-    data: T.ForeignerRegisterRequest,
-    accessToken: string,
-  ) =>
-    api.post<BaseResponse<void>>("/api/foreigner/profile", data, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }),
+  updateProfile: (api: apiClientType, data: T.ForeignerRegisterRequest) =>
+    api.post<BaseResponse<void>>("/api/foreigner/profile", data),
 
   getRequirements: (api: apiClientType) =>
     api.get<BaseResponse<T.ForeignerStatusResponse>>(
@@ -23,36 +17,20 @@ export const foreignerService = {
   getHomeMatching: (api: apiClientType) =>
     api.get<BaseResponse<T.ForeignerCardResponse[]>>("/api/foreigner/home"),
 
-  getCard: (
-    api: apiClientType,
-    data: T.ForeignerCardRequest,
-    accessToken: string,
-  ) => {
-    const params = {
-      ...data,
-      jobGroupNameList: data.jobGroupNameList
-        ? JSON.stringify(data.jobGroupNameList)
-        : undefined,
-      nationIdList: data.nationIdList
-        ? JSON.stringify(data.nationIdList)
-        : undefined,
-      languageIdList: data.languageIdList
-        ? JSON.stringify(data.languageIdList)
-        : undefined,
-    };
-    return api.get<PageResponse<T.ForeignerCardResponse>>(
-      "api/foreigner/cards",
-      params,
-      accessToken
-        ? { headers: { Authorization: `Bearer ${accessToken}` } }
-        : undefined,
+  getCard: (api: apiClientType, data: T.ForeignerCardRequest) => {
+    const cleanParams = Object.fromEntries(
+      Object.entries(data).filter(
+        ([_, v]) => v !== undefined && v !== null && v !== "[]",
+      ),
+    );
+    return api.get<BaseResponse<PageResponse<T.ForeignerCardResponse>>>(
+      "/api/foreigner/cards",
+      cleanParams,
     );
   },
-  getRecommendedForeigners: async (api: apiClientType, accessToken: string) => {
+  getRecommendedForeigners: async (api: apiClientType) => {
     return await api.get<BaseResponse<T.ForeignerCardResponse[]>>(
       "/api/foreigner/home",
-      undefined,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
     );
   },
 

@@ -6,14 +6,17 @@ import { useAuth } from "../../contexts/AuthContextProvider";
 
 export const useRecentAgentFeedbackQuery = () => {
   const { apiClient } = useApiClient();
-  const { userType, userId, accessToken } = useAuth();
-  const token = userType === "VALID_AGENT" ? accessToken : undefined;
+  const { userType, userId } = useAuth();
 
   return useQuery<AgentRecentFeedbackResponse[]>({
     queryKey: ["agentRecentFeedback", userType, userId],
     queryFn: async () => {
-      const res = await agentService.agentRecentFeedback(apiClient, token);
+      const res = await agentService.agentRecentFeedback(
+        apiClient,
+        userType !== "VALID_AGENT",
+      );
       return res.result;
     },
+    retry: false, // 에러 시 재시도 금지
   });
 };

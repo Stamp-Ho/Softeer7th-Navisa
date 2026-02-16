@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useRecommendedForeignerQuery } from "../../../api/queries/useRecommendedForeignerQuery";
-import RecommendedForeignerCard from "../../../components/domain/RecommendedForeignerCard";
+import SearchForeignerCard from "../../Search/components/SearchForeignerCard";
 
 const SuggestedForeigners = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -53,22 +53,27 @@ const SuggestedForeigners = () => {
   };
 
   if (isLoading) return <div>로딩중...</div>;
-  const dataToRender = isError ? (
-    <>
-      {Array.from({ length: 12 }).map((_, idx) => (
-        <RecommendedForeignerCard key={`foreignerCard_${idx}`} />
-      ))}{" "}
-    </>
-  ) : (
-    <>
-      {data?.map((foreigner, idx) => (
-        <RecommendedForeignerCard
-          key={`foreignerCard_${idx}`}
-          foreigner={foreigner}
-        />
-      ))}
-    </>
-  );
+  const dataToRender =
+    isError || !data || data.length === 0 ? (
+      <>
+        {Array.from({ length: 3 }).map((_, idx) => (
+          <SearchForeignerCard
+            withDetails={false}
+            key={`foreignerCard_${idx}`}
+          />
+        ))}
+      </>
+    ) : (
+      <>
+        {data?.map((foreigner, idx) => (
+          <SearchForeignerCard
+            key={`foreignerCard_${idx}`}
+            foreigner={foreigner}
+            withDetails={false}
+          />
+        ))}
+      </>
+    );
 
   return (
     <section className="w-full flex flex-col relative mt-12.5">

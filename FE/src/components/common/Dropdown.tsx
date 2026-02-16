@@ -24,13 +24,12 @@ const DropDown = ({
   const navigate = useNavigate();
   const [filterParams] = useSearchParams();
   const [selectedCategoryIdx, setSelectedCategoryIdx] = useState(0);
-  const thisParams = filterParams.getAll(paramKey);
   const filterOptions = FILTER_LIST[paramKey];
-  const [selectedIds, setSelectedIds] = useState<number[]>(
-    thisParams
-      .map(Number)
-      .filter((id) => !isNaN(id) && id >= 0 && id < filterOptions.length),
-  );
+  const thisParams = filterParams
+    .getAll(paramKey)
+    .map(Number)
+    .filter((id) => !isNaN(id) && id >= 0 && id < filterOptions.length);
+  const [selectedIds, setSelectedIds] = useState<number[]>(thisParams);
 
   const onOptionClicked = (targetId: number) => {
     let tempList = [...selectedIds];
@@ -87,10 +86,34 @@ const DropDown = ({
   const style = type === "left" ? "left-0" : type === "right" ? "right-0" : "";
   const gridStyle = cols === 5 ? `grid-cols-5` : `grid-cols-4`;
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const arraysEqual = (a: number[], b: number[]) =>
+    a.length === b.length && a.every((v, i) => v === b[i]);
+
+  const closeWithConfirm = () => {
+    if (!arraysEqual(thisParams, selectedIds))
+      alert("변경사항이 적용되지 않았습니다.");
+    else onClose();
+  };
+  // 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
+        closeWithConfirm();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [closeWithConfirm]);
   return (
     <div
       className={`absolute top-20 rounded-xl flex flex-col w-max h-fit whitespace-nowrap
         bg-white z-10 shadow ${style}`}
+      ref={wrapperRef}
     >
       <div className="p-9 border-b border-border-normal ">
         {category && (

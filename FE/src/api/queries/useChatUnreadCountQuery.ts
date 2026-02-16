@@ -14,6 +14,7 @@ export const useChatUnreadCount = () => {
       return res.result;
     },
     enabled: !!accessToken,
+    retry: false, // 에러 시 재시도 금지
   });
 };
 
@@ -31,5 +32,6 @@ export const useChatMatchedUnreadCount = (options?: { enabled?: boolean }) => {
       return res.result;
     },
     enabled: (options?.enabled ?? true) && !!accessToken,
+    retry: false, // 에러 시 재시도 금지
   });
 };

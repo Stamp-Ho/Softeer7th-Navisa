@@ -30,11 +30,7 @@ const useApiClient = () => {
             if (options._retry)
               throw new Error("Unauthorized even after retry");
 
-            if (!refreshPromise) {
-              refreshPromise = refreshAccessToken();
-            }
-            const newToken = await refreshPromise; // 새 토큰 수령
-            refreshPromise = null;
+            const newToken = await refreshAccessToken();
             return apiClient<T>(url, {
               ...options,
               _retry: true,
@@ -56,15 +52,33 @@ const useApiClient = () => {
     params?: Record<string, any>,
     options?: FetchOptions,
   ) => {
-    const queryString = params
-      ? "?" +
-        new URLSearchParams(
-          Object.entries(params).map(([key, value]) => [
-            key,
-            Array.isArray(value) ? JSON.stringify(value) : String(value),
-          ]),
-        ).toString()
-      : "";
+    const getQueryString = (params: Record<string, any>) => {
+      if (!params) return "";
+
+      const searchParams = new URLSearchParams();
+
+      Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          // 배열인 경우 각 요소를 순회하며 동일한 key로 append
+          value.forEach((v) => {
+            // v가 null이나 undefined가 아닐 때만 추가
+            if (v !== null && v !== undefined) {
+              console.log(v);
+              searchParams.append(key, String(v));
+            }
+          });
+        } else if (value !== null && value !== undefined) {
+          // 배열이 아닌 일반 값 처리
+          searchParams.append(key, String(value));
+        }
+      });
+
+      const baseQuery = searchParams.toString();
+
+      return baseQuery ? `?${baseQuery}` : "";
+    };
+
+    const queryString = params ? getQueryString(params) : "";
 
     return apiClient(`${url}${queryString}`, { ...options, method: "GET" });
   };
@@ -94,40 +108,38 @@ const useApiClient = () => {
   ): Promise<T> => apiClient<T>(url, { ...options, method: "PATCH" });
 
   const refreshAccessToken = useCallback(async () => {
-    try {
-      const res = await fetch(`${BASEURL}/api/auth/reissue`, {
-        method: "POST",
-        credentials: "include",
-      });
+    if (refreshPromise) return refreshPromise;
+    refreshPromise = (async () => {
+      try {
+        const res = await fetch(`${BASEURL}/api/auth/reissue`, {
+          method: "POST",
+          credentials: "include",
+        });
 
-      if (res.ok) {
-        // 1. JSON 파싱을 먼저 기다립니다.
-        const data = await res.json();
-
-        // 2. 이제 실제 데이터를 로그로 확인할 수 있습니다.
-        setAccessToken(data.result.accessToken);
-
-        // 3. 발급받은 새로운 액세스 토큰을 반환합니다.
-        return data.result.accessToken;
+        if (res.ok) {
+          const data = await res.json();
+          const newToken = data.result.accessToken;
+          setAccessToken(newToken);
+          return newToken;
+        }
+        // 에러 처리...
+        if (res.status === 401) {
+          alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
+          setUserId("");
+          setUserType("NOT_AUTHED");
+          window.localStorage.removeItem("userId");
+          navigate("/", { replace: false });
+          throw new Error("refresh token 시간 만료");
+        }
+      } finally {
+        refreshPromise = null; // 완료 후 초기화
       }
+    })();
 
-      if (res.status === 401) {
-        alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
-        setUserId("");
-        setUserType("NOT_AUTHED");
-        window.localStorage.removeItem("userId");
-        navigate("/", { replace: false });
-        throw new Error("refresh token 시간 만료");
-      }
+    return refreshPromise;
+  }, [navigate, setAccessToken, setUserId, setUserType]);
 
-      throw new Error(`서버 에러: ${res.status}`);
-    } catch (err) {
-      console.error("Reissue 실패:", err);
-      throw err;
-    }
-  }, [navigate]);
-
-  return { apiClient: apiClient as apiClientType };
+  return { apiClient: apiClient as apiClientType, refreshAccessToken };
 };
 export default useApiClient;
 
@@ -137,6 +149,7 @@ export type apiClientType = {
     url: string,
     params?: Record<string, any>,
     options?: FetchOptions,
+    additionalParams?: string,
   ): Promise<T>;
   post<T = any>(url: string, body?: any, options?: FetchOptions): Promise<T>;
   delete<T = any>(url: string, options?: FetchOptions): Promise<T>;

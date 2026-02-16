@@ -1,3 +1,5 @@
+import type { DegreeLevel } from "../api/types/common";
+
 export type SearchAgentCardType = {
   agentId: string;
   agentName: string;
@@ -8,10 +10,10 @@ export type SearchAgentCardType = {
   specialityJobCount: number;
 };
 export type SearchForeignerCardType = {
-  id: number;
-  nations: number[];
-  nickName: string;
-  targetJob: string;
-  major: string;
-  languages: number[];
+  foreignerId: string;
+  nationIdList: number[];
+  nickname: string;
+  jobTitle: string;
+  degreeLevel: DegreeLevel;
+  languageIdList: number[];
 };

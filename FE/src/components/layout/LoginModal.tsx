@@ -26,7 +26,7 @@ const LoginModal = ({
     <Modal className="flex flex-col items-center px-10 py-20" onClose={onClose}>
       <NavisaLogo height={10} />
       <TextInput
-        className="mt-16 mb-3"
+        className="mt-21 mb-3"
         placeholder="아이디 (이메일)"
         value={email}
         setValue={setEmail}
@@ -53,7 +53,7 @@ const LoginModal = ({
       >
         {loginMutation.isPending ? "로그인 중..." : "로그인"}
       </Button>
-      <div className="flex flex-row body-s-medium text-text-sub gap-3">
+      <div className="flex flex-row body-s-medium text-text-sub gap-3 pb-20">
         <a className="cursor-pointer">비밀번호 찾기</a>
         <div className="border-r border-gray-200 h-2 w-px mt-auto mb-auto"></div>
         <a className="cursor-pointer">아이디 찾기</a>
@@ -62,7 +62,6 @@ const LoginModal = ({
           회원가입
         </a>
       </div>
-      <img className="cursor-pointer mt-10" src="/GoogleLogo.png" />
     </Modal>
   );
 };

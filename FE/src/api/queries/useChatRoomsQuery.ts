@@ -19,5 +19,6 @@ export const useChatRoomsQuery = (filter: ChatRoomFilter = "all") => {
       return res?.result?.content ?? [];
     },
     enabled: !!accessToken,
+    retry: false, // 에러 시 재시도 금지
   });
 };

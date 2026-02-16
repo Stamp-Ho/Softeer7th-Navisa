@@ -36,3 +36,9 @@ export const DegreeLevelList: DegreeLevel[] = [
   "BACHELOR",
   "ABOVE_MASTER",
 ];
+
+export const DegreeToKorean = {
+  BELOW_BACHELOR: "학사 미만",
+  BACHELOR: "학사",
+  ABOVE_MASTER: "석사 이상",
+};

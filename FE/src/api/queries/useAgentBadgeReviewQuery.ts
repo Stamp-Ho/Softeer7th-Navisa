@@ -12,5 +12,6 @@ export const useAgentBadgeReviewQuery = (badgeId: number) => {
       const res = await agentService.getBadgeReview(apiClient, badgeId);
       return res.result;
     },
+    retry: false, // 에러 시 재시도 금지
   });
 };

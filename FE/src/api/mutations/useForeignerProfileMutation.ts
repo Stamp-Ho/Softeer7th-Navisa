@@ -6,11 +6,11 @@ import { useAuth } from "../../contexts/AuthContextProvider";
 
 export const useForiengerProfileMutation = (onSuccess?: () => void) => {
   const { apiClient } = useApiClient();
-  const { accessToken, setUserType } = useAuth();
+  const { setUserType } = useAuth();
 
   return useMutation({
     mutationFn: (data: ForeignerRegisterRequest) =>
-      foreignerService.updateProfile(apiClient, data, accessToken),
+      foreignerService.updateProfile(apiClient, data),
     onSuccess: () => {
       if (onSuccess) onSuccess();
       setUserType("FILLED_FOREIGNER");

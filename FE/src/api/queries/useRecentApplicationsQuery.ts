@@ -14,5 +14,6 @@ export const useRecentApplicationsQuery = () => {
       const res = await visaService.getRecentForms(apiClient);
       return res.result;
     },
+    retry: false, // 에러 시 재시도 금지
   });
 };

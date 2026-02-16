@@ -19,5 +19,6 @@ export const useChatHistoryQuery = (chatRoomId: number) => {
       return res.result.content;
     },
     enabled: !!accessToken && chatRoomId > 0,
+    retry: false, // 에러 시 재시도 금지
   });
 };

@@ -5,6 +5,7 @@ type AuthContextType = {
   setUserType: (a: feUserType) => void;
   accessToken: string;
   setAccessToken: (a: string) => void;
+  getAccessToken: () => string;
   userId: string;
   setUserId: (a: string) => void;
   logOut: () => void;
@@ -15,6 +16,9 @@ const defaultContext: AuthContextType = {
   setUserType: () => {},
   accessToken: "",
   setAccessToken: () => {},
+  getAccessToken: () => {
+    return "";
+  },
   userId: "",
   setUserId: () => {},
   logOut: () => {},

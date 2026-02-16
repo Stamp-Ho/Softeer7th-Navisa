@@ -35,13 +35,13 @@ export interface ForeignerCardResponse {
   nationIdList: number[];
   languageIdList: number[];
   jobTitle: string;
-  degreeLevel?: string;
+  degreeLevel: DegreeLevel;
 }
 export interface ForeignerCardRequest {
   jobGroupNameList?: string[];
   nationIdList?: number[];
   languageIdList?: number[];
-  lastElementId?: string;
+  lastElementId?: string | null;
   size: number;
 }
 

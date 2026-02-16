@@ -84,7 +84,7 @@ export interface AgentCardRequest {
   languageIdList?: number[];
   // slice 객체를 평탄화(Flatten)해서 보낼지, 객체로 보낼지는 API 구현 방식에 따라 다르지만
   // 보통 쿼리 스트링에서는 아래와 같이 구성합니다.
-  lastElementId?: string;
+  lastElementId?: string | null;
   size: number;
 }
 

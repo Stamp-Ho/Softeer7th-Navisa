@@ -11,8 +11,9 @@ const ExploreJobs = ({ isAgent = false }) => {
       <div className="grid grid-rows-2 grid-cols-8 px-5 pb-5 gap-4">
         {Array.from({ length: 16 }).map((_, i) => (
           <Link
-            className="flex flex-col items-center body-l-semibold cursor-pointer"
-            to={`/search/${isAgent ? "foreigner" : "agent"}?job=${i}`}
+            className="flex flex-col items-center body-l-semibold cursor-pointer
+              transition-all duration-150 ease-out hover:scale-115"
+            to={`/search/${isAgent ? "foreigner" : "agent"}${i === 15 ? "" : `?job=${i}`}`}
           >
             <JobIcon index={i} />
             {jobs[i]}

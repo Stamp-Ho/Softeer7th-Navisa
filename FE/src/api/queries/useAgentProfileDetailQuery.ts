@@ -12,5 +12,6 @@ export const useAgentProfileDetailQuery = (agentId: string) => {
       const res = await agentService.getAgentProfileDetail(apiClient, agentId);
       return res.result;
     },
+    retry: false, // 에러 시 재시도 금지
   });
 };

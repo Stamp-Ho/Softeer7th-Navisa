@@ -15,5 +15,6 @@ export const useForeignerMyFormQuery = (enabled: boolean) => {
       return res.result;
     },
     enabled: enabled,
+    retry: false, // 에러 시 재시도 금지
   });
 };
