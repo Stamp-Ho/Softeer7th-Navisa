@@ -68,6 +68,7 @@ public enum ResponseStatus {
     FEEDBACK_ALREADY_EXISTS(400, "이미 해당 리뷰에 대한 피드백이 등록되었습니다."),
     CHATROOM_ALREADY_EXISTS(400, "이미 채팅방이 존재합니다"),
     PROPOSAL_ALREADY_EXISTS(400, "해당 수임 제안이 존재합니다."),
+    HTTP_METHOD_NOT_ALLOWED(405, "지원되지 않는 HTTP 메서드입니다"),
 
     /**
      * 서버 에러 (500번대)

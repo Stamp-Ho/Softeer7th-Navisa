@@ -4,12 +4,14 @@ import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.global.web.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 
 @Slf4j
 @RestControllerAdvice
@@ -42,6 +44,16 @@ public class GlobalExceptionHandler {
 
         BaseResponse<Void> response = new BaseResponse<>(ResponseStatus.BAD_REQUEST, errorMessage);
         return new ResponseEntity<>(response, HttpStatus.valueOf(ResponseStatus.BAD_REQUEST.getCode()));
+    }
+
+    /**
+     * 지원하지 않는 HTTP method 에러 처리
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<BaseResponse<Void>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+        log.error("HttpRequestMethodNotSupportedException: {}", e.getMessage());
+        BaseResponse<Void> response = new BaseResponse<>(ResponseStatus.HTTP_METHOD_NOT_ALLOWED, ResponseStatus.HTTP_METHOD_NOT_ALLOWED.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ResponseStatus.HTTP_METHOD_NOT_ALLOWED.getCode()));
     }
 
     /**

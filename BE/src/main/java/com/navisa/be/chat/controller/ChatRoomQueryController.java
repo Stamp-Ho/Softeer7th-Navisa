@@ -70,7 +70,7 @@ public class ChatRoomQueryController {
     }
 
     @HasUserType({UserType.VALID_AGENT, UserType.FILLED_FOREIGNER})
-    @PostMapping("/{roomId}/participants-info")
+    @GetMapping("/{roomId}/participants-info")
     @Operation(
             summary = "특정 채팅방 참여자 정보 조회",
             description = "특정 채팅방에 참여하는 유저들의 정보를 조회할 수 있는 API입니다. 관련 노션 링크 : https://www.notion.so/bside/305220202735808aa3f7eb052902d4fc?source=copy_link "
