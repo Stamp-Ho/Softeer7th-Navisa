@@ -1,5 +1,3 @@
-// components/ChatMessageGroup.tsx
-import CalcChattedTime from "../../../../../utils/CalcChattedTime";
 import ChatBubble from "./ChatBubble";
 import type { ChatHistoryResponse } from "../../../../../api/types/chat";
 
@@ -60,14 +58,6 @@ const ChatMessageGroup = ({
                 key={msg.chatMessageId}
                 className={`flex flex-row gap-3 mb-2 ${isMe ? "justify-end" : "justify-start"}`}
               >
-                {/* 내 메시지일 때 시간/읽음 표시 (좌측) */}
-                {isMe && isLast && (
-                  <div className="flex flex-col gap-[2px] justify-end items-end caption-l-regular text-text-sub min-w-[50px]">
-                    {!msg.isRead && <div>안 읽음</div>}
-                    <div>{CalcChattedTime(msg.createdAt)}</div>
-                  </div>
-                )}
-
                 {/* 말풍선 내용 */}
                 <ChatBubble
                   message={msg}
@@ -76,14 +66,9 @@ const ChatMessageGroup = ({
                   isAgent={isAgent}
                   onModalAction={onModalAction}
                   showReplyButton={pendingProposalId === msg.chatMessageId}
+                  isRead={msg.isRead}
+                  isLast={isLast}
                 />
-
-                {/* 상대 메시지일 때 시간 표시 (우측) */}
-                {!isMe && isLast && (
-                  <div className="flex items-end caption-l-regular text-text-sub min-w-[50px]">
-                    {CalcChattedTime(msg.createdAt)}
-                  </div>
-                )}
               </div>
             );
           })}

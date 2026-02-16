@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import ChatRoomList from "./components/ChatList/ChatRoomList";
 import Envelope from "../../assets/Envelope";
 import ChatRoom from "./components/ChatRoom/ChatRoom";
@@ -14,8 +14,7 @@ import {
 import { useChatRoomsQuery } from "../../api/queries/useChatRoomsQuery";
 import { useAuth } from "../../contexts/AuthContextProvider";
 import { useWebSocket } from "../../contexts/WebSocketContext";
-import { deriveStatusFromMessageType } from "./components/utils/getChatStatus";
-import type { ChatRoomStatus } from "./components/hooks/useChatRoom";
+import { useSyncedChatRooms } from "./components/hooks/useSyncedChatRooms";
 
 const ChatPage = () => {
   const [selectedChatRoomId, setSelectedChatRoomId] = useState<number>(-1);
@@ -25,6 +24,7 @@ const ChatPage = () => {
   const [opponentImg, setOpponentImg] = useState<string | null>(null);
 
   const { messages: socketMessages } = useWebSocket(); // 전역 웹소켓 메시지 구독
+  const { userId } = useAuth();
 
   // ======== Auth ========
   const { userType } = useAuth();
@@ -53,45 +53,14 @@ const ChatPage = () => {
     isError: isChatRoomsError,
   } = useChatRoomsQuery(selectedTab);
 
-  const syncedChatRooms = useMemo(() => {
-    return chatRooms.map((room) => {
-      // 해당 방에 대한 새로운 소켓 메시지들 필터링
-      const roomSocketMsgs = socketMessages.filter(
-        (m) => Number(m.roomId) === room.chatRoomId,
-      );
-
-      if (roomSocketMsgs.length === 0) return room;
-
-      // 가장 최신 소켓 메시지를 기준으로 방 정보 업데이트
-      const latestMsg = roomSocketMsgs[roomSocketMsgs.length - 1];
-
-      // 수임 관련 메시지만 필터링
-      const PROPOSAL_TYPES = new Set([
-        "ACCEPTED",
-        "CANCELED",
-        "PROPOSAL",
-        "REJECTED",
-      ]);
-      const proposalMsgs = roomSocketMsgs.filter((m) =>
-        PROPOSAL_TYPES.has(m.type),
-      );
-
-      return {
-        ...room,
-        // 마지막 메시지 갱신
-        lastMessage: latestMsg.content,
-        lastChattedAt: latestMsg.createdAt,
-        // 실시간 수임 상태 반영
-        roomStatus:
-          proposalMsgs.length > 0
-            ? deriveStatusFromMessageType(
-                proposalMsgs[proposalMsgs.length - 1].type,
-                room.roomStatus as ChatRoomStatus,
-              )
-            : room.roomStatus,
-      };
-    });
-  }, [chatRooms, socketMessages]);
+  // 채팅방 목록 실시간 연동 (수임상태, 안읽음 개수)
+  const { syncedChatRooms, realTimeTotalUnread } = useSyncedChatRooms({
+    chatRooms,
+    socketMessages,
+    selectedChatRoomId,
+    userId,
+    selectedTab,
+  });
 
   const isChatExist = chatRooms.length > 0;
 
@@ -149,7 +118,7 @@ const ChatPage = () => {
               label="안 읽음"
               value="unread"
               selectedTab={selectedTab}
-              count={isUnreadLoading || isUnreadError ? 0 : unreadCount}
+              count={isUnreadLoading || isUnreadError ? 0 : realTimeTotalUnread}
               onClick={() => {
                 setSelectedTab("unread");
                 setSelectedChatRoomId(-1);
@@ -190,7 +159,7 @@ const ChatPage = () => {
         </div>
         {/* ===== 오른쪽: 채팅창 ===== */}
         {selectedTab === "unread" &&
-        unreadCount === 0 &&
+        realTimeTotalUnread === 0 &&
         !isChatRoomsError &&
         !isUnreadLoading ? (
           <div className="absolute flex justify-center top-[40%] w-full headline-s-medium text-gray-500 ">

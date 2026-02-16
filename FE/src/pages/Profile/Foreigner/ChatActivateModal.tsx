@@ -2,28 +2,56 @@ import { useState } from "react";
 import Button from "../../../components/common/Button";
 import Modal from "../../../components/common/Modal";
 import TextInput from "../../../components/common/TextInput";
+import { useCreateNewChat } from "../../../api/mutations/useCreateNewChat";
+import { useQueryClient } from "@tanstack/react-query";
 
 type ChatActivateProps = {
   onClose: () => void;
   onSendSuccess: () => void;
-  chatRoomId: number;
+  opponentProfileId: string;
   isAgent: boolean;
 };
 
 const ChatActivateModal = ({
   onClose,
   onSendSuccess,
-  chatRoomId,
+  opponentProfileId,
   isAgent,
 }: ChatActivateProps) => {
+  const queryClient = useQueryClient();
   const [firstMessage, setFirstMessage] = useState<string>("");
+  const { mutate: createNewChat, isPending } = useCreateNewChat();
 
   const handleSendMessage = () => {
-    alert(chatRoomId);
-    onSendSuccess(); // 성공 처리 (toast)
-    onClose(); // UI 닫기
-  };
+    const defaultMessage = isAgent
+      ? "의뢰인님, 도움을 드리고 싶어요!"
+      : "행정사님, 상담하고 싶어요!";
 
+    const messageToSend =
+      firstMessage.trim() === "" ? defaultMessage : firstMessage;
+
+    createNewChat(
+      {
+        opponentProfileId,
+        content: messageToSend,
+        sendAt: new Date().toISOString(),
+      },
+      {
+        onSuccess: () => {
+          // 부모 API 다시 불러오기
+          queryClient.invalidateQueries({
+            queryKey: [
+              isAgent ? "foreignerDetail" : "agentDetail",
+              opponentProfileId,
+            ],
+          });
+
+          onSendSuccess();
+          onClose();
+        },
+      },
+    );
+  };
   return (
     <Modal
       className="flex flex-col items-center px-5 pt-4 pb-6.25"
@@ -51,6 +79,7 @@ const ChatActivateModal = ({
         size="large"
         className="w-full"
         onClick={handleSendMessage}
+        disabled={isPending}
       >
         메시지 보내기
       </Button>

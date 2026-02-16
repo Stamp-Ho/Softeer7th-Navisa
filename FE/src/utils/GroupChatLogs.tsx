@@ -25,9 +25,8 @@ const groupChatLogs = (logs: ChatHistoryResponse[]) => {
       prev.isSentByMe === log.isSentByMe;
     const sameMinute = isSameMinute(prev.createdAt, log.createdAt);
     const isNextDay = isDateChanged(prev.createdAt, log.createdAt);
-    const notRead = log.isRead;
 
-    if (!isNextDay && sameSender && sameMinute && notRead) {
+    if (!isNextDay && sameSender && sameMinute) {
       lastGroup.push(log);
     } else {
       if (isNextDay) {

@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../../components/common/Button";
 import ToolTipMessage from "../../../components/common/ToolTipMessage";
 import CalcLastAccessDay from "../../../utils/CalcLastAccessDay";
 import ChatActivateModal from "../Foreigner/ChatActivateModal";
 import Toast from "../../../components/common/Toast";
-import { AuthContext } from "../../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContextProvider";
 
 type AgentProfilePanelProps = {
   agentInfo?: {
@@ -16,6 +17,7 @@ type AgentProfilePanelProps = {
     chatRoomId: number;
   };
   officeName?: string;
+  opponentProfileId?: string;
 };
 
 const AgentProfilePanel = ({
@@ -28,9 +30,11 @@ const AgentProfilePanel = ({
     chatRoomId: 0,
   },
   officeName = "엄경례 행정사사무소",
+  opponentProfileId = "",
 }: AgentProfilePanelProps) => {
   const [viewMessageModal, setViewMessageModal] = useState(false);
   const [showToast, setShowToast] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!showToast) return;
@@ -42,9 +46,7 @@ const AgentProfilePanel = ({
     };
   }, [showToast]);
 
-  const context = useContext(AuthContext);
-  if (!context) return null;
-  const { userType } = context;
+  const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
 
   return (
@@ -58,7 +60,8 @@ const AgentProfilePanel = ({
           onSendSuccess={() => {
             setShowToast(true);
           }}
-          chatRoomId={0}
+          // chatRoomId={0}
+          opponentProfileId={opponentProfileId}
           isAgent={isAgent}
         />
       ) : (
@@ -66,14 +69,30 @@ const AgentProfilePanel = ({
       )}
 
       <div className="flex flex-col items-center bg-white w-92 rounded-[20px] overflow-hidden shadow">
-        <img className="w-187 h-113 object-cover" src={agentInfo.profileImageUrl || "https://placehold.co/748x462"} alt={`${agentInfo.name} 행정사 프로필 이미지`} />
+        <img
+          className="w-187 h-113 object-cover"
+          src={agentInfo.profileImageUrl || "https://placehold.co/748x462"}
+          alt={`${agentInfo.name} 행정사 프로필 이미지`}
+        />
         <div className="flex flex-col pt-6 pb-5 px-4 w-full">
-          <div className="headline-l-bold text-text-base mb-3">{agentInfo.name} 행정사</div>
+          <div className="headline-l-bold text-text-base mb-3">
+            {agentInfo.name} 행정사
+          </div>
           <div className="title-s-medium text-text-base">{officeName}</div>
           <div className="flex flex-row justify-end">
-            <ToolTipMessage message={CalcLastAccessDay(agentInfo.lastLoginAt)} />
+            <ToolTipMessage
+              message={CalcLastAccessDay(agentInfo.lastLoginAt)}
+            />
           </div>
-          <Button type="primary" className="w-full" onClick={() => (agentInfo.hasChatRoom ? alert("gotochat") : setViewMessageModal(true))}>
+          <Button
+            type="primary"
+            className="w-full"
+            onClick={() =>
+              agentInfo.hasChatRoom
+                ? navigate(`/chat`)
+                : setViewMessageModal(true)
+            }
+          >
             {agentInfo.hasChatRoom ? "상담 이어하기" : "상담하기"}
           </Button>
         </div>

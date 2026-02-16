@@ -109,6 +109,7 @@ const ProfileOfAgent = () => {
         <AgentProfilePanel
           agentInfo={data?.agentInfo}
           officeName={data?.officeInfo.officeName}
+          opponentProfileId={data?.agentInfo.agentId}
         />
       </div>
     </>

@@ -8,6 +8,15 @@ import type { BaseResponse, PageResponse } from "../types/common";
 import type { Send } from "../websocket/types";
 
 export const chatService = {
+  createNewChatRoom: (
+    api: apiClientType,
+    data: {
+      opponentProfileId: string;
+      content: string;
+      sendAt: string;
+    },
+  ) => api.post<BaseResponse<number>>(`/api/chatroom`, data),
+
   // 채팅방 목록 조회 (필터: unread | matched)
   getChatRooms: async (
     apiClient: apiClientType,

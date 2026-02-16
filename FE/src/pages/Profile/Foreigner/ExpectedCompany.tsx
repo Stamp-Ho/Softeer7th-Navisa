@@ -3,11 +3,12 @@ import Button from "../../../components/common/Button";
 import Tag from "../../../components/common/Tag";
 import ToolTipMessage from "../../../components/common/ToolTipMessage";
 import ChatActivateModal from "./ChatActivateModal";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CalcLastAccessDay from "../../../utils/CalcLastAccessDay";
-import { AuthContext } from "../../../contexts/AuthContext";
 import Toast from "../../../components/common/Toast";
 import { calcDDay } from "../../../utils/CalcDDay";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContextProvider";
 
 const ExpectedCompany = ({
   targetJob = "웹 개발자",
@@ -16,7 +17,7 @@ const ExpectedCompany = ({
   nickname = "고라니 099",
   lastAccessDay = "2026-01-26T11:27:02+09:00",
   hasChatRoomBetween = false,
-  chatRoomId = 0,
+  opponentProfileId = "",
 }: {
   targetJob?: string;
   companyName?: string;
@@ -25,9 +26,11 @@ const ExpectedCompany = ({
   lastAccessDay?: string;
   hasChatRoomBetween?: boolean;
   chatRoomId?: number;
+  opponentProfileId?: string;
 }) => {
   const [viewMessageModal, setViewMessageModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!showToast) return;
@@ -39,23 +42,19 @@ const ExpectedCompany = ({
     };
   }, [showToast]);
 
-  const context = useContext(AuthContext);
-  if (!context) return null;
-  const { userType } = context;
+  const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
 
   return (
     <>
       {showToast && <Toast message="상담메시지가 전송되었습니다." />}
-      {viewMessageModal ? (
+      {viewMessageModal && (
         <ChatActivateModal
           onClose={() => setViewMessageModal(false)}
-          chatRoomId={chatRoomId}
+          opponentProfileId={opponentProfileId}
           onSendSuccess={() => setShowToast(true)}
           isAgent={isAgent}
         />
-      ) : (
-        <></>
       )}
       <div className="fixed right-48 shadow">
         <div className="flex flex-col w-92 px-5 py-8 border border-border-normal rounded-radius-400 bg-white">
@@ -98,7 +97,7 @@ const ExpectedCompany = ({
               className="w-full"
               onClick={() =>
                 hasChatRoomBetween
-                  ? alert("gotochat")
+                  ? navigate(`/chat`)
                   : setViewMessageModal(true)
               }
             >

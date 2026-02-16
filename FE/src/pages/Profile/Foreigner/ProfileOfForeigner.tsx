@@ -54,7 +54,7 @@ function ProfileOfForeigner() {
         lastAccessDay={data?.basicInfo.lastAccessDay}
         hasChatRoomBetween={data?.basicInfo.hasChatRoomBetween}
         nickname={data?.basicInfo.nickname}
-        chatRoomId={data?.basicInfo.chatRoomId}
+        opponentProfileId={data?.basicInfo.foreignerId}
       />
     </>
   );
