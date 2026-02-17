@@ -144,13 +144,13 @@ jobs:
 
               # 실제 HTTP 응답 확인
               RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$TARGET_PORT/swagger-ui/index.html || echo "000")
-              
+            
               if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "302" ]; then
                  echo "✅ Health Check Passed! (HTTP $RESPONSE)"
                  SUCCESS=1
                  break
               fi
-              
+            
               echo "Waiting for Spring Boot... ($((COUNT+1))/$MAX_RETRIES)"
               sleep 10
               COUNT=$((COUNT+1))
@@ -175,8 +175,8 @@ jobs:
             sudo cp ~/navisa-dev/docs/infra/nginx.conf /etc/nginx/nginx.conf
 
             # 3. 포트 설정 변경 (sed로 upstream 포트 수정)
-            # server 127.0.0.1:xxxx; 패턴을 찾아 $TARGET_PORT로 변경
-            sudo sed -i "s/server 127.0.0.1:[0-9]*;/server 127.0.0.1:$TARGET_PORT;/g" /etc/nginx/nginx.conf
+            # server 127.0.0.1:8080; 또는 server 127.0.0.1:8081; 을 찾아 $TARGET_PORT로 변경
+            sudo sed -i "s/server 127.0.0.1:[0-9]\{4\};/server 127.0.0.1:$TARGET_PORT;/g" /etc/nginx/nginx.conf
 
             # 4. Nginx 문법 검사
             if ! sudo nginx -t; then

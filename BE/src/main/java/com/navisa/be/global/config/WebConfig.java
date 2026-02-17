@@ -2,6 +2,7 @@ package com.navisa.be.global.config;
 
 import com.navisa.be.auth.interceptor.AuthInterceptor;
 import com.navisa.be.auth.interceptor.UserTypeCheckInterceptor;
+import com.navisa.be.global.web.log.LoggingInterceptor;
 import com.navisa.be.global.web.resolver.LoginUserResolver;
 import com.navisa.be.global.web.resolver.SliceInfoArgumentResolver;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
     private final LoginUserResolver loginUserResolver;
     private final SliceInfoArgumentResolver sliceInfoArgumentResolver;
+    private final LoggingInterceptor loggingInterceptor;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -47,6 +49,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loggingInterceptor)
+                .addPathPatterns(ALL_APIS);
+
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns(ALL_APIS)
                 .excludePathPatterns(AUTH_EXCLUDED_LIST);

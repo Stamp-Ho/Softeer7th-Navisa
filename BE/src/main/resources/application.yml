@@ -1,5 +1,9 @@
 server:
   forward-headers-strategy: native
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
 
 spring:
   application:
