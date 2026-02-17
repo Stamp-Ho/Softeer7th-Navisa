@@ -191,4 +191,12 @@ public class ApplicationCommandService {
                 chatRoom.getAgentProfile().getId(), chatRoom.getForeignerProfile().getId())
                 .ifPresent(form -> form.setAgentProfile(null));
     }
+
+    @Transactional(readOnly = true)
+    public boolean existsByForeignerProfileIdAndAgentProfileIdAndIsFinishedTrue(UUID foreignerProfileId, UUID agentProfileId) {
+        return applicationFormRepository.existsByForeignerProfileIdAndAgentProfileIdAndIsFinishedTrue(
+                foreignerProfileId,
+                agentProfileId
+        );
+    }
 }

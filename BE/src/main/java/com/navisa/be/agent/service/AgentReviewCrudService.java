@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Transactional
@@ -46,5 +47,10 @@ public class AgentReviewCrudService {
 
     public boolean existsByProposalId(Long proposalId) {
         return agentReviewRepository.existsByProposalId(proposalId);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<AgentReview> findOptionalByProposalId(Long proposalId) {
+        return agentReviewRepository.findByProposalId(proposalId);
     }
 }

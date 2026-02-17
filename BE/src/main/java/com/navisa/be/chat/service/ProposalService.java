@@ -10,8 +10,9 @@ import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.chat.repository.ProposalRepository;
+import com.navisa.be.foreigner.model.entity.ForeignerProfile;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.web.response.ResponseStatus;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -31,7 +33,7 @@ public class ProposalService {
 
     private final ProposalRepository proposalRepository;
     private final UserQueryService userQueryService;
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileCrudService agentProfileQueryService;
     private final ChatRoomQueryService chatRoomQueryService;
     private final ChatServiceFacade chatServiceFacade;
@@ -96,7 +98,7 @@ public class ProposalService {
 
     private UUID getProfileId(User user) {
         return user.getUserType().equals(UserType.FILLED_FOREIGNER)
-                ? foreignerQueryService.findByUserId(user.getId()).getId()
+                ? foreignerProfileCrudService.findByUserId(user.getId()).getId()
                 : agentProfileQueryService.findByUserId(user.getId()).getId();
     }
 
@@ -211,5 +213,18 @@ public class ProposalService {
                 .orElseThrow(() -> new ProposalException(ResponseStatus.PROPOSAL_NOT_FOUND));
 
         return proposal;
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Proposal> findLatestMatchedProposal(UUID foreignerId) {
+        List<ProposalStatus> targetStatuses = List.of(ProposalStatus.MATCHED, ProposalStatus.COMPLETED);
+
+        List<Proposal> proposals = proposalRepository.findLatestMatchedProposal(
+                foreignerId,
+                targetStatuses,
+                PageRequest.of(0, 1)
+        );
+
+        return proposals.stream().findFirst();
     }
 }

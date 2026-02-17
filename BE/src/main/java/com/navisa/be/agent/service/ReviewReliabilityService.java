@@ -1,12 +1,9 @@
 package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.response.ReviewReliabilityResponse;
-import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
-import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
-import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.recommendation.calculator.ReviewReliabilityCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,13 +17,13 @@ import java.util.stream.Collectors;
 @Service
 public class ReviewReliabilityService {
 
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final ReviewReliabilityCalculator reliabilityCalculator;
 
     @Transactional(readOnly = true)
     public ReviewReliabilityResponse getReviewReliability(ForeignerProfile foreignerProfile) {
         // 행정사 특화 분야 추천을 위한 상대 신뢰도(ria) 계산
-        ForeignerSimilarity similarity = foreignerQueryService.findSimilarityByForeignerId(foreignerProfile.getId());
+        ForeignerSimilarity similarity = foreignerProfileCrudService.findSimilarityByForeignerId(foreignerProfile.getId());
 
         // 상위 3개 데이터 추출
         List<Long> allJobCodeIds = Arrays.stream(similarity.getJobCodeIdList()).boxed().toList();

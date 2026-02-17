@@ -1,17 +1,19 @@
 package com.navisa.be.foreigner.service;
 
+import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
+import com.navisa.be.foreigner.model.entity.ForeignerProfile;
+import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
+import com.navisa.be.foreigner.repository.*;
+import com.navisa.be.global.common.dto.projection.JobCodeSimilarityProjection;
 import com.navisa.be.global.common.model.entity.Language;
 import com.navisa.be.global.common.model.entity.Nationality;
 import com.navisa.be.global.common.repository.LanguageRepository;
 import com.navisa.be.global.common.repository.NationalityRepository;
-import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
-import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.repository.*;
-import com.navisa.be.user.repository.UserRepository;
 import com.navisa.be.support.ForeignerFixture;
 import com.navisa.be.support.IntegrationTestSupport;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
+import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +24,11 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
-import com.navisa.be.global.common.dto.projection.JobCodeSimilarityProjection;
-
 @Transactional
-class ForeignerCommandServiceTest extends IntegrationTestSupport {
+public class ForeignerProfileCrudServiceTest extends IntegrationTestSupport {
 
     @Autowired
-    private ForeignerCommandService foreignerCommandService;
+    private ForeignerProfileCrudService foreignerProfileCrudService;
 
     @Autowired
     private ForeignerProfileRepository foreignerProfileRepository;
@@ -77,7 +76,12 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
         UUID userId = savedUser.getId();
 
         // when
-        ForeignerProfile savedProfile = foreignerCommandService.registerForeignerTotalInfo(request, userId);
+        ForeignerProfile savedProfile = foreignerProfileCrudService.registerForeignerTotalInfo(
+                request,
+                userId,
+                List.of(language),
+                List.of(nationality)
+        );
 
         // then
         assertThat(savedProfile).isNotNull();
@@ -121,7 +125,8 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
         User savedUser = userRepository.save(User.createGoogleUser("upsert@example.com", UserType.UNFILLED_FOREIGNER));
         UUID userId = savedUser.getId();
 
-        ForeignerProfile initialProfile = foreignerCommandService.registerForeignerTotalInfo(initialRequest, userId);
+        ForeignerProfile initialProfile = foreignerProfileCrudService.registerForeignerTotalInfo(
+                initialRequest, userId, List.of(langEng), List.of(natUSA));
 
         var preUpdateEducation = foreignerEducationRepository.findByForeignerId(initialProfile.getId()).orElseThrow();
         Long preUpdateEducationId = preUpdateEducation.getId();
@@ -135,7 +140,8 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
                 true);
 
         // when
-        ForeignerProfile updatedProfile = foreignerCommandService.registerForeignerTotalInfo(updateRequest, userId);
+        ForeignerProfile updatedProfile = foreignerProfileCrudService.registerForeignerTotalInfo(
+                updateRequest, userId, List.of(langKor), List.of(natCan));
 
         // then
         assertThat(updatedProfile.getId()).isEqualTo(initialProfile.getId());
@@ -168,7 +174,7 @@ class ForeignerCommandServiceTest extends IntegrationTestSupport {
         );
 
         // when
-        foreignerCommandService.registerCalculatedSimilarity(profile, projections);
+        foreignerProfileCrudService.registerCalculatedSimilarity(profile, projections);
 
         // then
         var savedSimilarity = foreignerSimilarityRepository.findByForeignerId(profile.getId()).orElseThrow();

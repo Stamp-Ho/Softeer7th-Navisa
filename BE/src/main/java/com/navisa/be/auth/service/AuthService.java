@@ -11,8 +11,8 @@ import com.navisa.be.auth.exception.AuthException;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.model.entity.RefreshToken;
 import com.navisa.be.auth.repository.RefreshTokenRepository;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.web.response.ResponseStatus;
-import com.navisa.be.foreigner.service.ForeignerCommandService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
@@ -39,7 +39,7 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AgentProfileCrudService agentProfileCrudService;
-    private final ForeignerCommandService foreignerCommandService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
 
     // 구글 로그인
     @Transactional
@@ -197,7 +197,7 @@ public class AuthService {
         }
 
         if (user.getUserType() == UserType.FILLED_FOREIGNER) {
-            foreignerCommandService.syncForeignerLoginActivity(user.getId());
+            foreignerProfileCrudService.syncForeignerLoginActivity(user.getId());
         }
     }
 }

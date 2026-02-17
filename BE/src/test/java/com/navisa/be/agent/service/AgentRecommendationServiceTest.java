@@ -5,11 +5,11 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
 import com.navisa.be.global.common.service.StorageService;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.recommendation.calculator.FinalRecommendationCalculator;
 import com.navisa.be.recommendation.calculator.ReviewBonusCalculator;
 import com.navisa.be.recommendation.calculator.SpecialtyDistributionCalculator;
@@ -23,7 +23,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +36,7 @@ class AgentRecommendationServiceTest {
     private AgentRecommendationService agentRecommendationService;
 
     @Mock
-    private ForeignerQueryService foreignerQueryService;
+    private ForeignerProfileCrudService foreignerProfileCrudService;
 
     @Mock
     private AgentProfileRepository agentProfileRepository;
@@ -72,7 +71,7 @@ class AgentRecommendationServiceTest {
         // given
         String email = "email";
         UUID foreignerId = UUID.randomUUID();
-        given(foreignerQueryService.getForeignerIdByEmail(any())).willReturn(foreignerId);
+        given(foreignerProfileCrudService.getForeignerIdByEmail(any())).willReturn(foreignerId);
 
         ForeignerSimilarity similarity = Mockito.mock(ForeignerSimilarity.class);
         given(similarity.getJobCodeIdList()).willReturn(new long[] { 1L });
@@ -99,7 +98,7 @@ class AgentRecommendationServiceTest {
         given(lowAgent.getProfileObjectKey()).willReturn("low-profile-key");
 
         given(agentProfileRepository.findAllValidAgentProfiles()).willReturn(List.of(lowAgent, highAgent));
-        given(foreignerQueryService.findSimilarityByForeignerId(foreignerId)).willReturn(similarity);
+        given(foreignerProfileCrudService.findSimilarityByForeignerId(foreignerId)).willReturn(similarity);
 
         given(finalCalculator.calculateFinalGradeByLongId(any(), any())).willAnswer(invocation -> {
             Map<Long, Double> saMap = invocation.getArgument(0);

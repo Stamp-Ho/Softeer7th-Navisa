@@ -11,12 +11,12 @@ import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.service.ChatRoomQueryService;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.global.common.service.JobGroupService;
 import com.navisa.be.global.common.model.enums.ImageSize;
 import com.navisa.be.user.model.entity.User;
@@ -45,7 +45,7 @@ public class AgentProfileSearchService {
     private final StorageService storageService;
     private final ChatRoomQueryService chatRoomQueryService;
     private final AgentReviewRepository agentReviewRepository;
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
 
     public SliceResponse<AgentCardResponse, UUID> findAgentProfileCardsBasedOnFilter(
             AgentCardRequest request, SliceRequest<UUID> slice, String email) {
@@ -116,7 +116,7 @@ public class AgentProfileSearchService {
         Optional<ChatRoom> optChatRoom = Optional.empty();
         User loginUser = userQueryService.findByEmail(loginUserEmail);
         if(loginUser.getUserType() == UserType.FILLED_FOREIGNER){
-            ForeignerProfile foreignerProfile = foreignerQueryService.findByUserId(loginUser.getId());
+            ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByUserId(loginUser.getId());
             optChatRoom = chatRoomQueryService.findByAgentIdAndForeignerId(agentId, foreignerProfile.getId());
         }
 

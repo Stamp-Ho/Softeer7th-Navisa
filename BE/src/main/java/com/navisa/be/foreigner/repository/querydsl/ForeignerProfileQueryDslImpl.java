@@ -1,7 +1,7 @@
 package com.navisa.be.foreigner.repository.querydsl;
 
+import com.navisa.be.foreigner.dto.request.ForeignerCardQuery;
 import com.navisa.be.global.web.request.SliceRequest;
-import com.navisa.be.foreigner.dto.ForeignerCardQueryDto;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -23,7 +23,7 @@ import static com.navisa.be.global.common.model.entity.QLanguage.language;
 import static com.navisa.be.global.common.model.entity.QNationality.nationality;
 
 @RequiredArgsConstructor
-public class ForeignerProfileRepositoryImpl implements ForeignerProfileRepositoryQueryDsl {
+public class ForeignerProfileQueryDslImpl implements ForeignerProfileQueryDsl {
 
     private final JPAQueryFactory queryFactory;
 
@@ -63,7 +63,7 @@ public class ForeignerProfileRepositoryImpl implements ForeignerProfileRepositor
     }
 
     @Override
-    public List<ForeignerProfile> findByFilters(ForeignerCardQueryDto dto, SliceRequest<UUID> slice) {
+    public List<ForeignerProfile> findByFilters(ForeignerCardQuery dto, SliceRequest<UUID> slice) {
 
         LocalDateTime lastElementCreatedAt = null;
         if (slice.lastElementId() != null) {

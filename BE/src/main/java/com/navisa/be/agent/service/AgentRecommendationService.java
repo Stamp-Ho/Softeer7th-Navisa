@@ -6,8 +6,8 @@ import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.service.StorageService;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.recommendation.calculator.FinalRecommendationCalculator;
 import com.navisa.be.recommendation.calculator.ReviewBonusCalculator;
 import com.navisa.be.recommendation.calculator.SpecialtyDistributionCalculator;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AgentRecommendationService {
 
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileRepository agentProfileRepository;
     private final SpecialtyDistributionCalculator distributionCalculator;
     private final ReviewBonusCalculator reviewBonusCalculator;
@@ -40,9 +40,9 @@ public class AgentRecommendationService {
     // 맞춤 행정사 추천
     public List<AgentCardResponse> getPersonalizedAgents(String email) {
 
-        UUID foreignerId = foreignerQueryService.getForeignerIdByEmail(email);
+        UUID foreignerId = foreignerProfileCrudService.getForeignerIdByEmail(email);
 
-        ForeignerSimilarity similarity = foreignerQueryService.findSimilarityByForeignerId(foreignerId);
+        ForeignerSimilarity similarity = foreignerProfileCrudService.findSimilarityByForeignerId(foreignerId);
 
         List<AgentProfile> profiles = agentProfileRepository.findAllValidAgentProfiles();
 

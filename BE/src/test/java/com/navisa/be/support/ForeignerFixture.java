@@ -1,13 +1,10 @@
 package com.navisa.be.support;
 
-import com.navisa.be.foreigner.dto.ForeignerBasicInfoDto;
-import com.navisa.be.foreigner.dto.*;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
-import com.navisa.be.foreigner.dto.response.FindForeignerDetailResponse;
+import com.navisa.be.foreigner.dto.response.ForeignerDetailResponse;
 import com.navisa.be.foreigner.model.enums.EducationDegreeLevel;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -25,15 +22,15 @@ public class ForeignerFixture {
                 isWork);
     }
 
-    public static ForeignerEducationDto createEducationRequest() {
-        return new ForeignerEducationDto(
+    public static ForeignerRegisterRequest.ForeignerEducationRegistration createEducationRequest() {
+        return new ForeignerRegisterRequest.ForeignerEducationRegistration(
                 "University",
                 EducationDegreeLevel.BACHELOR,
                 "Computer Science");
     }
 
-    public static ForeignerCareerDto createCareerRequest() {
-        return new ForeignerCareerDto(
+    public static ForeignerRegisterRequest.ForeignerCareerRegistration createCareerRequest() {
+        return new ForeignerRegisterRequest.ForeignerCareerRegistration(
                 "Company A",
                 "Developer",
                 LocalDate.of(2020, 1, 1),
@@ -41,16 +38,16 @@ public class ForeignerFixture {
                 true);
     }
 
-    public static ForeignerExpectedCompanyDto createExpectedCompanyRequest() {
-        return new ForeignerExpectedCompanyDto(
+    public static ForeignerRegisterRequest.ForeignerExpectedCompanyRegistration createExpectedCompanyRequest() {
+        return new ForeignerRegisterRequest.ForeignerExpectedCompanyRegistration(
                 "IT",
                 "Software Engineer",
                 LocalDate.now());
     }
 
-    public static FindForeignerDetailResponse createFindForeignerDetailResponse() {
-        return new FindForeignerDetailResponse(
-                new ForeignerBasicInfoDto(
+    public static ForeignerDetailResponse createFindForeignerDetailResponse() {
+        return new ForeignerDetailResponse(
+                new ForeignerDetailResponse.ForeignerBasicInfo(
                         UUID.randomUUID(),
                         "고라니 099",
                         List.of(1L, 24L),
@@ -58,20 +55,20 @@ public class ForeignerFixture {
                         false,
                         null
                 ),
-                new EducationInfoDto(
+                new ForeignerDetailResponse.EducationInfo(
                         EducationDegreeLevel.ABOVE_MASTER,
                         "으악대학교",
                         "대박전공"
                 ),
                 List.of(12L, 100L, 1L, 4L),
-                new CareerInfoDto(
+                new ForeignerDetailResponse.CareerInfo(
                         13,
                         List.of(
-                                new CareerInfoDto.CareerHistory("땡땡회사", "머시기 직무", "2023. 11. 02. ~ 2024. 11. 02.", 12),
-                                new CareerInfoDto.CareerHistory("땡땡회사", "머시기 직무", "2023. 11. 02. ~ 현재", 1)
+                                new ForeignerDetailResponse.CareerInfo.CareerHistory("땡땡회사", "머시기 직무", "2023. 11. 02. ~ 2024. 11. 02.", 12),
+                                new ForeignerDetailResponse.CareerInfo.CareerHistory("땡땡회사", "머시기 직무", "2023. 11. 02. ~ 현재", 1)
                         )
                 ),
-                new ExpectedCompanyInfoDto(
+                new ForeignerDetailResponse.ExpectedCompanyInfo(
                         "웹 개발자",
                         "대박쩌는 IT회사",
                         LocalDate.of(2026, 1, 15)

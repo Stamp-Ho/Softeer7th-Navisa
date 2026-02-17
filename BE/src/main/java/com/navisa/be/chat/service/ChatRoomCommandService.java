@@ -8,9 +8,9 @@ import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.chat.repository.ChatRoomRepository;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
@@ -30,7 +30,7 @@ public class ChatRoomCommandService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final AgentProfileCrudService agentProfileQueryService;
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final UserQueryService userQueryService;
     private final ChatMessageCommandService chatMessageCommandService;
     private final ChatRoomQueryService chatRoomQueryService;
@@ -76,9 +76,9 @@ public class ChatRoomCommandService {
 
     private ForeignerProfile getForeignerProfile(User loginUser, UUID opponentProfileId) {
         if (loginUser.getUserType() == UserType.VALID_AGENT) {
-            return foreignerQueryService.findById(opponentProfileId);
+            return foreignerProfileCrudService.findById(opponentProfileId);
         }
-        return foreignerQueryService.findByUserId(loginUser.getId());
+        return foreignerProfileCrudService.findByUserId(loginUser.getId());
     }
 
     private AgentProfile getAgentProfile(User loginUser, UUID opponentProfileId) {

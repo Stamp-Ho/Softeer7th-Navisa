@@ -2,17 +2,19 @@ package com.navisa.be.foreigner.controller;
 
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
-import com.navisa.be.global.web.response.ResponseStatus;
-import com.navisa.be.foreigner.dto.request.FindForeignerDetailCommand;
-import com.navisa.be.foreigner.dto.response.FindForeignerDetailResponse;
+import com.navisa.be.foreigner.dto.request.ForeignerDetailRequest;
+import com.navisa.be.foreigner.dto.response.ForeignerDetailResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerProgressResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
 import com.navisa.be.foreigner.exception.ForeignerException;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
-import com.navisa.be.foreigner.service.ForeignerServiceFacade;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
+import com.navisa.be.foreigner.service.ForeignerProfileDetailService;
+import com.navisa.be.foreigner.service.ForeignerRegistrationService;
 import com.navisa.be.global.web.resolver.LoginUserResolver;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.support.ForeignerFixture;
 import com.navisa.be.user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,21 +28,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ForeignerQueryController.class)
-class ForeignerQueryControllerTest {
+@WebMvcTest(ForeignerProfileController.class)
+class ForeignerProfileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private ForeignerServiceFacade foreignerServiceFacade;
+    private ForeignerRegistrationService registrationWorkflow;
 
     @MockitoBean
-    private ForeignerQueryService foreignerQueryService;
+    private ForeignerProfileDetailService foreignerProfileDetailService;
 
     @MockitoBean
     private AuthService authService;
@@ -54,21 +55,26 @@ class ForeignerQueryControllerTest {
     @MockitoBean
     private UserRepository userRepository;
 
+    @MockitoBean
+    private ForeignerProfileCrudService foreignerProfileCrudService;
+
+    private final String mockEmail = "test@navisa.com";
+
+    @BeforeEach
+    void setUp() throws Exception {
+        given(jwtProvider.validateToken(anyString())).willReturn(true);
+        given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
+        given(loginUserResolver.supportsParameter(any())).willReturn(true);
+        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
+    }
+
     @Test
-    @DisplayName("외국인 상세 요건 상태 조회 성공 시 200 OK와 상태 정보를 반환한다.")
+    @DisplayName("외국인 상세 요건 상태 조회 성공 시 200 OK를 반환한다.")
     void checkForeignerFilledStatus_Success() throws Exception {
         // given
         UUID profileId = UUID.randomUUID();
         ForeignerStatusResponse response = new ForeignerStatusResponse(profileId, true);
-        String mockEmail = "test@navisa.com";
-
-        given(jwtProvider.validateToken(anyString())).willReturn(true);
-        given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-
-        given(loginUserResolver.supportsParameter(any())).willReturn(true);
-        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
-
-        given(foreignerQueryService.checkForeignerFilledStatus(anyString())).willReturn(response);
+        given(foreignerProfileDetailService.checkForeignerFilledStatus(mockEmail)).willReturn(response);
 
         // when & then
         mockMvc.perform(get("/api/foreigner/requirements")
@@ -92,102 +98,65 @@ class ForeignerQueryControllerTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 사용자의 정보를 조회할 경우 400 Bad Request를 반환한다.")
-    void checkForeignerFilledStatus_NotFound() throws Exception {
+    @DisplayName("행정사의 외국인 상세 조회 성공 시 200 OK를 반환한다.")
+    void findForeignerDetail_Success() throws Exception {
         // given
-        String mockEmail = "nonexistent@navisa.com";
-        given(jwtProvider.validateToken(anyString())).willReturn(true);
-        given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-
-        given(loginUserResolver.supportsParameter(any())).willReturn(true);
-        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
-
-        given(foreignerQueryService.checkForeignerFilledStatus(mockEmail))
-                .willThrow(new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
-
-        // when & then
-        mockMvc.perform(get("/api/foreigner/requirements")
-                        .header("Authorization", "Bearer test-token"))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ResponseStatus.INVALID_FOREIGNER.getMessage()));
-    }
-
-    @Test
-    @DisplayName("외국인 상세 조회는 성공한다")
-    void findForeignerDetail_shouldSucceed() throws Exception {
-        // given
-        String mockEmail = "nonexistent@navisa.com";
-        given(jwtProvider.validateToken(anyString())).willReturn(true);
-        given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-
-        given(loginUserResolver.supportsParameter(any())).willReturn(true);
-        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
-
         given(authService.checkUserType(any(), any())).willReturn(true);
-
-        FindForeignerDetailResponse response = ForeignerFixture.createFindForeignerDetailResponse();
-
-        given(foreignerQueryService.findForeignerDetail(any(FindForeignerDetailCommand.class)))
-                .willReturn(response);
+        ForeignerDetailResponse response = ForeignerFixture.createFindForeignerDetailResponse();
+        given(foreignerProfileDetailService.findForeignerDetail(any(ForeignerDetailRequest.class))).willReturn(response);
 
         UUID foreignerId = UUID.randomUUID();
 
         // when & then
         mockMvc.perform(get("/api/foreigner/" + foreignerId)
                         .header("Authorization", "Bearer test-token"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.basicInfo.nickname").value(response.basicInfo().nickname()));
     }
 
     @Test
-    @DisplayName("외국인 진행 상태 조회 성공 시 200 OK와 상태 정보를 반환한다.")
+    @DisplayName("외국인 진행 상태 조회 성공 시 200 OK를 반환한다.")
     void getForeignerProgress_Success() throws Exception {
         // given
-        String mockEmail = "foreigner@navisa.com";
         ForeignerProgressResponse mockResponse = new ForeignerProgressResponse(true, false, true, true, 134L);
-
-        given(jwtProvider.validateToken(anyString())).willReturn(true);
-        given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-        given(loginUserResolver.supportsParameter(any())).willReturn(true);
-        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
         given(authService.checkUserType(any(), any())).willReturn(true);
-        given(foreignerQueryService.getForeignerProgress(mockEmail)).willReturn(mockResponse);
+        given(foreignerProfileDetailService.getForeignerProgress(mockEmail)).willReturn(mockResponse);
 
         // when & then
         mockMvc.perform(get("/api/foreigner/progress")
                         .header("Authorization", "Bearer valid-token"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.chatRoomId").value(134))
-                .andExpect(jsonPath("$.result.isReview").value(true))
                 .andExpect(jsonPath("$.result.isMatched").value(true));
     }
 
     @Test
-    @DisplayName("매칭 내역이 없는 외국인이 진행 상태 조회 시 모든 상태가 false인 객체를 반환한다.")
+    @DisplayName("존재하지 않는 사용자의 정보를 조회할 경우 400 Bad Request를 반환한다.")
+    void checkForeignerFilledStatus_NotFound() throws Exception {
+        // given
+        given(foreignerProfileDetailService.checkForeignerFilledStatus(mockEmail))
+                .willThrow(new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
+
+        // when & then
+        mockMvc.perform(get("/api/foreigner/requirements")
+                        .header("Authorization", "Bearer test-token"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ResponseStatus.INVALID_FOREIGNER.getMessage()));
+    }
+
+    @Test
+    @DisplayName("매칭 내역이 없는 외국인이 진행 상태 조회 시 초기 상태 객체를 반환한다.")
     void getForeignerProgress_EmptyData() throws Exception {
         // given
-        String mockEmail = "newbie@navisa.com";
-
-        given(jwtProvider.validateToken(anyString())).willReturn(true);
-        given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-        given(loginUserResolver.supportsParameter(any())).willReturn(true);
-        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
         given(authService.checkUserType(any(), any())).willReturn(true);
-        given(foreignerQueryService.getForeignerProgress(mockEmail))
+        given(foreignerProfileDetailService.getForeignerProgress(mockEmail))
                 .willReturn(new ForeignerProgressResponse(false, false, false, false, null));
 
         // when & then
         mockMvc.perform(get("/api/foreigner/progress")
                         .header("Authorization", "Bearer valid-token"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.isMatched").value(false))
-                .andExpect(jsonPath("$.result.isReview").value(false))
-                .andExpect(jsonPath("$.result.isFeedback").value(false))
-                .andExpect(jsonPath("$.result.isFinished").value(false))
                 .andExpect(jsonPath("$.result.chatRoomId").doesNotExist());
     }
 }

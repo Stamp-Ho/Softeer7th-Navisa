@@ -6,11 +6,11 @@ import com.navisa.be.chat.dto.response.ChatMessageCountResponse;
 import com.navisa.be.chat.dto.response.ChatMessageSimpleResponse;
 import com.navisa.be.chat.exception.ChatMessageException;
 import com.navisa.be.chat.model.entity.ChatMessage;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
@@ -26,7 +26,7 @@ import java.util.UUID;
 public class ChatMessageServiceFacade {
 
     private final UserQueryService userQueryService;
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileCrudService agentProfileQueryService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final ChatRoomQueryService chatRoomQueryService;
@@ -38,7 +38,7 @@ public class ChatMessageServiceFacade {
         boolean isForeigner = findUser.getUserType().equals(UserType.FILLED_FOREIGNER);
 
         UUID profileId = isForeigner ?
-                foreignerQueryService.findByUserId(findUser.getId()).getId() :
+                foreignerProfileCrudService.findByUserId(findUser.getId()).getId() :
                 agentProfileQueryService.findByUserId(findUser.getId()).getId();
 
         Long count = chatMessageQueryService.findNonReadCountByProfileId(profileId, isForeigner);
@@ -85,7 +85,7 @@ public class ChatMessageServiceFacade {
 
     private UUID findProfileId(User findUser, Long roomId) {
         if (findUser.getUserType().equals(UserType.FILLED_FOREIGNER)) {
-            ForeignerProfile foreignerProfile = foreignerQueryService.findByUserId(findUser.getId());
+            ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByUserId(findUser.getId());
             if (!chatRoomQueryService.isOwnedByProfileIdAndChatRoomId(roomId, foreignerProfile)) {
                 throw new ChatMessageException(ResponseStatus.NOT_ALLOWED_TO_GET_CHAT_MESSAGE);
             }

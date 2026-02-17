@@ -1,7 +1,5 @@
 package com.navisa.be.foreigner.model.entity;
 
-import com.navisa.be.foreigner.dto.ForeignerCareerDto;
-
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,10 +41,6 @@ public class ForeignerCareers extends BaseEntity {
 
     @Column(name = "is_work")
     private boolean isWork;
-
-    public ForeignerCareerDto toDto() {
-        return new ForeignerCareerDto(companyName, jobTitle, startDate, endDate, isWork);
-    }
 
     public void update(String jobTitle, LocalDate endDate, boolean isWork) {
         this.jobTitle = jobTitle;

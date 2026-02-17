@@ -1,7 +1,5 @@
 package com.navisa.be.foreigner.model.entity;
 
-import com.navisa.be.foreigner.dto.ForeignerExpectedCompanyDto;
-
 import com.navisa.be.global.common.model.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -35,10 +33,6 @@ public class ForeignerExpectedCompany extends BaseEntity {
 
     @Column(name = "start_date")
     private LocalDate startDate;
-
-    public ForeignerExpectedCompanyDto toDto() {
-        return new ForeignerExpectedCompanyDto(companyName, jobTitle, startDate);
-    }
 
     public void update(String companyName, String jobTitle, LocalDate startDate) {
         this.companyName = companyName;

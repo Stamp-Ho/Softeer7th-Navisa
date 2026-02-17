@@ -7,13 +7,13 @@ import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomFilterType;
 import com.navisa.be.chat.repository.ChatRoomRepository;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.global.common.model.entity.Nationality;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerExpectedCompany;
 import com.navisa.be.foreigner.model.entity.ForeignerNationality;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserQueryService;
@@ -32,7 +32,7 @@ public class ChatRoomQueryService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserQueryService userQueryService;
     private final AgentBadgeService agentBadgeService;
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
 
     // 외국인이 자신의 채팅방을 조회
     public List<ChatRoom> findChatRoomByProfileId(
@@ -91,7 +91,7 @@ public class ChatRoomQueryService {
         // 행정사는 외국인의 정보를 조회
         if (loginUser.getUserType() == UserType.VALID_AGENT) {
             ForeignerProfile foreignerProfile = chatRoom.getForeignerProfile();
-            ForeignerExpectedCompany expectedCompany = foreignerQueryService.findExpectedCompanyByForeignerProfileId(foreignerProfile.getId());
+            ForeignerExpectedCompany expectedCompany = foreignerProfileCrudService.findExpectedCompanyByForeignerProfileId(foreignerProfile.getId());
             List<Long> nationalityIds = foreignerProfile.getForeignerNationalities().stream()
                     .map(ForeignerNationality::getNationality)
                     .map(Nationality::getId)

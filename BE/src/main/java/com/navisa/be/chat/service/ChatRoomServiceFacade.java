@@ -10,11 +10,11 @@ import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomFilterType;
 import com.navisa.be.chat.model.enums.ProposalStatus;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.global.web.response.ResponseStatus;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
 import com.navisa.be.global.common.model.enums.ImageSize;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
@@ -35,7 +35,7 @@ public class ChatRoomServiceFacade {
 
     private final UserQueryService userQueryService;
     private final ChatRoomQueryService chatRoomQueryService;
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final ProposalService proposalService;
@@ -52,7 +52,7 @@ public class ChatRoomServiceFacade {
 
         // 1. 자신의 프로필 ID 조회
         UUID profileId = isForeigner
-                ? foreignerQueryService.findByUserId(user.getId()).getId()
+                ? foreignerProfileCrudService.findByUserId(user.getId()).getId()
                 : agentProfileCrudService.findByUserId(user.getId()).getId();
 
         // 2. 채팅방 목록 조회 (ExistsNext 확인을 위해 Repository에서 slice.size() + 1개를 가져와야 함)
@@ -155,7 +155,7 @@ public class ChatRoomServiceFacade {
 
     private void validateChatRoomOwnership(User user, ChatRoom chatRoom) {
         UUID profileId = user.getUserType().equals(UserType.FILLED_FOREIGNER)
-                ? foreignerQueryService.findByUserId(user.getId()).getId()
+                ? foreignerProfileCrudService.findByUserId(user.getId()).getId()
                 : agentProfileCrudService.findByUserId(user.getId()).getId(); // 프로필 ID를 먼저 추출
 
         boolean isParticipant = user.getUserType().equals(UserType.FILLED_FOREIGNER)

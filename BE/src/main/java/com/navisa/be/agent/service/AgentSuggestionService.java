@@ -10,7 +10,7 @@ import com.navisa.be.agent.repository.AgentBadgeRepository;
 import com.navisa.be.agent.repository.AgentBadgeSummaryRepository;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.model.enums.ImageSize;
 import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.global.web.response.ResponseStatus;
@@ -35,7 +35,7 @@ public class AgentSuggestionService {
     private final AgentProfileRepository agentProfileRepository;
     private final AgentBadgeService agentBadgeService;
     private final StorageService storageService;
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentBadgeSummaryRepository agentBadgeSummaryRepository;
     private final AgentBadgeRepository agentBadgeRepository;
 
@@ -88,7 +88,7 @@ public class AgentSuggestionService {
         Map<UUID, AgentProfile> agentMap = agentProfileRepository.findAllById(agentIds).stream()
                 .collect(Collectors.toMap(AgentProfile::getId, Function.identity()));
 
-        Map<UUID, ForeignerProfile> foreignerMap = foreignerQueryService.findAllById(foreignerIds).stream()
+        Map<UUID, ForeignerProfile> foreignerMap = foreignerProfileCrudService.findAllById(foreignerIds).stream()
                 .collect(Collectors.toMap(ForeignerProfile::getId, Function.identity()));
 
         // 모든 행정사의 배지 요약 정보 Batch 조회

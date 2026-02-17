@@ -17,7 +17,7 @@ import com.navisa.be.application.service.ApplicationQueryService;
 import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.service.ProposalService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.service.ForeignerQueryService;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.model.enums.ImageSize;
 import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.global.web.response.ResponseStatus;
@@ -39,7 +39,7 @@ public class AgentReviewService {
     private final AgentReviewRepository agentReviewRepository;
     private final AgentProfileRepository agentProfileRepository;
     private final StorageService storageService;
-    private final ForeignerQueryService foreignerQueryService;
+    private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final ProposalService proposalService;
     private final AgentReviewCrudService agentReviewCrudService;
     private final ApplicationEventPublisher eventPublisher;
@@ -87,7 +87,7 @@ public class AgentReviewService {
     }
 
     public void registerAgentReview(String loginUserEmail, CreateAgentReviewRequest request) {
-        ForeignerProfile foreignerProfile = foreignerQueryService.findByEmail(loginUserEmail);
+        ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByEmail(loginUserEmail);
 
         Proposal proposal = proposalService.findLatestProposalByAgentIdAndForeignerId(request.agentId(), foreignerProfile.getId());
 
@@ -143,7 +143,7 @@ public class AgentReviewService {
     }
 
     public void createAgentFeedback(String email, String content) {
-        ForeignerProfile foreignerProfile = foreignerQueryService.findByEmail(email);
+        ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByEmail(email);
 
         Proposal proposal = proposalService.findOngoingOneByForeignerId(foreignerProfile.getId());
 

@@ -1,7 +1,6 @@
 package com.navisa.be.foreigner.model.entity;
 
 import com.navisa.be.global.common.model.entity.BaseEntity;
-import com.navisa.be.foreigner.dto.ForeignerEducationDto;
 import com.navisa.be.foreigner.model.enums.EducationDegreeLevel;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -35,10 +34,6 @@ public class ForeignerEducation extends BaseEntity {
 
     @Column(name = "major_name")
     private String majorName;
-
-    public ForeignerEducationDto toDto() {
-        return new ForeignerEducationDto(schoolName, degreeLevel, majorName);
-    }
 
     public void update(EducationDegreeLevel degreeLevel, String schoolName, String majorName) {
         this.degreeLevel = degreeLevel;
