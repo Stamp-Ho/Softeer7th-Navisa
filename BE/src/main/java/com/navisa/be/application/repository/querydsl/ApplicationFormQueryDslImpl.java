@@ -1,6 +1,6 @@
 package com.navisa.be.application.repository.querydsl;
 
-import com.navisa.be.application.dto.projection.VisaApplicationFormProjection;
+import com.navisa.be.application.dto.projection.ApplicationFormProjection;
 import com.navisa.be.global.web.request.SliceRequest;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -12,43 +12,43 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static com.navisa.be.application.model.entity.QVisaApplicationForm.visaApplicationForm;
+import static com.navisa.be.application.model.entity.QApplicationForm.applicationForm;
 import static com.navisa.be.foreigner.model.entity.QForeignerProfile.foreignerProfile;
 
 @RequiredArgsConstructor
-public class ApplicationFormRepositoryImpl implements ApplicationFormRepositoryQueryDsl{
+public class ApplicationFormQueryDslImpl implements ApplicationFormQueryDsl {
 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<VisaApplicationFormProjection> findAllByNoOffsetAndFilter(UUID agentId, SliceRequest<UUID> slice, Boolean complete) {
+    public List<ApplicationFormProjection> findAllByNoOffsetAndFilter(UUID agentId, SliceRequest<UUID> slice, Boolean complete) {
 
         LocalDateTime lastElementModifiedAt = null;
         if (slice.lastElementId() != null) {
             lastElementModifiedAt = queryFactory
-                    .select(visaApplicationForm.updatedAt)
-                    .from(visaApplicationForm)
-                    .where(visaApplicationForm.id.eq(slice.lastElementId()))
+                    .select(applicationForm.updatedAt)
+                    .from(applicationForm)
+                    .where(applicationForm.id.eq(slice.lastElementId()))
                     .fetchOne();
         }
 
         return queryFactory
-                .select(Projections.constructor(VisaApplicationFormProjection.class,
-                        visaApplicationForm.id,
+                .select(Projections.constructor(ApplicationFormProjection.class,
+                        applicationForm.id,
                         foreignerProfile.nickname,
-                        visaApplicationForm.currentStep,
-                        visaApplicationForm.totalCount,
-                        visaApplicationForm.profileObjectKey,
-                        visaApplicationForm.updatedAt
+                        applicationForm.currentStep,
+                        applicationForm.totalCount,
+                        applicationForm.profileObjectKey,
+                        applicationForm.updatedAt
                 ))
-                .from(visaApplicationForm)
-                .leftJoin(visaApplicationForm.foreignerProfile, foreignerProfile)
+                .from(applicationForm)
+                .leftJoin(applicationForm.foreignerProfile, foreignerProfile)
                 .where(
                         cursorCondition(lastElementModifiedAt, slice.lastElementId()),
                         isDone(complete),
                         isOwnedByAgentId(agentId)
                 )
-                .orderBy(visaApplicationForm.updatedAt.desc(), visaApplicationForm.id.asc())
+                .orderBy(applicationForm.updatedAt.desc(), applicationForm.id.asc())
                 .limit(slice.size() + 1)
                 .fetch();
     }
@@ -63,9 +63,9 @@ public class ApplicationFormRepositoryImpl implements ApplicationFormRepositoryQ
         }
 
         // (수정일 < 마지막수정일) OR (수정일 == 마지막수정일 AND ID > 마지막ID)
-        return visaApplicationForm.updatedAt.lt(lastModifiedAt)
-                .or(visaApplicationForm.updatedAt.eq(lastModifiedAt)
-                        .and(visaApplicationForm.id.gt(lastId)));
+        return applicationForm.updatedAt.lt(lastModifiedAt)
+                .or(applicationForm.updatedAt.eq(lastModifiedAt)
+                        .and(applicationForm.id.gt(lastId)));
     }
 
     private BooleanExpression isDone(Boolean complete) { // complete = true일 때 isDone = true인 경우 조회
@@ -73,7 +73,7 @@ public class ApplicationFormRepositoryImpl implements ApplicationFormRepositoryQ
             return null;
         }
 
-        return visaApplicationForm.isDone.eq(complete);
+        return applicationForm.isDone.eq(complete);
     }
 
     private BooleanExpression isOwnedByAgentId(UUID agentId) {
@@ -81,6 +81,6 @@ public class ApplicationFormRepositoryImpl implements ApplicationFormRepositoryQ
             return Expressions.asBoolean(false).isTrue(); // 혹여나 agentId가 null일 시, 아무것도 조회안되게 제약
         }
 
-        return visaApplicationForm.agentProfile.id.eq(agentId);
+        return applicationForm.agentProfile.id.eq(agentId);
     }
 }

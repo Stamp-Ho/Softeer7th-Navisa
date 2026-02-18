@@ -1,13 +1,11 @@
 package com.navisa.be.application.scheduler;
 
-import com.navisa.be.application.exception.ApplicationException;
-import com.navisa.be.application.model.entity.VisaApplicationForm;
+import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.application.service.ApplicationCommandService;
-import com.navisa.be.application.service.ApplicationEmailService;
-import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.application.service.ApplicationFormForAgentService;
+import com.navisa.be.application.service.ApplicationFormEmailService;
 import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.repository.UserRepository;
+import com.navisa.be.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -21,20 +19,20 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class VisaEmailScheduler {
+public class VisaResultRequestMailScheduler {
 
     private final ApplicationFormRepository applicationFormRepository;
-    private final UserRepository userRepository;
-    private final ApplicationEmailService applicationEmailService;
-    private final ApplicationCommandService applicationCommandService;
+    private final ApplicationFormEmailService applicationFormEmailService;
+    private final ApplicationFormForAgentService applicationFormForAgentService;
+    private final UserQueryService userQueryService;
 
     @Scheduled(cron = "0 0 10 * * *") // 매일 오전 10시
     @SchedulerLock(name = "VisaEmailScheduler_sendFollowUpEmails", lockAtMostFor = "10m", lockAtLeastFor = "2m")
     public void sendFollowUpEmails() {
         LocalDate targetDate = LocalDate.now().minusDays(14);
-        List<VisaApplicationForm> forms = applicationFormRepository.findAllByExportedDate(targetDate);
+        List<ApplicationForm> forms = applicationFormRepository.findAllByExportedDate(targetDate);
 
-        for (VisaApplicationForm form : forms) {
+        for (ApplicationForm form : forms) {
             if (form.getAgentProfile() == null) {
                 log.warn("Form ID: {} 에 배정된 행정사가 없어 메일을 발송하지 않습니다.", form.getId());
                 continue;
@@ -43,17 +41,16 @@ public class VisaEmailScheduler {
             try {
                 UUID userId = form.getAgentProfile().getUserId();
 
-                User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new ApplicationException(ResponseStatus.INVALID_USER));
+                User user = userQueryService.findById(userId);
 
                 String recipientEmail = user.getEmail();
                 String agentName = form.getAgentProfile().getName();
                 UUID formId = form.getId();
 
-                applicationEmailService.sendCareEmail(recipientEmail, agentName)
+                applicationFormEmailService.sendCareEmail(recipientEmail, agentName)
                         .thenAccept(isSuccess -> {
                             if (Boolean.TRUE.equals(isSuccess)) {
-                                applicationCommandService.updateMailSentTime(formId);
+                                applicationFormForAgentService.updateMailSentTime(formId);
                                 log.info("사후 관리 메일 발송 및 기록 완료: {} ({})", agentName, recipientEmail);
                             }
                         });

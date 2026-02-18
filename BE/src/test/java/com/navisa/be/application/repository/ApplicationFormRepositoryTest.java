@@ -2,7 +2,7 @@ package com.navisa.be.application.repository;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentProfileRepository;
-import com.navisa.be.application.model.entity.VisaApplicationForm;
+import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
@@ -66,12 +66,12 @@ class ApplicationFormRepositoryTest extends IntegrationTestSupport {
         createFormWithExportedAt("notdone@test.com", targetDate.atTime(12, 0), false);
 
         // when
-        List<VisaApplicationForm> result = applicationFormRepository.findAllByExportedDate(targetDate);
+        List<ApplicationForm> result = applicationFormRepository.findAllByExportedDate(targetDate);
 
         // then
         assertThat(result).hasSize(2);
         assertThat(result).allMatch(f -> f.getExportedAt().toLocalDate().equals(targetDate));
-        assertThat(result).allMatch(VisaApplicationForm::isDone);
+        assertThat(result).allMatch(ApplicationForm::isDone);
     }
 
     private void createFormWithExportedAt(String email, LocalDateTime exportedAt, boolean isDone) {
@@ -84,7 +84,7 @@ class ApplicationFormRepositoryTest extends IntegrationTestSupport {
         ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(fUser.getId(), ForeignerSearchStatus.REQUESTING));
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수", null, null));
 
-        VisaApplicationForm form = new VisaApplicationForm(agent, foreigner, jobCode, isDone, 100, 0);
+        ApplicationForm form = new ApplicationForm(agent, foreigner, jobCode, isDone, 100, 0);
         ReflectionTestUtils.setField(form, "exportedAt", exportedAt);
         applicationFormRepository.save(form);
     }

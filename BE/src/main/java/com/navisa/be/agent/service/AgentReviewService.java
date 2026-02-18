@@ -12,8 +12,8 @@ import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
 import com.navisa.be.agent.repository.BadgeRepository;
-import com.navisa.be.application.model.entity.VisaApplicationForm;
-import com.navisa.be.application.service.ApplicationQueryService;
+import com.navisa.be.application.model.entity.ApplicationForm;
+import com.navisa.be.application.service.ApplicationFormCrudService;
 import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.service.ProposalService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
@@ -44,8 +44,8 @@ public class AgentReviewService {
     private final AgentReviewCrudService agentReviewCrudService;
     private final ApplicationEventPublisher eventPublisher;
     private final BadgeRepository badgeRepository;
-    private final ApplicationQueryService applicationQueryService;
     private final ReviewReliabilityService reviewReliabilityService;
+    private final ApplicationFormCrudService applicationFormCrudService;
 
     // 행정사 후기 사례 최신순 3개 조회
     @Transactional(readOnly = true)
@@ -129,7 +129,7 @@ public class AgentReviewService {
 
     private void validateApplicationForm(CreateAgentReviewRequest request, ForeignerProfile foreignerProfile) {
         // 첫번째 내보내기 여부 확인
-        VisaApplicationForm form = applicationQueryService.findCurrentApplicationForm(foreignerProfile.getId(), request.agentId());
+        ApplicationForm form = applicationFormCrudService.findCurrentApplicationForm(foreignerProfile.getId(), request.agentId());
 
         if (!form.isDone()) {
             throw new AgentException(ResponseStatus.NOT_ALLOWED_TO_REVIEW);

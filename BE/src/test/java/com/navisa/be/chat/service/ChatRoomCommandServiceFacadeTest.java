@@ -1,7 +1,7 @@
 package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.application.model.entity.VisaApplicationForm;
+import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
@@ -82,7 +82,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
 
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수활동", null, null));
 
-        VisaApplicationForm visaApplicationForm = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile,
+        ApplicationForm applicationForm = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile,
                 foreignerProfile, jobCode, false);
 
         // when
@@ -94,7 +94,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
         Proposal updatedProposal = proposalRepository.findById(proposal.getId()).orElseThrow();
         assertThat(updatedProposal.getStatus()).isEqualTo(ProposalStatus.REJECTED);
 
-        VisaApplicationForm updatedForm = applicationFormRepository.findById(visaApplicationForm.getId()).orElseThrow();
+        ApplicationForm updatedForm = applicationFormRepository.findById(applicationForm.getId()).orElseThrow();
         assertThat(updatedForm.getAgentProfile()).isNull();
     }
 

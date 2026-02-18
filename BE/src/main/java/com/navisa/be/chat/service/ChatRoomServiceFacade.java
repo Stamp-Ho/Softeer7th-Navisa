@@ -1,7 +1,7 @@
 package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.service.AgentProfileCrudService;
-import com.navisa.be.application.service.ApplicationCommandService;
+import com.navisa.be.application.service.ApplicationFormForAgentService;
 import com.navisa.be.chat.dto.projection.ChatMessageNonReadCountProjection;
 import com.navisa.be.chat.dto.projection.ChatRoomProposalStatusProjection;
 import com.navisa.be.chat.dto.response.ChatRoomCardResponse;
@@ -39,9 +39,9 @@ public class ChatRoomServiceFacade {
     private final AgentProfileCrudService agentProfileCrudService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final ProposalService proposalService;
-    private final ApplicationCommandService applicationCommandService;
     private final ChatRoomCommandService chatRoomCommandService;
     private final StorageService storageService;
+    private final ApplicationFormForAgentService applicationFormForAgentService;
 
     public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter,
             SliceRequest<Long> slice) {
@@ -150,7 +150,7 @@ public class ChatRoomServiceFacade {
 
         chatRoomCommandService.updateStatus(chatRoom);
         proposalService.updateProposalOnBlock(chatRoom.getId());
-        applicationCommandService.updateAgentProfileConnection(chatRoom);
+        applicationFormForAgentService.updateAgentProfileConnection(chatRoom);
     }
 
     private void validateChatRoomOwnership(User user, ChatRoom chatRoom) {

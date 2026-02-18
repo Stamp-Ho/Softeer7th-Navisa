@@ -4,7 +4,7 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentReview;
 import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.agent.service.AgentReviewCrudService;
-import com.navisa.be.application.service.ApplicationCommandService;
+import com.navisa.be.application.service.ApplicationFormCrudService;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.service.ChatRoomQueryService;
@@ -20,8 +20,6 @@ import com.navisa.be.foreigner.repository.ForeignerCareersRepository;
 import com.navisa.be.foreigner.repository.ForeignerEducationRepository;
 import com.navisa.be.foreigner.repository.ForeignerExpectedCompanyRepository;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
-import com.navisa.be.global.common.model.entity.Language;
-import com.navisa.be.global.common.model.entity.Nationality;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
@@ -43,11 +41,11 @@ public class ForeignerProfileDetailService {
     private final AgentReviewCrudService agentReviewCrudService;
     private final ChatRoomQueryService chatRoomQueryService;
     private final ProposalService proposalService;
-    private final ApplicationCommandService applicationCommandService;
     private final ForeignerProfileRepository foreignerProfileRepository;
     private final ForeignerEducationRepository foreignerEducationRepository;
     private final ForeignerCareersRepository foreignerCareersRepository;
     private final ForeignerExpectedCompanyRepository foreignerExpectedCompanyRepository;
+    private final ApplicationFormCrudService applicationFormCrudService;
 
     @Transactional(readOnly = true)
     public ForeignerQueryResponse findForeignerTotalInfo(UUID userId) {
@@ -62,22 +60,16 @@ public class ForeignerProfileDetailService {
         ForeignerExpectedCompany expectedCompany = foreignerExpectedCompanyRepository.findByForeignerId(profile.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
 
-        List<Long> nationalityIds = profile.getForeignerNationalities().stream()
-                .map(ForeignerNationality::getNationality).map(Nationality::getId).toList();
-        List<Long> languageIds = profile.getForeignLanguages().stream()
-                .map(ForeignerLanguage::getLanguage).map(Language::getId).toList();
-
         return ForeignerQueryResponse.of(profile, education, careers, expectedCompany);
     }
 
-    public ForeignerDetailResponse findForeignerDetail(ForeignerDetailRequest command) {
-        ForeignerProfile foreignerProfile = foreignerProfileRepository.findById(command.foreignerId())
+    public ForeignerDetailResponse findForeignerDetail(ForeignerDetailRequest request) {
+        ForeignerProfile foreignerProfile = foreignerProfileRepository.findById(request.foreignerId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
 
         List<Long> nationIds = foreignerProfile.getForeignerNationalities().stream().map(ForeignerNationality::getId).toList();
 
-        User user = userQueryService.findById(foreignerProfile.getUserId());
-        User agentUser = userQueryService.findByEmail(command.loginUserEmail());
+        User agentUser = userQueryService.findByEmail(request.loginUserEmail());
 
         AgentProfile agentProfile = agentProfileCrudService.findByUserId(agentUser.getId());
 
@@ -141,7 +133,7 @@ public class ForeignerProfileDetailService {
         Optional<AgentReview> reviewOpt = agentReviewCrudService.findOptionalByProposalId(proposal.getId());
         boolean isReview = reviewOpt.isPresent();
         boolean isFeedback = reviewOpt.map(r -> r.getFeedbackContent() != null).orElse(false);
-        boolean isFinished = applicationCommandService.existsByForeignerProfileIdAndAgentProfileIdAndIsFinishedTrue(profile.getId(), matchedAgentId);
+        boolean isFinished = applicationFormCrudService.existsByForeignerProfileIdAndAgentProfileIdAndIsFinishedTrue(profile.getId(), matchedAgentId);
 
         return new ForeignerProgressResponse(isReview, isFeedback, isFinished, true, proposal.getChatRoom().getId());
     }

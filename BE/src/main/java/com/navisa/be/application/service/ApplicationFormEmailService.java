@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ApplicationEmailService {
+public class ApplicationFormEmailService {
 
     private final JavaMailSender mailSender;
 

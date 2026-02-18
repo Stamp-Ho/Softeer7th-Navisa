@@ -1,11 +1,16 @@
 package com.navisa.be.application.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navisa.be.application.dto.request.VisaApplicationFinishRequest;
-import com.navisa.be.application.dto.request.VisaApplicationSaveRequest;
-import com.navisa.be.application.dto.response.VisaApplicationFinishResponse;
-import com.navisa.be.application.dto.response.VisaApplicationSaveResponse;
-import com.navisa.be.application.service.ApplicationCommandService;
+import com.navisa.be.application.dto.request.ApplicationFormFinishedStatusRequest;
+import com.navisa.be.application.dto.request.ApplicationFormSectionDataRequest;
+import com.navisa.be.application.dto.response.ApplicationFormDetailResponse;
+import com.navisa.be.application.dto.response.ApplicationFormFinishedStatusResponse;
+import com.navisa.be.application.dto.response.ApplicationFormIdResponse;
+import com.navisa.be.application.dto.response.RecentApplicationFormsResponse;
+import com.navisa.be.application.service.ApplicationFormForForeignerService;
+import com.navisa.be.application.service.ApplicationFormForAgentService;
+import com.navisa.be.application.service.ApplicationFormRegistrationService;
+import com.navisa.be.application.service.ApplicationFormSearchService;
 import com.navisa.be.auth.interceptor.AuthInterceptor;
 import com.navisa.be.auth.interceptor.UserTypeCheckInterceptor;
 import com.navisa.be.auth.jwt.JwtProvider;
@@ -26,22 +31,24 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ApplicationCommandController.class)
+import com.navisa.be.global.web.annotation.LoginUser;
+
+@WebMvcTest(ApplicationFormController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class ApplicationCommandControllerTest {
+class ApplicationFormControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
@@ -50,7 +57,10 @@ class ApplicationCommandControllerTest {
     protected ObjectMapper objectMapper;
 
     @MockitoBean
-    private ApplicationCommandService applicationCommandService;
+    private ApplicationFormForForeignerService applicationFormForForeignerService;
+
+    @MockitoBean
+    private ApplicationFormForAgentService applicationFormForAgentService;
 
     @MockitoBean
     private AuthService authService;
@@ -69,6 +79,11 @@ class ApplicationCommandControllerTest {
 
     @MockitoBean
     private LoginUserResolver loginUserResolver;
+    @MockitoBean
+    private ApplicationFormRegistrationService applicationFormRegistrationService;
+
+    @MockitoBean
+    private ApplicationFormSearchService applicationFormSearchService;
 
     @TestConfiguration
     static class TestConfig implements WebMvcConfigurer {
@@ -85,7 +100,8 @@ class ApplicationCommandControllerTest {
     void setUp() throws Exception {
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(userTypeCheckInterceptor.preHandle(any(), any(), any())).willReturn(true);
-        given(loginUserResolver.supportsParameter(any())).willReturn(true);
+        given(loginUserResolver.supportsParameter(argThat(p -> p.hasParameterAnnotation(LoginUser.class))))
+                .willReturn(true);
     }
 
     @Test
@@ -100,12 +116,13 @@ class ApplicationCommandControllerTest {
 
         Map<String, Object> section1 = Map.of(
                 "sectionId", 1,
-                "fields", List.of(Map.of("fieldId", 101, "value", "Hong Gil Dong"))
-        );
-        VisaApplicationSaveRequest request = new VisaApplicationSaveRequest(150, 10, List.of(section1));
-        VisaApplicationSaveResponse response = new VisaApplicationSaveResponse(visaFormId, updatedAt);
+                "fields", List.of(Map.of("fieldId", 101, "value", "Hong Gil Dong")));
+        ApplicationFormSectionDataRequest request = new ApplicationFormSectionDataRequest(150, 10,
+                List.of(section1));
+        ApplicationFormIdResponse response = new ApplicationFormIdResponse(visaFormId, updatedAt);
 
-        given(applicationCommandService.saveVisaForm(eq(email), eq(visaFormId), any(VisaApplicationSaveRequest.class)))
+        given(applicationFormRegistrationService.saveApplicationForm(eq(email), eq(visaFormId),
+                any(ApplicationFormSectionDataRequest.class)))
                 .willReturn(response);
 
         // when & then
@@ -128,8 +145,8 @@ class ApplicationCommandControllerTest {
 
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
 
-        VisaApplicationSaveResponse response = new VisaApplicationSaveResponse(visaFormId, now);
-        given(applicationCommandService.saveProfilePhoto(eq(email), eq(visaFormId), eq(objectKey)))
+        ApplicationFormIdResponse response = new ApplicationFormIdResponse(visaFormId, now);
+        given(applicationFormRegistrationService.saveProfilePhoto(eq(email), eq(visaFormId), eq(objectKey)))
                 .willReturn(response);
 
         Map<String, String> request = Map.of("profileObjectKey", objectKey);
@@ -152,8 +169,8 @@ class ApplicationCommandControllerTest {
 
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
 
-        VisaApplicationSaveResponse response = new VisaApplicationSaveResponse(visaFormId, now);
-        given(applicationCommandService.updateApplicationStatus(eq(email), eq(visaFormId), eq(true)))
+        ApplicationFormIdResponse response = new ApplicationFormIdResponse(visaFormId, now);
+        given(applicationFormForAgentService.updateApplicationStatus(eq(email), eq(visaFormId), eq(true)))
                 .willReturn(response);
 
         Map<String, Boolean> request = Map.of("isDone", true);
@@ -178,11 +195,11 @@ class ApplicationCommandControllerTest {
 
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
 
-        VisaApplicationFinishResponse response = new VisaApplicationFinishResponse(formId, newFormId, now);
-        given(applicationCommandService.finishApplication(eq(email), eq(formId), eq(true)))
+        ApplicationFormFinishedStatusResponse response = new ApplicationFormFinishedStatusResponse(formId, newFormId, now);
+        given(applicationFormForAgentService.finishApplication(eq(email), eq(formId), eq(true)))
                 .willReturn(response);
 
-        VisaApplicationFinishRequest request = new VisaApplicationFinishRequest(true);
+        ApplicationFormFinishedStatusRequest request = new ApplicationFormFinishedStatusRequest(true);
 
         // when & then
         mockMvc.perform(patch("/api/application-forms/{formId}/status/finished", formId)
@@ -204,9 +221,9 @@ class ApplicationCommandControllerTest {
 
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
 
-        VisaApplicationFinishResponse response = new VisaApplicationFinishResponse(oldFormId, newFormId, now);
+        ApplicationFormFinishedStatusResponse response = new ApplicationFormFinishedStatusResponse(oldFormId, newFormId, now);
 
-        given(applicationCommandService.finishByForeigner(eq(email)))
+        given(applicationFormForForeignerService.finishByForeigner(eq(email)))
                 .willReturn(response);
 
         // when & then
@@ -215,5 +232,62 @@ class ApplicationCommandControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.closedVisaFormId").value(oldFormId.toString()))
                 .andExpect(jsonPath("$.result.newVisaFormId").value(newFormId.toString()));
+    }
+
+    @Test
+    @DisplayName("로그인한 행정사는 최근 수정한 비자 신청서 목록을 조회할 수 있다.")
+    void getRecentVisaForms() throws Exception {
+        // given
+        String email = "agent@navisa.com";
+        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
+
+        RecentApplicationFormsResponse summary = new RecentApplicationFormsResponse(
+                UUID.randomUUID(), "Nick Judy", false, 105, "img.png", LocalDateTime.now());
+        given(applicationFormSearchService.getRecentApplicationForms(email)).willReturn(List.of(summary));
+
+        // when & then
+        mockMvc.perform(get("/api/application-forms/recent-applications")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result[0].title").value("Nick Judy"));
+    }
+
+    @Test
+    @DisplayName("외국인 최신 폼 조회 시 200을 반환한다.")
+    void getLatestVisaForm_Returns200() throws Exception {
+        // given
+        String email = "foreigner@navisa.com";
+        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
+
+        ApplicationFormDetailResponse response = new ApplicationFormDetailResponse(
+                UUID.randomUUID(), "img.png", false, LocalDateTime.now(), 150, 10,
+                List.of(Collections.emptyMap()));
+        given(applicationFormSearchService.getLatestApplicationFormForForeigner(email)).willReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/application-forms/foreigner")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("행정사는 특정 신청서 ID로 상세 정보를 조회할 수 있다.")
+    void getVisaFormForAgent_Success() throws Exception {
+        // given
+        String email = "agent@navisa.com";
+        UUID formId = UUID.randomUUID();
+        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
+
+        ApplicationFormDetailResponse response = new ApplicationFormDetailResponse(
+                formId, "img.png", false, LocalDateTime.now(), 150, 80,
+                List.of(Collections.emptyMap()));
+        given(applicationFormSearchService.getApplicationFormForAgent(eq(email), eq(formId)))
+                .willReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/application-forms/agent/{formId}", formId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.applicationFormId").value(formId.toString()));
     }
 }

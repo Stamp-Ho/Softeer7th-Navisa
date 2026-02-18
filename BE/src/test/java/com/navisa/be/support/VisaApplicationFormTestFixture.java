@@ -1,7 +1,7 @@
 package com.navisa.be.support;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.application.model.entity.VisaApplicationForm;
+import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
@@ -18,9 +18,9 @@ public class VisaApplicationFormTestFixture {
 
     private final ApplicationFormRepository applicationFormRepository;
 
-    public VisaApplicationForm createVisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
-                                                                 JobCode jobCode, boolean isDone) {
-        VisaApplicationForm form = new VisaApplicationForm(
+    public ApplicationForm createVisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
+                                                     JobCode jobCode, boolean isDone) {
+        ApplicationForm form = new ApplicationForm(
                 agentProfile,
                 foreignerProfile,
                 jobCode,

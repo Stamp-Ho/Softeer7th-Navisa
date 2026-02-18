@@ -2,7 +2,7 @@ package com.navisa.be.application.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentProfileRepository;
-import com.navisa.be.application.model.entity.VisaApplicationForm;
+import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.common.repository.JobCodeRepository;
@@ -34,16 +34,16 @@ import static org.mockito.Mockito.*;
 
 @Slf4j
 @Transactional
-public class ApplicationEmailServiceTest extends IntegrationTestSupport {
+public class ApplicationFormEmailServiceTest extends IntegrationTestSupport {
 
     @Autowired
-    private ApplicationCommandService applicationCommandService;
+    private ApplicationFormForAgentService applicationFormForAgentService;
 
     @Autowired
-    private ApplicationEmailService applicationEmailService;
+    private ApplicationFormEmailService applicationFormEmailService;
 
     @Autowired
-    private ApplicationFormRepository visaApplicationFormRepository;
+    private ApplicationFormRepository applicationFormRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -69,16 +69,16 @@ public class ApplicationEmailServiceTest extends IntegrationTestSupport {
         // given
         String email = "agent@navisa.com";
         User loginUser = saveUser(email, UserType.VALID_AGENT);
-        VisaApplicationForm form = setupInitialForm(loginUser);
+        ApplicationForm form = setupInitialForm(loginUser);
         UUID visaFormId = form.getId();
 
         // when
-        applicationCommandService.updateApplicationStatus(email, visaFormId, true);
+        applicationFormForAgentService.updateApplicationStatus(email, visaFormId, true);
         em.flush();
         em.clear();
 
         // then
-        VisaApplicationForm updatedForm = visaApplicationFormRepository.findById(visaFormId).orElseThrow();
+        ApplicationForm updatedForm = applicationFormRepository.findById(visaFormId).orElseThrow();
         assertThat(updatedForm.isDone()).isTrue();
         assertThat(updatedForm.getExportedAt()).isNotNull();
     }
@@ -89,21 +89,21 @@ public class ApplicationEmailServiceTest extends IntegrationTestSupport {
         // given
         String email = "agent@navisa.com";
         User loginUser = saveUser(email, UserType.VALID_AGENT);
-        VisaApplicationForm form = setupInitialForm(loginUser);
+        ApplicationForm form = setupInitialForm(loginUser);
 
-        applicationCommandService.updateApplicationStatus(email, form.getId(), true);
+        applicationFormForAgentService.updateApplicationStatus(email, form.getId(), true);
         em.flush();
         em.clear();
 
-        java.time.LocalDateTime firstExportedAt = visaApplicationFormRepository.findById(form.getId()).get().getExportedAt();
+        java.time.LocalDateTime firstExportedAt = applicationFormRepository.findById(form.getId()).get().getExportedAt();
 
         // when
-        applicationCommandService.updateApplicationStatus(email, form.getId(), true);
+        applicationFormForAgentService.updateApplicationStatus(email, form.getId(), true);
         em.flush();
         em.clear();
 
         // then
-        java.time.LocalDateTime secondExportedAt = visaApplicationFormRepository.findById(form.getId()).get().getExportedAt();
+        java.time.LocalDateTime secondExportedAt = applicationFormRepository.findById(form.getId()).get().getExportedAt();
         assertThat(secondExportedAt).isEqualTo(firstExportedAt);
     }
 
@@ -115,7 +115,7 @@ public class ApplicationEmailServiceTest extends IntegrationTestSupport {
         given(mailSender.createMimeMessage()).willReturn(mimeMessage);
 
         // when
-        CompletableFuture<Boolean> result = applicationEmailService.sendCareEmail("agent@test.com", "김행정");
+        CompletableFuture<Boolean> result = applicationFormEmailService.sendCareEmail("agent@test.com", "김행정");
         result.join();
 
         // then
@@ -124,12 +124,12 @@ public class ApplicationEmailServiceTest extends IntegrationTestSupport {
         verifyNoMoreInteractions(mailSender);
     }
 
-    private VisaApplicationForm setupInitialForm(User owner) {
+    private ApplicationForm setupInitialForm(User owner) {
         AgentProfile agent = saveAgentProfile(owner.getId());
         User foreignerUser = saveUser("foreigner_owner@test.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(foreignerUser.getId(), null));
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수활동", null, null));
-        return visaApplicationFormRepository.save(new VisaApplicationForm(agent, foreigner, jobCode, false, 100, 0));
+        return applicationFormRepository.save(new ApplicationForm(agent, foreigner, jobCode, false, 100, 0));
     }
 
     private User saveUser(String email, UserType type) {

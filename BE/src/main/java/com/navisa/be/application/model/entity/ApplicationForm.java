@@ -19,14 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static java.lang.Boolean.TRUE;
-
 @Entity
 @Table(name = "visa_application_form")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public class VisaApplicationForm extends BaseEntity {
+public class ApplicationForm extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -103,8 +101,8 @@ public class VisaApplicationForm extends BaseEntity {
     @Column(name = "invite_information", columnDefinition = "json")
     private Map<String, Object> inviteInformation;
 
-    public VisaApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
-                               JobCode jobCode, Boolean isDone, Integer totalCount, Integer currentStep) {
+    public ApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
+                           JobCode jobCode, Boolean isDone, Integer totalCount, Integer currentStep) {
         this.agentProfile = agentProfile;
         this.foreignerProfile = foreignerProfile;
         this.jobCode = jobCode;
@@ -146,7 +144,7 @@ public class VisaApplicationForm extends BaseEntity {
 
     public void updateStatus(boolean isDone) {
         this.isDone = isDone;
-        if (TRUE.equals(isDone) && this.exportedAt == null) {
+        if (isDone && this.exportedAt == null) {
             this.exportedAt = LocalDateTime.now();
         }
     }
@@ -172,8 +170,8 @@ public class VisaApplicationForm extends BaseEntity {
     }
 
     // 기존 데이터를 기반으로 새 신청서 생성 메서드
-    public static VisaApplicationForm createRenewalForm(VisaApplicationForm oldForm) {
-        VisaApplicationForm nextForm = new VisaApplicationForm();
+    public static ApplicationForm createRenewalForm(ApplicationForm oldForm) {
+        ApplicationForm nextForm = new ApplicationForm();
 
         // 초기화가 필요한 필드
         nextForm.agentProfile = null;

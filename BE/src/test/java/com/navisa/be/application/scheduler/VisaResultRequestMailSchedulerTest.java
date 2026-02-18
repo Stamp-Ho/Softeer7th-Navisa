@@ -2,9 +2,9 @@ package com.navisa.be.application.scheduler;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentProfileRepository;
-import com.navisa.be.application.model.entity.VisaApplicationForm;
+import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.application.service.ApplicationEmailService;
+import com.navisa.be.application.service.ApplicationFormEmailService;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
@@ -31,10 +31,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @Transactional
-class VisaEmailSchedulerTest extends IntegrationTestSupport {
+class VisaResultRequestMailSchedulerTest extends IntegrationTestSupport {
 
     @Autowired
-    private VisaEmailScheduler visaEmailScheduler;
+    private VisaResultRequestMailScheduler visaResultRequestMailScheduler;
 
     @Autowired
     private ApplicationFormRepository applicationFormRepository;
@@ -52,7 +52,7 @@ class VisaEmailSchedulerTest extends IntegrationTestSupport {
     private JobCodeRepository jobCodeRepository;
 
     @MockitoSpyBean
-    private ApplicationEmailService applicationEmailService;
+    private ApplicationFormEmailService applicationFormEmailService;
 
     @Test
     @DisplayName("스케줄러 실행 시 14일 전 내보내기 된 서류 담당자에게 메일을 발송한다.")
@@ -70,13 +70,13 @@ class VisaEmailSchedulerTest extends IntegrationTestSupport {
         createFormWithExportedAt("other@navisa.site", "이행정", today.minusDays(13).atStartOfDay(), true);
 
         // when
-        visaEmailScheduler.sendFollowUpEmails();
+        visaResultRequestMailScheduler.sendFollowUpEmails();
 
         // then
-        verify(applicationEmailService, times(1))
+        verify(applicationFormEmailService, times(1))
                 .sendCareEmail(eq(agentEmail), eq(agentName));
 
-        verify(applicationEmailService, never())
+        verify(applicationFormEmailService, never())
                 .sendCareEmail(eq("other@navisa.site"), anyString());
     }
 
@@ -90,7 +90,7 @@ class VisaEmailSchedulerTest extends IntegrationTestSupport {
         ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(fUser.getId(), ForeignerSearchStatus.REQUESTING));
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수", null, null));
 
-        VisaApplicationForm form = new VisaApplicationForm(agent, foreigner, jobCode, isDone, 100, 0);
+        ApplicationForm form = new ApplicationForm(agent, foreigner, jobCode, isDone, 100, 0);
         ReflectionTestUtils.setField(form, "exportedAt", exportedAt);
         applicationFormRepository.save(form);
     }
