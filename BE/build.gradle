@@ -87,6 +87,10 @@ dependencies {
 
     // Jackson extension for Java 8 time
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // ShedLock
+    implementation 'net.javacrumbs.shedlock:shedlock-spring:7.6.0'
+    implementation 'net.javacrumbs.shedlock:shedlock-provider-redis-spring:7.6.0'
 }
 
 tasks.named('test') {

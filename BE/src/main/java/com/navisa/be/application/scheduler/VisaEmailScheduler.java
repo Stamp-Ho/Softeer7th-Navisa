@@ -10,9 +10,9 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +29,7 @@ public class VisaEmailScheduler {
     private final ApplicationCommandService applicationCommandService;
 
     @Scheduled(cron = "0 0 10 * * *") // 매일 오전 10시
-    @Transactional
+    @SchedulerLock(name = "VisaEmailScheduler_sendFollowUpEmails", lockAtMostFor = "10m", lockAtLeastFor = "2m")
     public void sendFollowUpEmails() {
         LocalDate targetDate = LocalDate.now().minusDays(14);
         List<VisaApplicationForm> forms = applicationFormRepository.findAllByExportedDate(targetDate);

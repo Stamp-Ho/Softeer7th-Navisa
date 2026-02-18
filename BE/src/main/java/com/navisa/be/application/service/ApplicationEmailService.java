@@ -22,7 +22,7 @@ public class ApplicationEmailService {
     @Value("${navisa.mail.care-template}")
     private String careMailTemplate;
 
-    @Async
+    @Async("mailExecutor")
     public CompletableFuture<Boolean> sendCareEmail(String recipientEmail, String agentName) {
         try {
             String safeAgentName = HtmlUtils.htmlEscape(agentName);

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 @Component
 @RequiredArgsConstructor
@@ -23,11 +23,10 @@ public class ActivityScoreScheduler {
     private final AgentProfileRepository agentProfileRepository;
     private final ActivityDecayCalculator activityDecayCalculator;
 
-    @Scheduled(cron = "0 0 4 * * *") // 매일 새벽 4시
+    @Scheduled(cron = "0 0 4 * * *") // 매일 새벽 4시마다 실행
+    @SchedulerLock(name = "ActivityScoreScheduler_updateAgentActivityScores", lockAtMostFor = "10m", lockAtLeastFor = "2m")
     @Transactional
     public void updateAgentActivityScores() {
-        log.info("행정사 활동 점수 갱신 스케줄러 시작");
-
         List<AgentProfile> profiles = agentProfileRepository.findAllValidAgentProfiles();
         ZonedDateTime now = ZonedDateTime.now();
 
@@ -45,8 +44,7 @@ public class ActivityScoreScheduler {
             double newScore = activityDecayCalculator.calculateDailyScore(
                     profile.getActiveScore(),
                     inactiveDays,
-                    daysSinceReconnect
-            );
+                    daysSinceReconnect);
 
             profile.updateActiveScore(newScore);
         }
@@ -55,7 +53,9 @@ public class ActivityScoreScheduler {
     }
 
     private int calculateDaysBetween(ZonedDateTime startAt, ZonedDateTime endAt) {
-        if (startAt == null) return 0;
+        if (startAt == null) {
+            return 0;
+        }
         int days = (int) Duration.between(startAt, endAt).toDays();
         return Math.max(days, 0);
     }
