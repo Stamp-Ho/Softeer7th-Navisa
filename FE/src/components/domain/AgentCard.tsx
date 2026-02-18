@@ -51,12 +51,12 @@ const AgentCard = ({
             </a>
             {userType !== "NOT_AUTHED" ? (
               <ol className="flex flex-row gap-1">
-                {agent.agentSpecialityTop2.length === 0 && (
+                {agent.agentSpecialityTop2?.length === 0 && (
                   <Tag type="small_fill_gray">
                     전문분야를 선택하지 않은 행정사입니다.
                   </Tag>
                 )}
-                {agent.agentSpecialityTop2.slice(0, 2).map((jobId) => (
+                {agent.agentSpecialityTop2?.slice(0, 2).map((jobId) => (
                   <Tag
                     key={`agent_special_job_${jobId}`}
                     type={"small_fill_violet_max"}
@@ -64,9 +64,9 @@ const AgentCard = ({
                     {jobList[jobId]}
                   </Tag>
                 ))}
-                {agent.agentSpecialityTop2.length > 2 && (
+                {(agent.agentSpecialityTop2?.length ?? 0) > 2 && (
                   <Tag type="small_fill_gray">
-                    +{agent.agentSpecialityTop2.length - 2}
+                    {(agent.agentSpecialityTop2?.length ?? 0) - 2}
                   </Tag>
                 )}
               </ol>

@@ -17,6 +17,7 @@ const ChatBubble = ({
   message,
   opponentName,
   myName,
+  isAgent,
   onModalAction,
   showReplyButton,
   isRead,
@@ -30,9 +31,7 @@ const ChatBubble = ({
         {/* 내 메시지일 때 시간/읽음 표시 (좌측) */}
         <div className="flex flex-col gap-[2px] justify-end items-end caption-l-regular text-text-sub">
           {isSentByMe && !isRead && <div>안 읽음</div>}
-          {isSentByMe && isLast && (
-            <div>{CalcChattedTime(message.createdAt)}</div>
-          )}
+          {isSentByMe && isLast && <div>{CalcChattedTime(message.sentAt)}</div>}
         </div>
 
         <div
@@ -48,7 +47,7 @@ const ChatBubble = ({
         {/* 상대 메시지일 때 시간 표시 (우측) */}
         <div className="flex flex-col gap-[2px] caption-l-regular text-text-sub">
           {!isSentByMe && isLast && (
-            <div>{CalcChattedTime(message.createdAt)}</div>
+            <div>{CalcChattedTime(message.sentAt)}</div>
           )}
         </div>
       </div>
@@ -62,7 +61,7 @@ const ChatBubble = ({
         type={type as any}
         onModalAction={onModalAction}
         senderName={isSentByMe ? myName : opponentName}
-        receiverName={isSentByMe ? opponentName : myName}
+        agentName={isAgent ? myName : opponentName}
         isSentByMe={isSentByMe}
         showReplyButton={showReplyButton}
       />

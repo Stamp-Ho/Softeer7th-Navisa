@@ -1,10 +1,14 @@
+import { usePostBlocked } from "../../../../api/mutations/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
 type ProposalParams = {
   onAnswer: (num: number) => void;
+  roomId: number;
 };
 
-const ChatModalBlock = ({ onAnswer }: ProposalParams) => {
+const ChatModalBlock = ({ onAnswer, roomId }: ProposalParams) => {
+  const { mutate: blockUser } = usePostBlocked(roomId);
+
   return (
     <div className="flex flex-col gap-8 items-center w-full">
       <div className="flex flex-col gap-2 items-center">
@@ -19,7 +23,14 @@ const ChatModalBlock = ({ onAnswer }: ProposalParams) => {
         type="primary"
         size="large"
         className="w-full"
-        onClick={() => onAnswer(0)}
+        onClick={() => {
+          blockUser(undefined, {
+            onSuccess: () => onAnswer(0),
+            onError: () => {
+              console.log("차단에 실패했습니다.");
+            },
+          });
+        }}
       >
         차단하기
       </Button>

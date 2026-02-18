@@ -7,20 +7,20 @@ import ChatSystemMessageBackground from "../../../../../assets/ChatSystemMessage
 type ChatSystemMessageParams = {
   type: "PROPOSAL" | "ACCEPTED" | "REJECTED" | "CANCELED";
   senderName?: string;
-  receiverName?: string;
   date?: string;
   isSentByMe?: boolean;
   onModalAction: (num: number) => void;
   showReplyButton?: boolean;
+  agentName: string;
 };
 
 const ChatSystemMessage = ({
   type,
   senderName,
-  receiverName,
   isSentByMe,
   onModalAction,
   showReplyButton,
+  agentName,
 }: ChatSystemMessageParams) => {
   switch (type) {
     case "PROPOSAL":
@@ -96,8 +96,8 @@ const ChatSystemMessage = ({
             <div className="flex flex-col gap-[1px]">
               <div className="body-l-bold">수임을 취소했어요.</div>
               <div className="body-s-medium">
-                {receiverName} 행정사님은 더 이상 의뢰인의 비자 신청서를 작성할
-                수 없어요.
+                {agentName} 행정사님은 더 이상 의뢰인의 비자 신청서를 작성할 수
+                없어요.
               </div>
             </div>
           </div>

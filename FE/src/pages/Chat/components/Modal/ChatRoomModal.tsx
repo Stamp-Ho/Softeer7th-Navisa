@@ -29,7 +29,9 @@ const ChatRoomModal = ({
       {modalView === 3 && (
         <ChatModalReply onAnswer={onModalAction} roomId={roomId} />
       )}
-      {modalView === 4 && <ChatModalBlock onAnswer={onModalAction} />}
+      {modalView === 4 && (
+        <ChatModalBlock onAnswer={onModalAction} roomId={roomId} />
+      )}
     </Modal>
   );
 };

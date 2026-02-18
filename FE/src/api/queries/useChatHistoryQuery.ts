@@ -1,24 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import useApiClient from "../../hooks/useApiClient";
 import { chatService } from "../services/chat";
-import { useAuth } from "../../contexts/AuthContextProvider";
-import type { ChatHistoryResponse } from "../types/chat";
+import type { ChatHistoryResponse, ChatPageResponse } from "../types/chat";
 
 export const useChatHistoryQuery = (chatRoomId: number) => {
   const { apiClient } = useApiClient();
-  const { accessToken } = useAuth();
 
-  return useQuery<ChatHistoryResponse[]>({
+  return useInfiniteQuery<ChatPageResponse<ChatHistoryResponse>>({
     queryKey: ["chatHistory", chatRoomId],
-    queryFn: async () => {
+    queryFn: async ({ pageParam }) => {
       const res = await chatService.getChatHistory(
         apiClient,
         chatRoomId,
-        accessToken,
+        pageParam !== undefined
+          ? { lastElementId: pageParam as number }
+          : undefined,
       );
-      return res.result.content;
+      // result 구조 그대로 반환
+      return res.result;
     },
-    enabled: !!accessToken && chatRoomId > 0,
-    retry: false, // 에러 시 재시도 금지
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.existsNext || !lastPage.lastElementId) return undefined;
+      return lastPage.lastElementId;
+    },
+    enabled: chatRoomId > 0,
+    retry: false,
   });
 };

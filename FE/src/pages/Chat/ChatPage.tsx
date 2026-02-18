@@ -48,10 +48,14 @@ const ChatPage = () => {
   const matchedUnreadCount = matchedUnreadCountData?.count ?? 0;
 
   const {
-    data: chatRooms = [],
+    data,
     isLoading: isChatRoomsLoading,
     isError: isChatRoomsError,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
   } = useChatRoomsQuery(selectedTab);
+  const chatRooms = data?.pages.flatMap((page) => page.content) ?? [];
 
   // 채팅방 목록 실시간 연동 (수임상태, 안읽음 개수)
   const { syncedChatRooms, realTimeTotalUnread } = useSyncedChatRooms({
@@ -154,6 +158,9 @@ const ChatPage = () => {
               chatRooms={isChatRoomsError ? [] : syncedChatRooms}
               onSelectChat={onSelectChat}
               selectedChatRoomId={selectedChatRoomId}
+              fetchNextPage={fetchNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              hasNextPage={hasNextPage ?? false}
             />
           )}
         </div>

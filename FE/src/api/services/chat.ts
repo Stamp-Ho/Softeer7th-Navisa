@@ -1,13 +1,16 @@
 import type { apiClientType } from "../../hooks/useApiClient";
 import type {
   ChatHistoryResponse,
+  ChatPageResponse,
+  ChatParticipantsInfo,
   ChatRoomFilter,
   ChatRoomResponse,
 } from "../types/chat";
-import type { BaseResponse, PageResponse } from "../types/common";
+import type { BaseResponse } from "../types/common";
 import type { Send } from "../websocket/types";
 
 export const chatService = {
+  // 채팅방 생성
   createNewChatRoom: (
     api: apiClientType,
     data: {
@@ -17,19 +20,29 @@ export const chatService = {
     },
   ) => api.post<BaseResponse<number>>(`/api/chatroom`, data),
 
+  // 특정 채팅방 참여자 정보 조회
+  getParticipantsInfo: async (apiClient: apiClientType, roomId: number) => {
+    return await apiClient.get<BaseResponse<ChatParticipantsInfo>>(
+      `/api/chatrooms/${roomId}/participants-info`,
+    );
+  },
+
   // 채팅방 목록 조회 (필터: unread | matched)
   getChatRooms: async (
     apiClient: apiClientType,
-    filter: ChatRoomFilter,
-    accessToken: string,
+    filter?: ChatRoomFilter,
+    params?: { lastElementId?: number; size?: number },
   ) => {
-    const query = filter === "all" ? "" : `?filter=${filter}`;
-
-    return await apiClient.get<BaseResponse<PageResponse<ChatRoomResponse>>>(
-      `/api/chatrooms${query}`,
-      undefined,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+    const requestParams = Object.fromEntries(
+      Object.entries({
+        ...params,
+        filter: filter === "all" ? undefined : filter,
+      }).filter(([, v]) => v !== undefined),
     );
+
+    return await apiClient.get<
+      BaseResponse<ChatPageResponse<ChatRoomResponse>>
+    >(`/api/chatrooms`, requestParams);
   },
 
   getUnreadCount: async (apiClient: apiClientType, accessToken: string) => {
@@ -54,13 +67,11 @@ export const chatService = {
   getChatHistory: async (
     apiClient: apiClientType,
     chatRoomId: number,
-    accessToken: string,
+    params?: { lastElementId?: number },
   ) => {
-    return await apiClient.get<BaseResponse<PageResponse<ChatHistoryResponse>>>(
-      `/api/chatroom/${chatRoomId}/messages`,
-      undefined,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
-    );
+    return await apiClient.get<
+      BaseResponse<ChatPageResponse<ChatHistoryResponse>>
+    >(`/api/chatroom/${chatRoomId}/messages`, params);
   },
 
   postProposal: (api: apiClientType, roomId: number, data: Send) =>
@@ -83,4 +94,7 @@ export const chatService = {
       `/api/chatroom/${roomId}/proposal/canceled`,
       data,
     ),
+
+  postBlocked: (api: apiClientType, roomId: number) =>
+    api.post<BaseResponse<string>>(`/api/chatroom/${roomId}/block`),
 };

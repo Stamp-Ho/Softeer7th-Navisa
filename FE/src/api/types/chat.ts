@@ -36,3 +36,25 @@ export interface ChatHistoryResponse {
   createdAt: string;
   isRead: boolean;
 }
+
+export interface ChatPageResponse<T> {
+  content: T[];
+  existsNext: boolean;
+  lastElementId: number;
+}
+
+// 특정 채팅방 참여자 정보 조회
+export interface ChatParticipantsInfo {
+  agentInfo: {
+    agentId: string;
+    top2BadgeIds: number[];
+    name: string;
+  };
+  foreignerInfo: {
+    foreignerId: string;
+    nickname: string;
+    expectedJob: string;
+    expectedStartDate: string;
+    nationalityIds: number[];
+  };
+}

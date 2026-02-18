@@ -1,24 +1,34 @@
-import { useQuery } from "@tanstack/react-query";
-import type { ChatRoomFilter, ChatRoomResponse } from "../types/chat";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import type {
+  ChatPageResponse,
+  ChatRoomFilter,
+  ChatRoomResponse,
+} from "../types/chat";
 import useApiClient from "../../hooks/useApiClient";
 import { chatService } from "../services/chat";
-import { useAuth } from "../../contexts/AuthContextProvider";
+
+const PAGE_SIZE = 10;
 
 export const useChatRoomsQuery = (filter: ChatRoomFilter = "all") => {
   const { apiClient } = useApiClient();
-  const { accessToken } = useAuth();
 
-  return useQuery<ChatRoomResponse[]>({
+  return useInfiniteQuery<ChatPageResponse<ChatRoomResponse>>({
     queryKey: ["chatRooms", filter],
-    queryFn: async () => {
+    queryFn: async ({ pageParam }) => {
       const res = await chatService.getChatRooms(
         apiClient,
         filter,
-        accessToken,
+        pageParam !== undefined
+          ? { lastElementId: pageParam as number, size: PAGE_SIZE }
+          : undefined,
       );
-      return res?.result?.content ?? [];
+      return res.result;
     },
-    enabled: !!accessToken,
-    retry: false, // 에러 시 재시도 금지
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.existsNext) return undefined;
+      return lastPage.lastElementId ?? undefined;
+    },
+    retry: false,
   });
 };

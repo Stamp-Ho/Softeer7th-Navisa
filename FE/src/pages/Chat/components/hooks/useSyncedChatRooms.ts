@@ -59,7 +59,7 @@ export const useSyncedChatRooms = ({
           lastMessage: EXCLUDE_FROM_LAST_MESSAGE.has(msg.type)
             ? ""
             : msg.content,
-          lastChattedAt: msg.createdAt,
+          lastChattedAt: msg.sentAt,
           hasNewMessage: false,
         });
       }
@@ -69,11 +69,11 @@ export const useSyncedChatRooms = ({
       // 마지막 메시지 갱신
       // 더 최신 createdAt이면 덮어쓰기
       if (
-        msg.createdAt > roomData.lastChattedAt &&
+        msg.sentAt > roomData.lastChattedAt &&
         !EXCLUDE_FROM_LAST_MESSAGE.has(msg.type)
       ) {
         roomData.lastMessage = msg.content;
-        roomData.lastChattedAt = msg.createdAt;
+        roomData.lastChattedAt = msg.sentAt;
       }
 
       // 상대방 메시지 & 현재 보고 있는 방이 아닐 경우
@@ -86,11 +86,10 @@ export const useSyncedChatRooms = ({
       // 수임 관련 메시지면 상태 저장
       if (
         PROPOSAL_TYPES.has(msg.type) &&
-        (!roomData.latestProposalAt ||
-          msg.createdAt > roomData.latestProposalAt)
+        (!roomData.latestProposalAt || msg.sentAt > roomData.latestProposalAt)
       ) {
         roomData.latestProposalType = msg.type;
-        roomData.latestProposalAt = msg.createdAt;
+        roomData.latestProposalAt = msg.sentAt;
       }
     }
 
@@ -136,24 +135,48 @@ export const useSyncedChatRooms = ({
     return syncedChatRooms.reduce((acc, room) => acc + room.noneReadCount, 0);
   }, [syncedChatRooms]);
 
+  // const lastMessageId = socketMessages.at(-1)?.messageId;
+
   // 소켓 메시지 수신 시 서버 데이터 재요청
   useEffect(() => {
+    // if (!lastMessageId) return;
+
     const lastMsg = socketMessages.at(-1);
     if (!lastMsg) return;
 
-    // 내가 보낸 메시지는 unread 변화 없음
     if (lastMsg.senderId !== userId) {
-      queryClient.invalidateQueries({
+      queryClient.refetchQueries({
         queryKey: ["chatRooms", selectedTab],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["chatUnreadCount"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["chatMatchedUnreadCount"],
       });
     }
   }, [socketMessages, selectedTab]);
+
+  // 채팅방 입장시 서버 데이터 재요청
+  useEffect(() => {
+    if (!selectedChatRoomId) return;
+
+    queryClient.refetchQueries({
+      queryKey: ["chatRooms", selectedTab],
+    });
+  }, [selectedChatRoomId, selectedTab]);
+
+  // useEffect(() => {
+  //   const lastMsg = socketMessages.at(-1);
+  //   if (!lastMsg) return;
+
+  //   // 내가 보낸 메시지는 unread 변화 없음
+  //   if (lastMsg.senderId !== userId) {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["chatRooms", selectedTab],
+  //     });
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["chatUnreadCount"],
+  //     });
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["chatMatchedUnreadCount"],
+  //     });
+  //   }
+  // }, [lastMessageId, selectedTab, selectedChatRoomId]);
 
   return {
     syncedChatRooms, // 실시간 반영된 채팅방 목록

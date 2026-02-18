@@ -4,44 +4,13 @@ import ChatRoomFooter from "./ChatRoomFooter/ChatRoomFooter";
 import ChatRoomHeader from "./ChatRoomHeader/ChatRoomHeader";
 import { useAuth } from "../../../../contexts/AuthContextProvider";
 import { useChatRoom } from "../hooks/useChatRoom";
+import { useChatParticipantsInfoQuery } from "../../../../api/queries/useChatParticipantsInfoQuery";
 
 type ChatRoomParams = {
   chatRoomId: number;
   onClose: () => void;
   onModalAction: (num: number) => void;
   profileImg: string | null;
-};
-
-// 필요 데이터
-// 행정사
-const dummyAgent = {
-  agentInfo: {
-    agentId: 10,
-    name: "엄경례",
-    profileImageUrl: "https://placehold.co/748x462",
-  },
-  strengths: [
-    { badgeId: 4, reviewCount: 102 },
-    { badgeId: 10, reviewCount: 79 },
-    { badgeId: 2, reviewCount: 73 },
-    { badgeId: 7, reviewCount: 50 },
-    { badgeId: 1, reviewCount: 21 },
-    { badgeId: 0, reviewCount: 7 },
-  ],
-};
-
-// 외국인
-const dummyForeigner = {
-  basicInfo: {
-    foreignerId: 99,
-    nickname: "고라니 099",
-    nationIdList: [1, 24],
-  },
-  expectedInfo: {
-    targetJob: "웹 개발자",
-    companyName: "대박쩌는 IT회사",
-    startDate: "2026. 01. 31",
-  },
 };
 
 const ChatRoom = ({
@@ -53,14 +22,16 @@ const ChatRoom = ({
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
   const { chatStatus } = useChatRoom(chatRoomId, false);
+  const { data: participants } = useChatParticipantsInfoQuery(chatRoomId);
 
   const headerData: ChatRoomHeaderData = isAgent
-    ? { type: "FOREIGNER", data: dummyForeigner }
-    : { type: "AGENT", data: dummyAgent };
+    ? { type: "FOREIGNER", data: participants?.foreignerInfo }
+    : { type: "AGENT", data: participants?.agentInfo };
 
   return (
     <>
       <ChatRoomHeader
+        chatRoomId={chatRoomId}
         headerData={headerData}
         roomStatus={chatStatus}
         onClose={onClose}
@@ -72,13 +43,13 @@ const ChatRoom = ({
         profileImg={profileImg}
         opponentName={
           isAgent
-            ? dummyForeigner.basicInfo.nickname
-            : dummyAgent.agentInfo.name
+            ? participants?.foreignerInfo?.nickname
+            : participants?.agentInfo?.name
         }
         myName={
           isAgent
-            ? dummyAgent.agentInfo.name
-            : dummyForeigner.basicInfo.nickname
+            ? participants?.agentInfo?.name
+            : participants?.foreignerInfo?.nickname
         }
       />
       <ChatRoomFooter roomStatus={chatStatus} chatRoomId={chatRoomId} />

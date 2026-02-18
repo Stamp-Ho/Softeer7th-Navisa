@@ -1,37 +1,26 @@
 // 채팅방 헤더 데이터
 export type AgentInfo = {
-  agentInfo: {
-    agentId: number;
-    name: string;
-    profileImageUrl: string;
-  };
-  strengths: {
-    badgeId: number;
-    reviewCount: number;
-  }[];
+  agentId: string;
+  top2BadgeIds: number[];
+  name: string;
 };
 
 export type ForeignerInfo = {
-  basicInfo: {
-    foreignerId: number;
-    nickname: string;
-    nationIdList: number[];
-  };
-  expectedInfo: {
-    targetJob: string;
-    companyName: string;
-    startDate: string;
-  };
+  foreignerId: string;
+  nickname: string;
+  expectedJob: string;
+  expectedStartDate: string;
+  nationalityIds: number[];
 };
 
 export type AgentHeaderData = {
   type: "AGENT";
-  data: AgentInfo;
+  data?: AgentInfo;
 };
 
 export type ForeignerHeaderData = {
   type: "FOREIGNER";
-  data: ForeignerInfo;
+  data?: ForeignerInfo;
 };
 
 export type ChatRoomHeaderData = AgentHeaderData | ForeignerHeaderData;

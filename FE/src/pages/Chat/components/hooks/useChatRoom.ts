@@ -6,6 +6,7 @@ import { useChatHistoryQuery } from "../../../../api/queries/useChatHistoryQuery
 import type { ChatHistoryResponse } from "../../../../api/types/chat";
 import type { Message } from "../../../../api/websocket/types";
 import groupChatLogs from "../../../../utils/GroupChatLogs";
+import { useChatScroll } from "./useChatScroll";
 
 export type ChatRoomStatus =
   | "DEFAULT"
@@ -19,7 +20,6 @@ export const useChatRoom = (
   chatRoomId: number,
   isRoomActive: boolean = false,
 ) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const lastReadSentRef = useRef<number | null>(null);
 
   const { userId } = useAuth();
@@ -28,6 +28,9 @@ export const useChatRoom = (
     data: historyData,
     isLoading,
     isError,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
   } = useChatHistoryQuery(chatRoomId);
 
   // 1. 현재 방의 소켓 메시지만 필터링
@@ -37,6 +40,10 @@ export const useChatRoom = (
     [socketMessages, chatRoomId],
   );
 
+  const historyMessages: ChatHistoryResponse[] = useMemo(() => {
+    if (!historyData) return [];
+    return historyData.pages.flatMap((page) => page.content);
+  }, [historyData]);
   // 2. 메시지 병합 및 정렬 (History + Socket)
   const allMessages = useMemo(() => {
     if (!historyData) return [];
@@ -54,7 +61,7 @@ export const useChatRoom = (
     );
 
     // 중복 제거 및 정렬
-    const merged = [...historyData, ...realtimeAsHistory]
+    const merged = [...historyMessages, ...realtimeAsHistory]
       .reduce<ChatHistoryResponse[]>((acc, cur) => {
         if (!acc.some((m) => m.chatMessageId === cur.chatMessageId)) {
           acc.push(cur);
@@ -62,15 +69,21 @@ export const useChatRoom = (
         return acc;
       }, [])
       .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        (a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime(),
       );
 
     return merged;
-  }, [historyData, roomSocketMessages, userId]);
+  }, [historyMessages, roomSocketMessages, userId]);
 
   // 3. 메시지 그룹화
   const groupedChats = useMemo(() => groupChatLogs(allMessages), [allMessages]);
+
+  const { scrollRef, handleScroll, isAtBottom } = useChatScroll({
+    chatData: allMessages,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
 
   // 4. "수임 제안" 버튼 활성화 여부 계산 logic
   const pendingProposalId = useMemo(() => {
@@ -82,7 +95,7 @@ export const useChatRoom = (
     const hasReplied = allMessages.some(
       (m) =>
         (m.type === "ACCEPTED" || m.type === "REJECTED") &&
-        new Date(m.createdAt) > new Date(latestProposal.createdAt),
+        new Date(m.sentAt) > new Date(latestProposal.sentAt),
     );
 
     return !hasReplied ? latestProposal.chatMessageId : null;
@@ -144,10 +157,12 @@ export const useChatRoom = (
 
   // 7. 자동 스크롤
   useEffect(() => {
-    if (scrollRef.current) {
+    if (!scrollRef.current) return;
+
+    if (isAtBottom) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [allMessages]);
+  }, [allMessages, isAtBottom]);
 
   return {
     groupedChats,
@@ -155,6 +170,8 @@ export const useChatRoom = (
     isLoading,
     isError,
     scrollRef,
+    handleScroll,
+    isFetchingNextPage,
     pendingProposalId, // UI에서 어떤 메시지에 버튼을 띄울지 결정하는 ID
   };
 };

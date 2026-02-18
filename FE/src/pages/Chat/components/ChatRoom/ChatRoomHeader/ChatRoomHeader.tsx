@@ -7,6 +7,7 @@ import ForeignerHeaderInfo from "./ForeignerHeaderInfo";
 import type { ChatRoomStatus } from "../../hooks/useChatRoom";
 
 type HeaderParams = {
+  chatRoomId: number;
   headerData: ChatRoomHeaderData;
   roomStatus: ChatRoomStatus;
   onClose: () => void;
@@ -41,7 +42,6 @@ const ChatRoomHeader = ({
                 <Chip type="chips_square_request" className="mr-3" />
               </div>
             )}
-
             <Button
               size="small"
               type="lightGray"

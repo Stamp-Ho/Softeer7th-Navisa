@@ -80,3 +80,13 @@ export const usePostProposalCanceled = (roomId: number) => {
     },
   });
 };
+
+export const usePostBlocked = (roomId: number) => {
+  const { apiClient } = useApiClient();
+
+  return useMutation({
+    mutationFn: () => {
+      return chatService.postBlocked(apiClient, roomId);
+    },
+  });
+};
