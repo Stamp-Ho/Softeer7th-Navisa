@@ -113,4 +113,17 @@ public class ChatRoomQueryService {
     public Optional<ChatRoom> findByAgentIdAndForeignerId(UUID agentId, UUID foreignerId) {
         return chatRoomRepository.findByAgentIdAndForeignerId(agentId, foreignerId);
     }
+
+    public Optional<ChatRoom> findByAgentProfileAndForeignerProfile(AgentProfile agent, ForeignerProfile foreigner) {
+        if (agent == null || foreigner == null) {
+            return Optional.empty();
+        }
+        return chatRoomRepository.findByAgentProfileAndForeignerProfile(agent, foreigner);
+    }
+
+    public Long getChatRoomIdByProfiles(AgentProfile agent, ForeignerProfile foreigner) {
+        return findByAgentProfileAndForeignerProfile(agent, foreigner)
+                .map(ChatRoom::getId)
+                .orElse(null);
+    }
 }

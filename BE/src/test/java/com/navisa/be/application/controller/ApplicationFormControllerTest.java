@@ -261,7 +261,7 @@ class ApplicationFormControllerTest {
 
         ApplicationFormDetailResponse response = new ApplicationFormDetailResponse(
                 UUID.randomUUID(), "img.png", false, LocalDateTime.now(), 150, 10,
-                List.of(Collections.emptyMap()));
+                List.of(Collections.emptyMap()), 1L);
         given(applicationFormSearchService.getLatestApplicationFormForForeigner(email)).willReturn(response);
 
         // when & then
@@ -280,7 +280,7 @@ class ApplicationFormControllerTest {
 
         ApplicationFormDetailResponse response = new ApplicationFormDetailResponse(
                 formId, "img.png", false, LocalDateTime.now(), 150, 80,
-                List.of(Collections.emptyMap()));
+                List.of(Collections.emptyMap()), 1L);
         given(applicationFormSearchService.getApplicationFormForAgent(eq(email), eq(formId)))
                 .willReturn(response);
 

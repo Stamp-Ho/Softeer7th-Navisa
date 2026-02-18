@@ -9,6 +9,8 @@ import com.navisa.be.application.dto.response.RecentApplicationFormsResponse;
 import com.navisa.be.application.exception.ApplicationFormException;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
+import com.navisa.be.chat.model.entity.ChatRoom;
+import com.navisa.be.chat.service.ChatRoomQueryService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.model.enums.ImageSize;
@@ -35,6 +37,7 @@ public class ApplicationFormSearchService {
     private final UserQueryService userQueryService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final StorageService storageService;
+    private final ChatRoomQueryService chatRoomQueryService;
 
     public List<RecentApplicationFormsResponse> getRecentApplicationForms(String email) {
         User user = userQueryService.findByEmail(email);
@@ -80,9 +83,9 @@ public class ApplicationFormSearchService {
 
         return new SliceResponse<>(
                 contentApplicationFormProjections.stream().map(
-                        projection -> ApplicationFormCardResponse.projectionToDto(
-                                projection,
-                                storageService.getImgUrl(ImageSize.MEDIUM, projection.profileObjectKey(), true)))
+                                projection -> ApplicationFormCardResponse.projectionToDto(
+                                        projection,
+                                        storageService.getImgUrl(ImageSize.MEDIUM, projection.profileObjectKey(), true)))
                         .toList(),
                 existsNext,
                 lastElementId);
@@ -103,6 +106,8 @@ public class ApplicationFormSearchService {
                 ? storageService.getImgUrl(ImageSize.MEDIUM, form.getProfileObjectKey(), true)
                 : null;
 
+        Long chatRoomId = chatRoomQueryService.getChatRoomIdByProfiles(form.getAgentProfile(), foreigner);
+
         return new ApplicationFormDetailResponse(
                 form.getId(),
                 profileImgUrl,
@@ -110,7 +115,8 @@ public class ApplicationFormSearchService {
                 form.getUpdatedAt(),
                 form.getTotalCount(),
                 form.getCurrentStep(),
-                sections);
+                sections,
+                chatRoomId);
     }
 
     public ApplicationFormDetailResponse getApplicationFormForAgent(String email, UUID applicationFormId) {
@@ -129,6 +135,8 @@ public class ApplicationFormSearchService {
                 ? storageService.getImgUrl(ImageSize.MEDIUM, form.getProfileObjectKey(), true)
                 : null;
 
+        Long chatRoomId = chatRoomQueryService.getChatRoomIdByProfiles(agent, form.getForeignerProfile());
+
         return new ApplicationFormDetailResponse(
                 form.getId(),
                 profileImgUrl,
@@ -136,7 +144,8 @@ public class ApplicationFormSearchService {
                 form.getUpdatedAt(),
                 form.getTotalCount(),
                 form.getCurrentStep(),
-                mergeSections(form));
+                mergeSections(form),
+                chatRoomId);
     }
 
     private List<Map<String, Object>> mergeSections(ApplicationForm form) {

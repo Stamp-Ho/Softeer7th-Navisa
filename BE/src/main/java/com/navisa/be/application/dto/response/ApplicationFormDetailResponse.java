@@ -20,6 +20,8 @@ public record ApplicationFormDetailResponse(
 
         @Schema(description = "작성된 문항 수") Integer filledCount,
 
-        @Schema(description = "섹션별 데이터 목록") List<Map<String, Object>> sections
+        @Schema(description = "섹션별 데이터 목록") List<Map<String, Object>> sections,
+
+        @Schema(description = "연결된 채팅방 id") Long chatRoomId
 ) {
 }

@@ -1,7 +1,9 @@
 package com.navisa.be.chat.repository;
 
+import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.repository.querydsl.ChatRoomRepositoryQueryDsl;
+import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,4 +47,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long>, ChatR
             "LEFT JOIN FETCH fn.nationality " +
             "WHERE cr.id = :roomId")
     Optional<ChatRoom> findByIdWithParticipantsInfo(@Param("roomId") Long roomId);
+
+    Optional<ChatRoom> findByAgentProfileAndForeignerProfile(AgentProfile agentProfile, ForeignerProfile foreignerProfile);
 }
