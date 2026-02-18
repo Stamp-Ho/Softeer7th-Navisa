@@ -2,6 +2,7 @@ package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.application.service.ApplicationFormForAgentService;
+import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.dto.projection.ChatMessageNonReadCountProjection;
 import com.navisa.be.chat.dto.projection.ChatRoomProposalStatusProjection;
 import com.navisa.be.chat.dto.response.ChatRoomCardResponse;
@@ -42,6 +43,7 @@ public class ChatRoomServiceFacade {
     private final ChatRoomCommandService chatRoomCommandService;
     private final StorageService storageService;
     private final ApplicationFormForAgentService applicationFormForAgentService;
+    private final ChatServiceFacade chatServiceFacade;
 
     public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter,
             SliceRequest<Long> slice) {
@@ -141,7 +143,7 @@ public class ChatRoomServiceFacade {
     }
 
     @Transactional
-    public void updateBlockStatusToEntity(String email, Long chatRoomId) {
+    public void updateBlockStatusToEntity(String email, Long chatRoomId, ChatMessageRequest request) {
         User user = userQueryService.findByEmail(email);
 
         ChatRoom chatRoom = chatRoomQueryService.findByIdWithProfiles(chatRoomId);
@@ -151,6 +153,7 @@ public class ChatRoomServiceFacade {
         chatRoomCommandService.updateStatus(chatRoom);
         proposalService.updateProposalOnBlock(chatRoom.getId());
         applicationFormForAgentService.updateAgentProfileConnection(chatRoom);
+        chatServiceFacade.saveAndPublishChatMessage(user.getId(), request, chatRoom);
     }
 
     private void validateChatRoomOwnership(User user, ChatRoom chatRoom) {

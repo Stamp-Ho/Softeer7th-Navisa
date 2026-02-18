@@ -34,6 +34,7 @@ public class ChatServiceFacade {
                 : chatRoomQueryService.findByIdWithProfiles(request.roomId());
         ChatMessage chatMessage = chatMessageCommandService.create(
                 finalChatRoom, getSenderProfileId(finalChatRoom, senderId), request);
+        finalChatRoom.updateLastChattedAt(request.sentAt());
 
         // Redis 발행은 트랜잭션 커밋 후 실행
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {

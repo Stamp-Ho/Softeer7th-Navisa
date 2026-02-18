@@ -1,5 +1,6 @@
 package com.navisa.be.chat.controller;
 
+import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.service.ChatRoomServiceFacade;
 import com.navisa.be.chat.dto.request.CreateChatRoomRequest;
 import com.navisa.be.chat.dto.response.CreateChatRoomResponse;
@@ -39,9 +40,10 @@ public class ChatRoomCommandController {
     @PostMapping("/{roomId}/block")
     public BaseResponse<Void> blockChatRoom(
             @Parameter(hidden = true) @LoginUser String email,
-            @PathVariable(name = "roomId") Long chatRoomId) {
+            @PathVariable(name = "roomId") Long chatRoomId,
+            @Valid @RequestBody ChatMessageRequest request) {
 
-        chatRoomServiceFacade.updateBlockStatusToEntity(email, chatRoomId);
+        chatRoomServiceFacade.updateBlockStatusToEntity(email, chatRoomId, request);
         return new BaseResponse<>(null);
     }
 

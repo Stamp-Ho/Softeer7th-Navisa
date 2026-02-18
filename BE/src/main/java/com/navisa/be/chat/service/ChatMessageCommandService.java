@@ -22,9 +22,12 @@ public class ChatMessageCommandService {
 
     @Transactional
     public ChatMessage create(ChatRoom chatRoom, UUID senderId, ChatMessageRequest request) {
-        return chatMessageRepository.save(request.dtoToEntity(chatRoom, senderId));
+        ChatMessage message = chatMessageRepository.save(request.dtoToEntity(chatRoom, senderId));
+        chatMessageRepository.flush();
+        return message;
     }
 
+    @Transactional
     public ChatMessage create(ChatRoom chatRoom, UUID senderId, String content, ZonedDateTime sentAt){
         return chatMessageRepository.save(new ChatMessage(chatRoom, MessageType.TEXT, content, senderId, sentAt));
     }
