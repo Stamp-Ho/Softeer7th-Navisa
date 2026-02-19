@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import BannerBackground from "../../components/layout/BannerBackground";
 import ForeignerBanner from "./Foreigner/ForeignerBanner";
 import SuggestedAgents from "./Foreigner/SuggestedAgents";
@@ -12,7 +11,6 @@ import { useAuth } from "../../contexts/AuthContextProvider";
 import Footer from "./Footer";
 
 const HomePage = () => {
-  const { t } = useTranslation(["pages"]);
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
 

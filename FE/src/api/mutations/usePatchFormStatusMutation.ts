@@ -7,7 +7,7 @@ export const usePatchFormStatusMutation = (onLoginSuccess?: () => void) => {
 
   return useMutation({
     mutationFn: ({ formId, isDone }: { formId: string; isDone: boolean }) => visaService.patchFormStatus(apiClient, formId, { isDone: isDone }),
-    onSuccess: (res) => {
+    onSuccess: () => {
       if (onLoginSuccess) onLoginSuccess();
     },
     onError: (error) => {

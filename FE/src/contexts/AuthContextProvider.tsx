@@ -52,7 +52,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
         setAccessToken(newToken);
         setInitialized(true);
       } catch (e) {
-        console.log("로그인 필요 상태");
+        console.error("로그인 필요 상태");
       }
     };
     if (userType && userType !== "NOT_AUTHED") initAuth();

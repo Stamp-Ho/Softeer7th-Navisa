@@ -69,7 +69,6 @@ const EditDocument = () => {
     //const dataToApply = structuredClone(Object.values(fresherData.sections));
     let dataToApply = { ...fresherData.sections };
     if (data.foreignerProfileImgUrl !== null) dataToApply[0].sectionData[0].values = [true];
-    console.log(dataToApply[0].sectionData[0].values);
 
     // inputLine(추가 입력)을 적용하여 초기 폼 구조에 line 추가
     const newStruct = structuredClone(editDocumentData);
@@ -85,7 +84,6 @@ const EditDocument = () => {
               ...JSON.parse(JSON.stringify(targetField.inputLines[0])),
               rowId: i,
             };
-            console.log(`${sectionIndex}섹션 ${fieldIndex}에 ${i}번째 inputline추가!`);
             targetField.inputLines.push(newLine);
           }
         });
@@ -104,7 +102,6 @@ const EditDocument = () => {
   // 폼 입력 값 저장 함수
   const onSubmit = (formData: Record<number, any>) => {
     const { totalCount, filledCount } = calculateOnlyInputs(formData);
-    console.log(formData);
 
     if (imageFile !== undefined && data?.applicationFormId) {
       uploadFormImage(data?.applicationFormId ?? documentId, imageFile);
@@ -121,7 +118,7 @@ const EditDocument = () => {
         })),
       })),
     };
-    console.log(params);
+
     postForm.mutate(params);
   };
   const onError = (errors: any) => {
@@ -169,16 +166,16 @@ const EditDocument = () => {
 };
 export default EditDocument;
 
-const informationMessage = [
-  "본 서비스는 신청서 작성 편의를 위한 보조 수단에 불과하며, 신청서에 기재된 내용의 정확성 및 법적 책임은 전적으로 작성자에게 있습니다.",
-  "신청서의 모든 질문에 대한 답변은 한글 또는 영문으로 작성해야 하며, 누락된 항목은 신청인이 자필로 작성해야 합니다.",
-  "행정사가 ‘내보내기’를 완료한 즉시 비자가 신청된 것으로 간주하며, 2주 후 의뢰의 완료 여부를 문의합니다.",
-  "화면에 보이지 않는 선택지는 내보내기 후 자필로 입력하시길 바랍니다.",
-];
+// const informationMessage = [
+//   "본 서비스는 신청서 작성 편의를 위한 보조 수단에 불과하며, 신청서에 기재된 내용의 정확성 및 법적 책임은 전적으로 작성자에게 있습니다.",
+//   "신청서의 모든 질문에 대한 답변은 한글 또는 영문으로 작성해야 하며, 누락된 항목은 신청인이 자필로 작성해야 합니다.",
+//   "행정사가 ‘내보내기’를 완료한 즉시 비자가 신청된 것으로 간주하며, 2주 후 의뢰의 완료 여부를 문의합니다.",
+//   "화면에 보이지 않는 선택지는 내보내기 후 자필로 입력하시길 바랍니다.",
+// ];
 
-const informationMessageWhenDone = [
-  "본 서비스는 신청서 작성 편의를 위한 보조 수단에 불과하며, 신청서에 기재된 내용의 정확성 및 법적 책임은 전적으로 작성자에게 있습니다.",
-  "신청서의 모든 질문에 대한 답변은 한글 또는 영문으로 작성해야 하며, 누락된 항목은 신청인이 자필로 작성해야 합니다.",
-  "화면에 보이지 않는 선택지는 다운로드 후 자필로 입력하시길 바랍니다.",
-  "이미 [내보내기] 완료된 신청서입니다. 수정 및 미리보기, 다운로드가 가능하지만 의뢰 완료 여부 문의 시점은 [내보내기] 2주 후 입니다.",
-];
+// const informationMessageWhenDone = [
+//   "본 서비스는 신청서 작성 편의를 위한 보조 수단에 불과하며, 신청서에 기재된 내용의 정확성 및 법적 책임은 전적으로 작성자에게 있습니다.",
+//   "신청서의 모든 질문에 대한 답변은 한글 또는 영문으로 작성해야 하며, 누락된 항목은 신청인이 자필로 작성해야 합니다.",
+//   "화면에 보이지 않는 선택지는 다운로드 후 자필로 입력하시길 바랍니다.",
+//   "이미 [내보내기] 완료된 신청서입니다. 수정 및 미리보기, 다운로드가 가능하지만 의뢰 완료 여부 문의 시점은 [내보내기] 2주 후 입니다.",
+// ];

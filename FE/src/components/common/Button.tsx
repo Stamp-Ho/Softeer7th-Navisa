@@ -1,5 +1,4 @@
 import type React from "react";
-import { useTranslation } from "react-i18next";
 
 interface ButtonProps {
   variant?: "lightGray" | "primary" | "grayLine" | "gray" | "violetLine" | "brightViolet" | "skeleton";
@@ -12,8 +11,6 @@ interface ButtonProps {
 }
 
 const Button = ({ variant = "lightGray", size = "medium", className = "", children, onClick, disabled = false, type = "button" }: ButtonProps) => {
-  const { t } = useTranslation(["common"]);
-
   const getButtonStyle = () => {
     if (disabled) return "bg-gray-200 text-white cursor-not-allowed";
     return (variant === "skeleton" ? "cursor-default " : "cursor-pointer ") + (styles[variant] || styles.lightGray);
