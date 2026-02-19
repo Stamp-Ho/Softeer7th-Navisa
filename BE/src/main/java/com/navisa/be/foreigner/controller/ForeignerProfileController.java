@@ -49,8 +49,7 @@ public class ForeignerProfileController {
     @GetMapping("/profile")
     public BaseResponse<ForeignerQueryResponse> findForeignerProfile(
             @Parameter(hidden = true) @LoginUser String email) {
-        UUID foreignerId = foreignerProfileCrudService.getForeignerIdByEmail(email);
-        ForeignerQueryResponse response = foreignerProfileDetailService.findForeignerTotalInfo(foreignerId);
+        ForeignerQueryResponse response = foreignerProfileDetailService.findForeignerTotalInfo(email);
         return new BaseResponse<>(response);
     }
 

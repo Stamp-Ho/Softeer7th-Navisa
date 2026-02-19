@@ -1,5 +1,6 @@
 package com.navisa.be.foreigner.service;
 
+import com.navisa.be.application.service.ApplicationFormCrudService;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.exception.ForeignerException;
 import com.navisa.be.foreigner.model.entity.*;
@@ -31,6 +32,7 @@ public class ForeignerProfileCrudService {
     private final ForeignerSimilarityRepository foreignerSimilarityRepository;
     private final ForeignerEducationRepository foreignerEducationRepository;
     private final ForeignerCareersRepository foreignerCareersRepository;
+    private final ApplicationFormCrudService applicationFormCrudService;
 
     @Transactional
     public ForeignerProfile registerForeignerTotalInfo(
@@ -103,13 +105,6 @@ public class ForeignerProfileCrudService {
     }
 
     @Transactional(readOnly = true)
-    public List<Nationality> findNationalitiesByForeignerProfileId(UUID foreignerProfileId) {
-        return foreignerNationalityRepository.findByForeignerProfileId(foreignerProfileId).stream()
-                .map(ForeignerNationality::getNationality)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
     public List<ForeignerProfile> findAllById(List<UUID> foreignerIds) {
         return foreignerProfileRepository.findAllById(foreignerIds);
     }
@@ -126,6 +121,8 @@ public class ForeignerProfileCrudService {
         ForeignerProfile savedProfile = foreignerProfileRepository.save(profile);
 
         saveForeignerRelations(savedProfile, request, languages, nationalities);
+        foreignerProfileRepository.flush();
+        applicationFormCrudService.createInitForm(savedProfile);
 
         return savedProfile;
     }

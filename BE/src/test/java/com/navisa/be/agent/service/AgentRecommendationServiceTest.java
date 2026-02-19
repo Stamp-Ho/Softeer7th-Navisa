@@ -5,6 +5,7 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
+import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
@@ -71,7 +72,9 @@ class AgentRecommendationServiceTest {
         // given
         String email = "email";
         UUID foreignerId = UUID.randomUUID();
-        given(foreignerProfileCrudService.getForeignerIdByEmail(any())).willReturn(foreignerId);
+        ForeignerProfile mockForeignerProfile = Mockito.mock(ForeignerProfile.class);
+        given(foreignerProfileCrudService.findByEmail(any())).willReturn(mockForeignerProfile);
+        given(mockForeignerProfile.getId()).willReturn(foreignerId);
 
         ForeignerSimilarity similarity = Mockito.mock(ForeignerSimilarity.class);
         given(similarity.getJobCodeIdList()).willReturn(new long[] { 1L });

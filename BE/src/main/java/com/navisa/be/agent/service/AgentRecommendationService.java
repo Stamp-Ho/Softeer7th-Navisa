@@ -5,6 +5,7 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
+import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.service.StorageService;
@@ -40,9 +41,9 @@ public class AgentRecommendationService {
     // 맞춤 행정사 추천
     public List<AgentCardResponse> getPersonalizedAgents(String email) {
 
-        UUID foreignerId = foreignerProfileCrudService.getForeignerIdByEmail(email);
+        ForeignerProfile profile = foreignerProfileCrudService.findByEmail(email);
 
-        ForeignerSimilarity similarity = foreignerProfileCrudService.findSimilarityByForeignerId(foreignerId);
+        ForeignerSimilarity similarity = foreignerProfileCrudService.findSimilarityByForeignerId(profile.getId());
 
         List<AgentProfile> profiles = agentProfileRepository.findAllValidAgentProfiles();
 

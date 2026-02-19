@@ -1,6 +1,9 @@
 package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.application.model.entity.ApplicationForm;
+import com.navisa.be.application.repository.ApplicationFormRepository;
+import com.navisa.be.application.service.ApplicationFormCrudService;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
@@ -52,6 +55,12 @@ class ProposalServiceTest extends IntegrationTestSupport {
     @MockitoBean
     private ChatServiceFacade chatServiceFacade;
 
+    @Autowired
+    private ApplicationFormCrudService applicationFormCrudService;
+
+    @Autowired
+    private ApplicationFormRepository applicationFormRepository;
+
     @Test
     @DisplayName("제안 생성 시 Redis 발행 이벤트에 User ID가 올바르게 전달되는지 검증")
     void createProposal_Success() {
@@ -74,16 +83,13 @@ class ProposalServiceTest extends IntegrationTestSupport {
                 ZonedDateTime.now());
 
         // when
-        // 행정사가 제안 생성
         proposalService.createProposal(agentUser.getEmail(), chatRoom.getId(), request);
 
         // then
-        // 1. DB에 제안 생성 확인
         Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom).orElseThrow();
         assertThat(proposal.getStatus()).isEqualTo(ProposalStatus.PROPOSED);
-        assertThat(proposal.getSenderId()).isEqualTo(agentProfile.getId()); // Sender ID는 Profile ID
+        assertThat(proposal.getSenderId()).isEqualTo(agentProfile.getId());
 
-        // 2. ChatServiceFacade 호출 시 User ID가 전달되었는지 확인 (중요)
         verify(chatServiceFacade).saveAndPublishChatMessage(
                 eq(agentUser.getId()),
                 any(ChatMessageRequest.class),
@@ -91,11 +97,12 @@ class ProposalServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("제안 성사(MATCHED) 시 상태 변경 및 Redis 발행 검증")
+    @DisplayName("제안 성사(MATCHED) 시 상태 변경, Redis 발행, ApplicationForm 업데이트 검증")
     void updateProposalStatusMatched_Success() {
         // given
         User foreignerUser = userTestFixture.createUser("foreigner_match@test.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+        applicationFormCrudService.createInitForm(foreignerProfile);
 
         User agentUser = userTestFixture.createUser("agent_match@test.com", UserType.VALID_AGENT);
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentMatch", "Address",
@@ -103,7 +110,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
 
         ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
                 foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
-        proposalRepository.save(new Proposal(chatRoom, agentProfile.getId())); // 초기 상태 PROPOSED
+        proposalRepository.save(new Proposal(chatRoom, agentProfile.getId()));
 
         ChatMessageRequest request = new ChatMessageRequest(
                 chatRoom.getId(),
@@ -113,12 +120,17 @@ class ProposalServiceTest extends IntegrationTestSupport {
                 ZonedDateTime.now());
 
         // when
-        // 외국인이 수락 (MATCHED)
         proposalService.updateProposalStatusMatched(foreignerUser.getEmail(), chatRoom.getId(), request);
 
         // then
         Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom).orElseThrow();
         assertThat(proposal.getStatus()).isEqualTo(ProposalStatus.MATCHED);
+
+        ApplicationForm form = applicationFormRepository
+                .findFirstByForeignerProfile_IdOrderByCreatedAtDesc(foreignerProfile.getId())
+                .orElseThrow();
+        assertThat(form.getAgentProfile()).isNotNull();
+        assertThat(form.getAgentProfile().getId()).isEqualTo(agentProfile.getId());
 
         verify(chatServiceFacade).saveAndPublishChatMessage(eq(foreignerUser.getId()),
                 any(ChatMessageRequest.class),
@@ -148,7 +160,6 @@ class ProposalServiceTest extends IntegrationTestSupport {
                 ZonedDateTime.now());
 
         // when
-        // 외국인이 거절 (REJECTED)
         proposalService.updateProposalStatusRejected(foreignerUser.getEmail(), chatRoom.getId(), request);
 
         // then
@@ -162,7 +173,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("제안 취소(CANCELED) 시 상태 변경 및 Redis 발행 검증")
+    @DisplayName("제안 취소(CANCELED) 시 상태 변경, Redis 발행, ApplicationForm 연결 해제 검증")
     void updateProposalStatusCanceled_Success() {
         // given
         User foreignerUser = userTestFixture.createUser("foreigner_cancel@test.com", UserType.FILLED_FOREIGNER);
@@ -171,6 +182,11 @@ class ProposalServiceTest extends IntegrationTestSupport {
         User agentUser = userTestFixture.createUser("agent_cancel@test.com", UserType.VALID_AGENT);
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentCancel", "Address",
                 agentUser.getId());
+
+        ApplicationForm form = applicationFormCrudService
+                .createInitForm(foreignerProfile);
+        form.updateAgentProfile(agentProfile);
+        applicationFormRepository.saveAndFlush(form);
 
         ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
                 foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
@@ -186,12 +202,16 @@ class ProposalServiceTest extends IntegrationTestSupport {
                 ZonedDateTime.now());
 
         // when
-        // 행정사가 취소 (CANCELED)
         proposalService.updateProposalStatusCanceled(agentUser.getEmail(), chatRoom.getId(), request);
 
         // then
         Proposal findProposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom).orElseThrow();
         assertThat(findProposal.getStatus()).isEqualTo(ProposalStatus.CANCELED);
+
+        ApplicationForm updatedForm = applicationFormRepository
+                .findFirstByForeignerProfile_IdOrderByCreatedAtDesc(foreignerProfile.getId())
+                .orElseThrow();
+        assertThat(updatedForm.getAgentProfile()).isNull();
 
         verify(chatServiceFacade).saveAndPublishChatMessage(
                 eq(agentUser.getId()),

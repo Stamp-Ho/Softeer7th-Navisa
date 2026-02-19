@@ -56,4 +56,6 @@ public interface ApplicationFormRepository extends JpaRepository<ApplicationForm
 
     Optional<ApplicationForm> findFirstByAgentProfileIdAndForeignerProfileIdOrderByCreatedAtDesc(
             UUID agentProfileId, UUID foreignerProfileId);
+
+    Optional<ApplicationForm> findFirstByForeignerProfile_IdOrderByCreatedAtDesc(UUID foreignerProfileId);
 }

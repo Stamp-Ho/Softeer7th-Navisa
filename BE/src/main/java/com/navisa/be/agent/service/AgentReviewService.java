@@ -15,7 +15,7 @@ import com.navisa.be.agent.repository.BadgeRepository;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.service.ApplicationFormCrudService;
 import com.navisa.be.chat.model.entity.Proposal;
-import com.navisa.be.chat.service.ProposalService;
+import com.navisa.be.chat.service.ProposalCrudService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.model.enums.ImageSize;
@@ -40,12 +40,12 @@ public class AgentReviewService {
     private final AgentProfileRepository agentProfileRepository;
     private final StorageService storageService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
-    private final ProposalService proposalService;
     private final AgentReviewCrudService agentReviewCrudService;
     private final ApplicationEventPublisher eventPublisher;
     private final BadgeRepository badgeRepository;
     private final ReviewReliabilityService reviewReliabilityService;
     private final ApplicationFormCrudService applicationFormCrudService;
+    private final ProposalCrudService proposalCrudService;
 
     // 행정사 후기 사례 최신순 3개 조회
     @Transactional(readOnly = true)
@@ -89,7 +89,7 @@ public class AgentReviewService {
     public void registerAgentReview(String loginUserEmail, CreateAgentReviewRequest request) {
         ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByEmail(loginUserEmail);
 
-        Proposal proposal = proposalService.findLatestProposalByAgentIdAndForeignerId(request.agentId(), foreignerProfile.getId());
+        Proposal proposal = proposalCrudService.findLatestProposalByAgentIdAndForeignerId(request.agentId(), foreignerProfile.getId());
 
         validateProposal(proposal);
         validateApplicationForm(request, foreignerProfile);
@@ -145,7 +145,7 @@ public class AgentReviewService {
     public void createAgentFeedback(String email, String content) {
         ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByEmail(email);
 
-        Proposal proposal = proposalService.findOngoingOneByForeignerId(foreignerProfile.getId());
+        Proposal proposal = proposalCrudService.findOngoingOneByForeignerId(foreignerProfile.getId());
 
         agentReviewCrudService.updateAgentFeedback(proposal.getId(), content);
     }

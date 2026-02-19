@@ -18,4 +18,8 @@ public record ChatMessageRequest(
     public ChatMessage dtoToEntity(ChatRoom chatRoom, UUID senderId) {
         return new ChatMessage(chatRoom, type, content, senderId, sentAt);
     }
+
+    public ChatMessageRequest updateContent(String newContent) {
+        return new ChatMessageRequest(this.roomId, this.clientMessageId, newContent, this.type, this.sentAt);
+    }
 }

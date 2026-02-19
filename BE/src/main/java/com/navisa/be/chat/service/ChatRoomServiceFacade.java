@@ -151,7 +151,7 @@ public class ChatRoomServiceFacade {
         validateChatRoomOwnership(user, chatRoom);
 
         chatRoomCommandService.updateStatus(chatRoom);
-        proposalService.updateProposalOnBlock(chatRoom.getId());
+        proposalService.updateProposalOnBlock(chatRoom);
         applicationFormForAgentService.updateAgentProfileConnection(chatRoom);
         chatServiceFacade.saveAndPublishChatMessage(user.getId(), request, chatRoom);
     }

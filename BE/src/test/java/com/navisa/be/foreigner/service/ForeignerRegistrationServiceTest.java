@@ -1,5 +1,6 @@
 package com.navisa.be.foreigner.service;
 
+import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
@@ -46,6 +47,9 @@ public class ForeignerRegistrationServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private NationalityRepository nationalityRepository;
+
+    @Autowired
+    private ApplicationFormRepository applicationFormRepository;
 
     @Autowired
     private EntityManager em;
@@ -101,6 +105,11 @@ public class ForeignerRegistrationServiceTest extends IntegrationTestSupport {
                 .orElse(null);
 
         assertThat(foundProfile).isNotNull();
+
+        // 신청서가 존재하는지만 확인하면 충분
+        boolean formExists = applicationFormRepository.findAll().stream()
+                .anyMatch(form -> form.getForeignerProfile().getId().equals(foundProfile.getId()));
+        assertThat(formExists).isTrue();
     }
 
     @Test

@@ -10,7 +10,7 @@ import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.service.ChatRoomQueryService;
-import com.navisa.be.chat.service.ProposalService;
+import com.navisa.be.chat.service.ProposalCrudService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.service.UserCrudService;
@@ -29,8 +29,8 @@ public class ApplicationFormForAgentService {
     private final UserCrudService userCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final ApplicationFormRepository applicationFormRepository;
-    private final ProposalService proposalService;
     private final ChatRoomQueryService chatRoomQueryService;
+    private final ProposalCrudService proposalCrudService;
 
     @Transactional
     public ApplicationFormIdResponse updateApplicationStatus(String email, UUID formId, Boolean isDone) {
@@ -100,7 +100,7 @@ public class ApplicationFormForAgentService {
         if (form.getAgentProfile() != null && form.getForeignerProfile() != null) {
             chatRoomQueryService.findByAgentIdAndForeignerId(
                     form.getAgentProfile().getId(),
-                    form.getForeignerProfile().getId()).flatMap(proposalService::findFirstByChatRoomOrderByIdDesc)
+                    form.getForeignerProfile().getId()).flatMap(proposalCrudService::findFirstByChatRoomOrderByIdDesc)
                     .ifPresent(proposal -> {
                         proposal.updateStatus(ProposalStatus.COMPLETED);
                         log.info("제안서 완료 처리 성공: Proposal ID = {}", proposal.getId());

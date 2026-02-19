@@ -105,7 +105,7 @@ public class ForeignerProfileDetailServiceTest extends IntegrationTestSupport {
         em.clear();
 
         // when
-        ForeignerQueryResponse response = foreignerProfileDetailService.findForeignerTotalInfo(userId);
+        ForeignerQueryResponse response = foreignerProfileDetailService.findForeignerTotalInfo("query@example.com");
 
         // then
         assertThat(response).isNotNull();

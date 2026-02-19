@@ -62,7 +62,7 @@ public class ApplicationForm extends BaseEntity {
     private Integer currentStep = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_code_id", nullable = false)
+    @JoinColumn(name = "job_code_id", nullable = true)
     private JobCode jobCode;
 
     @JdbcTypeCode(SqlTypes.JSON)
@@ -101,14 +101,28 @@ public class ApplicationForm extends BaseEntity {
     @Column(name = "invite_information", columnDefinition = "json")
     private Map<String, Object> inviteInformation;
 
+    public ApplicationForm(ForeignerProfile foreignerProfile) {
+        this.agentProfile = null;
+        this.foreignerProfile = foreignerProfile;
+        this.jobCode = null;
+        this.isDone = false;
+        this.isFinished = false;
+        this.exportedAt = null;
+        this.mailSentAt = null;
+    }
+
     public ApplicationForm(AgentProfile agentProfile, ForeignerProfile foreignerProfile,
-                           JobCode jobCode, Boolean isDone, Integer totalCount, Integer currentStep) {
+            JobCode jobCode, Boolean isDone, Integer totalCount, Integer currentStep) {
         this.agentProfile = agentProfile;
         this.foreignerProfile = foreignerProfile;
         this.jobCode = jobCode;
         this.isDone = isDone;
         this.totalCount = totalCount;
         this.currentStep = currentStep;
+    }
+
+    public void updateAgentProfile(AgentProfile agentProfile) {
+        this.agentProfile = agentProfile;
     }
 
     public void updateSections(List<Map<String, Object>> sections, Integer totalCount, Integer currentStep) {

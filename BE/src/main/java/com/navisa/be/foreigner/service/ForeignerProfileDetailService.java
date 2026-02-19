@@ -8,7 +8,7 @@ import com.navisa.be.application.service.ApplicationFormCrudService;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.service.ChatRoomQueryService;
-import com.navisa.be.chat.service.ProposalService;
+import com.navisa.be.chat.service.ProposalCrudService;
 import com.navisa.be.foreigner.dto.request.ForeignerDetailRequest;
 import com.navisa.be.foreigner.dto.response.ForeignerDetailResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerProgressResponse;
@@ -40,16 +40,17 @@ public class ForeignerProfileDetailService {
     private final AgentProfileCrudService agentProfileCrudService;
     private final AgentReviewCrudService agentReviewCrudService;
     private final ChatRoomQueryService chatRoomQueryService;
-    private final ProposalService proposalService;
     private final ForeignerProfileRepository foreignerProfileRepository;
     private final ForeignerEducationRepository foreignerEducationRepository;
     private final ForeignerCareersRepository foreignerCareersRepository;
     private final ForeignerExpectedCompanyRepository foreignerExpectedCompanyRepository;
     private final ApplicationFormCrudService applicationFormCrudService;
+    private final ProposalCrudService proposalCrudService;
 
     @Transactional(readOnly = true)
-    public ForeignerQueryResponse findForeignerTotalInfo(UUID userId) {
-        ForeignerProfile profile = foreignerProfileRepository.findByUserIdWithNationalitiesAndLanguages(userId)
+    public ForeignerQueryResponse findForeignerTotalInfo(String email) {
+        User user = userCrudService.findByEmail(email);
+        ForeignerProfile profile = foreignerProfileRepository.findByUserIdWithNationalitiesAndLanguages(user.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
 
         ForeignerEducation education = foreignerEducationRepository.findByForeignerId(profile.getId())
@@ -119,7 +120,7 @@ public class ForeignerProfileDetailService {
         ForeignerProfile profile = foreignerProfileRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
 
-        Optional<Proposal> latestProposalOpt = proposalService.findLatestMatchedProposal(profile.getId());
+        Optional<Proposal> latestProposalOpt = proposalCrudService.findLatestMatchedProposal(profile.getId());
 
         // 매칭된 제안이 없는 경우 모두 false 반환
         if (latestProposalOpt.isEmpty()) {
