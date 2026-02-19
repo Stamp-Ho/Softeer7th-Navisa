@@ -98,6 +98,10 @@ public class ProposalService {
             throw new ProposalException(ResponseStatus.PROPOSAL_ALREADY_EXISTS, "해당 채팅방에 PROPOSED 상태인 제안이 이미 존재합니다.");
         }
 
+        if (proposal != null && proposal.getStatus().equals(ProposalStatus.MATCHED)) {
+            throw new ProposalException(ResponseStatus.PROPOSAL_ALREADY_EXISTS, "해당 채팅방에 MATCHED 상태인 제안이 이미 존재합니다.");
+        }
+
         proposalRepository.save(new Proposal(room, room.getAgentProfile().getId()));
         return request;
     }
