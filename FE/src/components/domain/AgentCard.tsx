@@ -5,23 +5,16 @@ import { useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import type { AgentCardResponse } from "../../api/types/agent";
 import { useResizeImage } from "../../hooks/useResizeImage";
-import { jobList } from "../../constants/job";
+import { useJobListLabels } from "../../assets/JobIcon";
+import { useTranslation } from "react-i18next";
 
-const AgentCard = ({
-  hasAnimation = true,
-  agent,
-  className = "",
-}: {
-  hasAnimation?: boolean;
-  agent?: AgentCardResponse;
-  className: string;
-}) => {
+const AgentCard = ({ hasAnimation = true, agent, className = "" }: { hasAnimation?: boolean; agent?: AgentCardResponse; className: string }) => {
   const context = useContext(AuthContext);
+  const { t } = useTranslation(["components"]);
+  const jobListLabels = useJobListLabels();
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
 
-  const animationStyle = hasAnimation
-    ? "transition-all duration-150 ease-out hover:scale-107 hover:m-2"
-    : "";
+  const animationStyle = hasAnimation ? "transition-all duration-150 ease-out hover:scale-107 hover:m-2" : "";
 
   useEffect(() => {
     if (agent?.profileImgUrl) resizeImage(agent.profileImgUrl, 240, 192);
@@ -36,53 +29,36 @@ const AgentCard = ({
       <Link to={`/profile/agent/${agent.agentId}`}>
         <div className="flex w-60 h-48 overflow-hidden items-center justify-center">
           <div className="shrink-0">
-            <img
-              src={agent.profileImgUrl}
-              width={imageSize.width}
-              height={imageSize.height}
-            />
+            <img src={agent.profileImgUrl} width={imageSize.width} height={imageSize.height} />
           </div>
         </div>
         <div className="flex flex-col gap-3 pb-5 px-4 h-44.75">
-          <h4 className="title-m-bold pt-5">{agent.agentName} 행정사</h4>
+          <h4 className="title-m-bold pt-5">{agent.agentName} {t("agentCard.title")}</h4>
           <div className="flex-col flex gap-1">
             <a className="flex flex-row items-center gap-1.5 caption-m-medium">
-              <IcGraduation size={14} /> 전문 분야
+              <IcGraduation size={14} /> {t("agentCard.expertise")}
             </a>
             {userType !== "NOT_AUTHED" ? (
               <ol className="flex flex-row gap-1">
-                {agent.agentSpecialityTop2?.length === 0 && (
-                  <Tag type="small_fill_gray">
-                    전문분야를 선택하지 않은 행정사입니다.
-                  </Tag>
-                )}
+                {agent.agentSpecialityTop2?.length === 0 && <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>}
                 {agent.agentSpecialityTop2?.slice(0, 2).map((jobId) => (
-                  <Tag
-                    key={`agent_special_job_${jobId}`}
-                    type={"small_fill_violet_max"}
-                  >
-                    {jobList[jobId]}
+                  <Tag key={`agent_special_job_${jobId}`} variant={"small_fill_violet_max"}>
+                    {jobListLabels[jobId]}
                   </Tag>
                 ))}
-                {(agent.agentSpecialityTop2?.length ?? 0) > 2 && (
-                  <Tag type="small_fill_gray">
-                    {(agent.agentSpecialityTop2?.length ?? 0) - 2}
-                  </Tag>
-                )}
+                {(agent.agentSpecialityTop2?.length ?? 0) > 2 && <Tag variant="small_fill_gray">{(agent.agentSpecialityTop2?.length ?? 0) - 2}</Tag>}
               </ol>
             ) : (
-              <Tag type={"small_fill_gray"} className="w-fit">
-                로그인 후 확인 가능합니다.
+              <Tag variant={"small_fill_gray"} className="w-fit">
+                {t("agentCard.loginRequired")}
               </Tag>
             )}
           </div>
           <div className="flex-col flex gap-1">
             <a className="flex flex-row items-center gap-1.5 caption-m-medium">
-              <IcLocation size={14} /> 사무실 위치
+              <IcLocation size={14} /> {t("agentCard.office")}
             </a>
-            <a className="text-text-base body-m-medium">
-              {agent.officeAddress}
-            </a>
+            <a className="text-text-base body-m-medium">{agent.officeAddress}</a>
           </div>
         </div>
       </Link>
@@ -100,20 +76,20 @@ const SkeletonUi = (className = "") => {
     >
       <div className="w-60 h-48 bg-gray-100" />
       <div className="flex flex-col gap-3 pb-5 px-4">
-        <Tag type="small_fill_gray" className="w-28 mt-5" />
+        <Tag variant="small_fill_gray" className="w-28 mt-5" />
         <div className="flex-col flex gap-1">
           <a className="flex flex-row items-center gap-1.5">
-            <Tag type="tiny_skeleton" />
-            <Tag type="tiny_skeleton" className="w-17" />
+            <Tag variant="tiny_skeleton" />
+            <Tag variant="tiny_skeleton" className="w-17" />
           </a>
-          <Tag type="small_fill_gray" className="w-40 mt-1" />
+          <Tag variant="small_fill_gray" className="w-40 mt-1" />
         </div>
         <div className="flex-col flex gap-1">
           <a className="flex flex-row items-center gap-1.5">
-            <Tag type="tiny_skeleton" />
-            <Tag type="tiny_skeleton" className="w-17" />
+            <Tag variant="tiny_skeleton" />
+            <Tag variant="tiny_skeleton" className="w-17" />
           </a>
-          <Tag type="tiny_skeleton" className="w-50 mt-2" />
+          <Tag variant="tiny_skeleton" className="w-50 mt-2" />
         </div>
       </div>
     </li>

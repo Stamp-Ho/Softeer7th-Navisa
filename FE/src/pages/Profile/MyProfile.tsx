@@ -11,7 +11,7 @@ const MyProfile = () => {
       <BannerBackground />
       <div className="flex flex-row gap-2 h-200">
         <Button
-          type="primary"
+          variant="primary"
           className="w-50 ml-auto mt-20 mr-20"
           onClick={logOut}
         >

@@ -49,6 +49,13 @@ export interface PostApplicationFormResponse {
   visaFormId: string;
   updatedAt: string;
 }
+export interface PatchFormStatusRequest {
+  isDone: boolean;
+}
+export interface PatchFormStatusResponse {
+  visaFormId: string; //"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  updatedAt: string; //"2026-02-18T13:30:49.600Z"
+}
 
 // 스토리지
 export interface IssuePresignedUrlRequest {

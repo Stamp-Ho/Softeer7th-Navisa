@@ -1,0 +1,44 @@
+{
+  "dDay": {
+    "format": "D-{{days}}",
+    "today": "D-Day",
+    "past": "D+{{days}}"
+  },
+  "monthDiff": {
+    "months": "{{months}}ヶ月",
+    "years": "{{years}}年{{months}}ヶ月"
+  },
+  "localTime": {
+    "format": "YYYY-MM-DD HH:mm:ss"
+  },
+  "lastChattedAt": {
+    "today": "{{period}} {{time}}",
+    "yesterday": "昨日",
+    "past": "YYYY-MM-DD",
+    "morning": "午前",
+    "afternoon": "午後"
+  },
+  "lastAccessDay": {
+    "now": "ログインしたばかり",
+    "within24h": "24時間以内にログイン",
+    "within3d": "3日以内にログイン",
+    "within7d": "7日以内にログイン"
+  },
+  "chattedTime": {
+    "format": "{{period}} {{time}}",
+    "morning": "午前",
+    "afternoon": "午後"
+  },
+  "dateSystemMessage": {
+    "format": "{{year}}年{{month}}月{{day}}日 {{weekDay}}",
+    "weekDays": {
+      "sunday": "日",
+      "monday": "月",
+      "tuesday": "火",
+      "wednesday": "水",
+      "thursday": "木",
+      "friday": "金",
+      "saturday": "土"
+    }
+  }
+}

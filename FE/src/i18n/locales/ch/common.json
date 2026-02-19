@@ -1,0 +1,126 @@
+{
+  "button": {
+    "confirm": "确认",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "添加",
+    "search": "搜索",
+    "upload": "上传",
+    "download": "下载",
+    "close": "关闭",
+    "submit": "提交",
+    "next": "下一步",
+    "complete": "完成",
+    "logout": "登出",
+    "login": "登录",
+    "signup": "注册",
+    "reset": "重置",
+    "apply": "应用"
+  },
+  "modal": {
+    "title": "对话框",
+    "closeButton": "关闭"
+  },
+  "input": {
+    "placeholder": "请输入",
+    "required": "此项为必填项",
+    "email": "用户ID（邮箱）",
+    "password": "密码",
+    "confirmPassword": "确认密码"
+  },
+  "dropdown": {
+    "select": "请选择",
+    "changesFailed": "更改未能应用"
+  },
+  "checkbox": {
+    "agree": "我同意",
+    "agreeAll": "我同意全部"
+  },
+  "radio": {
+    "select": "选择",
+    "yes": "是",
+    "no": "否"
+  },
+  "languageSelector": {
+    "title": "选择语言",
+    "ko": "한국어",
+    "ch": "中文",
+    "en": "English",
+    "ja": "日本語"
+  },
+  "datePicker": {
+    "selectDate": "请选择日期",
+    "year": "YYYY",
+    "month": "MM",
+    "day": "DD"
+  },
+  "timePicker": {
+    "selectTime": "请选择时间",
+    "hour": "09",
+    "minute": "00"
+  },
+  "tag": {
+    "close": "移除",
+    "noExpertise": "未选择专业领域的移民律师",
+    "loginRequired": "登录后可查看",
+    "completedStatus": "已完成",
+    "writingStatus": "进行中"
+  },
+  "chip": {
+    "contractProposal": "委托提议",
+    "cancelContract": "取消委托",
+    "visaApplicationLink": "转到签证申请",
+    "writeReview": "撰写评论"
+  },
+  "tooltip": {
+    "info": "信息"
+  },
+  "navigation": {
+    "home": "主页",
+    "searchForeigner": "搜索外国申请人",
+    "searchAgent": "搜索律师",
+    "chatMessage": "咨询消息",
+    "documentWrite": "创建签证文件"
+  },
+  "filter": {
+    "job": "工作分类",
+    "region": "地区",
+    "language": "语言",
+    "nationality": "国籍",
+    "selectJob": "选择工作分类",
+    "selectRegion": "选择地区",
+    "selectLanguage": "选择语言",
+    "selectNationality": "请选择国家"
+  },
+  "tabs": {
+    "all": "全部",
+    "writing": "进行中",
+    "completed": "已完成",
+    "unread": "未读",
+    "inContract": "进行中的委托"
+  },
+  "placeholders": {
+    "email": "navisa@gmail.com",
+    "review": "示例：解释清晰易懂。对进展的持续指导让我感到安心。"
+  },
+  "jobs": {
+    "business": "经营/运营",
+    "finance": "金融/咨询",
+    "law": "法律/行政",
+    "research": "研究/科学",
+    "it": "IT/开发/数据",
+    "electricity": "电气/通信技术",
+    "mechanic": "机械/制造技术",
+    "chemistry": "化学/环境技术",
+    "building": "建筑/土木",
+    "education": "教育/讲座",
+    "planning": "企划/营销",
+    "sales": "营业/贸易",
+    "design": "设计/媒体",
+    "medical": "医疗/保健",
+    "tour": "观光/服务",
+    "all": "查看全部职类"
+  }
+}

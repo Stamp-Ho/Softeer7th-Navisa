@@ -1,4 +1,5 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import FormRadio from "./inputComponents/FormRadio";
 import Tag from "../common/Tag";
 import CheckBox from "../common/CheckBox";
@@ -21,6 +22,7 @@ const FormField = ({
   startsWithImage?: boolean;
   setFormStruct: React.Dispatch<React.SetStateAction<FormSection[]>>;
 }) => {
+  const { t } = useTranslation(["components"]);
   const methods = useFormContext();
 
   const isFieldDisabled = useWatch({
@@ -29,8 +31,7 @@ const FormField = ({
   });
   useEffect(() => {
     if (isFieldDisabled) {
-      const targetFieldIndex =
-        startsWithImage && sectionIdx === 0 ? fieldIdx + 1 : fieldIdx;
+      const targetFieldIndex = startsWithImage && sectionIdx === 0 ? fieldIdx + 1 : fieldIdx;
 
       setFormStruct((prev) => {
         return prev.map((section, sIdx) => {
@@ -59,22 +60,17 @@ const FormField = ({
         <div className="mb-4">
           {addIndex && (
             <Tag
-              type={"small_fill_gray_dark"} //false ? "small_fill_violet_max" :"small_fill_gray_dark"
+              variant={"small_fill_gray_dark"} //false ? "small_fill_violet_max" :"small_fill_gray_dark"
               className="w-fit mb-2"
             >
-              {sectionIdx + 1}-
-              {startsWithImage && sectionIdx === 0 ? fieldIdx : fieldIdx + 1}
+              {sectionIdx + 1}-{startsWithImage && sectionIdx === 0 ? fieldIdx : fieldIdx + 1}
             </Tag>
           )}
           <h4 className="title-l-semibold flex flex-row gap-1 items-center">
-            {inputField.isOptional && <Tag type="small_fill">선택</Tag>}
+            {inputField.isOptional && <Tag variant="small_fill">{t("form.optional")}</Tag>}
             {inputField.label}
           </h4>
-          {inputField.description && (
-            <h5 className="title-s-medium text-text-sub">
-              {inputField.description}
-            </h5>
-          )}
+          {inputField.description && <h5 className="title-s-medium text-text-sub">{inputField.description}</h5>}
           {inputField.canInputBlocked && (
             <Controller
               name={`${sectionIdx}.sectionData.${fieldIdx}.disabled`}

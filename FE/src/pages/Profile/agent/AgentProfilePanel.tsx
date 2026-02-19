@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Button from "../../../components/common/Button";
 import ToolTipMessage from "../../../components/common/ToolTipMessage";
 import CalcLastAccessDay from "../../../utils/CalcLastAccessDay";
@@ -32,6 +33,7 @@ const AgentProfilePanel = ({
   officeName = "엄경례 행정사사무소",
   opponentProfileId = "",
 }: AgentProfilePanelProps) => {
+  const { t } = useTranslation(["components"]);
   const [viewMessageModal, setViewMessageModal] = useState(false);
   const [showToast, setShowToast] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -51,7 +53,7 @@ const AgentProfilePanel = ({
 
   return (
     <>
-      {showToast && <Toast message="상담메시지가 전송되었습니다." />}
+      {showToast && <Toast message={t("agentProfile.consultMessageSent")} />}
       {viewMessageModal ? (
         <ChatActivateModal
           onClose={() => {
@@ -69,31 +71,15 @@ const AgentProfilePanel = ({
       )}
 
       <div className="flex flex-col items-center bg-white w-92 rounded-[20px] overflow-hidden shadow">
-        <img
-          className="w-187 h-113 object-cover"
-          src={agentInfo.profileImageUrl || "https://placehold.co/748x462"}
-          alt={`${agentInfo.name} 행정사 프로필 이미지`}
-        />
+        <img className="w-187 h-113 object-cover" src={agentInfo.profileImageUrl || "https://placehold.co/748x462"} alt={t("agentProfile.profileImageAlt", { name: agentInfo.name })} />
         <div className="flex flex-col pt-6 pb-5 px-4 w-full">
-          <div className="headline-l-bold text-text-base mb-3">
-            {agentInfo.name} 행정사
-          </div>
+          <div className="headline-l-bold text-text-base mb-3">{agentInfo.name} {t("agentProfile.title")}</div>
           <div className="title-s-medium text-text-base">{officeName}</div>
           <div className="flex flex-row justify-end">
-            <ToolTipMessage
-              message={CalcLastAccessDay(agentInfo.lastLoginAt)}
-            />
+            <ToolTipMessage message={CalcLastAccessDay(agentInfo.lastLoginAt)} />
           </div>
-          <Button
-            type="primary"
-            className="w-full"
-            onClick={() =>
-              agentInfo.hasChatRoom
-                ? navigate(`/chat`)
-                : setViewMessageModal(true)
-            }
-          >
-            {agentInfo.hasChatRoom ? "상담 이어하기" : "상담하기"}
+          <Button variant="primary" className="w-full" onClick={() => (agentInfo.hasChatRoom ? navigate(`/chat`) : setViewMessageModal(true))}>
+            {agentInfo.hasChatRoom ? t("agentProfile.continueConsult") : t("agentProfile.consult")}
           </Button>
         </div>
       </div>

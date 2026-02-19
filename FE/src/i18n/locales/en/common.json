@@ -1,0 +1,126 @@
+{
+  "button": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "upload": "Upload",
+    "download": "Download",
+    "close": "Close",
+    "submit": "Submit",
+    "next": "Next",
+    "complete": "Complete",
+    "logout": "Logout",
+    "login": "Login",
+    "signup": "Sign Up",
+    "reset": "Reset",
+    "apply": "Apply"
+  },
+  "modal": {
+    "title": "Modal",
+    "closeButton": "Close"
+  },
+  "input": {
+    "placeholder": "Please enter",
+    "required": "This field is required",
+    "email": "User ID (Email)",
+    "password": "Password",
+    "confirmPassword": "Confirm Password"
+  },
+  "dropdown": {
+    "select": "Please select",
+    "changesFailed": "Changes could not be applied"
+  },
+  "checkbox": {
+    "agree": "I agree",
+    "agreeAll": "I agree to all"
+  },
+  "radio": {
+    "select": "Select",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "languageSelector": {
+    "title": "Select language",
+    "ko": "한국어",
+    "ch": "中文",
+    "en": "English",
+    "ja": "日本語"
+  },
+  "datePicker": {
+    "selectDate": "Please select a date",
+    "year": "YYYY",
+    "month": "MM",
+    "day": "DD"
+  },
+  "timePicker": {
+    "selectTime": "Please select a time",
+    "hour": "09",
+    "minute": "00"
+  },
+  "tag": {
+    "close": "Remove",
+    "noExpertise": "Immigration attorney without selected specialty",
+    "loginRequired": "Available after login",
+    "completedStatus": "Completed",
+    "writingStatus": "In Progress"
+  },
+  "chip": {
+    "contractProposal": "Engagement Proposal",
+    "cancelContract": "Cancel Engagement",
+    "visaApplicationLink": "Go to Visa Application",
+    "writeReview": "Write a Review"
+  },
+  "tooltip": {
+    "info": "Information"
+  },
+  "navigation": {
+    "home": "Home",
+    "searchForeigner": "Search Foreigner",
+    "searchAgent": "Search Attorney",
+    "chatMessage": "Consultation Messages",
+    "documentWrite": "Create Visa Documents"
+  },
+  "filter": {
+    "job": "Job Category",
+    "region": "Region",
+    "language": "Language",
+    "nationality": "Nationality",
+    "selectJob": "Select Job Category",
+    "selectRegion": "Select Region",
+    "selectLanguage": "Select Language",
+    "selectNationality": "Please select a country"
+  },
+  "tabs": {
+    "all": "All",
+    "writing": "In Progress",
+    "completed": "Completed",
+    "unread": "Unread",
+    "inContract": "Under Engagement"
+  },
+  "placeholders": {
+    "email": "navisa@gmail.com",
+    "review": "Example: The explanation was easy to understand. I felt reassured by the continuous guidance on the progress."
+  },
+  "jobs": {
+    "business": "Management/Operations",
+    "finance": "Finance/Consulting",
+    "law": "Law/Administration",
+    "research": "Research/Science",
+    "it": "IT/Development/Data",
+    "electricity": "Electrical/Telecom",
+    "mechanic": "Mechanical/Manufacturing",
+    "chemistry": "Chemistry/Environment",
+    "building": "Construction/Civil",
+    "education": "Education/Lecture",
+    "planning": "Planning/Marketing",
+    "sales": "Sales/Trade",
+    "design": "Design/Media",
+    "medical": "Medical/Healthcare",
+    "tour": "Tourism/Service",
+    "all": "View all categories"
+  }
+}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Tag from "../../components/common/Tag";
 import DocumentCard from "../../components/domain/DocumentCard";
 import GrayBackground from "../../components/layout/GrayBackground";
@@ -6,12 +7,11 @@ import type { RecentVisaFormsResponse } from "../../api/types/etc";
 import { useRecentApplicationsQuery } from "../../api/queries/useRecentApplicationsQuery";
 
 const Documents = () => {
+  const { t } = useTranslation(["pages"]);
   const { data, isLoading, isError } = useRecentApplicationsQuery();
   const [statusTab, setStatusTab] = useState<number>(0);
 
-  const [documentToRender, setDocumentToRender] = useState<
-    RecentVisaFormsResponse[]
-  >([]);
+  const [documentToRender, setDocumentToRender] = useState<RecentVisaFormsResponse[]>([]);
 
   useEffect(() => {
     if (data) {
@@ -24,18 +24,14 @@ const Documents = () => {
   }, [data, statusTab]);
 
   const renderTabs = () => {
-    return ["전체", "작성중", "작성완료"].map((opt, index) => {
+    const tabLabels = [t("documents.allTab"), t("documents.inProgressTab"), t("documents.completedTab")];
+    return tabLabels.map((opt, index) => {
       const isActive = statusTab === index;
       return (
         <div key={`tab_${index}`} onClick={() => setStatusTab(index)}>
-          <Tag
-            type={isActive ? "large_violet_off_bold" : "large_white_off"}
-            className="w-27 cursor-pointer"
-          >
+          <Tag variant={isActive ? "large_violet_off_bold" : "large_white_off"} className="w-27 cursor-pointer">
             {opt}
-            {isActive && (
-              <span className="ml-2">{documentToRender.length}</span>
-            )}
+            {isActive && <span className="ml-2">{documentToRender.length}</span>}
           </Tag>
         </div>
       );
@@ -43,30 +39,17 @@ const Documents = () => {
   };
 
   const renderDocuments = () => {
-    if (isLoading)
-      return Array.from({ length: 4 }).map((_, i) => (
-        <DocumentCard key={`skel_${i}`} />
-      ));
-    if (isError || !data)
-      return (
-        <div className="title-m-medium text-gray-600">
-          문서 목록을 불러오지 못했습니다.
-        </div>
-      );
-    return documentToRender.map((doc, index) => (
-      <DocumentCard key={`doc_${index}`} document={doc} />
-    ));
+    if (isLoading) return Array.from({ length: 4 }).map((_, i) => <DocumentCard key={`skel_${i}`} />);
+    if (isError || !data) return <div className="title-m-medium text-gray-600">{t("documents.error")}</div>;
+    return documentToRender.map((doc, index) => <DocumentCard key={`doc_${index}`} document={doc} />);
   };
   return (
     <>
       <GrayBackground />
       <div className="flex flex-col gap-8">
-        <h2 className="headline-m-bold mt-9">문서함</h2>
+        <h2 className="headline-m-bold mt-9">{t("documents.title")}</h2>
         <div className="flex flex-row gap-3 w-full">{renderTabs()}</div>
-        <div
-          className="w-full grid-cols-3 grid gap-3 p-4 -m-4 pb-4 mb-0 overflow-y-auto scrollbar-hide "
-          style={{ maxHeight: "calc(100vh - 250px)" }}
-        >
+        <div className="w-full grid-cols-3 grid gap-3 p-4 -m-4 pb-4 mb-0 overflow-y-auto scrollbar-hide " style={{ maxHeight: "calc(100vh - 250px)" }}>
           {renderDocuments()}
         </div>
       </div>

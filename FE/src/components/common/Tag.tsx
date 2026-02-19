@@ -3,14 +3,14 @@ import type React from "react";
 const Tag = ({
   as: Component = "div",
   children,
-  type = "default",
+  variant = "default",
   className = "",
 }: TagProps) => {
   // 2. 미리 정의된 스타일을 가져오고 없을 경우를 대비해 처리
-  const typeStyle = TAG_STYLES[type] || TAG_STYLES.default;
+  const variantStyle = TAG_STYLES[variant] || TAG_STYLES.default;
 
   return (
-    <Component className={`${BASE_STYLE} ${typeStyle} ${className}`}>
+    <Component className={`${BASE_STYLE} ${variantStyle} ${className}`}>
       {children}
     </Component>
   );
@@ -39,7 +39,7 @@ type TagType =
 interface TagProps {
   as?: React.ElementType;
   children?: React.ReactNode;
-  type?: TagType;
+  variant?: TagType;
   className?: string;
 }
 

@@ -1,15 +1,18 @@
 interface FlagIconProps {
   nationIndex?: number;
   className?: string;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  title?: string;
+  "data-testid"?: string;
 }
 
-const FlagIcon = ({ nationIndex = 0, className }: FlagIconProps) => {
+const FlagIcon = ({ nationIndex = 0, className, onClick, title, "data-testid": testId }: FlagIconProps) => {
   // 인덱스 범위를 벗어날 경우를 대비한 안전 장치
   //const flagSrc = FLAG_IMAGES[nationIndex] || FLAG_IMAGES[0];
   const flagSrc = `/flag/${COUNTRY_NAMES[nationIndex]}.png`;
 
   return (
-    <div className={className}>
+    <div className={className} onClick={onClick} title={title} data-testid={testId}>
       <img
         src={flagSrc}
         alt={`flag-${nationIndex}`}

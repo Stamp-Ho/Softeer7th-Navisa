@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useChatSender } from "../../../../../api/websocket/useChatSender";
 
 interface ChatAreaProps {
@@ -11,12 +12,14 @@ interface ChatAreaProps {
 
 const ChatArea = ({
   className = "",
-  placeholder = "메시지를 입력하세요.",
+  placeholder,
   value,
   setValue,
   roomId,
 }: ChatAreaProps) => {
+  const { t } = useTranslation(["components"]);
   const chatAreaRef = useRef<HTMLTextAreaElement>(null);
+  const messagePlaceholder = placeholder ?? t("chatRoom.messagePlaceholder");
   const isComposing = useRef(false);
   const { sendChat } = useChatSender();
 
@@ -59,7 +62,7 @@ const ChatArea = ({
         flex flex-row items-center scrollbar-hide
          pl-6 pr-12 py-3 w-208 bg-background-sub rounded-6
          resize-none ${className}`}
-      placeholder={placeholder}
+      placeholder={messagePlaceholder}
       value={value}
       onChange={(e) => setValue(e.target.value)}
       onCompositionStart={() => (isComposing.current = true)}

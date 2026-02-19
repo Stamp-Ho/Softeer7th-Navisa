@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { IcClock01, IcLocation, IcPhone } from "../../../assets/icon/StratisUi";
 
 const AgentOffice = ({
@@ -15,15 +16,16 @@ const AgentOffice = ({
     phoneNumber: string;
   };
 }) => {
+  const { t } = useTranslation(["components"]);
   return (
     <>
-      <div className="headline-m-semibold mb-13">행정사 위치</div>
+      <div className="headline-m-semibold mb-13">{t("agentProfile.location")}</div>
       <div className="flex flex-row gap-9 items-center">
         <div className="w-121.5 h-70 flex items-center overflow-hidden border border-border-normal rounded-[20px]">
           <img
             className="object-cover"
             src="https://placehold.co/1520x1144"
-            alt="행정사 사무소 위치 이미지"
+            alt={t("agentProfile.officeImage")}
           />
         </div>
         <div className="flex flex-col py-14 gap-9 text-text-base">

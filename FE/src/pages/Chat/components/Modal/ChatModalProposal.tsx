@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { usePostProposal } from "../../../../api/mutations/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
@@ -7,20 +8,21 @@ type ProposalParams = {
 };
 
 const ChatModalProposal = ({ onAnswer, roomId }: ProposalParams) => {
+  const { t } = useTranslation(["components"]);
   const { mutate: sendProposal } = usePostProposal(roomId);
 
   return (
     <div className="flex flex-col gap-8 items-center w-full">
       <div className="flex flex-col gap-2 items-center">
         <div className="title-l-semibold text-text-base">
-          수임을 제안하시겠습니까?
+          {t("chatModal.proposeRetainerTitle")}
         </div>
         <div className="body-l-medium text-text-base">
-          상대방이 수락하면 수임이 확정돼요.
+          {t("chatModal.proposeRetainerDesc")}
         </div>
       </div>
       <Button
-        type="primary"
+        variant="primary"
         size="large"
         className="w-full"
         onClick={() => {
@@ -28,7 +30,7 @@ const ChatModalProposal = ({ onAnswer, roomId }: ProposalParams) => {
           onAnswer(0);
         }}
       >
-        제안하기
+        {t("chatModal.propose")}
       </Button>
     </div>
   );

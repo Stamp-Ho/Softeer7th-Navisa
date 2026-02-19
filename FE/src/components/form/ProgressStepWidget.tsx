@@ -39,7 +39,7 @@ const ProgressStepWidget = ({
       <h3 className="title-s-bold flex flex-row gap-2">
         {title} 항목 현황
         {stepBySection && (
-          <Tag type="small_fill_gray">
+          <Tag variant="small_fill_gray">
             {filledCount}/{totalCount}칸
           </Tag>
         )}

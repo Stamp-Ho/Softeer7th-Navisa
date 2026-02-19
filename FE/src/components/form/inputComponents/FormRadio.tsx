@@ -1,4 +1,5 @@
 import { useFormContext } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 const FormRadio = ({
   value = -1,
@@ -9,6 +10,7 @@ const FormRadio = ({
   options = [""] as any[],
   disableNextField = false,
 }) => {
+  const { t } = useTranslation(["common"]);
   const { toggleDisableNextField } = useToggleDisableNextField();
   const isBoolean = options[0] === false;
 
@@ -25,8 +27,8 @@ const FormRadio = ({
     if (isBoolean) setValue(opt);
     else onChange(index);
   };
-  const boolToKorean = (bool: boolean) => {
-    return bool ? "예" : "아니오";
+  const boolToLabel = (bool: boolean) => {
+    return bool ? t("radio.yes") : t("radio.no");
   };
   return (
     <div className={`h-14 flex flex-row ${className}`}>
@@ -42,7 +44,7 @@ const FormRadio = ({
             handleOnClick(index, opt);
           }}
         >
-          {isBoolean ? boolToKorean(!opt) : opt}
+          {isBoolean ? boolToLabel(!opt) : opt}
         </div>
       ))}
     </div>

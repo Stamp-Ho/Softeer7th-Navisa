@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import ChatSystemMessage from "./ChatSystemMessage"; // 기존 컴포넌트 재사용
 import type { ChatHistoryResponse } from "../../../../../api/types/chat";
 import CalcChattedTime from "../../../../../utils/CalcChattedTime";
@@ -23,6 +24,7 @@ const ChatBubble = ({
   isRead,
   isLast,
 }: ChatBubbleProps) => {
+  const { t } = useTranslation(["components"]);
   const { type, content, isSentByMe } = message;
 
   if (type === "TEXT") {
@@ -30,7 +32,7 @@ const ChatBubble = ({
       <div className="flex flex-row gap-3 items-end">
         {/* 내 메시지일 때 시간/읽음 표시 (좌측) */}
         <div className="flex flex-col gap-[2px] justify-end items-end caption-l-regular text-text-sub">
-          {isSentByMe && !isRead && <div>안 읽음</div>}
+          {isSentByMe && !isRead && <div>{t("chatRoom.unread")}</div>}
           {isSentByMe && isLast && <div>{CalcChattedTime(message.sentAt)}</div>}
         </div>
 

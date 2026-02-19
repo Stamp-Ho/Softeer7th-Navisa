@@ -1,0 +1,126 @@
+{
+  "button": {
+    "confirm": "확인",
+    "cancel": "취소",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "수정",
+    "add": "추가",
+    "search": "검색",
+    "upload": "업로드",
+    "download": "다운로드",
+    "close": "닫기",
+    "submit": "제출",
+    "next": "다음",
+    "complete": "완료",
+    "logout": "로그아웃",
+    "login": "로그인",
+    "signup": "회원가입",
+    "reset": "초기화",
+    "apply": "적용"
+  },
+  "modal": {
+    "title": "모달",
+    "closeButton": "닫기"
+  },
+  "input": {
+    "placeholder": "입력해주세요",
+    "required": "필수 입력 항목입니다",
+    "email": "아이디 (이메일)",
+    "password": "비밀번호",
+    "confirmPassword": "비밀번호 확인"
+  },
+  "dropdown": {
+    "select": "선택해주세요",
+    "changesFailed": "변경사항이 적용되지 않았습니다."
+  },
+  "checkbox": {
+    "agree": "동의합니다",
+    "agreeAll": "모두 동의합니다"
+  },
+  "radio": {
+    "select": "선택",
+    "yes": "예",
+    "no": "아니오"
+  },
+  "languageSelector": {
+    "title": "언어 선택",
+    "ko": "한국어",
+    "ch": "中文",
+    "en": "English",
+    "ja": "日本語"
+  },
+  "datePicker": {
+    "selectDate": "날짜를 선택해주세요",
+    "year": "YYYY",
+    "month": "MM",
+    "day": "DD"
+  },
+  "timePicker": {
+    "selectTime": "시간을 선택해주세요",
+    "hour": "09",
+    "minute": "00"
+  },
+  "tag": {
+    "close": "제거",
+    "noExpertise": "전문분야를 선택하지 않은 행정사입니다.",
+    "loginRequired": "로그인 후 확인 가능합니다.",
+    "completedStatus": "작성완료",
+    "writingStatus": "작성중"
+  },
+  "chip": {
+    "contractProposal": "수임 제안",
+    "cancelContract": "수임 취소",
+    "visaApplicationLink": "비자 신청서 바로가기",
+    "writeReview": "리뷰 작성하기"
+  },
+  "tooltip": {
+    "info": "정보"
+  },
+  "navigation": {
+    "home": "홈",
+    "searchForeigner": "외국인 탐색",
+    "searchAgent": "행정사 탐색",
+    "chatMessage": "상담 메세지",
+    "documentWrite": "비자서류 작성"
+  },
+  "filter": {
+    "job": "직군",
+    "region": "지역",
+    "language": "언어",
+    "nationality": "국적",
+    "selectJob": "직군 선택",
+    "selectRegion": "지역 선택",
+    "selectLanguage": "언어 선택",
+    "selectNationality": "국가를 선택해 주세요"
+  },
+  "tabs": {
+    "all": "전체",
+    "writing": "작성중",
+    "completed": "작성완료",
+    "unread": "안 읽음",
+    "inContract": "수임 중"
+  },
+  "placeholders": {
+    "email": "navisa@gmail.com",
+    "review": "예) 설명이 이해하기 쉬웠어요. 진행 상황을 계속 안내해줘서 안심됐어요."
+  },
+  "jobs": {
+    "business": "경영/운영",
+    "finance": "금융/경영 컨설팅",
+    "law": "법/행정",
+    "research": "연구/과학",
+    "it": "IT/개발/데이터",
+    "electricity": "전기/통신기술",
+    "mechanic": "기계/제조기술",
+    "chemistry": "화학/환경기술",
+    "building": "건축/토목",
+    "education": "교육/강의",
+    "planning": "기획/마케팅",
+    "sales": "영업/무역",
+    "design": "디자인/미디어",
+    "medical": "의료/헬스케어",
+    "tour": "관광/서비스",
+    "all": "모든 직군 보기"
+  }
+}

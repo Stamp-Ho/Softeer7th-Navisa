@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import BadgeIcon, {
   badgeDescription,
 } from "../../../../../assets/icon/BadgeIcon";
@@ -10,6 +11,7 @@ type Props = {
 };
 
 const AgentHeaderInfo = ({ data }: Props) => {
+  const { t } = useTranslation(["components"]);
   const content = (
     <div className="flex flex-row items-center title-m-bold text-text-base">
       <div className="flex flex-col justify-between">
@@ -29,7 +31,7 @@ const AgentHeaderInfo = ({ data }: Props) => {
           ))}
         </div>
         <div className="flex flex-row items-center gap-1 title-m-bold text-text-base">
-          {data?.name} 행정사
+          {data?.name}{t("chatRoom.attorneySuffix")}
           <div className="flex items-center -rotate-90 cursor-pointer">
             <IcArrows size={20} />
           </div>

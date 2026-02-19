@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import BadgeIcon, { badgeDescription } from "../../../assets/icon/BadgeIcon";
 
 type ReviewType = {
@@ -7,10 +8,11 @@ type ReviewType = {
 };
 
 const ReviewBar = ({ badgeId, reviewCount, totalReviews }: ReviewType) => {
+  const { t } = useTranslation(["components"]);
   const ratio = totalReviews > 0 ? reviewCount / totalReviews : 0;
   const percentage = Math.min(100, Math.max(0, ratio * 100));
   const hasValidBadge = badgeId >= 0 && badgeId < badgeDescription.length;
-  const label = hasValidBadge ? badgeDescription[badgeId] : "알 수 없음";
+  const label = hasValidBadge ? badgeDescription[badgeId] : t("agentProfile.unknownBadge");
   return (
     <div className="relative flex flex-row justify-between items-center w-124 h-15 overflow-hidden border border-violet-50 rounded-[12px] bg-background-default">
       <div

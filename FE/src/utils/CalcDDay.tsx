@@ -1,3 +1,5 @@
+import i18n from "../i18n/config";
+
 // D-Day 계산
 export const calcDDay = (targetDate: string): string => {
   const today = new Date();
@@ -11,9 +13,13 @@ export const calcDDay = (targetDate: string): string => {
   const diffTime = target.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays > 0) return `D-${diffDays}`;
+  if (diffDays > 0) {
+    return i18n.t("utils:dDay.format", { days: diffDays });
+  }
 
-  if (diffDays === 0) return "D-Day";
+  if (diffDays === 0) {
+    return i18n.t("utils:dDay.today");
+  }
 
-  return `D+${Math.abs(diffDays)}`;
+  return i18n.t("utils:dDay.past", { days: Math.abs(diffDays) });
 };

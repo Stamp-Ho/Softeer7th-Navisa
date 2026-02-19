@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 import NavisaLogo from "../../assets/NavisaLogo";
 import LanguageSelector from "../common/LanguageSelector";
 import { IcFile, IcMessage, IcUserProfile } from "../../assets/icon/StratisUi";
@@ -9,11 +10,10 @@ import { AuthContext } from "../../contexts/AuthContext";
 
 const PathNamesWithBackground = ["/profile"];
 const NavigationHeader = () => {
+  const { t } = useTranslation(["common"]);
   const location = useLocation();
   const currentPath = location.pathname;
-  const isSpecialBackground =
-    currentPath === "/" ||
-    PathNamesWithBackground.some((path) => currentPath.startsWith(path));
+  const isSpecialBackground = currentPath === "/" || PathNamesWithBackground.some((path) => currentPath.startsWith(path));
 
   const hasScroll = currentPath === "/" || currentPath.startsWith("/profile");
 
@@ -25,43 +25,23 @@ const NavigationHeader = () => {
 
   const { userType } = context; //, setUserType } = context;
 
-  const homeTabStyle = isSpecialBackground
-    ? "text-gray-0"
-    : currentPath === "/"
-      ? "text-text-base"
-      : "text-text-sub";
-  const searchTabStyle = isSpecialBackground
-    ? "text-gray-0"
-    : currentPath.startsWith("/search")
-      ? "text-text-base"
-      : "text-text-sub";
+  const homeTabStyle = isSpecialBackground ? "text-gray-0" : currentPath === "/" ? "text-text-base" : "text-text-sub";
+  const searchTabStyle = isSpecialBackground ? "text-gray-0" : currentPath.startsWith("/search") ? "text-text-base" : "text-text-sub";
 
-  const isUserCanAccessDoc = ["VALID_AGENT", "FILLED_FOREIGNER"].includes(
-    userType,
-  );
+  const searchLabel = userType === "VALID_AGENT" ? t("navigation.searchForeigner") : t("navigation.searchAgent");
+
+  const isUserCanAccessDoc = ["VALID_AGENT", "FILLED_FOREIGNER"].includes(userType);
   return (
-    <header
-      className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${hasScroll && "ml-1 mr-3"}`}
-    >
-      {authMode === 1 ? (
-        <LoginModal onClose={() => setAuthMode(0)} setAuthMode={setAuthMode} />
-      ) : authMode === 2 ? (
-        <SignUpModal onClose={() => setAuthMode(0)} />
-      ) : (
-        <></>
-      )}
+    <header className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${hasScroll && "ml-1 mr-3"}`}>
+      {authMode === 1 ? <LoginModal onClose={() => setAuthMode(0)} setAuthMode={setAuthMode} /> : authMode === 2 ? <SignUpModal onClose={() => setAuthMode(0)} /> : <></>}
       <div className="flex flex-row items-center gap-32">
         <NavisaLogo whiteMode={isSpecialBackground} />
         <div className={`flex flex-row items-center title-s-bold gap-18`}>
           <Link className={`cursor-pointer ${homeTabStyle}`} to="/">
-            홈
+            {t("navigation.home")}
           </Link>
-          <Link
-            className={`cursor-pointer ${searchTabStyle}`}
-            to={`/search/${userType === "VALID_AGENT" ? "foreigner" : "agent"}`}
-          >
-            {userType === "VALID_AGENT" ? "외국인" : "행정사"}
-            탐색
+          <Link className={`cursor-pointer ${searchTabStyle}`} to={`/search/${userType === "VALID_AGENT" ? "foreigner" : "agent"}`}>
+            {searchLabel}
           </Link>
         </div>
       </div>
@@ -69,12 +49,9 @@ const NavigationHeader = () => {
       <div className="flex flex-row gap-6 h-12">
         {userType !== "NOT_AUTHED" ? (
           <div className="flex flex-row items-center">
-            <Link
-              to="/chat"
-              className="flex flex-row items-center gap-2.25 mr-spacing-700 body-l-semibold text-text-base cursor-pointer"
-            >
+            <Link to="/chat" className="flex flex-row items-center gap-2.25 mr-spacing-700 body-l-semibold text-text-base cursor-pointer">
               <IcMessage />
-              상담 메세지
+              {t("navigation.chatMessage")}
             </Link>
             <Link
               to={userType === "VALID_AGENT" ? "/documents" : "/document"}
@@ -85,7 +62,7 @@ const NavigationHeader = () => {
                 ${isUserCanAccessDoc ? " cursor-pointer" : " opacity-50 cursor-not-allowed"}`}
             >
               <IcFile />
-              비자서류 작성
+              {t("navigation.documentWrite")}
             </Link>
             <Link to={`/profile`} className="cursor-pointer">
               <IcUserProfile />
@@ -94,10 +71,10 @@ const NavigationHeader = () => {
         ) : (
           <div className="flex flex-row items-center body-l-semibold text-gray-800 gap-5 ">
             <a className="cursor-pointer" onClick={() => setAuthMode(1)}>
-              로그인
+              {t("button.login")}
             </a>
             <a className="cursor-pointer" onClick={() => setAuthMode(2)}>
-              회원가입
+              {t("button.signup")}
             </a>
           </div>
         )}

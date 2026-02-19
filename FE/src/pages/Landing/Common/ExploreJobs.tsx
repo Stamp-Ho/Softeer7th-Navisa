@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
-import JobIcon, { jobs } from "../../../assets/JobIcon";
+import { useTranslation } from "react-i18next";
+import JobIcon, { useJobLabels } from "../../../assets/JobIcon";
 
 const ExploreJobs = ({ isAgent = false }) => {
+  const { t } = useTranslation(["pages"]);
+  const jobLabels = useJobLabels();
   return (
     <div className="flex flex-col gap-5 mt-17">
-      <h2 className="headline-s-bold">
-        직군별 {isAgent ? "의뢰인" : "행정사"}
-        탐색
-      </h2>
+      <h2 className="headline-s-bold">{t("landing.exploreJobs")}</h2>
       <div className="grid grid-rows-2 grid-cols-8 px-5 pb-5 gap-4">
         {Array.from({ length: 16 }).map((_, i) => (
           <Link
@@ -16,7 +16,7 @@ const ExploreJobs = ({ isAgent = false }) => {
             to={`/search/${isAgent ? "foreigner" : "agent"}${i === 15 ? "" : `?job=${i}`}`}
           >
             <JobIcon index={i} />
-            {jobs[i]}
+            {jobLabels[i]}
           </Link>
         ))}
       </div>

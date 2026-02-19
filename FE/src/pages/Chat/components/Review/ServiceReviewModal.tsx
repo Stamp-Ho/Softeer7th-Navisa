@@ -3,12 +3,14 @@ import Button from "../../../../components/common/Button";
 import Modal from "../../../../components/common/Modal";
 import Radio from "../../../../components/common/Radio";
 import Tag from "../../../../components/common/Tag";
+import { useTranslation } from "react-i18next";
 
 type ServiceReviewModalParams = {
   reviewHandler: (num: number) => void;
 };
 
 const ServiceReviewModal = ({ reviewHandler }: ServiceReviewModalParams) => {
+  const { t } = useTranslation(["components"]);
   const [reviewText, setReviewText] = useState<string>("");
   const MAX_LENGTH = 1000;
 
@@ -16,17 +18,15 @@ const ServiceReviewModal = ({ reviewHandler }: ServiceReviewModalParams) => {
     <Modal onClose={() => reviewHandler(0)}>
       <div className="flex flex-col px-5 pt-4">
         <div className="flex flex-row items-center gap-3 mb-6 title-l-semibold text-text-base">
-          <Tag type="small_fill">필수</Tag>
-          비자 발급 결과를 선택해주세요.
+          <Tag variant="small_fill">{t("review.serviceTitle")}</Tag>
+          {t("review.visaResult")}
         </div>
-        <Radio options={["발급됨", "발급되지 않음"]} className="mb-9" />
-        <div className="title-l-semibold text-text-base">
-          비자 발급 과정에서 느낀 점을 남겨주세요.
-        </div>
+        <Radio options={[t("review.visaApproved"), t("review.visaRejected")]} className="mb-9" />
+        <div className="title-l-semibold text-text-base">{t("review.serviceDescription")}</div>
         <div className="mt-5 bg-gray-50 rounded-lg p-4 h-86.5 flex flex-col">
           <textarea
             className="w-full flex-1 resize-none outline-none placeholder:text-text-sub"
-            placeholder="예) 설명이 이해하기 쉬웠어요. 진행 상황을 계속 안내해줘서 안심됐어요."
+            placeholder={t("review.servicePlaceholder")}
             value={reviewText}
             onChange={(e) => {
               const value = e.target.value;
@@ -44,14 +44,8 @@ const ServiceReviewModal = ({ reviewHandler }: ServiceReviewModalParams) => {
             {reviewText.length}/{MAX_LENGTH}자
           </div>
         </div>
-        <Button
-          type="primary"
-          size="large"
-          className="w-full mt-10 mb-9.75"
-          disabled={false}
-          onClick={() => reviewHandler(0)}
-        >
-          다음
+        <Button variant="primary" size="large" className="w-full mt-10 mb-9.75" disabled={false} onClick={() => reviewHandler(0)}>
+          {t("review.next")}
         </Button>{" "}
       </div>
     </Modal>

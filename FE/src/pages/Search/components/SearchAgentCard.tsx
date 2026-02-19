@@ -2,11 +2,12 @@ import { Link } from "react-router-dom";
 import BadgeIcon, { badgeDescription } from "../../../assets/icon/BadgeIcon";
 import { IcGraduation, IcLocation } from "../../../assets/icon/StratisUi";
 import Tag from "../../../components/common/Tag";
-import { jobList } from "../../../constants/job";
+import { useJobListLabels } from "../../../assets/JobIcon";
 import type { SearchAgentCardType } from "../../../types/Cards";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { useResizeImage } from "../../../hooks/useResizeImage";
+import { useTranslation } from "react-i18next";
 
 /**
  * 
@@ -22,6 +23,8 @@ import { useResizeImage } from "../../../hooks/useResizeImage";
  */
 const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
   const context = useContext(AuthContext);
+  const { t } = useTranslation(["components"]);
+  const jobListLabels = useJobListLabels();
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
   if (!context) return null;
   const { userType } = context;
@@ -33,17 +36,10 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
   if (!agent || loadingImage) return skeletonUI();
   return (
     <div>
-      <Link
-        to={`/profile/agent/${agent.agentId}`}
-        className="flex flex-row items-center  gap-8 py-6 px-7 bg-gray-30 w-124 h-fit rounded-2xl "
-      >
+      <Link to={`/profile/agent/${agent.agentId}`} className="flex flex-row items-center  gap-8 py-6 px-7 bg-gray-30 w-124 h-fit rounded-2xl ">
         <div className="flex w-35 h-35 rounded-full overflow-hidden  items-center justify-center">
           <div className=" shrink-0">
-            <img
-              src={agent.profileImgUrl}
-              width={imageSize.width}
-              height={imageSize.height}
-            />
+            <img src={agent.profileImgUrl} width={imageSize.width} height={imageSize.height} />
           </div>
         </div>
         <div className="flex flex-col gap-3">
@@ -52,57 +48,37 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
               <div className="h-[16.8px] w-18 bg-gray-100 rounded-4xl" />
             ) : (
               agent.badgeTop2.map((badgeId) => (
-                <div
-                  key={`badgeId_${badgeId}`}
-                  className="flex flex-row gap-1 items-center caption-m-medium text-primary "
-                >
-                  <BadgeIcon
-                    badgeIndex={badgeId}
-                    size={12}
-                    color="var(--primary)"
-                  />
+                <div key={`badgeId_${badgeId}`} className="flex flex-row gap-1 items-center caption-m-medium text-primary ">
+                  <BadgeIcon badgeIndex={badgeId} size={12} color="var(--primary)" />
                   {badgeDescription[badgeId]}
                 </div>
               ))
             )}
           </div>
-          <span className="title-m-bold -mt-2">{agent.agentName} 행정사</span>
+          <span className="title-m-bold -mt-2">{agent.agentName} {t("agentCard.title")}</span>
           <div className="flex-col flex gap-1.5">
             <span className="flex flex-row items-center gap-1.5 caption-m-medium">
-              <IcGraduation size={14} /> 전문 분야
+              <IcGraduation size={14} /> {t("agentCard.expertise")}
             </span>
             {authed ? (
               <ol className="flex flex-row gap-1">
-                {agent.agentSpecialityTop2.length === 0 && (
-                  <Tag type="small_fill_gray">
-                    전문분야를 선택하지 않은 행정사입니다.
-                  </Tag>
-                )}
+                {agent.agentSpecialityTop2.length === 0 && <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>}
                 {agent.agentSpecialityTop2.slice(0, 2).map((jobId) => (
-                  <Tag
-                    key={`agent_special_job_${jobId}`}
-                    type={"small_fill_violet_max"}
-                  >
-                    {jobList[jobId]}
+                  <Tag key={`agent_special_job_${jobId}`} variant={"small_fill_violet_max"}>
+                    {jobListLabels[jobId]}
                   </Tag>
                 ))}
-                {agent.agentSpecialityTop2.length > 2 && (
-                  <Tag type="small_fill_gray">
-                    +{agent.agentSpecialityTop2.length - 2}
-                  </Tag>
-                )}
+                {agent.agentSpecialityTop2.length > 2 && <Tag variant="small_fill_gray">+{agent.agentSpecialityTop2.length - 2}</Tag>}
               </ol>
             ) : (
-              <Tag type={"small_fill_gray"}>로그인 후 확인 가능합니다.</Tag>
+              <Tag variant={"small_fill_gray"}>{t("agentCard.loginRequired")}</Tag>
             )}
           </div>
           <div className="flex-col flex gap-1">
             <span className="flex flex-row items-center gap-1.5 caption-m-medium">
-              <IcLocation size={14} /> 사무실 위치
+              <IcLocation size={14} /> {t("agentCard.office")}
             </span>
-            <span className="text-text-base body-m-medium">
-              {agent.officeAddress}
-            </span>
+            <span className="text-text-base body-m-medium">{agent.officeAddress}</span>
           </div>
         </div>
       </Link>
@@ -120,29 +96,29 @@ const skeletonUI = () => {
         <div className="flex flex-row gap-3">
           {[1, 2].map((badgeId) => (
             <div key={`badgeId_${badgeId}`} className="flex flex-row gap-1 ">
-              <Tag type="tiny_skeleton" />
-              <Tag type="tiny_skeleton" className="w-15" />
+              <Tag variant="tiny_skeleton" />
+              <Tag variant="tiny_skeleton" className="w-15" />
             </div>
           ))}
         </div>
-        <Tag type="small_fill_gray" />
+        <Tag variant="small_fill_gray" />
         <div className="flex-col flex gap-1.5">
           <div className="flex flex-row  gap-1.5">
-            <Tag type="tiny_skeleton" />
-            <Tag type="tiny_skeleton" className="w-17" />
+            <Tag variant="tiny_skeleton" />
+            <Tag variant="tiny_skeleton" className="w-17" />
           </div>
 
           <div className="flex flex-row gap-1">
-            <Tag type={"small_fill_gray"} className="w-13" />
-            <Tag type={"small_fill_gray"} className="w-13" />
+            <Tag variant={"small_fill_gray"} className="w-13" />
+            <Tag variant={"small_fill_gray"} className="w-13" />
           </div>
         </div>
         <div className="flex-col flex gap-1">
           <div className="flex flex-row  gap-1.5">
-            <Tag type="tiny_skeleton" />
-            <Tag type="tiny_skeleton" className="w-17" />
+            <Tag variant="tiny_skeleton" />
+            <Tag variant="tiny_skeleton" className="w-17" />
           </div>
-          <Tag type="tiny_skeleton" className="w-17" />
+          <Tag variant="tiny_skeleton" className="w-17" />
         </div>
       </div>
     </div>

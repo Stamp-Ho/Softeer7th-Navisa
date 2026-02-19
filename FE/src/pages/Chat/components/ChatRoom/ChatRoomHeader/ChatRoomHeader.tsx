@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { ChatRoomHeaderData } from "../../../../../types/chatRoomTypes";
 import { IcX } from "../../../../../assets/icon/StratisUi";
 import Button from "../../../../../components/common/Button";
@@ -20,6 +21,7 @@ const ChatRoomHeader = ({
   onClose,
   onModalAction,
 }: HeaderParams) => {
+  const { t } = useTranslation(["components"]);
   return (
     <>
       <div className="absolute w-full top-0">
@@ -44,11 +46,11 @@ const ChatRoomHeader = ({
             )}
             <Button
               size="small"
-              type="lightGray"
+              variant="lightGray"
               className="w-[100px] mr-8 body-l-semibold"
               onClick={() => onModalAction(4)}
             >
-              차단
+              {t("chatRoom.block")}
             </Button>
             <div className="flex items-center cursor-pointer" onClick={onClose}>
               <IcX />
@@ -58,8 +60,8 @@ const ChatRoomHeader = ({
 
         <div className="flex flex-row justify-between w-full px-6 py-[2px] bg-gradient-to-r from-violet-50 to-green-50">
           <div className="flex flex-row items-center gap-2 body-s-semibold text-text-base">
-            <span>[시스템 알림]</span>
-            <span>비자 발급이 완료되었다면 경험을 후기로 남겨주세요.</span>
+            <span>{t("chatRoom.systemNotice")}</span>
+            <span>{t("chatRoom.reviewPrompt")}</span>
           </div>
           <Chip type="chips_square_review" />
         </div>

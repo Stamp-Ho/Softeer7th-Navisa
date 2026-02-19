@@ -1,0 +1,126 @@
+{
+  "button": {
+    "confirm": "確認",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "add": "追加",
+    "search": "検索",
+    "upload": "アップロード",
+    "download": "ダウンロード",
+    "close": "閉じる",
+    "submit": "送信",
+    "next": "次へ",
+    "complete": "完了",
+    "logout": "ログアウト",
+    "login": "ログイン",
+    "signup": "登録",
+    "reset": "リセット",
+    "apply": "適用"
+  },
+  "modal": {
+    "title": "モーダル",
+    "closeButton": "閉じる"
+  },
+  "input": {
+    "placeholder": "入力してください",
+    "required": "このフィールドは必須です",
+    "email": "ユーザーID（メール）",
+    "password": "パスワード",
+    "confirmPassword": "パスワード確認"
+  },
+  "dropdown": {
+    "select": "選択してください",
+    "changesFailed": "変更が適用されませんでした"
+  },
+  "checkbox": {
+    "agree": "同意します",
+    "agreeAll": "すべてに同意します"
+  },
+  "radio": {
+    "select": "選択",
+    "yes": "はい",
+    "no": "いいえ"
+  },
+  "languageSelector": {
+    "title": "言語を選択",
+    "ko": "한국어",
+    "ch": "中文",
+    "en": "English",
+    "ja": "日本語"
+  },
+  "datePicker": {
+    "selectDate": "日付を選択してください",
+    "year": "YYYY",
+    "month": "MM",
+    "day": "DD"
+  },
+  "timePicker": {
+    "selectTime": "時間を選択してください",
+    "hour": "09",
+    "minute": "00"
+  },
+  "tag": {
+    "close": "削除",
+    "noExpertise": "専門分野が選択されていない行政書士",
+    "loginRequired": "ログイン後に確認できます",
+    "completedStatus": "完了",
+    "writingStatus": "進行中"
+  },
+  "chip": {
+    "contractProposal": "依頼提案",
+    "cancelContract": "依頼をキャンセル",
+    "visaApplicationLink": "ビザ申請へ",
+    "writeReview": "レビューを書く"
+  },
+  "tooltip": {
+    "info": "情報"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "searchForeigner": "外国人依頼者を検索",
+    "searchAgent": "行政書士を検索",
+    "chatMessage": "相談メッセージ",
+    "documentWrite": "ビザ書類を作成"
+  },
+  "filter": {
+    "job": "職業分類",
+    "region": "地域",
+    "language": "言語",
+    "nationality": "国籍",
+    "selectJob": "職業分類を選択",
+    "selectRegion": "地域を選択",
+    "selectLanguage": "言語を選択",
+    "selectNationality": "国を選択してください"
+  },
+  "tabs": {
+    "all": "すべて",
+    "writing": "進行中",
+    "completed": "完了",
+    "unread": "未読",
+    "inContract": "依頼中"
+  },
+  "placeholders": {
+    "email": "navisa@gmail.com",
+    "review": "例）説明がわかりやすかったです。進捗状況の継続的なガイダンスで安心できました。"
+  },
+  "jobs": {
+    "business": "経営/運営",
+    "finance": "金融/コンサル",
+    "law": "法/行政",
+    "research": "研究/科学",
+    "it": "IT/開発/データ",
+    "electricity": "電気/通信技術",
+    "mechanic": "機械/製造技術",
+    "chemistry": "化学/環境技術",
+    "building": "建築/土木",
+    "education": "教育/講義",
+    "planning": "企画/マーケティング",
+    "sales": "営業/貿易",
+    "design": "デザイン/メディア",
+    "medical": "医療/ヘルスケア",
+    "tour": "観光/サービス",
+    "all": "すべての職種を見る"
+  }
+}

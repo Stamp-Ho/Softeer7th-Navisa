@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { usePostProposalCanceled } from "../../../../api/mutations/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
@@ -7,20 +8,21 @@ type ProposalParams = {
 };
 
 const ChatModalCancel = ({ onAnswer, roomId }: ProposalParams) => {
+  const { t } = useTranslation(["components"]);
   const { mutate: sendProposalCanceled } = usePostProposalCanceled(roomId);
 
   return (
     <div className="flex flex-col gap-8 items-center w-full">
       <div className="flex flex-col gap-2 items-center">
         <div className="title-l-semibold text-text-base">
-          수임을 취소하시겠습니까?
+          {t("chatModal.cancelRetainerTitle")}
         </div>
         <div className="body-l-medium text-text-base">
-          취소 시, 행정사의 비자 신청서 작성 권한이 사라져요.
+          {t("chatModal.cancelRetainerDesc")}
         </div>
       </div>
       <Button
-        type="primary"
+        variant="primary"
         size="large"
         className="w-full"
         onClick={() => {
@@ -28,7 +30,7 @@ const ChatModalCancel = ({ onAnswer, roomId }: ProposalParams) => {
           onAnswer(0);
         }}
       >
-        취소하기
+        {t("chatModal.cancel")}
       </Button>
     </div>
   );

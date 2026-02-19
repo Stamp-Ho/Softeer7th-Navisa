@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import ChatRoomList from "./components/ChatList/ChatRoomList";
 import Envelope from "../../assets/Envelope";
 import ChatRoom from "./components/ChatRoom/ChatRoom";
@@ -7,16 +8,14 @@ import ReviewModal from "./components/Review/ReviewModal";
 import NoChatView from "./components/ChatRoom/NoChatView";
 import type { ChatRoomFilter } from "../../api/types/chat";
 import ChatRoomTabButton from "./components/ChatRoom/ChatRoomTabButton";
-import {
-  useChatMatchedUnreadCount,
-  useChatUnreadCount,
-} from "../../api/queries/useChatUnreadCountQuery";
+import { useChatMatchedUnreadCount, useChatUnreadCount } from "../../api/queries/useChatUnreadCountQuery";
 import { useChatRoomsQuery } from "../../api/queries/useChatRoomsQuery";
 import { useAuth } from "../../contexts/AuthContextProvider";
 import { useWebSocket } from "../../contexts/WebSocketContext";
 import { useSyncedChatRooms } from "./components/hooks/useSyncedChatRooms";
 
 const ChatPage = () => {
+  const { t } = useTranslation(["pages", "common"]);
   const [selectedChatRoomId, setSelectedChatRoomId] = useState<number>(-1);
   const [selectedTab, setSelectedTab] = useState<ChatRoomFilter>("all");
   const [viewMessageModal, setViewMessageModal] = useState<number>(0);
@@ -29,32 +28,16 @@ const ChatPage = () => {
   // ======== Auth ========
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
-  const isFileReady =
-    userType === "VALID_AGENT" || userType === "FILLED_FOREIGNER";
+  const isFileReady = userType === "VALID_AGENT" || userType === "FILLED_FOREIGNER";
 
   // ======== API ========
-  const {
-    data: unreadCountData,
-    isLoading: isUnreadLoading,
-    isError: isUnreadError,
-  } = useChatUnreadCount();
+  const { data: unreadCountData, isLoading: isUnreadLoading, isError: isUnreadError } = useChatUnreadCount();
   const unreadCount = unreadCountData?.count ?? 0;
   console.log(unreadCount);
-  const {
-    data: matchedUnreadCountData,
-    isLoading: isMatchedUnreadLoading,
-    isError: isMatchedUnreadError,
-  } = useChatMatchedUnreadCount({ enabled: isAgent });
+  const { data: matchedUnreadCountData, isLoading: isMatchedUnreadLoading, isError: isMatchedUnreadError } = useChatMatchedUnreadCount({ enabled: isAgent });
   const matchedUnreadCount = matchedUnreadCountData?.count ?? 0;
 
-  const {
-    data,
-    isLoading: isChatRoomsLoading,
-    isError: isChatRoomsError,
-    fetchNextPage,
-    isFetchingNextPage,
-    hasNextPage,
-  } = useChatRoomsQuery(selectedTab);
+  const { data, isLoading: isChatRoomsLoading, isError: isChatRoomsError, fetchNextPage, isFetchingNextPage, hasNextPage } = useChatRoomsQuery(selectedTab);
   const chatRooms = data?.pages.flatMap((page) => page.content) ?? [];
 
   // 채팅방 목록 실시간 연동 (수임상태, 안읽음 개수)
@@ -79,36 +62,25 @@ const ChatPage = () => {
   };
   const reviewHandler = (num: number) => setReviewModal(num);
 
-  if (!isFileReady || (!isChatExist && selectedTab === "all"))
-    return <NoChatView isFileReady={isFileReady} />;
+  if (!isFileReady || (!isChatExist && selectedTab === "all")) return <NoChatView isFileReady={isFileReady} />;
 
   return (
     <>
       <div className="fixed inset-0 bg-background-sub -z-10"></div>
 
-      {reviewModal > 0 && (
-        <ReviewModal reviewHandler={reviewHandler} modalView={reviewModal} />
-      )}
+      {reviewModal > 0 && <ReviewModal reviewHandler={reviewHandler} modalView={reviewModal} />}
 
-      {viewMessageModal > 0 && (
-        <ChatRoomModal
-          onModalAction={onModalAction}
-          modalView={viewMessageModal}
-          roomId={selectedChatRoomId}
-        />
-      )}
+      {viewMessageModal > 0 && <ChatRoomModal onModalAction={onModalAction} modalView={viewMessageModal} roomId={selectedChatRoomId} />}
 
       {/* ================= 메인 레이아웃 ================= */}
       <div className="relative flex flex-row justify-between mt-12 h-[904px]">
         {/* ===== 왼쪽: 탭 + 목록 ===== */}
         <div className="flex flex-col">
-          <div className="headline-m-bold text-gray-1000 mb-13">
-            상담 메시지
-          </div>
+          <div className="headline-m-bold text-gray-1000 mb-13">{t("chat.title")}</div>
 
           <div className="flex flex-row gap-3 px-3 mb-10">
             <ChatRoomTabButton
-              label="전체"
+              label={t("tabs.all")}
               value="all"
               selectedTab={selectedTab}
               width="w-[92px]"
@@ -119,7 +91,7 @@ const ChatPage = () => {
             />
 
             <ChatRoomTabButton
-              label="안 읽음"
+              label={t("tabs.unread")}
               value="unread"
               selectedTab={selectedTab}
               count={isUnreadLoading || isUnreadError ? 0 : realTimeTotalUnread}
@@ -131,14 +103,10 @@ const ChatPage = () => {
 
             {isAgent && (
               <ChatRoomTabButton
-                label="수임 중"
+                label={t("tabs.inContract")}
                 value="matched"
                 selectedTab={selectedTab}
-                count={
-                  isMatchedUnreadLoading || isMatchedUnreadError
-                    ? 0
-                    : matchedUnreadCount
-                }
+                count={isMatchedUnreadLoading || isMatchedUnreadError ? 0 : matchedUnreadCount}
                 onClick={() => {
                   setSelectedTab("matched");
                   setSelectedChatRoomId(-1);
@@ -148,9 +116,7 @@ const ChatPage = () => {
           </div>
 
           {/* ===== 전체 페이지 로딩 ===== */}
-          {isChatRoomsLoading && (
-            <div className="px-3 text-gray-500">로딩 중...</div>
-          )}
+          {isChatRoomsLoading && <div className="px-3 text-gray-500">{t("search.loading")}</div>}
 
           {/* ===== 목록 (에러면 chatRooms 안 넘김 = 더미 사용) ===== */}
           {!isChatRoomsLoading && (
@@ -165,33 +131,21 @@ const ChatPage = () => {
           )}
         </div>
         {/* ===== 오른쪽: 채팅창 ===== */}
-        {selectedTab === "unread" &&
-        realTimeTotalUnread === 0 &&
-        !isChatRoomsError &&
-        !isUnreadLoading ? (
-          <div className="absolute flex justify-center top-[40%] w-full headline-s-medium text-gray-500 ">
-            읽지 않은 메시지가 없어요.
-          </div>
+        {selectedTab === "unread" && realTimeTotalUnread === 0 && !isChatRoomsError && !isUnreadLoading ? (
+          <div className="absolute flex justify-center top-[40%] w-full headline-s-medium text-gray-500 ">{t("chat.noUnreadMessages")}</div>
         ) : (
           <div className="relative flex flex-col w-[880px] h-full rounded-[20px] overflow-hidden bg-gray-0">
             {selectedChatRoomId === -1 && (
               <div className="flex flex-col items-center my-auto">
                 <Envelope />
-                <div className="mt-7 headline-s-medium text-gray-500">
-                  대화할 메시지를 선택해 주세요.
-                </div>
+                <div className="mt-7 headline-s-medium text-gray-500">{t("chat.selectMessage")}</div>
               </div>
             )}
 
             {selectedChatRoomId !== -1 && (
               <div className="flex flex-col justify-between h-full">
                 <div className="w-full pt-10"></div>
-                <ChatRoom
-                  chatRoomId={selectedChatRoomId}
-                  onClose={onCloseChat}
-                  onModalAction={onModalAction}
-                  profileImg={opponentImg}
-                />
+                <ChatRoom chatRoomId={selectedChatRoomId} onClose={onCloseChat} onModalAction={onModalAction} profileImg={opponentImg} />
                 <div className="w-full pt-28"></div>
               </div>
             )}

@@ -6,6 +6,8 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+
+    "strict": true,
     "paths": {
       "@components/*": ["src/components/*"],
       "@pages/*": ["src/pages/*"],
@@ -13,6 +15,5 @@
       "@assets/*": ["src/assets/*"],
       "@api/*": ["src/api/*"]
     }
-  },
-  "strict": true
+  }
 }

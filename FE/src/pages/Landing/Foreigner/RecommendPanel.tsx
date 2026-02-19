@@ -1,19 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import {
-  RPDocument,
-  RPMessage,
-  RPPeople,
-} from "../../../assets/icon/RecommendPanelIcon";
+import { RPDocument, RPMessage, RPPeople } from "../../../assets/icon/RecommendPanelIcon";
 import { IcPencilLine } from "../../../assets/icon/StratisUi";
 import Button from "../../../components/common/Button";
 import { useAuth } from "../../../contexts/AuthContextProvider";
+import { alertT } from "../../../i18n/alerts";
 
 const RecommendPanel = () => {
   const { userType } = useAuth();
   const navigate = useNavigate();
   const handleClick = () => {
     if (userType === "NOT_AUTHED") {
-      alert("먼저 로그인해 주세요");
+      alertT("pages.landing.loginRequired");
     } else {
       navigate("/onboard/foreigner");
     }
@@ -26,12 +23,7 @@ const RecommendPanel = () => {
           {rec.message}
         </div>
       ))}
-      <Button
-        type="primary"
-        size="large"
-        className="w-58 gap-2 ml-auto mt-auto"
-        onClick={handleClick}
-      >
+      <Button variant="primary" size="large" className="w-58 gap-2 ml-auto mt-auto" onClick={handleClick}>
         내 요건 등록하러가기
         <IcPencilLine color="white" />
       </Button>

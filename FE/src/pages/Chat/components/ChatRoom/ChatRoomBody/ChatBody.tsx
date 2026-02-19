@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Tag from "../../../../../components/common/Tag";
 import CalcDateSystemMessage from "../../../../../utils/CalcDateSystemMessage";
 import { useAuth } from "../../../../../contexts/AuthContextProvider";
@@ -12,30 +13,16 @@ type ChatBodyParams = {
   profileImg: string | null;
 };
 
-const ChatBody = ({
-  chatRoomId,
-  onModalAction,
-  opponentName = "loading",
-  myName = "loading",
-  profileImg,
-}: ChatBodyParams) => {
+const ChatBody = ({ chatRoomId, onModalAction, opponentName = "loading", myName = "loading", profileImg }: ChatBodyParams) => {
+  const { t } = useTranslation(["components"]);
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
 
   // 모든 로직은 훅 안에 숨김
-  const {
-    groupedChats,
-    isLoading,
-    isError,
-    scrollRef,
-    pendingProposalId,
-    handleScroll,
-    isFetchingNextPage,
-  } = useChatRoom(chatRoomId, true);
+  const { groupedChats, isLoading, isError, scrollRef, pendingProposalId, handleScroll, isFetchingNextPage } = useChatRoom(chatRoomId, true);
 
-  if (isLoading) return <div className="p-6">채팅 불러오는 중...</div>;
-  if (isError)
-    return <div className="p-6 text-red-500">채팅을 불러오지 못했습니다.</div>;
+  if (isLoading) return <div className="p-6">{t("chatRoom.loadingChat")}</div>;
+  if (isError) return <div className="p-6 text-red-500">{t("chatRoom.loadChatFailed")}</div>;
 
   return (
     <>
@@ -48,22 +35,15 @@ const ChatBody = ({
         }}
         className="scrollbar-hide h-full"
       >
-        <div style={{ height: 600 }}>
-          {isFetchingNextPage && "이전 메시지 불러오는 중..."}
-        </div>
+        <div style={{ height: 600 }}>{isFetchingNextPage && t("chatRoom.previousMessagesLoading")}</div>
         {groupedChats.map((group) => {
           const firstMsg = group[0];
 
           // 날짜 구분선 (SYSTEM 메시지)
           if (firstMsg.type === "SYSTEM") {
             return (
-              <div
-                key={firstMsg.chatMessageId}
-                className="flex flex-row justify-center w-full my-10"
-              >
-                <Tag type="small_fill_gray">
-                  {CalcDateSystemMessage(firstMsg.sentAt)}
-                </Tag>
+              <div key={firstMsg.chatMessageId} className="flex flex-row justify-center w-full my-10">
+                <Tag variant="small_fill_gray">{CalcDateSystemMessage(firstMsg.sentAt)}</Tag>
               </div>
             );
           }

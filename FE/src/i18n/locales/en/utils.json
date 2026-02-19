@@ -1,0 +1,44 @@
+{
+  "dDay": {
+    "format": "D-{{days}}",
+    "today": "D-Day",
+    "past": "D+{{days}}"
+  },
+  "monthDiff": {
+    "months": "{{months}} month(s)",
+    "years": "{{years}} year(s) {{months}} month(s)"
+  },
+  "localTime": {
+    "format": "YYYY-MM-DD HH:mm:ss"
+  },
+  "lastChattedAt": {
+    "today": "{{period}} {{time}}",
+    "yesterday": "Yesterday",
+    "past": "YYYY-MM-DD",
+    "morning": "AM",
+    "afternoon": "PM"
+  },
+  "lastAccessDay": {
+    "now": "Just logged in",
+    "within24h": "Logged in within 24 hours",
+    "within3d": "Logged in within 3 days",
+    "within7d": "Logged in within 7 days"
+  },
+  "chattedTime": {
+    "format": "{{period}} {{time}}",
+    "morning": "AM",
+    "afternoon": "PM"
+  },
+  "dateSystemMessage": {
+    "format": "{{month}}/{{day}}/{{year}} {{weekDay}}",
+    "weekDays": {
+      "sunday": "Sun",
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat"
+    }
+  }
+}

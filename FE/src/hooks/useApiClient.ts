@@ -9,10 +9,7 @@ let refreshPromise: Promise<any> | null;
 const useApiClient = () => {
   const navigate = useNavigate();
   const { accessToken, setAccessToken, setUserId, setUserType } = useAuth();
-  const apiClient: apiClientType = async <T = any>(
-    url: string,
-    options: FetchOptions,
-  ): Promise<T> => {
+  const apiClient: apiClientType = async <T = any>(url: string, options: FetchOptions): Promise<T> => {
     const headers = new Headers(options.headers);
     const currentToken = options.manualToken || accessToken;
     if (!options.skipAuth && currentToken) {
@@ -27,8 +24,7 @@ const useApiClient = () => {
         if (!res.ok) {
           if (res.status === 401 && !options.skipAuth) {
             // 이미 재시도를 한 요청인데 또 401이라면 중단 (무한루프 방지)
-            if (options._retry)
-              throw new Error("Unauthorized even after retry");
+            if (options._retry) throw new Error("Unauthorized even after retry");
 
             const newToken = await refreshAccessToken();
             return apiClient<T>(url, {
@@ -47,11 +43,7 @@ const useApiClient = () => {
       });
   };
   // 각 메서드 주입 시 제네릭 적용
-  apiClient.get = (
-    url: string,
-    params?: Record<string, any>,
-    options?: FetchOptions,
-  ) => {
+  apiClient.get = (url: string, params?: Record<string, any>, options?: FetchOptions) => {
     const getQueryString = (params: Record<string, any>) => {
       if (!params) return "";
 
@@ -82,11 +74,7 @@ const useApiClient = () => {
 
     return apiClient(`${url}${queryString}`, { ...options, method: "GET" });
   };
-  apiClient.post = <T = any>(
-    url: string,
-    body?: any,
-    options?: FetchOptions,
-  ): Promise<T> =>
+  apiClient.post = <T = any>(url: string, body?: any, options?: FetchOptions): Promise<T> =>
     apiClient<T>(url, {
       ...options,
       method: "POST",
@@ -94,18 +82,17 @@ const useApiClient = () => {
       headers: { "Content-Type": "application/json", ...options?.headers },
     });
 
-  apiClient.delete = <T = any>(
-    url: string,
-    options?: FetchOptions,
-  ): Promise<T> => apiClient<T>(url, { ...options, method: "DELETE" });
+  apiClient.delete = <T = any>(url: string, options?: FetchOptions): Promise<T> => apiClient<T>(url, { ...options, method: "DELETE" });
 
-  apiClient.put = <T = any>(url: string, options?: FetchOptions): Promise<T> =>
-    apiClient<T>(url, { ...options, method: "PUT" });
+  apiClient.put = <T = any>(url: string, options?: FetchOptions): Promise<T> => apiClient<T>(url, { ...options, method: "PUT" });
 
-  apiClient.patch = <T = any>(
-    url: string,
-    options?: FetchOptions,
-  ): Promise<T> => apiClient<T>(url, { ...options, method: "PATCH" });
+  apiClient.patch = <T = any>(url: string, body?: any, options?: FetchOptions): Promise<T> =>
+    apiClient<T>(url, {
+      ...options,
+      method: "PATCH",
+      body: body ? JSON.stringify(body) : undefined,
+      headers: { "Content-Type": "application/json", ...options?.headers },
+    });
 
   const refreshAccessToken = useCallback(async () => {
     if (refreshPromise) return refreshPromise;
@@ -127,6 +114,8 @@ const useApiClient = () => {
           alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
           setUserId("");
           setUserType("NOT_AUTHED");
+          setAccessToken("");
+          window.localStorage.removeItem("userType");
           window.localStorage.removeItem("userId");
           navigate("/", { replace: false });
           throw new Error("refresh token 시간 만료");
@@ -145,16 +134,11 @@ export default useApiClient;
 
 export type apiClientType = {
   <T = any>(url: string, options: FetchOptions): Promise<T>;
-  get<T = any>(
-    url: string,
-    params?: Record<string, any>,
-    options?: FetchOptions,
-    additionalParams?: string,
-  ): Promise<T>;
+  get<T = any>(url: string, params?: Record<string, any>, options?: FetchOptions, additionalParams?: string): Promise<T>;
   post<T = any>(url: string, body?: any, options?: FetchOptions): Promise<T>;
   delete<T = any>(url: string, options?: FetchOptions): Promise<T>;
   put<T = any>(url: string, options?: FetchOptions): Promise<T>;
-  patch<T = any>(url: string, options?: FetchOptions): Promise<T>;
+  patch<T = any>(url: string, body?: any, options?: FetchOptions): Promise<T>;
 };
 
 interface FetchOptions extends RequestInit {

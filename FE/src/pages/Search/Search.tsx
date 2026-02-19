@@ -1,4 +1,5 @@
 import { useParams, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useSearchScroll } from "./hooks/useSearchScroll";
 
 import SearchAgentFilter from "./components/SearchAgentFilter";
@@ -7,33 +8,26 @@ import SearchforeignerFilter from "./components/SearchForeignerFilter";
 import SearchForeignerCard from "./components/SearchForeignerCard";
 import GoTopFloating from "../../components/common/GoTopFloating";
 
-import type {
-  SearchAgentCardType,
-  SearchForeignerCardType,
-} from "../../types/Cards";
+import type { SearchAgentCardType, SearchForeignerCardType } from "../../types/Cards";
 import { useSearchInfiniteQuery } from "../../api/queries/useSearchInfiniteQuery";
-import { jobList } from "../../constants/job";
+import { useJobListLabels } from "../../assets/JobIcon";
 import { regionList } from "../../constants/regions";
 
 const Search = () => {
+  const { t } = useTranslation(["pages"]);
+  const jobListLabels = useJobListLabels();
   const { targetType } = useParams();
   const [searchParams] = useSearchParams();
 
   const isAgent = targetType === "agent";
   const params = isAgent
     ? {
-        jobGroupNameList: searchParams
-          .getAll("job")
-          .map((id) => jobList[Number(id)]),
-        regionList: searchParams
-          .getAll("region")
-          .map((id) => regionList[Number(id)]),
+        jobGroupNameList: searchParams.getAll("job").map((id) => jobListLabels[Number(id)]),
+        regionList: searchParams.getAll("region").map((id) => regionList[Number(id)]),
         languageIdList: searchParams.getAll("language").map((id) => Number(id)),
       }
     : {
-        jobGroupNameList: searchParams
-          .getAll("job")
-          .map((id) => jobList[Number(id)]),
+        jobGroupNameList: searchParams.getAll("job").map((id) => jobListLabels[Number(id)]),
         nationIdList: searchParams.getAll("nation"),
         languageIdList: searchParams.getAll("language").map((id) => Number(id)),
       };
@@ -47,17 +41,15 @@ const Search = () => {
   } = //, hasNextPage
     useSearchInfiniteQuery(targetType || null, params);
 
-  const { scrollRef, handleScroll, searchResultStyle, goTop } = useSearchScroll(
-    () => fetchNextPage(),
-  );
+  const { scrollRef, handleScroll, searchResultStyle, goTop } = useSearchScroll(() => fetchNextPage());
 
   const Filter = isAgent ? SearchAgentFilter : SearchforeignerFilter;
 
   //@ts-ignore
   const allItems = data?.pages.flatMap((page) => page.result.content) ?? [];
   const renderCards = () => {
-    if (status === "pending") return <div>로딩 중...</div>;
-    if (allItems.length === 0) return <div>검색 결과가 없습니다.</div>;
+    if (status === "pending") return <div>{t("search.loading")}</div>;
+    if (allItems.length === 0) return <div>{t("search.noResults")}</div>;
 
     return allItems.map((item, index) => {
       // 여기서 item의 타입을 구체화합니다.
@@ -71,12 +63,7 @@ const Search = () => {
         );
       } else {
         const foreignerItem = item as SearchForeignerCardType;
-        return (
-          <SearchForeignerCard
-            key={`foreigner_${index}`}
-            foreigner={foreignerItem}
-          />
-        );
+        return <SearchForeignerCard key={`foreigner_${index}`} foreigner={foreignerItem} />;
       }
     });
   };
@@ -94,16 +81,9 @@ const Search = () => {
         {renderCards()}
 
         {/* 추가 데이터 로딩 표시 */}
-        {isFetchingNextPage && (
-          <div className="col-span-full text-center">추가 로딩 중...</div>
-        )}
+        {isFetchingNextPage && <div className="col-span-full text-center">추가 로딩 중...</div>}
       </div>
-      {allItems.length > 12 && (
-        <GoTopFloating
-          onClick={goTop}
-          className="absolute -right-21 bottom-3"
-        />
-      )}
+      {allItems.length > 12 && <GoTopFloating onClick={goTop} className="absolute -right-21 bottom-3" />}
     </>
   );
 };

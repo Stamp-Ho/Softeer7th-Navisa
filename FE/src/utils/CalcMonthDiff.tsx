@@ -1,6 +1,11 @@
+import i18n from "../i18n/config";
+
 // 경력 계산
 export const calcMonthDiff = (months: number) => {
-  if (months <= 12) return `${months}개월`;
+  if (months <= 12) {
+    return i18n.t("utils:monthDiff.months", { months });
+  }
   const years = Math.floor(months / 12);
-  return `${years}년 ${months % 12}개월`;
+  const remainMonths = months % 12;
+  return i18n.t("utils:monthDiff.years", { years, months: remainMonths });
 };

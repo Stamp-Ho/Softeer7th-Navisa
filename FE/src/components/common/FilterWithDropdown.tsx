@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router-dom";
 
 import DropDown from "./Dropdown";
 
-import { jobList } from "../../constants/job";
+import { useJobListLabels } from "../../assets/JobIcon";
 import { regionList } from "../../constants/regions";
 import { languageList } from "../../constants/language";
 import {
@@ -27,11 +27,12 @@ const FilterWithDropdown = ({
   onClose,
 }: FilterWithDropdownProps) => {
   const [filterParams] = useSearchParams();
+  const jobListLabels = useJobListLabels();
   const thisParams = filterParams.getAll(paramKey);
 
   const FilterIcon = FILTER_ICONS[paramKey];
   const filterName = FILTER_NAME[paramKey];
-  const filterOptions = FILTER_LIST[paramKey];
+  const filterOptions = paramKey === "job" ? jobListLabels : FILTER_LIST[paramKey as keyof typeof FILTER_LIST];
 
   const selectedIds = thisParams
     .map(Number)
@@ -76,7 +77,6 @@ const FilterWithDropdown = ({
 export default FilterWithDropdown;
 
 const FILTER_LIST = {
-  job: jobList,
   region: regionList,
   language: languageList,
   nation: nationList,

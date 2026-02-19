@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ChatRoomCard from "./ChatRoomCard";
 import type { ChatRoomResponse } from "../../../../api/types/chat";
 
@@ -19,6 +20,7 @@ const ChatRoomList = ({
   isFetchingNextPage,
   hasNextPage,
 }: ChatRoomListProps) => {
+  const { t } = useTranslation(["components"]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -93,7 +95,7 @@ const ChatRoomList = ({
       ))}
 
       {isFetchingNextPage && (
-        <div className="py-4 text-center text-gray-400">불러오는 중...</div>
+        <div className="py-4 text-center text-gray-400">{t("chatRoom.loading")}</div>
       )}
 
       <div ref={endRef} className="h-4" />

@@ -30,7 +30,7 @@ const ChatRoomTabButton = ({
 
   return (
     <div className="cursor-pointer" onClick={onClick}>
-      <Tag type={getTagType()} className={width}>
+      <Tag variant={getTagType()} className={width}>
         {label}
         {count !== undefined ? (
           count > 0 ? (

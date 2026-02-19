@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import ChatBubble from "./ChatBubble";
 import type { ChatHistoryResponse } from "../../../../../api/types/chat";
 
@@ -20,6 +21,7 @@ const ChatMessageGroup = ({
   onModalAction,
   pendingProposalId,
 }: Props) => {
+  const { t } = useTranslation(["components"]);
   const firstMsg = group[0];
   const isMe = firstMsg.isSentByMe;
 
@@ -36,7 +38,7 @@ const ChatMessageGroup = ({
     return (
       <img
         src={profileImg ?? "https://placehold.co/56x56"}
-        alt="Profile"
+        alt={t("chatRoom.profileImageAlt")}
         className="w-[56px] h-[56px] mr-2 object-cover rounded-full shrink-0"
       />
     );

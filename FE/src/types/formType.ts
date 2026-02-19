@@ -32,13 +32,4 @@ export type input = {
   disableTargets?: { true: number[]; false: number[] };
   disableNextField?: boolean;
 };
-type formInputType =
-  | "text"
-  | "radio"
-  | "selector"
-  | "date"
-  | "image"
-  | "textArea"
-  | "timeRange"
-  | "phoneNumber"
-  | "checkBox";
+export type formInputType = "text" | "radio" | "selector" | "date" | "image" | "textArea" | "timeRange" | "phoneNumber" | "checkBox";

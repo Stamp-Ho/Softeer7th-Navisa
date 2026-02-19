@@ -1,3 +1,5 @@
+import i18n from "../i18n/config";
+
 const CalcChattedTime = (isoString: string) => {
   const date = new Date(isoString);
 
@@ -6,8 +8,9 @@ const CalcChattedTime = (isoString: string) => {
   const isAM = hours < 12;
 
   const displayHour = hours % 12 === 0 ? 12 : hours % 12;
+  const period = isAM ? i18n.t("utils:chattedTime.morning") : i18n.t("utils:chattedTime.afternoon");
 
-  return `${isAM ? "오전" : "오후"} ${displayHour}:${minutes}`;
+  return `${period} ${displayHour}:${minutes}`;
 };
 
 export default CalcChattedTime;

@@ -1,8 +1,10 @@
 import { useRef, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useRecommendedForeignerQuery } from "../../../api/queries/useRecommendedForeignerQuery";
 import SearchForeignerCard from "../../Search/components/SearchForeignerCard";
 
 const SuggestedForeigners = () => {
+  const { t } = useTranslation(["pages"]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null); // 마지막 빈 div를 위한 ref
 
@@ -52,34 +54,25 @@ const SuggestedForeigners = () => {
     );
   };
 
-  if (isLoading) return <div>로딩중...</div>;
+  if (isLoading) return <div>{t("landing.loading")}</div>;
   const dataToRender =
     isError || !data || data.length === 0 ? (
       <>
         {Array.from({ length: 3 }).map((_, idx) => (
-          <SearchForeignerCard
-            withDetails={false}
-            key={`foreignerCard_${idx}`}
-          />
+          <SearchForeignerCard withDetails={false} key={`foreignerCard_${idx}`} />
         ))}
       </>
     ) : (
       <>
         {data?.map((foreigner, idx) => (
-          <SearchForeignerCard
-            key={`foreignerCard_${idx}`}
-            foreigner={foreigner}
-            withDetails={false}
-          />
+          <SearchForeignerCard key={`foreignerCard_${idx}`} foreigner={foreigner} withDetails={false} />
         ))}
       </>
     );
 
   return (
     <section className="w-full flex flex-col relative mt-12.5">
-      <h2 className="headline-s-bold">
-        행정사님의 도움이 필요한 새로운 의뢰인
-      </h2>
+      <h2 className="headline-s-bold">{t("landing.suggestedForeigners")}</h2>
       <div
         ref={scrollRef}
         onScroll={handleScroll}

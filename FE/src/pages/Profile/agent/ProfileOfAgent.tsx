@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import BannerBackground from "../../../components/layout/BannerBackground";
 import Languages from "../Foreigner/Languages";
 import AgentBlog from "./AgentBlog";
@@ -38,10 +39,11 @@ const blog = [
 ];
 
 const ProfileOfAgent = () => {
+  const { t } = useTranslation(["pages"]);
   const { agentId } = useParams();
   const { data, isLoading, isError } = useAgentProfileDetailQuery(agentId!);
-  if (!agentId) return <div>잘못된 접근입니다.</div>;
-  if (isLoading) return <div>로딩 중...</div>;
+  if (!agentId) return <div>{t("profile.invalidAccess")}</div>;
+  if (isLoading) return <div>{t("search.loading")}</div>;
   const dataToRender = isError ? (
     <>
       <section className="flex flex-col">
@@ -53,7 +55,7 @@ const ProfileOfAgent = () => {
         </div>
 
         <div className="mt-15">
-          <div className="headline-m-semibold text-gray-1000">추가 이력</div>
+          <div className="headline-m-semibold text-gray-1000">{t("profile.additionalHistory")}</div>
           <div className="mt-13 whitespace-pre-line title-s-medium text-text-base">
             {`주요 약력 및 자격\n현) OO 행정사 사무소 대표 행정사\n대한행정사협회
             정회원`}
@@ -87,10 +89,8 @@ const ProfileOfAgent = () => {
         </div>
 
         <div className="mt-15">
-          <div className="headline-m-semibold text-gray-1000">추가 이력</div>
-          <div className="mt-13 whitespace-pre-line title-s-medium text-text-base">
-            {data?.additionalHistory}
-          </div>
+          <div className="headline-m-semibold text-gray-1000">{t("profile.additionalHistory")}</div>
+          <div className="mt-13 whitespace-pre-line title-s-medium text-text-base">{data?.additionalHistory}</div>
         </div>
 
         <div className="mt-40">
@@ -106,11 +106,7 @@ const ProfileOfAgent = () => {
         </div>
       </section>
       <div>
-        <AgentProfilePanel
-          agentInfo={data?.agentInfo}
-          officeName={data?.officeInfo.officeName}
-          opponentProfileId={data?.agentInfo.agentId}
-        />
+        <AgentProfilePanel agentInfo={data?.agentInfo} officeName={data?.officeInfo.officeName} opponentProfileId={data?.agentInfo.agentId} />
       </div>
     </>
   );

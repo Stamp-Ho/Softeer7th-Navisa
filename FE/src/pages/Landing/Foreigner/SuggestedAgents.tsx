@@ -2,8 +2,10 @@ import { useRef, useState, useEffect } from "react";
 import AgentCard from "../../../components/domain/AgentCard";
 import LoadingBar from "../Common/LoadingBar";
 import { useRecommendedAgentQuery } from "../../../api/queries/useRecommendedAgentQuery";
+import { useTranslation } from "react-i18next";
 
 const SuggestedAgents = () => {
+  const { t } = useTranslation(["pages"]);
   const { data, isLoading, isError } = useRecommendedAgentQuery();
   const [loading, setLoading] = useState<boolean>(true);
   const [showLoadingBar, setShowLoadingBar] = useState<boolean>(true);
@@ -46,8 +48,7 @@ const SuggestedAgents = () => {
             return; // 아무것도 하지 않음
           }
           event.preventDefault();
-          if (Math.abs(event.deltaX) > Math.abs(event.deltaY))
-            scrollContainer.scrollLeft += event.deltaX;
+          if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) scrollContainer.scrollLeft += event.deltaX;
           else scrollContainer.scrollLeft += event.deltaY;
         }
       };
@@ -89,8 +90,7 @@ const SuggestedAgents = () => {
     };
 
     const finishLoading = async () => {
-      const delay = (ms: number) =>
-        new Promise((resolve) => setTimeout(resolve, ms));
+      const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
       // 1. 로딩 바 숨기기
       setShowLoadingBar(false);
 
@@ -112,30 +112,20 @@ const SuggestedAgents = () => {
   const dataToRender = isError ? (
     <>
       {Array.from({ length: 12 }).map((_, idx) => (
-        <AgentCard
-          key={idx}
-          className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
-        />
+        <AgentCard key={idx} className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `} />
       ))}
     </>
   ) : (
     <>
-      <AgentCard
-        key={1}
-        className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
-      />
+      <AgentCard key={1} className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `} />
       {data?.map((agent, idx) => (
-        <AgentCard
-          key={idx}
-          agent={agent}
-          className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
-        />
+        <AgentCard key={idx} agent={agent} className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `} />
       ))}
     </>
   );
   return (
     <section className="w-full flex flex-col relative">
-      <h2 className="headline-s-bold">행정사 탐색</h2>
+      <h2 className="headline-s-bold">{t("landing.suggestedAgents")}</h2>
       <div
         ref={scrollRef}
         onScroll={handleScroll}

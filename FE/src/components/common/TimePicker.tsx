@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const TimePicker = ({
   time,
@@ -15,16 +16,14 @@ const TimePicker = ({
     }>
   >;
 }) => {
+  const { t } = useTranslation(["common"]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   // 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
-      ) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -33,10 +32,7 @@ const TimePicker = ({
   }, []);
 
   // 입력값 검증 및 업데이트
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    type: "hour" | "minute",
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: "hour" | "minute") => {
     let val = e.target.value.replace(/[^0-9]/g, "");
     if (type === "hour" && Number(val) > 23) val = "00";
     if (type === "minute" && Number(val) > 59) val = "00";
@@ -52,34 +48,12 @@ const TimePicker = ({
           outline-gray-300 focus-within:outline-2 ${isOpen && "outline-2"}`}
       >
         <div className="flex items-center space-x-1 body-l-medium  text-gray-700">
-          <input
-            type="text"
-            value={time.hour}
-            onChange={(e) => handleInputChange(e, "hour")}
-            className="w-7 bg-transparent outline-none text-center"
-            placeholder="09"
-          />
+          <input type="text" value={time.hour} onChange={(e) => handleInputChange(e, "hour")} className="w-7 bg-transparent outline-none text-center" placeholder={t("timePicker.hour")} />
           <span>:</span>
-          <input
-            type="text"
-            value={time.minute}
-            onChange={(e) => handleInputChange(e, "minute")}
-            className="w-7 bg-transparent outline-none text-center"
-            placeholder="00"
-          />
+          <input type="text" value={time.minute} onChange={(e) => handleInputChange(e, "minute")} className="w-7 bg-transparent outline-none text-center" placeholder={t("timePicker.minute")} />
         </div>
-        <svg
-          className="w-5 h-5 text-gray-400 cursor-pointer"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
+        <svg className="w-5 h-5 text-gray-400 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>
 
@@ -93,14 +67,8 @@ const TimePicker = ({
                 <button
                   key={i}
                   type="button"
-                  onClick={() =>
-                    setTime({ ...time, hour: i.toString().padStart(2, "0") })
-                  }
-                  className={`snap-center py-2 shrink-0 rounded-lg transition-colors ${
-                    Number(time.hour) === i
-                      ? "bg-blue-600 text-white font-bold"
-                      : "hover:bg-blue-50 text-gray-500"
-                  }`}
+                  onClick={() => setTime({ ...time, hour: i.toString().padStart(2, "0") })}
+                  className={`snap-center py-2 shrink-0 rounded-lg transition-colors ${Number(time.hour) === i ? "bg-blue-600 text-white font-bold" : "hover:bg-blue-50 text-gray-500"}`}
                 >
                   {i.toString().padStart(2, "0")}
                 </button>
@@ -114,11 +82,7 @@ const TimePicker = ({
                   key={m}
                   type="button"
                   onClick={() => setTime({ ...time, minute: m })}
-                  className={`snap-center py-2 shrink-0 rounded-lg transition-colors ${
-                    time.minute === m
-                      ? "bg-blue-600 text-white font-bold"
-                      : "hover:bg-blue-50 text-gray-500"
-                  }`}
+                  className={`snap-center py-2 shrink-0 rounded-lg transition-colors ${time.minute === m ? "bg-blue-600 text-white font-bold" : "hover:bg-blue-50 text-gray-500"}`}
                 >
                   {m}
                 </button>

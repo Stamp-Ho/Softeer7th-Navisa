@@ -4,6 +4,7 @@ import CalcLastChattedAt from "../../../../utils/CalcLastChattedAt";
 import { type ChatRoomStatus } from "../hooks/useChatRoom";
 import { useAuth } from "../../../../contexts/AuthContextProvider";
 import { IcPin } from "../../../../assets/icon/StratisUi";
+import { useTranslation } from "react-i18next";
 
 type ChatRoomCardParams = {
   chatRoomId: number;
@@ -15,33 +16,17 @@ type ChatRoomCardParams = {
   lastChattedAt: string;
 };
 
-const ChatRoomCard = ({
-  chatRoomId,
-  profileImgUrl = "https://placehold.co/80x80",
-  opponentName,
-  roomStatus,
-  lastMessage,
-  noneRead,
-  lastChattedAt,
-}: ChatRoomCardParams) => {
+const ChatRoomCard = ({ chatRoomId, profileImgUrl = "https://placehold.co/80x80", opponentName, roomStatus, lastMessage, noneRead, lastChattedAt }: ChatRoomCardParams) => {
+  const { t } = useTranslation(["components"]);
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
 
   return (
-    <div
-      key={chatRoomId}
-      className={`flex flex-row gap-6 items-center p-3 cursor-pointer`}
-    >
+    <div key={chatRoomId} className={`flex flex-row gap-6 items-center p-3 cursor-pointer`}>
       {isAgent ? (
-        <div className="flex flex-row justify-center items-center w-20 aspect-square border border-border-normal rounded-full bg-violet-25 headline-l-bold text-violet-500">
-          {opponentName[0]}
-        </div>
+        <div className="flex flex-row justify-center items-center w-20 aspect-square border border-border-normal rounded-full bg-violet-25 headline-l-bold text-violet-500">{opponentName[0]}</div>
       ) : (
-        <img
-          src={profileImgUrl}
-          alt="행정사 프로필 사진"
-          className="w-20 h-20 object-cover rounded-full"
-        />
+        <img src={profileImgUrl} alt={t("chatRoom.attorneyProfileImage")} className="w-20 h-20 object-cover rounded-full" />
       )}
       <div className="flex flex-col gap-3 w-full    ">
         <div className="flex flex-row justify-between">
@@ -49,33 +34,23 @@ const ChatRoomCard = ({
             <span className="flex flex-row items-center gap-3 title-s-semibold text-text-base">
               {opponentName}
               {roomStatus === "MATCHED" ? (
-                <Tag type="small_fill_icon" className="min-w-[83px]">
+                <Tag variant="small_fill_icon" className="min-w-[83px]">
                   <IcPin size="14" />
-                  수임 확정
+                  {t("chatRoom.retainerConfirmed")}
                 </Tag>
               ) : roomStatus === "PROPOSED" ? (
-                <div className="caption-l-medium text-violet-500">
-                  수임 제안이 도착했어요!
-                </div>
+                <div className="caption-l-medium text-violet-500">{t("chatRoom.retainerProposalArrived")}</div>
               ) : (
                 <></>
               )}
             </span>
           </div>
 
-          <span className="caption-l-regular text-text-sub">
-            {CalcLastChattedAt(lastChattedAt)}
-          </span>
+          <span className="caption-l-regular text-text-sub">{CalcLastChattedAt(lastChattedAt)}</span>
         </div>
         <div className="flex flex-row items-center justify-between">
-          <div className="body-s-regular text-text-sub w-[390px] line-clamp-2">
-            {lastMessage}
-          </div>
-          {noneRead > 0 && (
-            <AlarmBadge isActive={true}>
-              {noneRead > 99 ? `99+` : noneRead}
-            </AlarmBadge>
-          )}
+          <div className="body-s-regular text-text-sub w-[390px] line-clamp-2">{lastMessage}</div>
+          {noneRead > 0 && <AlarmBadge isActive={true}>{noneRead > 99 ? `99+` : noneRead}</AlarmBadge>}
         </div>
       </div>
     </div>

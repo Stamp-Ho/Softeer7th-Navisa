@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { AllJobs } from "./jobIcon/AllJobs";
 import { Building } from "./jobIcon/Building";
 import { Business } from "./jobIcon/Business";
@@ -33,27 +34,41 @@ const icons = [
   <Tour />,
   <AllJobs />,
 ];
+
+/** 직군 아이콘 순서와 동일한 번역 키 (0~15: jobList, 16: 모든 직군 보기) */
+export const JOB_KEYS = [
+  "business",
+  "finance",
+  "law",
+  "research",
+  "it",
+  "electricity",
+  "mechanic",
+  "chemistry",
+  "building",
+  "education",
+  "planning",
+  "sales",
+  "design",
+  "medical",
+  "tour",
+  "all",
+] as const;
+
+/** JobIcon 16개 + "모든 직군 보기" (17개) 번역 라벨 배열 */
+export function useJobLabels(): string[] {
+  const { t } = useTranslation(["common"]);
+  return JOB_KEYS.map((key) => t(`jobs.${key}`));
+}
+
+/** jobList와 동일한 순서의 16개 직군 번역 라벨 (Dropdown, AgentCard 등에서 사용) */
+export function useJobListLabels(): string[] {
+  const labels = useJobLabels();
+  return labels.slice(0, 16);
+}
+
 const JobIcon = ({ index = 0 }) => {
   return icons[index];
 };
 
 export default JobIcon;
-
-export const jobs = [
-  "경영/운영",
-  "금융/경영 컨설팅",
-  "법/행정",
-  "연구/과학",
-  "IT/개발/데이터",
-  "전기/통신기술",
-  "기계/제조기술",
-  "화학/환경기술",
-  "건축/토목",
-  "교육/강의",
-  "기획/마케팅",
-  "영업/무역",
-  "디자인/미디어",
-  "의료/헬스케어",
-  "관광/서비스",
-  "모든 직군 보기",
-];

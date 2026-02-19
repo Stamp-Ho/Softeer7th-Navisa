@@ -46,18 +46,18 @@ const SkeletonUI = () => {
   return (
     <div className="flex flex-col w-124 h-69.5 px-6 pt-6 pb-8 rounded-2xl bg-gray-50">
       <div className="flex flex-row justify-end items-center gap-2 body-s-medium text-text-sub">
-        <Tag type="tiny_skeleton" className="bg-gray-150 w-15" />
+        <Tag variant="tiny_skeleton" className="bg-gray-150 w-15" />
         <div className="w-6.5 h-6.5 bg-gray-150 rounded-[20px]" />
       </div>
 
       <div className="flex flex-col gap-5">
         <IcQuotes />
         <div className="h-33 line-clamp-6 body-l-medium flex flex-col gap-3">
-          <Tag type="small_fill_gray_dark" />
-          <Tag type="small_fill_gray_dark" />
-          <Tag type="small_fill_gray_dark" className="bg-gray-150 w-40" />
+          <Tag variant="small_fill_gray_dark" />
+          <Tag variant="small_fill_gray_dark" />
+          <Tag variant="small_fill_gray_dark" className="bg-gray-150 w-40" />
         </div>
-        <Tag type="tiny_skeleton" className="bg-gray-150 w-25" />
+        <Tag variant="tiny_skeleton" className="bg-gray-150 w-25" />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Button from "../../../components/common/Button";
 import Modal from "../../../components/common/Modal";
 import TextInput from "../../../components/common/TextInput";
@@ -12,23 +13,16 @@ type ChatActivateProps = {
   isAgent: boolean;
 };
 
-const ChatActivateModal = ({
-  onClose,
-  onSendSuccess,
-  opponentProfileId,
-  isAgent,
-}: ChatActivateProps) => {
+const ChatActivateModal = ({ onClose, onSendSuccess, opponentProfileId, isAgent }: ChatActivateProps) => {
+  const { t } = useTranslation(["pages"]);
   const queryClient = useQueryClient();
   const [firstMessage, setFirstMessage] = useState<string>("");
   const { mutate: createNewChat, isPending } = useCreateNewChat();
 
   const handleSendMessage = () => {
-    const defaultMessage = isAgent
-      ? "의뢰인님, 도움을 드리고 싶어요!"
-      : "행정사님, 상담하고 싶어요!";
+    const defaultMessage = isAgent ? t("profile.chatModalWantToHelp") : t("profile.chatModalWantToConsult");
 
-    const messageToSend =
-      firstMessage.trim() === "" ? defaultMessage : firstMessage;
+    const messageToSend = firstMessage.trim() === "" ? defaultMessage : firstMessage;
 
     createNewChat(
       {
@@ -40,10 +34,7 @@ const ChatActivateModal = ({
         onSuccess: () => {
           // 부모 API 다시 불러오기
           queryClient.invalidateQueries({
-            queryKey: [
-              isAgent ? "foreignerDetail" : "agentDetail",
-              opponentProfileId,
-            ],
+            queryKey: [isAgent ? "foreignerDetail" : "agentDetail", opponentProfileId],
           });
 
           onSendSuccess();
@@ -53,35 +44,17 @@ const ChatActivateModal = ({
     );
   };
   return (
-    <Modal
-      className="flex flex-col items-center px-5 pt-4 pb-6.25"
-      onClose={onClose}
-    >
-      <div className="title-l-semibold text-text-base">
-        해당 {isAgent ? "의뢰인" : "행정사"}에게 상담 메시지를 전송할까요?
-      </div>
-      <div className="body-l-medium text-text-base mt-3 mb-8.5">
-        {isAgent ? "의뢰인으로부터" : "행정사로부터"} 답장이 오면 상담
-        메시지함에서 확인할 수 있어요.
-      </div>
+    <Modal className="flex flex-col items-center px-5 pt-4 pb-6.25" onClose={onClose}>
+      <div className="title-l-semibold text-text-base">{t("profile.chatModalSendConfirm", { role: isAgent ? t("profile.chatModalClient") : t("profile.chatModalAttorney") })}</div>
+      <div className="body-l-medium text-text-base mt-3 mb-8.5">{t("profile.chatModalReplyNotice", { role: isAgent ? t("profile.chatModalClient") : t("profile.chatModalAttorney") })}</div>
       <TextInput
         className="placeholder:text-text-base mb-5"
-        placeholder={
-          isAgent
-            ? "의뢰인님, 도움을 드리고 싶어요!"
-            : "행정사님, 상담하고 싶어요!"
-        }
+        placeholder={isAgent ? t("profile.chatModalWantToHelp") : t("profile.chatModalWantToConsult")}
         value={firstMessage}
         setValue={setFirstMessage}
       />
-      <Button
-        type="primary"
-        size="large"
-        className="w-full"
-        onClick={handleSendMessage}
-        disabled={isPending}
-      >
-        메시지 보내기
+      <Button variant="primary" size="large" className="w-full" onClick={handleSendMessage} disabled={isPending}>
+        {t("profile.sendMessage")}
       </Button>
     </Modal>
   );

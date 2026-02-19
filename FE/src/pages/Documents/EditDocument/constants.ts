@@ -13,8 +13,7 @@ export const editDocumentData: FormSection[] = [
           {
             inputs: [
               {
-                placeholder:
-                  "흰색 바탕에 모자를 쓰지 않은 정면 사진으로 촬영일로부터 6개월이 경과하지 않아야 함",
+                placeholder: "흰색 바탕에 모자를 쓰지 않은 정면 사진으로 촬영일로부터 6개월이 경과하지 않아야 함",
                 inputType: "image",
                 colSpan: 9,
                 requestBodyName: "profileImageUrl",
@@ -140,16 +139,23 @@ export const editDocumentData: FormSection[] = [
       },
       {
         label: "이전에 한국에 출입국하였을 때 다른 성명을 사용했는지 여부",
-        description:
-          "Has the applicant ever used any other names to enter or depart Korea?",
+        description: "Has the applicant ever used any other names to enter or depart Korea?",
         getMany: false,
+        canInputBlocked: true,
         inputLines: [
           {
             inputs: [
               {
-                inputType: "radio",
-                colSpan: 2,
-                options: ["예", "아니오"],
+                placeholder: "성",
+                inputDescription: "성",
+                englishDescription: "Family Name",
+                inputType: "text",
+              },
+              {
+                placeholder: "이름",
+                inputDescription: "명",
+                englishDescription: "Given Name",
+                inputType: "text",
               },
             ],
           },
@@ -159,13 +165,15 @@ export const editDocumentData: FormSection[] = [
         label: "복수 국적 여부",
         description: "Is the applicant  a citizen of more than one country??",
         getMany: false,
+        canInputBlocked: true,
         inputLines: [
           {
             inputs: [
               {
-                inputType: "radio",
-                colSpan: 2,
-                options: ["예", "아니오"],
+                inputType: "text",
+                inputDescription: "세부사항",
+                englishDescription: "If ‘Yes’, please provide details",
+                placeholder: "세부사항을 입력해주세요.",
               },
             ],
           },
@@ -321,8 +329,7 @@ export const editDocumentData: FormSection[] = [
       {
         label: "현 거주지",
         disableToggleDescription: "본국 주소와 동일해요",
-        description:
-          "Current Residential Adress / Please write the current address if different from above.",
+        description: "Current Residential Adress / Please write the current address if different from above.",
         getMany: false,
         inputLines: [
           {
@@ -529,8 +536,7 @@ export const editDocumentData: FormSection[] = [
     fields: [
       {
         label: "최종학력",
-        description:
-          "What is the highest degree or level of education the applicant has completed?",
+        description: "What is the highest degree or level of education the applicant has completed?",
         getMany: false,
         inputLines: [
           {
@@ -597,16 +603,7 @@ export const editDocumentData: FormSection[] = [
               {
                 inputType: "radio",
                 colSpan: 9,
-                options: [
-                  "사업가",
-                  "자영업자",
-                  "직장인",
-                  "공무원",
-                  "학생",
-                  "퇴직자",
-                  "무직",
-                  "기타",
-                ],
+                options: ["사업가", "자영업자", "직장인", "공무원", "학생", "퇴직자", "무직", "기타"],
               },
               {
                 inputType: "textArea",
@@ -674,19 +671,7 @@ export const editDocumentData: FormSection[] = [
               {
                 inputType: "radio",
                 colSpan: 9,
-                options: [
-                  "관광/통과",
-                  "행사참석",
-                  "의료관광",
-                  "단기상용",
-                  "유학/연수",
-                  "취업활동",
-                  "무역/투자/주재",
-                  "가족/친지 방문",
-                  "결혼이민",
-                  "외교/공무",
-                  "기타",
-                ],
+                options: ["관광/통과", "행사참석", "의료관광", "단기상용", "유학/연수", "취업활동", "무역/투자/주재", "가족/친지 방문", "결혼이민", "외교/공무", "기타"],
               },
               {
                 inputType: "textArea",
@@ -762,9 +747,9 @@ export const editDocumentData: FormSection[] = [
       },
       {
         label: "과거 5년간 한국을 방문한 경력",
-        description:
-          "Has the applicant travelled to Korea in the last 5 years?",
+        description: "Has the applicant travelled to Korea in the last 5 years?",
         getMany: false,
+        canInputBlocked: true,
         inputLines: [
           {
             inputs: [
@@ -772,11 +757,13 @@ export const editDocumentData: FormSection[] = [
                 inputType: "selector",
                 colSpan: 1,
                 options: ["1", "2", "3", "4", "5", "5+"],
+                placeholder: "횟수",
               },
               {
-                inputType: "textArea",
+                inputType: "text",
                 inputDescription: "최근 방문 목적",
                 englishDescription: "Purpose of Recent Visit",
+                placeholder: "방문 목적을 입력해주세요",
                 colSpan: 6,
                 changeRow: true,
               },
@@ -786,8 +773,7 @@ export const editDocumentData: FormSection[] = [
       },
       {
         label: "한국 외에 과거 5년간 여행한 국가",
-        description:
-          "Has the applicant travelled outside his/her country of residence, excluding to Korea, in the last 5 years?",
+        description: "Has the applicant travelled outside his/her country of residence, excluding to Korea, in the last 5 years?",
         getMany: true,
         addButtonAtBelowLines: true,
         canInputBlocked: true,
@@ -823,8 +809,7 @@ export const editDocumentData: FormSection[] = [
       },
       {
         label: "국내 체류 가족 유무",
-        description:
-          "Does the applicant have any family member(s) staying in Korea?",
+        description: "Does the applicant have any family member(s) staying in Korea?",
         getMany: true,
         addButtonAtBelowLines: true,
         canInputBlocked: true,
@@ -837,10 +822,16 @@ export const editDocumentData: FormSection[] = [
                 englishDescription: "Full name inEnglish",
               },
               {
+                inputType: "date",
+                inputDescription: "생년월일",
+                englishDescription: "Date of Birth",
+              },
+              {
                 inputType: "selector",
-                inputDescription: "국가명",
-                englishDescription: "Name of Country",
+                inputDescription: "국적",
+                englishDescription: "Nationality",
                 options: nationList,
+                changeRow: true,
               },
               {
                 inputType: "selector",
@@ -848,17 +839,6 @@ export const editDocumentData: FormSection[] = [
                 inputDescription: "관계",
                 englishDescription: "Relationship",
                 options: ["부", "모", "형제", "자식", "조부모", "친척"],
-              },
-              {
-                inputType: "date",
-                inputDescription: "방문 시작 기간",
-                englishDescription: "Date of Beggining Staying",
-                changeRow: true,
-              },
-              {
-                inputType: "date",
-                inputDescription: "방문 종료 기간",
-                englishDescription: "Date of End Staying",
               },
             ],
           },
@@ -866,8 +846,7 @@ export const editDocumentData: FormSection[] = [
       },
       {
         label: "동반입국 가족 유무",
-        description:
-          "Is the applicant traveling to Korea with any family member(s)?",
+        description: "Is the applicant traveling to Korea with any family member(s)?",
         getMany: true,
         addButtonAtBelowLines: true,
         canInputBlocked: true,
@@ -880,10 +859,16 @@ export const editDocumentData: FormSection[] = [
                 englishDescription: "Full name inEnglish",
               },
               {
+                inputType: "date",
+                inputDescription: "생년월일",
+                englishDescription: "Date of Birth",
+              },
+              {
                 inputType: "selector",
-                inputDescription: "국가명",
-                englishDescription: "Name of Country",
+                inputDescription: "국적",
+                englishDescription: "Nationality",
                 options: nationList,
+                changeRow: true,
               },
               {
                 inputType: "selector",
@@ -891,17 +876,6 @@ export const editDocumentData: FormSection[] = [
                 inputDescription: "관계",
                 englishDescription: "Relationship",
                 options: ["부", "모", "형제", "자식", "조부모", "친척"],
-              },
-              {
-                inputType: "date",
-                inputDescription: "방문 시작 기간",
-                englishDescription: "Date of Beggining Staying",
-                changeRow: true,
-              },
-              {
-                inputType: "date",
-                inputDescription: "방문 종료 기간",
-                englishDescription: "Date of End Staying",
               },
             ],
           },
@@ -915,8 +889,7 @@ export const editDocumentData: FormSection[] = [
     fields: [
       {
         label: "이 신청서를 작성하는데 다른 사람의 도움을 받았습니까?",
-        description:
-          "Did the applicant receive assistance in completing this form?",
+        description: "Did the applicant receive assistance in completing this form?",
         getMany: false,
         canInputBlocked: true,
         inputLines: [
@@ -967,15 +940,20 @@ export const editDocumentData: FormSection[] = [
             inputs: [
               {
                 inputType: "text",
-                colSpan: 6,
-                inputDescription: "초청인, 초청회사명",
-                englishDescription:
-                  "Name of inviting person/organization (Korean, foreign resident in Korea, company, or institute)",
+                colSpan: 3,
+                inputDescription: "초청인/초청회사명",
+                englishDescription: "Name of inviting person/organization",
                 changeRow: true,
               },
               {
                 inputType: "text",
-                colSpan: 3,
+                colSpan: 4,
+                inputDescription: "생년월일/사업자등록번호",
+                englishDescription: "Date of Birth / Business Registration No.",
+              },
+              {
+                inputType: "text",
+                colSpan: 2,
                 inputDescription: "관계",
                 englishDescription: "Relationship to applicant",
               },

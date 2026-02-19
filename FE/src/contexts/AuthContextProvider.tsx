@@ -3,11 +3,7 @@ import { AuthContext, type feUserType } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import useApiClient from "../hooks/useApiClient";
 
-export const AuthContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { refreshAccessToken } = useApiClient();
   const navigate = useNavigate();
   const [initialLized, setInitialized] = useState(false);
@@ -59,7 +55,8 @@ export const AuthContextProvider = ({
         console.log("로그인 필요 상태");
       }
     };
-    initAuth();
+    if (userType && userType !== "NOT_AUTHED") initAuth();
+    else setInitialized(true);
   }, []);
   if (!initialLized) return <></>;
   return (

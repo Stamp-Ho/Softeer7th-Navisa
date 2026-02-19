@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { IcArrows } from "../../../../../assets/icon/StratisUi";
 import { nationList } from "../../../../../constants/nations";
 import type { ForeignerInfo } from "../../../../../types/chatRoomTypes";
@@ -8,6 +9,7 @@ type Props = {
 };
 
 const ForeignerHeaderInfo = ({ data }: Props) => {
+  const { t } = useTranslation(["components"]);
   const content = (
     <div className="flex flex-row items-center title-m-bold text-text-base">
       {data?.nickname}
@@ -18,7 +20,7 @@ const ForeignerHeaderInfo = ({ data }: Props) => {
           <span className="mr-1 caption-m-medium">
             {data?.expectedStartDate}
           </span>
-          <span className="caption-m-medium">입사 예정</span>
+          <span className="caption-m-medium">{t("chatRoom.expectedJoin")}</span>
         </div>
         <div className="flex flex-row gap-1 items-center caption-m-medium text-text-sub">
           {data?.nationalityIds?.map((nationIdx) => (

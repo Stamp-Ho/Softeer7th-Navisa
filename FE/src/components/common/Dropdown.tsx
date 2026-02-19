@@ -1,30 +1,26 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Button from "./Button";
 import type { DropDownProps } from "../../types/dropdownProps";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { jobList } from "../../constants/job";
 import { regionList } from "../../constants/regions";
 import { languageList } from "../../constants/language";
 import { nationList } from "../../constants/nations";
+import { alertT } from "../../i18n/alerts";
+import { useJobListLabels } from "../../assets/JobIcon";
 
 const FILTER_LIST = {
-  job: jobList,
   region: regionList,
   language: languageList,
   nation: nationList,
 };
-const DropDown = ({
-  paramKey,
-  type = "left",
-  cols = 1,
-  searchAgent,
-  category,
-  onClose,
-}: DropDownProps) => {
+const DropDown = ({ paramKey, type = "left", cols = 1, searchAgent, category, onClose }: DropDownProps) => {
+  const { t } = useTranslation(["common"]);
+  const jobListLabels = useJobListLabels();
   const navigate = useNavigate();
   const [filterParams] = useSearchParams();
   const [selectedCategoryIdx, setSelectedCategoryIdx] = useState(0);
-  const filterOptions = FILTER_LIST[paramKey];
+  const filterOptions = paramKey === "job" ? jobListLabels : FILTER_LIST[paramKey as keyof typeof FILTER_LIST];
   const thisParams = filterParams
     .getAll(paramKey)
     .map(Number)
@@ -46,9 +42,7 @@ const DropDown = ({
 
   const onOptionInCategoryClicked = (targetId: number) => {
     if (category) {
-      const absoluteIndex = filterOptions.indexOf(
-        category[selectedCategoryIdx].items[targetId],
-      );
+      const absoluteIndex = filterOptions.indexOf(category[selectedCategoryIdx].items[targetId]);
       onOptionClicked(absoluteIndex);
     }
   };
@@ -58,10 +52,7 @@ const DropDown = ({
 
     params.delete(paramKey);
     selectedIds.forEach((v) => params.append(paramKey, String(v)));
-    navigate(
-      `/search/${searchAgent ? "agent" : "foreigner"}?${params.toString()}`,
-      { replace: true },
-    );
+    navigate(`/search/${searchAgent ? "agent" : "foreigner"}?${params.toString()}`, { replace: true });
     onClose();
   };
 
@@ -71,8 +62,7 @@ const DropDown = ({
     if (scrollContainer) {
       const onWheel = (event: WheelEvent) => {
         event.preventDefault();
-        if (Math.abs(event.deltaX) > Math.abs(event.deltaY))
-          scrollContainer.scrollLeft += event.deltaX;
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) scrollContainer.scrollLeft += event.deltaX;
         else scrollContainer.scrollLeft += event.deltaY;
       };
 
@@ -88,21 +78,16 @@ const DropDown = ({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const arraysEqual = (a: number[], b: number[]) =>
-    a.length === b.length && a.every((v, i) => v === b[i]);
+  const arraysEqual = (a: number[], b: number[]) => a.length === b.length && a.every((v, i) => v === b[i]);
 
   const closeWithConfirm = () => {
-    if (!arraysEqual(thisParams, selectedIds))
-      alert("변경사항이 적용되지 않았습니다.");
+    if (!arraysEqual(thisParams, selectedIds)) alertT("common.dropdown.changesFailed");
     else onClose();
   };
   // 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
-      ) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         closeWithConfirm();
       }
     };
@@ -117,15 +102,10 @@ const DropDown = ({
     >
       <div className="p-9 border-b border-border-normal ">
         {category && (
-          <div
-            ref={scrollRef}
-            className="mb-5 flex max-w-147 flex-row items-center gap-5 overflow-x-auto scrollbar-hide"
-          >
+          <div ref={scrollRef} className="mb-5 flex max-w-147 flex-row items-center gap-5 overflow-x-auto scrollbar-hide">
             {category.map((cate, idx) => {
               const isSelected = selectedCategoryIdx === idx;
-              const hasSelectedOption = category[idx].items.some((opt) =>
-                selectedOpts.includes(opt),
-              );
+              const hasSelectedOption = category[idx].items.some((opt) => selectedOpts.includes(opt));
               return (
                 <button
                   key={cate.name}
@@ -148,7 +128,7 @@ const DropDown = ({
               <Button
                 key={`filter_btn_with_category_${paramKey}_${index}`}
                 onClick={() => onOptionInCategoryClicked(index)}
-                type={selectedOpts.includes(opt) ? "violetLine" : "lightGray"}
+                variant={selectedOpts.includes(opt) ? "violetLine" : "lightGray"}
                 className="w-35"
               >
                 {opt}
@@ -157,13 +137,8 @@ const DropDown = ({
           </div>
         ) : (
           <div className={`grid ${gridStyle} gap-3 `}>
-            {FILTER_LIST[paramKey].map((opt, index) => (
-              <Button
-                key={`filter_btn_${paramKey}_${index}`}
-                onClick={() => onOptionClicked(index)}
-                type={selectedIds.includes(index) ? "violetLine" : "lightGray"}
-                className="w-35"
-              >
+            {filterOptions.map((opt: string, index: number) => (
+              <Button key={`filter_btn_${paramKey}_${index}`} onClick={() => onOptionClicked(index)} variant={selectedIds.includes(index) ? "violetLine" : "lightGray"} className="w-35">
                 {opt}
               </Button>
             ))}
@@ -171,17 +146,17 @@ const DropDown = ({
         )}
       </div>
       <div className="flex flex-row ml-auto gap-3 px-9 py-5">
-        <Button type="grayLine" className="w-30" onClick={onFilterInit}>
-          초기화
+        <Button variant="grayLine" className="w-30" onClick={onFilterInit}>
+          {t("button.reset")}
         </Button>
         <Button
-          type="primary"
+          variant="primary"
           className="w-30"
           onClick={() => {
             onApply();
           }}
         >
-          적용하기
+          {t("button.apply")}
         </Button>
       </div>
     </div>

@@ -1,35 +1,22 @@
 import type React from "react";
+import { useTranslation } from "react-i18next";
 
 interface ButtonProps {
-  type?:
-    | "lightGray"
-    | "primary"
-    | "grayLine"
-    | "gray"
-    | "violetLine"
-    | "brightViolet"
-    | "skeleton";
+  variant?: "lightGray" | "primary" | "grayLine" | "gray" | "violetLine" | "brightViolet" | "skeleton";
   size?: "tiny" | "small" | "medium" | "large" | "giant";
   className?: string;
   children?: React.ReactNode;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset" | undefined;
 }
 
-const Button = ({
-  type = "lightGray",
-  size = "medium",
-  className = "",
-  children,
-  onClick,
-  disabled = false,
-}: ButtonProps) => {
+const Button = ({ variant = "lightGray", size = "medium", className = "", children, onClick, disabled = false, type = "button" }: ButtonProps) => {
+  const { t } = useTranslation(["common"]);
+
   const getButtonStyle = () => {
     if (disabled) return "bg-gray-200 text-white cursor-not-allowed";
-    return (
-      (type === "skeleton" ? "cursor-default " : "cursor-pointer ") +
-      (styles[type] || styles.lightGray)
-    );
+    return (variant === "skeleton" ? "cursor-default " : "cursor-pointer ") + (styles[variant] || styles.lightGray);
   };
 
   return (
@@ -42,6 +29,7 @@ const Button = ({
         ${sizes[size] || sizes.medium} 
         ${className}
       `}
+      type={type}
     >
       {children}
     </button>

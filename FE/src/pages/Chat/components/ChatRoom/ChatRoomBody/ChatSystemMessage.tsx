@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   IcMessageBox,
   IcMessageBoxCross,
@@ -22,6 +23,8 @@ const ChatSystemMessage = ({
   showReplyButton,
   agentName,
 }: ChatSystemMessageParams) => {
+  const { t } = useTranslation(["components"]);
+
   switch (type) {
     case "PROPOSAL":
       return (
@@ -33,10 +36,10 @@ const ChatSystemMessage = ({
           <div className="flex flex-col gap-5 p-6 bg-gray-0 text-text-base">
             <div className="flex flex-col gap-2">
               <div className="body-l-bold">
-                {senderName} 님이 수임 제안을 보냈어요!
+                {t("chatRoom.proposalSent", { name: senderName ?? "" })}
               </div>
               <div className="body-s-medium">
-                하단 버튼을 통해 답변을 전달해 주세요.
+                {t("chatRoom.replyViaButton")}
               </div>
             </div>
             {!isSentByMe && showReplyButton && (
@@ -44,7 +47,7 @@ const ChatSystemMessage = ({
                 className="body-s-semibold rounded-[6px] h-[48px] bg-gray-50 text-text-base cursor-pointer"
                 onClick={() => onModalAction(3)}
               >
-                답변 보내기
+                {t("chatRoom.sendReply")}
               </button>
             )}
           </div>
@@ -59,14 +62,14 @@ const ChatSystemMessage = ({
           <div className="flex flex-row items-center gap-4">
             <IcMessageBox color="var(--violet-500)" />
             <div className="flex flex-col gap-[1px]">
-              <div className="body-l-bold">수임이 확정됐어요.</div>
+              <div className="body-l-bold">{t("chatRoom.retainerAccepted")}</div>
               <div className="body-s-medium">
-                이제 함께 비자 신청서를 작성할 수 있어요.
+                {t("chatRoom.canWriteVisaTogether")}
               </div>
             </div>
           </div>
           <button className="rounded-[6px] h-12 body-l-semibold bg-violet-50-transpar cursor-pointer">
-            비자 신청서 보러 가기
+            {t("chatRoom.visaApplicationLink")}
           </button>
         </div>
       );
@@ -79,8 +82,8 @@ const ChatSystemMessage = ({
           <div className="flex flex-row items-center gap-4">
             <IcMessageBoxCross color="var(--green-800)" />
             <div className="flex flex-col gap-[1px]">
-              <div className="body-l-bold">아쉽지만 이번 수임 제안은</div>
-              <div className="body-l-bold">수락하지 않기로 결정했어요.</div>
+              <div className="body-l-bold">{t("chatRoom.retainerDeclinedLine1")}</div>
+              <div className="body-l-bold">{t("chatRoom.retainerDeclinedLine2")}</div>
             </div>
           </div>
         </div>
@@ -94,10 +97,9 @@ const ChatSystemMessage = ({
           <div className="flex flex-row items-center gap-4">
             <IcMessageBoxCross color="var(--green-800)" />
             <div className="flex flex-col gap-[1px]">
-              <div className="body-l-bold">수임을 취소했어요.</div>
+              <div className="body-l-bold">{t("chatRoom.retainerCanceled")}</div>
               <div className="body-s-medium">
-                {agentName} 행정사님은 더 이상 의뢰인의 비자 신청서를 작성할 수
-                없어요.
+                {t("chatRoom.agentNoLongerCanWrite", { agentName })}
               </div>
             </div>
           </div>
