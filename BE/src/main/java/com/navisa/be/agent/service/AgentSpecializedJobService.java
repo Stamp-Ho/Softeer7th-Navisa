@@ -14,8 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,12 +30,32 @@ public class AgentSpecializedJobService {
     @Transactional(readOnly = true)
     public List<Long> getTop2SpecializedJobIds(UUID agentId) {
         List<AgentSpecializedJobSummary> summaries = agentSpecializedJobSummaryRepository.findTop2SummaryByAgentId(
-                agentId, PageRequest.of(0, 2)
-        );
+                agentId, PageRequest.of(0, 2));
 
         return summaries.stream()
                 .map(summary -> summary.getJobCode().getId())
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Map<UUID, List<Long>> getTop2SpecializedJobIdsBatch(List<UUID> agentIds) {
+        if (agentIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<AgentSpecializedJobSummary> summaries = agentSpecializedJobSummaryRepository.findAllByAgentIdIn(agentIds);
+
+        return summaries.stream()
+                .collect(Collectors.groupingBy(AgentSpecializedJobSummary::getAgentId))
+                .entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .sorted(Comparator.comparingDouble(AgentSpecializedJobSummary::getAccumulatedReviewReliability)
+                                        .reversed())
+                                .limit(2)
+                                .map(summary -> summary.getJobCode().getId())
+                                .toList()));
     }
 
     public void save(List<Long> jobCodeIds, AgentProfile agentProfile) {
@@ -53,7 +73,7 @@ public class AgentSpecializedJobService {
     }
 
     private void checkAllJobCodeExists(List<Long> jobCodeIds) {
-        long requestCount = jobCodeIds.stream().count();
+        long requestCount = jobCodeIds.size();
         long foundCount = jobCodeService.countByIdIn(jobCodeIds);
         if (requestCount != foundCount) {
             throw new AgentException(ResponseStatus.INVALID_JOB_CODE);

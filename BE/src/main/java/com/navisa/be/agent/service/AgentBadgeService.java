@@ -12,8 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +39,7 @@ public class AgentBadgeService {
     // 특정 행정사의 상위 2개 배지 Id 조회
     public List<Long> getTop2BadgeIds(UUID agentId) {
         List<AgentBadgeSummary> summaries = agentBadgeSummaryRepository.findTopKBadgeSummarysByAgentId(
-                agentId, PageRequest.of(0, 2)
-        );
+                agentId, PageRequest.of(0, 2));
 
         return summaries.stream()
                 .map(summary -> summary.getBadge().getId())
@@ -49,5 +48,25 @@ public class AgentBadgeService {
 
     public List<AgentBadgeSummary> getTopKBadgeByAgentId(UUID agentId, int limit) {
         return agentBadgeSummaryRepository.findTopKBadgeSummarysByAgentId(agentId, PageRequest.of(0, limit));
+    }
+
+    public Map<UUID, List<Long>> getTop2BadgeIdsBatch(List<UUID> agentIds) {
+        if (agentIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<AgentBadgeSummary> summaries = agentBadgeSummaryRepository.findAllByAgentIdIn(agentIds);
+
+        return summaries.stream()
+                .collect(Collectors.groupingBy(AgentBadgeSummary::getAgentId))
+                .entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .sorted(Comparator.comparingInt(AgentBadgeSummary::getCount).reversed()
+                                        .thenComparing(summary -> summary.getBadge().getId()))
+                                .limit(2)
+                                .map(summary -> summary.getBadge().getId())
+                                .toList()));
     }
 }

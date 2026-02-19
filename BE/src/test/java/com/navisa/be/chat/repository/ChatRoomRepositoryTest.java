@@ -1,6 +1,7 @@
 package com.navisa.be.chat.repository;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.chat.dto.projection.ChatRoomInfoProjection;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.global.web.request.SliceRequest;
@@ -85,11 +86,41 @@ class ChatRoomRepositoryTest extends IntegrationTestSupport {
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
 
         // when (isForeignerId = true -> Foreigner가 자신의 채팅방 조회)
-        List<ChatRoom> result = chatRoomRepository.findByNoOffset(foreignerProfile.getId(), sliceRequest, true, null);
+        List<ChatRoomInfoProjection> result = chatRoomRepository.findByNoOffset(foreignerProfile.getId(), sliceRequest, true, null);
 
         // then
         assertThat(result).hasSize(2);
-        assertThat(result.get(0).getId()).isEqualTo(chatRoom2.getId()); // 최신순
-        assertThat(result.get(1).getId()).isEqualTo(chatRoom1.getId());
+        assertThat(result.get(0).chatRoomId()).isEqualTo(chatRoom2.getId()); // 최신순
+        assertThat(result.get(0).partnerName()).isEqualTo(agentProfile2.getName());
+        assertThat(result.get(1).chatRoomId()).isEqualTo(chatRoom1.getId());
+        assertThat(result.get(1).partnerName()).isEqualTo(agentProfile1.getName());
+    }
+
+    @Test
+    @DisplayName("NoOffset 방식으로 채팅방 목록을 조회한다 (Agent 기준)")
+    void findByNoOffset_Agent() {
+        // given
+        User foreignerUser = userTestFixture.createUser("f_agent_view@test.com", UserType.FILLED_FOREIGNER);
+        User agentUser = userTestFixture.createUser("a_agent_view@test.com", UserType.VALID_AGENT);
+
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Addr",
+                agentUser.getId());
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile,
+                ChatRoomStatus.DEFAULT,
+                ZonedDateTime.now());
+
+        SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
+
+        // when (isForeignerId = false -> Agent가 자신의 채팅방 조회)
+        List<ChatRoomInfoProjection> result = chatRoomRepository.findByNoOffset(agentProfile.getId(),
+                sliceRequest, false, null);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).chatRoomId()).isEqualTo(chatRoom.getId());
+        assertThat(result.get(0).partnerName()).isEqualTo(foreignerProfile.getNickname());
+        assertThat(result.get(0).partnerProfileImageKey()).isNull();
     }
 }

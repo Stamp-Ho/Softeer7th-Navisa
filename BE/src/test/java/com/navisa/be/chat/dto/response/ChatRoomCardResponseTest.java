@@ -17,7 +17,7 @@ class ChatRoomCardResponseTest {
 
     @Test
     @DisplayName("Foreigner 입장일 때 DTO 변환이 올바르게 수행된다")
-    void toDto_Foreigner() {
+    void entityToDto_Foreigner() {
         // given
         ForeignerProfile foreignerProfile = mock(ForeignerProfile.class);
         AgentProfile agentProfile = mock(AgentProfile.class);
@@ -34,7 +34,7 @@ class ChatRoomCardResponseTest {
         Long unreadCount = 5L;
 
         // when
-        ChatRoomCardResponse response = ChatRoomCardResponse.toDto(chatRoom, null, lastMessage, unreadCount,
+        ChatRoomCardResponse response = ChatRoomCardResponse.entityToDto(chatRoom, null, lastMessage, unreadCount,
                 isForeigner, true, true);
 
         // then
@@ -46,7 +46,7 @@ class ChatRoomCardResponseTest {
 
     @Test
     @DisplayName("Agent 입장일 때 DTO 변환이 올바르게 수행된다")
-    void toDto_Agent() {
+    void entityToDto_Agent() {
         // given
         ForeignerProfile foreignerProfile = mock(ForeignerProfile.class);
         ChatRoom chatRoom = mock(ChatRoom.class);
@@ -63,7 +63,7 @@ class ChatRoomCardResponseTest {
         Long unreadCount = 2L;
 
         // when
-        ChatRoomCardResponse response = ChatRoomCardResponse.toDto(chatRoom, profileImage, lastMessage, unreadCount,
+        ChatRoomCardResponse response = ChatRoomCardResponse.entityToDto(chatRoom, profileImage, lastMessage, unreadCount,
                 isForeigner, true, true);
 
         // then

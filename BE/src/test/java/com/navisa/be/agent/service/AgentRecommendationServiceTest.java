@@ -1,15 +1,15 @@
 package com.navisa.be.agent.service;
 
+import com.navisa.be.agent.dto.projection.AgentSimpleProjection;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
-import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
+import com.navisa.be.agent.model.enums.OfficeAddressRegion;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
-import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
 import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.recommendation.calculator.FinalRecommendationCalculator;
 import com.navisa.be.recommendation.calculator.ReviewBonusCalculator;
@@ -41,9 +41,6 @@ class AgentRecommendationServiceTest {
 
     @Mock
     private AgentProfileRepository agentProfileRepository;
-
-    @Mock
-    private ForeignerSimilarityRepository foreignerSimilarityRepository;
 
     @Mock
     private SpecialtyDistributionCalculator distributionCalculator;
@@ -79,28 +76,34 @@ class AgentRecommendationServiceTest {
         ForeignerSimilarity similarity = Mockito.mock(ForeignerSimilarity.class);
         given(similarity.getJobCodeIdList()).willReturn(new long[] { 1L });
         given(similarity.getSimilarityList()).willReturn(new double[] { 1.0 });
-        given(agentSpecializedJobService.getTop2SpecializedJobIds(any())).willReturn(List.of(1L, 2L));
-        given(agentBadgeService.getTop2BadgeIds(any())).willReturn(List.of(1L, 2L));
-
         UUID highId = UUID.randomUUID();
         UUID lowId = UUID.randomUUID();
-        AgentProfile highAgent = Mockito.mock(AgentProfile.class);
-        AgentProfile lowAgent = Mockito.mock(AgentProfile.class);
+
+        given(agentSpecializedJobService.getTop2SpecializedJobIdsBatch(any()))
+                .willReturn(Map.of(highId, List.of(1L, 2L), lowId, List.of(1L, 2L)));
+        given(agentBadgeService.getTop2BadgeIdsBatch(any()))
+                .willReturn(Map.of(highId, List.of(1L, 2L), lowId, List.of(1L, 2L)));
+
+        AgentSimpleProjection highAgent = new AgentSimpleProjection(
+                highId,
+                "High Agent",
+                "high-profile-key",
+                OfficeAddressRegion.SEOUL.getAliases().get(0),
+                5L,
+                100.0);
+        AgentSimpleProjection lowAgent = new AgentSimpleProjection(
+                lowId,
+                "Low Agent",
+                "low-profile-key",
+                OfficeAddressRegion.BUSAN.getAliases().get(0),
+                3L,
+                50.0);
         JobCode highJobCode = Mockito.mock(JobCode.class);
         JobCode lowJobCode = Mockito.mock(JobCode.class);
         given(highJobCode.getId()).willReturn(1L);
-        given(lowJobCode.getId()).willReturn(1L);
+        given(lowJobCode.getId()).willReturn(2L);
 
-        given(highAgent.getId()).willReturn(highId);
-        given(lowAgent.getId()).willReturn(lowId);
-        given(highAgent.getActiveScore()).willReturn(100.0);
-        given(lowAgent.getActiveScore()).willReturn(50.0);
-        given(highAgent.getSpecializedJobs()).willReturn(List.of());
-        given(lowAgent.getSpecializedJobs()).willReturn(List.of());
-        given(highAgent.getProfileObjectKey()).willReturn("high-profile-key");
-        given(lowAgent.getProfileObjectKey()).willReturn("low-profile-key");
-
-        given(agentProfileRepository.findAllValidAgentProfiles()).willReturn(List.of(lowAgent, highAgent));
+        given(agentProfileRepository.findAllValidAgentProjections()).willReturn(List.of(lowAgent, highAgent));
         given(foreignerProfileCrudService.findSimilarityByForeignerId(foreignerId)).willReturn(similarity);
 
         given(finalCalculator.calculateFinalGradeByLongId(any(), any())).willAnswer(invocation -> {

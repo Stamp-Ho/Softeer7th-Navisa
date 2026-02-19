@@ -3,6 +3,7 @@ package com.navisa.be.agent.repository;
 import com.navisa.be.agent.model.entity.AgentBadgeSummary;
 import com.navisa.be.agent.model.entity.Badge;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,9 +19,9 @@ public interface AgentBadgeSummaryRepository extends JpaRepository<AgentBadgeSum
     @Query("SELECT s FROM AgentBadgeSummary s " +
             "JOIN FETCH s.badge " +
             "WHERE s.agentId = :agentId " +
-            "ORDER BY s.count DESC, s.badge.id ASC "
-    )
+            "ORDER BY s.count DESC, s.badge.id ASC ")
     List<AgentBadgeSummary> findTopKBadgeSummarysByAgentId(UUID agentId, Pageable pageable);
 
+    @EntityGraph(attributePaths = "badge")
     List<AgentBadgeSummary> findAllByAgentIdIn(List<UUID> agentIds);
 }

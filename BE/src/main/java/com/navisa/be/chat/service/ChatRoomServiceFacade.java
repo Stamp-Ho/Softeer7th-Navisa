@@ -4,10 +4,11 @@ import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.application.service.ApplicationFormForAgentService;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.dto.projection.ChatMessageNonReadCountProjection;
+import com.navisa.be.chat.dto.projection.ChatRoomInfoProjection;
 import com.navisa.be.chat.dto.projection.ChatRoomProposalStatusProjection;
+import com.navisa.be.chat.dto.projection.LastMessageProjection;
 import com.navisa.be.chat.dto.response.ChatRoomCardResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
-import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomFilterType;
 import com.navisa.be.chat.model.enums.ProposalStatus;
@@ -45,8 +46,7 @@ public class ChatRoomServiceFacade {
     private final ApplicationFormForAgentService applicationFormForAgentService;
     private final ChatServiceFacade chatServiceFacade;
 
-    public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter,
-            SliceRequest<Long> slice) {
+    public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter, SliceRequest<Long> slice) {
         ChatRoomFilterType filterType = ChatRoomFilterType.from(filter);
 
         User user = userCrudService.findByEmail(email);
@@ -58,88 +58,88 @@ public class ChatRoomServiceFacade {
                 : agentProfileCrudService.findByUserId(user.getId()).getId();
 
         // 2. 채팅방 목록 조회 (ExistsNext 확인을 위해 Repository에서 slice.size() + 1개를 가져와야 함)
-        List<ChatRoom> chatRoomList = chatRoomQueryService.findChatRoomByProfileId(profileId, slice, isForeigner,
+        List<ChatRoomInfoProjection> chatRoomList = chatRoomQueryService.findChatRoomByProfileId(profileId, slice, isForeigner,
                 filterType);
 
         if (chatRoomList.isEmpty())
             return new SliceResponse<>(List.of(), false, null);
 
         boolean existsNext = chatRoomList.size() > slice.size();
-        List<ChatRoom> contentChatRooms = existsNext ? chatRoomList.subList(0, slice.size()) : chatRoomList;
+        List<ChatRoomInfoProjection> contentChatRooms = existsNext ? chatRoomList.subList(0, slice.size()) : chatRoomList;
 
-        List<Long> contentChatRoomIds = contentChatRooms.stream().map(ChatRoom::getId).toList();
+        List<Long> contentChatRoomIds = contentChatRooms.stream().map(ChatRoomInfoProjection::chatRoomId).toList();
 
         Map<Long, String> lastMessageMap = chatMessageQueryService
                 .findAllLastChatMessageByChatRoomIn(contentChatRoomIds)
                 .stream()
                 .collect(Collectors.toMap(
-                        message -> message.getChatRoom().getId(),
-                        ChatMessage::getContent,
+                        LastMessageProjection::chatRoomId,
+                        LastMessageProjection::content,
                         (existing, replacement) -> existing));
 
         boolean allMatched = contentChatRooms.stream()
-                .map(ChatRoom::getId)
+                .map(ChatRoomInfoProjection::chatRoomId)
                 .allMatch(lastMessageMap::containsKey);
 
         if (!allMatched) {
             throw new ChatRoomException(ResponseStatus.INVALID_CHATMESSAGE);
         }
 
-        Map<Long, Long> nonReadCountMap = chatMessageQueryService.findCountByChatRoomIn(contentChatRooms, profileId)
+        Map<Long, Long> nonReadCountMap = chatMessageQueryService.findCountByChatRoomIdsIn(contentChatRoomIds, profileId)
                 .stream()
                 .collect(Collectors.toMap(
-                        ChatMessageNonReadCountProjection::getId,
-                        ChatMessageNonReadCountProjection::getCount,
+                        ChatMessageNonReadCountProjection::id,
+                        ChatMessageNonReadCountProjection::count,
                         (existing, replacement) -> existing));
 
         Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap = proposalService
-                .findByChatRoomIn(contentChatRooms)
+                .findByChatRoomIdsIn(contentChatRoomIds)
                 .stream()
                 .collect(Collectors.toMap(
-                        ChatRoomProposalStatusProjection::getChatRoomId,
+                        ChatRoomProposalStatusProjection::chatRoomId,
                         Function.identity(),
                         (existing, replacement) -> existing));
 
         // 3. 응답 DTO 변환 (상대방 프로필 정보 매핑)
         List<ChatRoomCardResponse> responses = contentChatRooms.stream()
-                .map(chatRoom -> ChatRoomCardResponse.toDto(
-                        chatRoom,
-                        getProfileImgUrl(chatRoom, isForeigner),
-                        lastMessageMap.get(chatRoom.getId()),
-                        nonReadCountMap.getOrDefault(chatRoom.getId(), 0L),
-                        isForeigner,
-                        hasReceivedProposal(chatRoom, profileId, proposalStatusMap),
-                        isProposalMatched(chatRoom, proposalStatusMap)))
+                .map(projection -> new ChatRoomCardResponse(
+                        projection.chatRoomId(),
+                        getProfileImgUrl(projection, isForeigner),
+                        projection.partnerName(),
+                        projection.status(),
+                        lastMessageMap.get(projection.chatRoomId()),
+                        nonReadCountMap.getOrDefault(projection.chatRoomId(), 0L),
+                        projection.lastChattedAt(),
+                        hasReceivedProposal(projection.chatRoomId(), profileId, proposalStatusMap),
+                        isProposalMatched(projection.chatRoomId(), proposalStatusMap)))
                 .toList();
 
         Long lastElementId = contentChatRooms.isEmpty() ? null
-                : contentChatRooms.get(contentChatRooms.size() - 1).getId();
+                : contentChatRooms.get(contentChatRooms.size() - 1).chatRoomId();
 
         return new SliceResponse<>(responses, existsNext, lastElementId);
     }
 
-    private String getProfileImgUrl(ChatRoom chatRoom, boolean isForeigner) {
-        if (isForeigner) {
+    private String getProfileImgUrl(ChatRoomInfoProjection projection, boolean isForeigner) {
+        if (isForeigner && projection.partnerProfileImageKey() != null) {
             return storageService.getImgUrl(
-                    ImageSize.MEDIUM, chatRoom.getAgentProfile().getProfileObjectKey(), false);
+                    ImageSize.MEDIUM, projection.partnerProfileImageKey(), false);
         }
         return null;
     }
 
-    private boolean hasReceivedProposal(ChatRoom chatRoom, UUID profileId,
-            Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {
-        if (!proposalStatusMap.containsKey(chatRoom.getId())) {
+    private boolean hasReceivedProposal(Long chatRoomId, UUID profileId, Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {
+        if (!proposalStatusMap.containsKey(chatRoomId)) {
             return false;
         }
-        ChatRoomProposalStatusProjection projection = proposalStatusMap.get(chatRoom.getId());
+        ChatRoomProposalStatusProjection projection = proposalStatusMap.get(chatRoomId);
         // 내가 보낸 게 아닌 제안이 생성된 상태면 true
-        return !projection.getSenderId().equals(profileId) && projection.getStatus() == ProposalStatus.PROPOSED;
+        return !projection.senderId().equals(profileId) && projection.status() == ProposalStatus.PROPOSED;
     }
 
-    private boolean isProposalMatched(ChatRoom chatRoom,
-            Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {
-        return proposalStatusMap.containsKey(chatRoom.getId())
-                && proposalStatusMap.get(chatRoom.getId()).getStatus() == ProposalStatus.MATCHED;
+    private boolean isProposalMatched(Long chatRoomId, Map<Long, ChatRoomProposalStatusProjection> proposalStatusMap) {
+        return proposalStatusMap.containsKey(chatRoomId)
+                && proposalStatusMap.get(chatRoomId).status() == ProposalStatus.MATCHED;
     }
 
     @Transactional

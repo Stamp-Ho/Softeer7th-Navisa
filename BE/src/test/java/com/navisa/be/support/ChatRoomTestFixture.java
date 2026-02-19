@@ -24,8 +24,7 @@ public class ChatRoomTestFixture {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    public ChatRoom createChatRoom(ForeignerProfile foreignerProfile, AgentProfile agentProfile, ChatRoomStatus status,
-            ZonedDateTime time) {
+    public ChatRoom createChatRoom(ForeignerProfile foreignerProfile, AgentProfile agentProfile, ChatRoomStatus status, ZonedDateTime time) {
         ChatRoom chatRoom = new ChatRoom(foreignerProfile, agentProfile, status, time);
         return chatRoomRepository.save(chatRoom);
     }

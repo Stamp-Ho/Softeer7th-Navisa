@@ -1,6 +1,7 @@
 package com.navisa.be.agent.service;
 
-import com.navisa.be.agent.dto.request.AgentCardQueryDto;
+import com.navisa.be.agent.dto.projection.AgentSimpleProjection;
+import com.navisa.be.agent.dto.AgentCardQueryDto;
 import com.navisa.be.agent.dto.request.AgentCardRequest;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.AgentDetailResponse;
@@ -30,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -56,43 +56,33 @@ public class AgentProfileSearchService {
 
         AgentCardQueryDto dto = new AgentCardQueryDto(jobCodeIds, request.regionList(), request.languageIdList());
 
-        List<AgentProfile> agentProfiles = agentProfileRepository.findByFilters(dto, slice);
+        List<AgentSimpleProjection> agentProjections = agentProfileRepository.findByFilters(dto, slice);
 
-        boolean existsNext = agentProfiles.size() > slice.size();
+        boolean existsNext = agentProjections.size() > slice.size();
 
-        List<AgentProfile> contentProfiles = existsNext
-                ? agentProfiles.subList(0, slice.size())
-                : agentProfiles;
+        List<AgentSimpleProjection> contentProjections = existsNext
+                ? agentProjections.subList(0, slice.size())
+                : agentProjections;
 
-        List<UUID> contentProfileIds = contentProfiles.stream().map(AgentProfile::getId).toList();
+        List<UUID> contentProfileIds = contentProjections.stream().map(AgentSimpleProjection::agentId).toList();
 
-        Map<UUID, List<Long>> agentSpecialityTop2 = contentProfileIds.stream()
-                .collect(Collectors.toMap(
-                        agentId -> agentId,
-                        agentSpecializedJobService::getTop2SpecializedJobIds
-                ));
+        Map<UUID, List<Long>> agentSpecialityTop2 = agentSpecializedJobService.getTop2SpecializedJobIdsBatch(contentProfileIds);
 
-        Map<UUID, List<Long>> badgeTop2Map = contentProfileIds.stream()
-                .collect(Collectors.toMap(
-                        agentId -> agentId,
-                        agentBadgeService::getTop2BadgeIds
-                ));
+        Map<UUID, List<Long>> badgeTop2Map = agentBadgeService.getTop2BadgeIdsBatch(contentProfileIds);
 
-        List<AgentCardResponse> content = contentProfiles.stream()
+        List<AgentCardResponse> content = contentProjections.stream()
                 .map(agent -> {
                     String profileUrl = storageService.getImgUrl(
                             ImageSize.SMALL,
-                            agent.getProfileObjectKey(),
-                            false
-                    );
+                            agent.profileObjectKey(),
+                            false);
 
-                    return AgentCardResponse.of(
+                    return AgentCardResponse.projectionToDto(
                             agent,
                             profileUrl,
-                            agentSpecialityTop2.get(agent.getId()),
-                            badgeTop2Map.get(agent.getId()),
-                            requestUserType
-                    );
+                            agentSpecialityTop2.getOrDefault(agent.agentId(), List.of()),
+                            badgeTop2Map.getOrDefault(agent.agentId(), List.of()),
+                            requestUserType);
                 })
                 .toList();
 
@@ -103,25 +93,28 @@ public class AgentProfileSearchService {
 
     /*
      * 외국인 입장 행정사 조회
-     * */
+     */
     public AgentDetailResponse getAgentDetail(String loginUserEmail, UUID agentId) {
         // 행정사가 없으면 예외 발생
         AgentProfile agentProfile = agentProfileRepository.findById(agentId)
                 .orElseThrow(() -> new AgentException(ResponseStatus.AGENT_NOT_FOUND));
         List<AgentBadgeSummary> top6BadgeSummary = agentBadgeService.getTopKBadgeByAgentId(agentId, 6);
 
-        String agentProfileImageUrl = storageService.getImgUrl(ImageSize.MEDIUM, agentProfile.getProfileObjectKey(), false);
+        String agentProfileImageUrl = storageService.getImgUrl(ImageSize.MEDIUM,
+                agentProfile.getProfileObjectKey(), false);
 
         // 보는 사람이 외국인이면 채팅방 정보 제공
         Optional<ChatRoom> optChatRoom = Optional.empty();
         User loginUser = userCrudService.findByEmail(loginUserEmail);
-        if(loginUser.getUserType() == UserType.FILLED_FOREIGNER){
+        if (loginUser.getUserType() == UserType.FILLED_FOREIGNER) {
             ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByUserId(loginUser.getId());
-            optChatRoom = chatRoomQueryService.findByAgentIdAndForeignerId(agentId, foreignerProfile.getId());
+            optChatRoom = chatRoomQueryService.findByAgentIdAndForeignerId(agentId,
+                    foreignerProfile.getId());
         }
 
         long reviewCount = agentReviewRepository.countByAgentProfileId(agentId);
 
-        return AgentDetailResponse.entityToDto(agentProfile, top6BadgeSummary, agentProfileImageUrl, optChatRoom, reviewCount);
+        return AgentDetailResponse.entityToDto(agentProfile, top6BadgeSummary, agentProfileImageUrl,
+                optChatRoom, reviewCount);
     }
 }

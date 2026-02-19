@@ -6,7 +6,7 @@ import com.navisa.be.global.web.request.SliceRequest;
 import java.util.List;
 import java.util.UUID;
 
-public interface ChatMessageRepositoryQueryDsl {
+public interface ChatMessageQueryDsl {
     Long findNonReadCountByProfileId(UUID profileId, boolean isForeigner);
     Long findMatchedNonReadCountByAgentId(UUID profileId);
     List<ChatMessage> findChatMessagesByChatRoomIdAndNoOffset(Long chatRoomId, SliceRequest<Long> slice);

@@ -78,23 +78,11 @@ public class ForeignerProfileCrudService {
     }
 
     @Transactional(readOnly = true)
-    public UUID getForeignerIdByEmail(String email) {
-        User user = userCrudService.findByEmail(email);
-
-        ForeignerProfile profile = foreignerProfileRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
-
-        return profile.getId();
-    }
-
-    @Transactional(readOnly = true)
     public ForeignerProfile findByEmail(String loginUserEmail) {
         User loginUser = userCrudService.findByEmail(loginUserEmail);
 
-        ForeignerProfile foreignerProfile = foreignerProfileRepository.findByUserId(loginUser.getId())
+        return foreignerProfileRepository.findByUserId(loginUser.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
-
-        return foreignerProfile;
     }
 
     @Transactional(readOnly = true)

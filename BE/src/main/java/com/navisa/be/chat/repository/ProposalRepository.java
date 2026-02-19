@@ -4,7 +4,6 @@ import com.navisa.be.chat.dto.projection.ChatRoomProposalStatusProjection;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.model.enums.ProposalStatus;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,10 +23,11 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
             "WHERE p.id IN (" +
             "  SELECT MAX(p2.id) " +
             "  FROM Proposal p2 " +
-            "  WHERE p2.chatRoom IN :chatRooms " +
+            "  WHERE p2.chatRoom.id IN :chatRoomIds " +
             "  GROUP BY p2.chatRoom.id" +
             ")")
-    List<ChatRoomProposalStatusProjection> findProposalStatusByChatRoomIn(@Param("chatRooms") Collection<ChatRoom> chatRooms);
+    List<ChatRoomProposalStatusProjection> findProposalStatusByChatRoomIdsIn(
+            @Param("chatRoomIds") Collection<Long> chatRoomIds);
 
     @Query("SELECT p FROM Proposal p " +
             "JOIN FETCH p.chatRoom " +
@@ -36,8 +36,7 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
     List<Proposal> findLatestMatchedProposal(
             @Param("foreignerId") UUID foreignerId,
             @Param("statuses") List<ProposalStatus> statuses,
-            Pageable pageable
-    );
+            Pageable pageable);
 
     Optional<Proposal> findFirstByChatRoom_IdOrderByIdDesc(Long chatRoomId);
 }

@@ -1,12 +1,17 @@
 package com.navisa.be.agent.repository.querydsl;
 
-import com.navisa.be.agent.dto.request.AgentCardQueryDto;
-import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.agent.dto.AgentCardQueryDto;
 import com.navisa.be.agent.model.enums.OfficeAddressRegion;
 import com.navisa.be.global.web.request.SliceRequest;
+import com.querydsl.core.types.Projections;
+import com.navisa.be.agent.dto.projection.AgentSimpleProjection;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+
+import com.navisa.be.user.model.entity.QUser;
+import com.navisa.be.user.model.enums.UserType;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,12 +21,12 @@ import static com.navisa.be.agent.model.entity.QAgentProfile.agentProfile;
 import static com.navisa.be.agent.model.entity.QAgentSpecializedJob.agentSpecializedJob;
 
 @RequiredArgsConstructor
-public class AgentProfileRepositoryImpl implements AgentProfileRepositoryQueryDsl {
+public class AgentProfileQueryDslImpl implements AgentProfileQueryDsl {
 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<AgentProfile> findByFilters(AgentCardQueryDto dto, SliceRequest<UUID> slice) {
+    public List<AgentSimpleProjection> findByFilters(AgentCardQueryDto dto, SliceRequest<UUID> slice) {
 
         // 1. 커서 기준점(마지막으로 본 행정사의 activeScore) 사전 조회
         Double lastActiveScore = null;
@@ -35,7 +40,17 @@ public class AgentProfileRepositoryImpl implements AgentProfileRepositoryQueryDs
 
         // 2. 메인 쿼리 실행 (상수화된 lastActiveScore 전달)
         return queryFactory
-                .selectFrom(agentProfile)
+                .select(Projections.constructor(AgentSimpleProjection.class,
+                        agentProfile.id,
+                        agentProfile.name,
+                        agentProfile.profileObjectKey,
+                        agentProfile.officeAddress,
+                        JPAExpressions
+                                .select(agentSpecializedJob.count())
+                                .from(agentSpecializedJob)
+                                .where(agentSpecializedJob.agentProfile.eq(agentProfile)),
+                        agentProfile.activeScore))
+                .from(agentProfile)
                 .distinct()
                 .leftJoin(agentProfile.specializedJobs, agentSpecializedJob)
                 .leftJoin(agentProfile.languages, agentLanguage)
@@ -46,6 +61,26 @@ public class AgentProfileRepositoryImpl implements AgentProfileRepositoryQueryDs
                         regionIn(dto.regionList()))
                 .orderBy(agentProfile.activeScore.desc(), agentProfile.id.asc())
                 .limit(slice.size() + 1)
+                .fetch();
+    }
+
+    @Override
+    public List<AgentSimpleProjection> findAllValidAgentProjections() {
+        QUser user = QUser.user;
+        return queryFactory
+                .select(Projections.constructor(AgentSimpleProjection.class,
+                        agentProfile.id,
+                        agentProfile.name,
+                        agentProfile.profileObjectKey,
+                        agentProfile.officeAddress,
+                        JPAExpressions
+                                .select(agentSpecializedJob.count())
+                                .from(agentSpecializedJob)
+                                .where(agentSpecializedJob.agentProfile.eq(agentProfile)),
+                        agentProfile.activeScore))
+                .from(agentProfile)
+                .join(user).on(agentProfile.userId.eq(user.id))
+                .where(user.userType.eq(UserType.VALID_AGENT))
                 .fetch();
     }
 

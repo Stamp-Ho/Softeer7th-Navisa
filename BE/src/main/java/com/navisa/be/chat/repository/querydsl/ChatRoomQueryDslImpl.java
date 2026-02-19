@@ -1,6 +1,5 @@
 package com.navisa.be.chat.repository.querydsl;
 
-import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomFilterType;
 import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.global.web.request.SliceRequest;
@@ -14,20 +13,24 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.NullExpression;
+import com.navisa.be.chat.dto.projection.ChatRoomInfoProjection;
+
 import static com.navisa.be.agent.model.entity.QAgentProfile.agentProfile;
 import static com.navisa.be.chat.model.entity.QChatMessage.chatMessage;
 import static com.navisa.be.chat.model.entity.QChatRoom.chatRoom;
 import static com.navisa.be.chat.model.entity.QProposal.proposal;
 import static com.navisa.be.foreigner.model.entity.QForeignerProfile.foreignerProfile;
 
-
 @RequiredArgsConstructor
-public class ChatRoomRepositoryImpl implements ChatRoomRepositoryQueryDsl {
+public class ChatRoomQueryDslImpl implements ChatRoomQueryDsl {
 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ChatRoom> findByNoOffset(UUID profileId, SliceRequest<Long> slice, boolean isForeignerId, ChatRoomFilterType filter) {
+    public List<ChatRoomInfoProjection> findByNoOffset(UUID profileId, SliceRequest<Long> slice, boolean isForeignerId,
+                                                       ChatRoomFilterType filter) {
         // 커서 데이터 조회
         ZonedDateTime lastChattedAt = null;
         if (slice.lastElementId() != null) {
@@ -39,18 +42,26 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryQueryDsl {
         }
 
         // 기본 쿼리 생성
-        JPAQuery<ChatRoom> query = queryFactory.selectFrom(chatRoom)
+        JPAQuery<ChatRoomInfoProjection> query = queryFactory
+                .select(Projections.constructor(ChatRoomInfoProjection.class,
+                        chatRoom.id,
+                        chatRoom.status,
+                        chatRoom.lastChattedAt,
+                        isForeignerId ? agentProfile.name : foreignerProfile.nickname,
+                        isForeignerId ? agentProfile.profileObjectKey
+                                : new NullExpression<>(String.class)))
+                .from(chatRoom)
                 .where(
                         cursorCondition(lastChattedAt, slice.lastElementId()),
                         profileIdEq(profileId, isForeignerId), // 프로필 조건 통합
                         filterCondition(profileId, filter) // 필터 조건 추가
                 );
 
-        // Fetch Join 처리
+        // Join 처리 (메모리 효율성을 위한 의도적 Fetch Join 제거)
         if (isForeignerId) {
-            query.leftJoin(chatRoom.agentProfile, agentProfile).fetchJoin();
+            query.leftJoin(chatRoom.agentProfile, agentProfile);
         } else {
-            query.leftJoin(chatRoom.foreignerProfile, foreignerProfile).fetchJoin();
+            query.leftJoin(chatRoom.foreignerProfile, foreignerProfile);
         }
 
         return query
@@ -75,8 +86,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryQueryDsl {
                     .where(
                             chatMessage.chatRoom.eq(chatRoom),
                             chatMessage.senderId.ne(profileId),
-                            chatMessage.isReadByOther.isFalse()
-                    )
+                            chatMessage.isReadByOther.isFalse())
                     .exists();
         }
 
@@ -87,8 +97,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryQueryDsl {
                     .from(proposal)
                     .where(
                             proposal.chatRoom.eq(chatRoom),
-                            proposal.status.eq(ProposalStatus.MATCHED)
-                    )
+                            proposal.status.eq(ProposalStatus.MATCHED))
                     .exists();
         }
 

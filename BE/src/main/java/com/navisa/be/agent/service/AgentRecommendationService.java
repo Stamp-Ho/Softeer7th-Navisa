@@ -1,7 +1,7 @@
 package com.navisa.be.agent.service;
 
+import com.navisa.be.agent.dto.projection.AgentSimpleProjection;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
-import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
@@ -13,6 +13,7 @@ import com.navisa.be.recommendation.calculator.FinalRecommendationCalculator;
 import com.navisa.be.recommendation.calculator.ReviewBonusCalculator;
 import com.navisa.be.recommendation.calculator.SpecialtyDistributionCalculator;
 import com.navisa.be.global.common.model.enums.ImageSize;
+import com.navisa.be.user.model.enums.UserType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,30 +46,43 @@ public class AgentRecommendationService {
 
         ForeignerSimilarity similarity = foreignerProfileCrudService.findSimilarityByForeignerId(profile.getId());
 
-        List<AgentProfile> profiles = agentProfileRepository.findAllValidAgentProfiles();
+        List<AgentSimpleProjection> projections = agentProfileRepository
+                .findAllValidAgentProjections();
 
-        List<UUID> agentIds = profiles.stream().map(AgentProfile::getId).toList();
-        List<AgentSpecializedJobSummary> allSummaries = summaryRepository.findAllByAgentIdIn(agentIds);
+        List<UUID> validAgentIds = projections.stream().map(AgentSimpleProjection::agentId).toList();
+        List<AgentSpecializedJobSummary> allSummaries = summaryRepository.findAllByAgentIdIn(validAgentIds);
 
         Map<UUID, List<AgentSpecializedJobSummary>> summaryGroupByAgent = allSummaries.stream()
                 .collect(Collectors.groupingBy(AgentSpecializedJobSummary::getAgentId));
 
-        return profiles.stream()
+        List<AgentSimpleProjection> topProjections = projections.stream()
                 .sorted((p1, p2) -> {
-                    double score1 = calculatePersonalizedScore(p1, similarity, summaryGroupByAgent.getOrDefault(p1.getId(), List.of()));
-                    double score2 = calculatePersonalizedScore(p2, similarity, summaryGroupByAgent.getOrDefault(p2.getId(), List.of()));
+                    double score1 = calculatePersonalizedScore(p1, similarity, summaryGroupByAgent.getOrDefault(p1.agentId(), List.of()));
+                    double score2 = calculatePersonalizedScore(p2, similarity, summaryGroupByAgent.getOrDefault(p2.agentId(), List.of()));
                     return Double.compare(score2, score1);
                 })
                 .limit(12)
-                .map(agent -> toAgentCardResponse(agent))
+                .toList();
+
+        List<UUID> topAgentIds = topProjections.stream().map(AgentSimpleProjection::agentId).toList();
+
+        Map<UUID, List<Long>> agentSpecialityTop2 = agentSpecializedJobService.getTop2SpecializedJobIdsBatch(topAgentIds);
+        Map<UUID, List<Long>> badgeTop2Map = agentBadgeService.getTop2BadgeIdsBatch(topAgentIds);
+
+        return topProjections.stream()
+                .map(agent -> AgentCardResponse.projectionToDto(
+                        agent,
+                        storageService.getImgUrl(ImageSize.SMALL, agent.profileObjectKey(), false),
+                        agentSpecialityTop2.getOrDefault(agent.agentId(), List.of()),
+                        badgeTop2Map.getOrDefault(agent.agentId(), List.of()),
+                        UserType.FILLED_FOREIGNER))
                 .toList();
     }
 
-    private double calculatePersonalizedScore(AgentProfile profile,
-                                              ForeignerSimilarity similarity,
-                                              List<AgentSpecializedJobSummary> summaries) {
+    private double calculatePersonalizedScore(AgentSimpleProjection profile, ForeignerSimilarity similarity, List<AgentSpecializedJobSummary> summaries) {
         // [Step 3] 기본 분배 점수 y(n)
-        double yn = distributionCalculator.calculateDistribution(profile.getSpecializedJobs().size());
+        double yn = distributionCalculator.calculateDistribution(
+                profile.specialityJobCount() != null ? profile.specialityJobCount().intValue() : 0);
 
         // [Step 4] 유저 관심도 waMap 구성
         Map<Long, Double> waMap = buildWaMap(similarity);
@@ -83,7 +97,7 @@ public class AgentRecommendationService {
             double finalYn = reviewBonusCalculator.calculateFinalDistribution(yn, gza);
 
             // sa = T * y(n, za)
-            double sa = profile.getActiveScore() * finalYn;
+            double sa = profile.activeScore() * finalYn;
             saMap.put(jobId, sa);
         }
 
@@ -102,15 +116,5 @@ public class AgentRecommendationService {
             }
         }
         return waMap;
-    }
-
-    private AgentCardResponse toAgentCardResponse(AgentProfile agent) {
-        String profileUrl = storageService.getImgUrl(ImageSize.SMALL, agent.getProfileObjectKey(), false);
-        return AgentCardResponse.of(
-                agent,
-                profileUrl,
-                agentSpecializedJobService.getTop2SpecializedJobIds(agent.getId()),
-                agentBadgeService.getTop2BadgeIds(agent.getId())
-        );
     }
 }

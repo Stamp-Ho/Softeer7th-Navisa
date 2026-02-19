@@ -1,6 +1,7 @@
 package com.navisa.be.agent.repository;
 
-import com.navisa.be.agent.dto.request.AgentCardQueryDto;
+import com.navisa.be.agent.dto.projection.AgentSimpleProjection;
+import com.navisa.be.agent.dto.AgentCardQueryDto;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.support.AgentProfileTestFixture;
 import com.navisa.be.global.web.request.SliceRequest;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -47,11 +49,11 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
     void findByFilters_shouldReturnMatchingProfiles() {
         // given
         AgentProfile pA = agentProfileTestFixture.createAgentProfile("Agent A", "서울시 강남구", jobCode1, language1);
-        org.springframework.test.util.ReflectionTestUtils.setField(pA, "activeScore", 200.0);
+        ReflectionTestUtils.setField(pA, "activeScore", 200.0);
         agentProfileRepository.save(pA);
 
         AgentProfile pB = agentProfileTestFixture.createAgentProfile("Agent B", "서울시 강남구", jobCode1, language1);
-        org.springframework.test.util.ReflectionTestUtils.setField(pB, "activeScore", 100.0);
+        ReflectionTestUtils.setField(pB, "activeScore", 100.0);
         agentProfileRepository.save(pB);
 
         agentProfileTestFixture.createAgentProfile("Agent C", "부산시 해운대구", jobCode1, language1);
@@ -64,12 +66,12 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
         SliceRequest<UUID> sliceRequest = new SliceRequest<>(null, 10);
 
         // when
-        List<AgentProfile> result = agentProfileRepository.findByFilters(request, sliceRequest);
+        List<AgentSimpleProjection> result = agentProfileRepository.findByFilters(request, sliceRequest);
 
         // then
         assertThat(result).hasSize(2);
-        assertThat(result.get(0).getName()).isEqualTo("Agent A"); // Score 200
-        assertThat(result.get(1).getName()).isEqualTo("Agent B"); // Score 100
+        assertThat(result.get(0).name()).isEqualTo("Agent A"); // Score 200
+        assertThat(result.get(1).name()).isEqualTo("Agent B"); // Score 100
     }
 
     @Test
@@ -77,15 +79,15 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
     void findByFilters_shouldWorkWithCursor() {
         // given
         AgentProfile pA = agentProfileTestFixture.createAgentProfile("Agent A", "서울시 강남구", jobCode1, language1);
-        org.springframework.test.util.ReflectionTestUtils.setField(pA, "activeScore", 300.0);
+        ReflectionTestUtils.setField(pA, "activeScore", 300.0);
         agentProfileRepository.save(pA);
 
         AgentProfile pB = agentProfileTestFixture.createAgentProfile("Agent B", "서울시 강남구", jobCode1, language1);
-        org.springframework.test.util.ReflectionTestUtils.setField(pB, "activeScore", 200.0);
+        ReflectionTestUtils.setField(pB, "activeScore", 200.0);
         agentProfileRepository.save(pB);
 
         AgentProfile pC = agentProfileTestFixture.createAgentProfile("Agent C", "서울시 강남구", jobCode1, language1);
-        org.springframework.test.util.ReflectionTestUtils.setField(pC, "activeScore", 100.0);
+        ReflectionTestUtils.setField(pC, "activeScore", 100.0);
         agentProfileRepository.save(pC);
 
         AgentCardQueryDto request = new AgentCardQueryDto(
@@ -94,17 +96,17 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
                 List.of(language1.getId()));
 
         SliceRequest<UUID> sliceRequest1 = new SliceRequest<>(null, 2);
-        List<AgentProfile> result1 = agentProfileRepository.findByFilters(request, sliceRequest1);
+        List<AgentSimpleProjection> result1 = agentProfileRepository.findByFilters(request, sliceRequest1);
         assertThat(result1).hasSize(3);
-        assertThat(result1.get(0).getName()).isEqualTo("Agent A");
-        assertThat(result1.get(1).getName()).isEqualTo("Agent B");
+        assertThat(result1.get(0).name()).isEqualTo("Agent A");
+        assertThat(result1.get(1).name()).isEqualTo("Agent B");
 
         SliceRequest<UUID> sliceRequest2 = new SliceRequest<>(pB.getId(), 2);
-        List<AgentProfile> result2 = agentProfileRepository.findByFilters(request, sliceRequest2);
+        List<AgentSimpleProjection> result2 = agentProfileRepository.findByFilters(request, sliceRequest2);
 
         // then
         assertThat(result2).hasSize(1);
-        assertThat(result2.get(0).getName()).isEqualTo("Agent C");
+        assertThat(result2.get(0).name()).isEqualTo("Agent C");
     }
 
     @Test
@@ -121,11 +123,11 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
         SliceRequest<UUID> sliceRequest = new SliceRequest<>(null, 10);
 
         // when
-        List<AgentProfile> result = agentProfileRepository.findByFilters(request, sliceRequest);
+        List<AgentSimpleProjection> result = agentProfileRepository.findByFilters(request, sliceRequest);
 
         // then
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getId()).isEqualTo(profile1.getId());
+        assertThat(result.get(0).agentId()).isEqualTo(profile1.getId());
     }
 
     @Test
@@ -133,22 +135,22 @@ class AgentProfileRepositoryTest extends IntegrationTestSupport {
     void findByFilters_shouldReturnAllWhenFiltersAreNull() {
         // given
         AgentProfile pA = agentProfileTestFixture.createAgentProfile("Agent A", "서울시", jobCode1, language1);
-        org.springframework.test.util.ReflectionTestUtils.setField(pA, "activeScore", 200.0);
+        ReflectionTestUtils.setField(pA, "activeScore", 200.0);
         agentProfileRepository.save(pA);
 
         AgentProfile pB = agentProfileTestFixture.createAgentProfile("Agent B", "부산시", jobCode1, language1);
-        org.springframework.test.util.ReflectionTestUtils.setField(pB, "activeScore", 100.0);
+        ReflectionTestUtils.setField(pB, "activeScore", 100.0);
         agentProfileRepository.save(pB);
 
         AgentCardQueryDto request = new AgentCardQueryDto(null, null, null);
         SliceRequest<UUID> sliceRequest = new SliceRequest<>(null, 10);
 
         // when
-        List<AgentProfile> result = agentProfileRepository.findByFilters(request, sliceRequest);
+        List<AgentSimpleProjection> result = agentProfileRepository.findByFilters(request, sliceRequest);
 
         // then
         assertThat(result).hasSize(2);
-        assertThat(result.stream().map(AgentProfile::getName)).containsExactly("Agent A", "Agent B");
+        assertThat(result).extracting("name").containsExactly("Agent A", "Agent B");
     }
 
 }

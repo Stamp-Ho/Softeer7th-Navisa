@@ -2,6 +2,7 @@ package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.service.AgentBadgeService;
+import com.navisa.be.chat.dto.projection.ChatRoomInfoProjection;
 import com.navisa.be.chat.dto.response.GetChatRoomParticipantsInfoResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
@@ -35,18 +36,10 @@ public class ChatRoomQueryService {
     private final ForeignerProfileCrudService foreignerProfileCrudService;
 
     // 외국인이 자신의 채팅방을 조회
-    public List<ChatRoom> findChatRoomByProfileId(
+    public List<ChatRoomInfoProjection> findChatRoomByProfileId(
             UUID foreignerId, SliceRequest<Long> slice, boolean isForeignerId, ChatRoomFilterType filter) {
 
         return chatRoomRepository.findByNoOffset(foreignerId, slice, isForeignerId, filter);
-    }
-
-    public List<Long> findChatRoomsByForeignerId(UUID foreignerId) {
-        return chatRoomRepository.findAllIdsByForeignerProfileId(foreignerId);
-    }
-
-    public List<Long> findChatRoomsByAgentId(UUID agentId) {
-        return chatRoomRepository.findAllIdsByAgentProfileId(agentId);
     }
 
     public ChatRoom findById(Long roomId) {
@@ -91,7 +84,8 @@ public class ChatRoomQueryService {
         // 행정사는 외국인의 정보를 조회
         if (loginUser.getUserType() == UserType.VALID_AGENT) {
             ForeignerProfile foreignerProfile = chatRoom.getForeignerProfile();
-            ForeignerExpectedCompany expectedCompany = foreignerProfileCrudService.findExpectedCompanyByForeignerProfileId(foreignerProfile.getId());
+            ForeignerExpectedCompany expectedCompany = foreignerProfileCrudService
+                    .findExpectedCompanyByForeignerProfileId(foreignerProfile.getId());
             List<Long> nationalityIds = foreignerProfile.getForeignerNationalities().stream()
                     .map(ForeignerNationality::getNationality)
                     .map(Nationality::getId)
@@ -106,8 +100,7 @@ public class ChatRoomQueryService {
 
         return GetChatRoomParticipantsInfoResponse.entityToDto(
                 agentProfile,
-                top2BadgeIds
-        );
+                top2BadgeIds);
     }
 
     public Optional<ChatRoom> findByAgentIdAndForeignerId(UUID agentId, UUID foreignerId) {

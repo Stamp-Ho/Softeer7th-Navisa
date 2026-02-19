@@ -10,12 +10,6 @@ services:
       POSTGRES_PASSWORD: test-password
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
-    # 서버 실행 후 SQL 명령어를 직접 실행하도록 설정
-    command: >
-      bash -c "
-      (sleep 5 && psql -U test-user -d navisa_db -c 'CREATE EXTENSION IF NOT EXISTS vector; CREATE OR REPLACE FUNCTION array_overlap(bigint[], bigint[]) RETURNS boolean AS \$\$ SELECT \$$1 && \$$2; \$\$ LANGUAGE sql IMMUTABLE;') &
-      exec docker-entrypoint.sh postgres
-      "
     networks:
       - navisa-network
 

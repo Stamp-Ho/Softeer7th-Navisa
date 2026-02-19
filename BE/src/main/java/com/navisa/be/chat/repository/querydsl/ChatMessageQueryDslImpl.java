@@ -16,7 +16,7 @@ import static com.navisa.be.chat.model.entity.QChatRoom.chatRoom;
 import static com.navisa.be.chat.model.entity.QProposal.proposal;
 
 @RequiredArgsConstructor
-public class ChatMessageRepositoryImpl implements ChatMessageRepositoryQueryDsl {
+public class ChatMessageQueryDslImpl implements ChatMessageQueryDsl {
 
     private final JPAQueryFactory queryFactory;
 

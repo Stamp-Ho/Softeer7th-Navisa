@@ -38,8 +38,8 @@ public class ProposalService {
     private final ApplicationFormCrudService applicationFormCrudService;
 
     @Transactional(readOnly = true)
-    public List<ChatRoomProposalStatusProjection> findByChatRoomIn(Collection<ChatRoom> contentChatRooms) {
-        return proposalRepository.findProposalStatusByChatRoomIn(contentChatRooms);
+    public List<ChatRoomProposalStatusProjection> findByChatRoomIdsIn(Collection<Long> contentChatRoomIds) {
+        return proposalRepository.findProposalStatusByChatRoomIdsIn(contentChatRoomIds);
     }
 
     @Transactional

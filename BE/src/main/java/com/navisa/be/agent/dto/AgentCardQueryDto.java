@@ -1,4 +1,4 @@
-package com.navisa.be.agent.dto.request;
+package com.navisa.be.agent.dto;
 
 import java.util.List;
 import java.util.Optional;
