@@ -8,7 +8,7 @@ import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +19,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ApplicationFormRegistrationService {
 
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final ApplicationFormRepository applicationFormRepository;
 
     @Transactional
     public ApplicationFormIdResponse saveApplicationForm(String email, UUID formId,
                                                          ApplicationFormSectionDataRequest request) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ApplicationForm form = applicationFormRepository.findById(formId)
                 .orElseThrow(() -> new ApplicationFormException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));
@@ -40,7 +40,7 @@ public class ApplicationFormRegistrationService {
 
     @Transactional
     public ApplicationFormIdResponse saveProfilePhoto(String email, UUID formId, String objectKey) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ApplicationForm form = applicationFormRepository.findById(formId)
                 .orElseThrow(() -> new ApplicationFormException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));

@@ -13,7 +13,7 @@ import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChatMessageServiceFacade {
 
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileCrudService agentProfileQueryService;
     private final ChatMessageQueryService chatMessageQueryService;
@@ -33,7 +33,7 @@ public class ChatMessageServiceFacade {
 
     @Transactional(readOnly = true)
     public ChatMessageCountResponse findNonReadCountByUserEmail(String email) {
-        User findUser = userQueryService.findByEmail(email);
+        User findUser = userCrudService.findByEmail(email);
 
         boolean isForeigner = findUser.getUserType().equals(UserType.FILLED_FOREIGNER);
 
@@ -48,7 +48,7 @@ public class ChatMessageServiceFacade {
 
     @Transactional(readOnly = true)
     public ChatMessageCountResponse findMatchedNonReadCountByUserEmail(String email) {
-        User findUser = userQueryService.findByEmail(email);
+        User findUser = userCrudService.findByEmail(email);
 
         UUID agentId = agentProfileQueryService.findByUserId(findUser.getId()).getId();
 
@@ -61,7 +61,7 @@ public class ChatMessageServiceFacade {
     public SliceResponse<ChatMessageSimpleResponse, Long> findChatMessagesByChatRoomIdAndNoOffset(
             String email, Long roomId, SliceRequest<Long> slice) {
 
-        User findUser = userQueryService.findByEmail(email);
+        User findUser = userCrudService.findByEmail(email);
 
         UUID profileId = findProfileId(findUser, roomId);
 

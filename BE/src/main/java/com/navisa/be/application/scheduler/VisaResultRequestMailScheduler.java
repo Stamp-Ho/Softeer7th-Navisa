@@ -5,7 +5,7 @@ import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.application.service.ApplicationFormForAgentService;
 import com.navisa.be.application.service.ApplicationFormEmailService;
 import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -24,7 +24,7 @@ public class VisaResultRequestMailScheduler {
     private final ApplicationFormRepository applicationFormRepository;
     private final ApplicationFormEmailService applicationFormEmailService;
     private final ApplicationFormForAgentService applicationFormForAgentService;
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
 
     @Scheduled(cron = "0 0 10 * * *") // 매일 오전 10시
     @SchedulerLock(name = "VisaEmailScheduler_sendFollowUpEmails", lockAtMostFor = "10m", lockAtLeastFor = "2m")
@@ -41,7 +41,7 @@ public class VisaResultRequestMailScheduler {
             try {
                 UUID userId = form.getAgentProfile().getUserId();
 
-                User user = userQueryService.findById(userId);
+                User user = userCrudService.findById(userId);
 
                 String recipientEmail = user.getEmail();
                 String agentName = form.getAgentProfile().getName();

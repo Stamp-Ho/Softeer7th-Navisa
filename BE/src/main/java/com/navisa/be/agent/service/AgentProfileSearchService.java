@@ -21,7 +21,7 @@ import com.navisa.be.global.common.service.JobGroupService;
 import com.navisa.be.global.common.model.enums.ImageSize;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 public class AgentProfileSearchService {
 
     private final JobGroupService jobGroupService;
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final AgentProfileRepository agentProfileRepository;
     private final AgentSpecializedJobService agentSpecializedJobService;
     private final AgentBadgeService agentBadgeService;
@@ -52,7 +52,7 @@ public class AgentProfileSearchService {
 
         List<Long> jobCodeIds = jobGroupService.findAllJobCodeIdsByGroupNames(request.jobGroupNameList());
 
-        UserType requestUserType = userQueryService.findByEmail(email).getUserType();
+        UserType requestUserType = userCrudService.findByEmail(email).getUserType();
 
         AgentCardQueryDto dto = new AgentCardQueryDto(jobCodeIds, request.regionList(), request.languageIdList());
 
@@ -114,7 +114,7 @@ public class AgentProfileSearchService {
 
         // 보는 사람이 외국인이면 채팅방 정보 제공
         Optional<ChatRoom> optChatRoom = Optional.empty();
-        User loginUser = userQueryService.findByEmail(loginUserEmail);
+        User loginUser = userCrudService.findByEmail(loginUserEmail);
         if(loginUser.getUserType() == UserType.FILLED_FOREIGNER){
             ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByUserId(loginUser.getId());
             optChatRoom = chatRoomQueryService.findByAgentIdAndForeignerId(agentId, foreignerProfile.getId());

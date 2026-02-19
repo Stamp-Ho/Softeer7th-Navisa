@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Schema(description = "새로운 행정사 승인 요청 DTO")
-public record PermitNewAgentRequest(
+public record AgentPermitRequest(
         @Schema(description = "유저 id")
         @NotNull(message = "userId는 null일 수 없습니다")
         UUID userId

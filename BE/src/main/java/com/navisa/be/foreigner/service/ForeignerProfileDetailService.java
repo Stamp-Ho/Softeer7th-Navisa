@@ -23,7 +23,7 @@ import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ForeignerProfileDetailService {
 
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final AgentReviewCrudService agentReviewCrudService;
     private final ChatRoomQueryService chatRoomQueryService;
@@ -69,7 +69,7 @@ public class ForeignerProfileDetailService {
 
         List<Long> nationIds = foreignerProfile.getForeignerNationalities().stream().map(ForeignerNationality::getId).toList();
 
-        User agentUser = userQueryService.findByEmail(request.loginUserEmail());
+        User agentUser = userCrudService.findByEmail(request.loginUserEmail());
 
         AgentProfile agentProfile = agentProfileCrudService.findByUserId(agentUser.getId());
 
@@ -99,7 +99,7 @@ public class ForeignerProfileDetailService {
 
     // 외국인 상세 요건 입력 여부 확인
     public ForeignerStatusResponse checkForeignerFilledStatus(String email) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ForeignerProfile profile = foreignerProfileRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
@@ -114,7 +114,7 @@ public class ForeignerProfileDetailService {
 
     @Transactional(readOnly = true)
     public ForeignerProgressResponse getForeignerProgress(String email) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ForeignerProfile profile = foreignerProfileRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));

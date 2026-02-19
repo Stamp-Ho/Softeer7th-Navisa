@@ -16,7 +16,7 @@ import com.navisa.be.foreigner.model.entity.ForeignerNationality;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ import java.util.UUID;
 public class ChatRoomQueryService {
 
     private final ChatRoomRepository chatRoomRepository;
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final AgentBadgeService agentBadgeService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
 
@@ -77,7 +77,7 @@ public class ChatRoomQueryService {
 
     @Transactional
     public GetChatRoomParticipantsInfoResponse findParticipantsInfoById(Long roomId, String loginUserEmail) {
-        User loginUser = userQueryService.findByEmail(loginUserEmail);
+        User loginUser = userCrudService.findByEmail(loginUserEmail);
 
         ChatRoom chatRoom = chatRoomRepository.findByIdWithParticipantsInfo(roomId)
                 .orElseThrow(() -> new ChatRoomException(ResponseStatus.NOT_FOUND_CHATROOM));

@@ -15,7 +15,7 @@ import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.support.*;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,7 @@ public class ForeignerRegistrationServiceTest extends IntegrationTestSupport {
     private GeminiTextEmbeddingClient geminiTextEmbeddingClient;
 
     @MockitoBean
-    private UserQueryService userQueryService;
+    private UserCrudService userCrudService;
 
     @Autowired
     private JobCodeRepository jobCodeRepository;
@@ -88,8 +88,8 @@ public class ForeignerRegistrationServiceTest extends IntegrationTestSupport {
         given(geminiTextEmbeddingClient.embedText(any(), any()))
                 .willReturn(mockEmbedding);
 
-        given(userQueryService.findByEmail(email)).willReturn(mockUser);
-        given(userQueryService.findById(userId)).willReturn(mockUser);
+        given(userCrudService.findByEmail(email)).willReturn(mockUser);
+        given(userCrudService.findById(userId)).willReturn(mockUser);
 
         // when
         foreignerRegistrationService.registerAllForeignerInfo(request, email);
@@ -128,9 +128,9 @@ public class ForeignerRegistrationServiceTest extends IntegrationTestSupport {
         given(geminiTextEmbeddingClient.embedText(any(), any()))
                 .willReturn(mockEmbedding);
 
-        given(userQueryService.findByEmail(email))
+        given(userCrudService.findByEmail(email))
                 .willReturn(mockUser);
-        given(userQueryService.findById(userId))
+        given(userCrudService.findById(userId))
                 .willReturn(mockUser);
 
         // when & then

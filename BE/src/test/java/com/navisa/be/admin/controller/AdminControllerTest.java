@@ -1,7 +1,7 @@
 package com.navisa.be.admin.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navisa.be.admin.dto.request.PermitNewAgentRequest;
+import com.navisa.be.admin.dto.request.AgentPermitRequest;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.support.IntegrationTestSupport;
@@ -47,7 +47,7 @@ class AdminControllerTest extends IntegrationTestSupport {
         User newAgent = new User("email2", null, UserType.INVALID_AGENT, LoginType.GOOGLE, true);
         User savedAgent = userRepository.save(newAgent);
 
-        PermitNewAgentRequest request = new PermitNewAgentRequest(savedAgent.getId());
+        AgentPermitRequest request = new AgentPermitRequest(savedAgent.getId());
 
         // when & then
         mockMvc.perform(post("/api/admin/permit/agent")
@@ -72,7 +72,7 @@ class AdminControllerTest extends IntegrationTestSupport {
         User newAgent = new User("email2", null, UserType.INVALID_AGENT, LoginType.GOOGLE, true);
         User savedAgent = userRepository.save(newAgent);
 
-        PermitNewAgentRequest request = new PermitNewAgentRequest(savedAgent.getId());
+        AgentPermitRequest request = new AgentPermitRequest(savedAgent.getId());
 
         // when & then
         mockMvc.perform(post("/api/admin/permit/agent")

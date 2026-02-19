@@ -6,7 +6,7 @@ import com.navisa.be.chat.model.entity.ChatUserPrincipal;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
     private final JwtProvider jwtProvider;
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
 
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
@@ -63,7 +63,7 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             if (sessionAttributes == null)
                 throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
 
-            User findUser = userQueryService.findByEmail(email);
+            User findUser = userCrudService.findByEmail(email);
 
             if (!findUser.getUserType().equals(UserType.FILLED_FOREIGNER)
                     && !findUser.getUserType().equals(UserType.VALID_AGENT))

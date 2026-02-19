@@ -9,7 +9,6 @@ import com.navisa.be.application.dto.response.RecentApplicationFormsResponse;
 import com.navisa.be.application.exception.ApplicationFormException;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.service.ChatRoomQueryService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
@@ -20,7 +19,7 @@ import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,13 +33,13 @@ public class ApplicationFormSearchService {
 
     private final ApplicationFormRepository applicationFormRepository;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final StorageService storageService;
     private final ChatRoomQueryService chatRoomQueryService;
 
     public List<RecentApplicationFormsResponse> getRecentApplicationForms(String email) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         if (!user.getUserType().equals(UserType.VALID_AGENT)) {
             throw new ApplicationFormException(ResponseStatus.AGENT_NOT_APPROVED);
@@ -65,7 +64,7 @@ public class ApplicationFormSearchService {
     public SliceResponse<ApplicationFormCardResponse, UUID> findApplicationFormsByFilter(
             String email, SliceRequest<UUID> slice, Boolean complete) {
 
-        User findUser = userQueryService.findByEmail(email);
+        User findUser = userCrudService.findByEmail(email);
         AgentProfile agentProfile = agentProfileCrudService.findByUserId(findUser.getId());
 
         List<ApplicationFormProjection> applicationFormProjections = applicationFormRepository
@@ -92,7 +91,7 @@ public class ApplicationFormSearchService {
     }
 
     public ApplicationFormDetailResponse getLatestApplicationFormForForeigner(String email) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ForeignerProfile foreigner = foreignerProfileCrudService.findByUserId(user.getId());
 
@@ -120,7 +119,7 @@ public class ApplicationFormSearchService {
     }
 
     public ApplicationFormDetailResponse getApplicationFormForAgent(String email, UUID applicationFormId) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
         AgentProfile agent = agentProfileCrudService.findByUserId(user.getId());
 
         ApplicationForm form = applicationFormRepository.findWithAgentProfileById(applicationFormId)

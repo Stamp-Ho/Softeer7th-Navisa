@@ -14,7 +14,7 @@ import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ import java.util.function.BiConsumer;
 public class ProposalService {
 
     private final ProposalRepository proposalRepository;
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileCrudService agentProfileQueryService;
     private final ChatRoomQueryService chatRoomQueryService;
@@ -80,7 +80,7 @@ public class ProposalService {
 
     @Transactional
     protected void executeProposalAction(String email, Long roomId, ChatMessageRequest request, BiConsumer<ChatRoom, UUID> dbAction) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         UUID profileId = getProfileId(user);
 

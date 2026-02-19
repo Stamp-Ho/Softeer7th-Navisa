@@ -13,7 +13,7 @@ import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,7 +31,7 @@ public class ChatRoomCommandService {
     private final ChatRoomRepository chatRoomRepository;
     private final AgentProfileCrudService agentProfileQueryService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final ChatMessageCommandService chatMessageCommandService;
     private final ChatRoomQueryService chatRoomQueryService;
 
@@ -41,7 +41,7 @@ public class ChatRoomCommandService {
 
     @Transactional
     public CreateChatRoomResponse create(CreateChatRoomRequest request, String loginUserEmail) {
-        User loginUser = userQueryService.findByEmail(loginUserEmail);
+        User loginUser = userCrudService.findByEmail(loginUserEmail);
 
         if(loginUser.getUserType() != UserType.VALID_AGENT && loginUser.getUserType() != UserType.FILLED_FOREIGNER){
             throw new ChatRoomException(ResponseStatus.FORBIDDEN);

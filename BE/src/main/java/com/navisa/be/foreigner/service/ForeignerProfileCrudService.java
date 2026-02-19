@@ -8,11 +8,9 @@ import com.navisa.be.foreigner.repository.*;
 import com.navisa.be.global.common.dto.projection.JobCodeSimilarityProjection;
 import com.navisa.be.global.common.model.entity.Language;
 import com.navisa.be.global.common.model.entity.Nationality;
-import com.navisa.be.global.common.service.LanguageService;
-import com.navisa.be.global.common.service.NationalityService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ForeignerProfileCrudService {
 
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final ForeignerProfileRepository foreignerProfileRepository;
     private final ForeignerExpectedCompanyRepository foreignerExpectedCompanyRepository;
     private final ForeignerNationalityRepository foreignerNationalityRepository;
@@ -79,7 +77,7 @@ public class ForeignerProfileCrudService {
 
     @Transactional(readOnly = true)
     public UUID getForeignerIdByEmail(String email) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ForeignerProfile profile = foreignerProfileRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
@@ -89,7 +87,7 @@ public class ForeignerProfileCrudService {
 
     @Transactional(readOnly = true)
     public ForeignerProfile findByEmail(String loginUserEmail) {
-        User loginUser = userQueryService.findByEmail(loginUserEmail);
+        User loginUser = userCrudService.findByEmail(loginUserEmail);
 
         ForeignerProfile foreignerProfile = foreignerProfileRepository.findByUserId(loginUser.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));

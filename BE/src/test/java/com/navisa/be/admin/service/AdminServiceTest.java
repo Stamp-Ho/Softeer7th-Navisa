@@ -1,8 +1,7 @@
 package com.navisa.be.admin.service;
 
-import com.navisa.be.admin.dto.request.PermitNewAgentRequest;
+import com.navisa.be.admin.dto.request.AgentPermitRequest;
 import com.navisa.be.admin.exception.AdminDomainException;
-import com.navisa.be.admin.service.AdminService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
@@ -37,7 +36,7 @@ class AdminServiceTest {
     void permitNewAgent_shouldThrowException_whenUserNotFound(){
         // given
         UUID userId = UUID.randomUUID();
-        PermitNewAgentRequest request = new PermitNewAgentRequest(userId);
+        AgentPermitRequest request = new AgentPermitRequest(userId);
 
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
@@ -52,7 +51,7 @@ class AdminServiceTest {
     void permitNewAgent_shouldThrowException_whenUserIsNotInvalidAgent(){
         // given
         UUID userId = UUID.randomUUID();
-        PermitNewAgentRequest request = new PermitNewAgentRequest(userId);
+        AgentPermitRequest request = new AgentPermitRequest(userId);
 
         User user = new User("email", "hash", UserType.FILLED_FOREIGNER, LoginType.EMAIL, true);
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
@@ -67,7 +66,7 @@ class AdminServiceTest {
     void permitNewAgent_shouldSucceed(){
         // given
         UUID userId = UUID.randomUUID();
-        PermitNewAgentRequest request = new PermitNewAgentRequest(userId);
+        AgentPermitRequest request = new AgentPermitRequest(userId);
 
         User user = mock(User.class);
         when(user.getUserType()).thenReturn(UserType.INVALID_AGENT);

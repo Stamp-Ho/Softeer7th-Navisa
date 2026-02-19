@@ -19,7 +19,7 @@ import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ForeignerProfileSearchService {
 
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final JobGroupService jobGroupService;
     private final ForeignerProfileRepository foreignerProfileRepository;
@@ -43,7 +43,7 @@ public class ForeignerProfileSearchService {
     private final ForeignerEducationRepository foreignerEducationRepository;
 
     public List<ForeignerCardResponse> findForeignerCardMatchOnSpecializedJob(String email) {
-        User findUser = userQueryService.findByEmail(email);
+        User findUser = userCrudService.findByEmail(email);
 
         AgentProfile profile = agentProfileCrudService.findWithSpecializedJobByUserId(findUser.getId());
 

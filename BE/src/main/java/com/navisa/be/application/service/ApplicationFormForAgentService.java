@@ -13,7 +13,7 @@ import com.navisa.be.chat.service.ChatRoomQueryService;
 import com.navisa.be.chat.service.ProposalService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.UUID;
 @Slf4j
 public class ApplicationFormForAgentService {
 
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final ApplicationFormRepository applicationFormRepository;
     private final ProposalService proposalService;
@@ -34,7 +34,7 @@ public class ApplicationFormForAgentService {
 
     @Transactional
     public ApplicationFormIdResponse updateApplicationStatus(String email, UUID formId, Boolean isDone) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ApplicationForm form = applicationFormRepository.findById(formId)
                 .orElseThrow(() -> new ApplicationFormException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));
@@ -49,7 +49,7 @@ public class ApplicationFormForAgentService {
 
     @Transactional
     public ApplicationFormFinishedStatusResponse finishApplication(String email, UUID formId, Boolean isFinished) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ApplicationForm currentForm = applicationFormRepository.findById(formId)
                 .orElseThrow(() -> new ApplicationFormException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));

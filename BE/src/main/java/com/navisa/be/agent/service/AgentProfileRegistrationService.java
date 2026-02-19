@@ -7,7 +7,7 @@ import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AgentProfileRegistrationService {
 
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final AgentProfileRepository agentProfileRepository;
     private final AgentLanguageService agentLanguageService;
     private final AgentSpecializedJobService agentSpecializedJobService;
 
     @Transactional
     public AgentProfile registerAgentProfile(AgentProfileRegistrationRequest request, String loginUserEmail) {
-        User user = userQueryService.findByEmail(loginUserEmail);
+        User user = userCrudService.findByEmail(loginUserEmail);
 
         validateLicenseType(request.licenseInfo());
 

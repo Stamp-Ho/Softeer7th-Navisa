@@ -14,7 +14,7 @@ import com.navisa.be.global.web.error.BaseException;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ public class ForeignerRegistrationService {
 
     private final GeminiTextEmbeddingClient geminiTextEmbeddingClient;
     private final JobCodeService jobCodeService;
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final LanguageService languageService;
     private final NationalityService nationalityService;
@@ -41,7 +41,7 @@ public class ForeignerRegistrationService {
         List<Nationality> nationalities = nationalityService.findAllById(request.nationIdList());
         validateLanguagesAndNationalities(request, languages, nationalities);
 
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
         if (user.getUserType().equals(UserType.UNFILLED_FOREIGNER)) {
             user.upgradeToValidForeigner();
         }

@@ -9,7 +9,7 @@ import com.navisa.be.chat.service.ChatRoomQueryService;
 import com.navisa.be.chat.service.ProposalService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,14 +22,14 @@ import java.time.LocalDateTime;
 @Slf4j
 public class ApplicationFormForForeignerService {
 
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final ApplicationFormRepository applicationFormRepository;
     private final ProposalService proposalService;
     private final ChatRoomQueryService chatRoomQueryService;
 
     @Transactional
     public ApplicationFormFinishedStatusResponse finishByForeigner(String email) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ApplicationForm latestForm = applicationFormRepository
                 .findFirstByForeignerProfile_UserIdOrderByCreatedAtDesc(user.getId())

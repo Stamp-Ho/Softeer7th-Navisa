@@ -19,7 +19,7 @@ import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.global.common.model.enums.ImageSize;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserQueryService;
+import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatRoomServiceFacade {
 
-    private final UserQueryService userQueryService;
+    private final UserCrudService userCrudService;
     private final ChatRoomQueryService chatRoomQueryService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
@@ -49,7 +49,7 @@ public class ChatRoomServiceFacade {
             SliceRequest<Long> slice) {
         ChatRoomFilterType filterType = ChatRoomFilterType.from(filter);
 
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
         boolean isForeigner = user.getUserType().equals(UserType.FILLED_FOREIGNER);
 
         // 1. 자신의 프로필 ID 조회
@@ -144,7 +144,7 @@ public class ChatRoomServiceFacade {
 
     @Transactional
     public void updateBlockStatusToEntity(String email, Long chatRoomId, ChatMessageRequest request) {
-        User user = userQueryService.findByEmail(email);
+        User user = userCrudService.findByEmail(email);
 
         ChatRoom chatRoom = chatRoomQueryService.findByIdWithProfiles(chatRoomId);
 
