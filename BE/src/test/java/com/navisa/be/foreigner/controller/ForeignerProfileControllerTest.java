@@ -1,5 +1,6 @@
 package com.navisa.be.foreigner.controller;
 
+import com.navisa.be.auth.exception.AuthException;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.foreigner.dto.request.ForeignerDetailRequest;
@@ -26,7 +27,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -62,7 +63,8 @@ class ForeignerProfileControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        given(jwtProvider.validateToken(anyString())).willReturn(true);
+        willDoNothing().given(jwtProvider).validateToken(anyString());
+
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
         given(loginUserResolver.supportsParameter(any())).willReturn(true);
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
@@ -88,7 +90,8 @@ class ForeignerProfileControllerTest {
     @DisplayName("유효하지 않은 토큰으로 요청 시 401 Unauthorized를 반환한다.")
     void checkForeignerFilledStatus_InvalidToken() throws Exception {
         // given
-        given(jwtProvider.validateToken(anyString())).willReturn(false);
+        willThrow(new AuthException(ResponseStatus.INVALID_TOKEN))
+                .given(jwtProvider).validateToken(anyString());
 
         // when & then
         mockMvc.perform(get("/api/foreigner/requirements")

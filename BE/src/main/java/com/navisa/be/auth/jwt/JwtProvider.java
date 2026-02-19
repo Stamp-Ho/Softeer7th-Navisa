@@ -1,5 +1,7 @@
 package com.navisa.be.auth.jwt;
 
+import com.navisa.be.auth.exception.AuthException;
+import com.navisa.be.global.web.response.ResponseStatus;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -52,24 +54,26 @@ public class JwtProvider {
 
     // 토큰에서 이메일 추출
     public String getEmail(String token) {
-        return Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+        return getClaims(token).getSubject();
+    }
+
+    public Claims getClaims(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .clockSkewSeconds(60) // 검증 유예 시간 설정
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            throw e;
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthException(ResponseStatus.INVALID_TOKEN);
+        }
     }
 
     // 토큰 유효성 검사
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .verifyWith(key)
-                    .build()
-                    .parseSignedClaims(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
+    public void validateToken(String token) {
+        getClaims(token);
     }
 }

@@ -12,19 +12,20 @@ import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.user.model.enums.UserType;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -73,9 +74,9 @@ class AuthControllerTest {
         LoginRequest request = new LoginRequest("test@test.com", "password123");
         LoginResponse responseDto = new LoginResponse("access-token", UUID.randomUUID(), UserType.INVALID_AGENT);
 
-        org.mockito.BDDMockito.willAnswer(invocation -> {
+        willAnswer(invocation -> {
             HttpServletResponse response = invocation.getArgument(1);
-            response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, "refreshToken=mock-refresh-token; Path=/; HttpOnly");
+            response.addHeader(HttpHeaders.SET_COOKIE, "refreshToken=mock-refresh-token; Path=/; HttpOnly");
             return responseDto;
         }).given(authService).login(any(LoginRequest.class), any(HttpServletResponse.class));
 
@@ -86,22 +87,23 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.accessToken").value("access-token"))
                 .andExpect(header().exists("Set-Cookie"))
-                .andExpect(header().string("Set-Cookie", org.hamcrest.Matchers.containsString("refreshToken")));
+                .andExpect(header().string("Set-Cookie", Matchers.containsString("refreshToken")));
     }
 
     @Test
     @DisplayName("로그아웃 API: 성공 시 Set-Cookie 헤더를 통해 쿠키를 만료시킨다")
     void logout_success() throws Exception {
         //given
-        given(jwtProvider.validateToken(any())).willReturn(true);
-        given(jwtProvider.getEmail(any())).willReturn("test@test.com");
+        willDoNothing().given(jwtProvider).validateToken(anyString());
+        given(jwtProvider.getEmail(anyString())).willReturn("test@test.com");
 
         // when & then
         mockMvc.perform(post("/api/auth/logout")
                         .header("Authorization", "Bearer access-token"))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("Set-Cookie"))
-                .andExpect(header().string("Set-Cookie", org.hamcrest.Matchers.containsString("Max-Age=0")));
+                .andExpect(header().string("Set-Cookie", Matchers.containsString("Max-Age=0")))
+                .andExpect(header().string("Set-Cookie", Matchers.containsString("SameSite=None")));
     }
 
     @Test

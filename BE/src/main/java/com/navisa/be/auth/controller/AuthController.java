@@ -9,6 +9,7 @@ import com.navisa.be.auth.dto.response.TokenResponse;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.global.web.response.BaseResponse;
 import com.navisa.be.global.web.response.ResponseStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,17 +54,20 @@ public class AuthController {
     // 로그아웃
     @Operation(summary = "로그아웃", description = "사용자 로그아웃을 수행합니다.")
     @PostMapping("/logout")
-    public BaseResponse<String> logout(@RequestHeader("Authorization") String accessToken,
-                                       HttpServletResponse response) {
-        authService.logout(accessToken);
+    public BaseResponse<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        String email = (String) request.getAttribute("email");
+        authService.logout(email);
+
+        // 쿠키 삭제
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(0) // 즉시 만료
-                .sameSite("Strict")
+                .maxAge(0)
+                .sameSite("None") // reissue와 동일하게 None 설정
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
         return new BaseResponse<>(ResponseStatus.LOGOUT_SUCCESS.getMessage());
     }
 

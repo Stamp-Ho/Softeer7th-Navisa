@@ -17,6 +17,8 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -119,15 +122,13 @@ class AuthServiceTest {
     @DisplayName("로그아웃 성공: Redis에서 리프레시 토큰이 삭제된다")
     void logoutSuccess() {
 
-        String accessToken = "Bearer valid-token";
+        // given
         String email = "test@test.com";
-        LogoutRequest request = new LogoutRequest("refresh-token");
 
-        given(jwtProvider.validateToken(anyString())).willReturn(true);
-        given(jwtProvider.getEmail(anyString())).willReturn(email);
+        // when
+        authService.logout(email);
 
-        authService.logout(accessToken);
-
+        // then
         verify(refreshTokenRepository, times(1)).deleteById(email);
     }
 
@@ -217,8 +218,9 @@ class AuthServiceTest {
         String email = "test@test.com";
         RefreshToken savedToken = new RefreshToken(email, oldRefreshToken);
 
-        given(jwtProvider.validateToken(oldRefreshToken)).willReturn(true);
-        given(jwtProvider.getEmail(oldRefreshToken)).willReturn(email);
+        Claims claims = Jwts.claims().subject(email).build();
+        given(jwtProvider.getClaims(oldRefreshToken)).willReturn(claims);
+
         given(refreshTokenRepository.findById(email)).willReturn(Optional.of(savedToken));
         given(jwtProvider.createAccessToken(email)).willReturn("new-at");
         given(jwtProvider.createRefreshToken(email)).willReturn("new-rt");
@@ -227,8 +229,11 @@ class AuthServiceTest {
         TokenResponse responseResult = authService.reissue(oldRefreshToken, response);
 
         // then
-        assertThat(responseResult.accessToken()).isEqualTo("new-at");
-        verify(response).addHeader(eq(HttpHeaders.SET_COOKIE), anyString());
+        assertAll(
+                () -> assertThat(responseResult.accessToken()).isEqualTo("new-at"),
+                () -> verify(jwtProvider).getClaims(oldRefreshToken),
+                () -> verify(response).addHeader(eq(HttpHeaders.SET_COOKIE), anyString())
+        );
     }
 
     @Test

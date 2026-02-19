@@ -17,6 +17,8 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,6 +96,7 @@ public class AuthService {
     }
 
     // 일반 로그인
+    @Transactional
     public LoginResponse login(LoginRequest request, HttpServletResponse response) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new AuthException(ResponseStatus.INVALID_USER));
@@ -113,38 +116,30 @@ public class AuthService {
 
     // 로그아웃
     @Transactional
-    public void logout(String accessToken) {
-        if (accessToken == null || !accessToken.startsWith("Bearer ")) {
-            throw new AuthException(ResponseStatus.INVALID_TOKEN);
+    public void logout(String email) {
+        if (email != null) {
+            refreshTokenRepository.deleteById(email);
         }
-
-        String token = accessToken.substring(7); // "Bearer " 제거
-
-        if (!jwtProvider.validateToken(token)) {
-            throw new AuthException(ResponseStatus.INVALID_TOKEN);
-        }
-
-        String email = jwtProvider.getEmail(token);
-        refreshTokenRepository.deleteById(email);
     }
 
     // 토큰 재발급
     public TokenResponse reissue(String refreshTokenValue, HttpServletResponse response) {
+        Claims claims;
         try {
-            if (refreshTokenValue == null || !jwtProvider.validateToken(refreshTokenValue)) {
-                throw new AuthException(ResponseStatus.INVALID_TOKEN);
-            }
-        } catch (Exception e) {
-            // 토큰 파싱 중 발생하는 모든 에러를 401(INVALID_TOKEN)로 처리
-            throw new AuthException(ResponseStatus.INVALID_TOKEN);
+            // 한 번의 파싱으로 검증과 데이터 확보 동시에 완료
+            claims = jwtProvider.getClaims(refreshTokenValue);
+        } catch (ExpiredJwtException e) {
+            log.error("리프레시 토큰 만료됨: {}", e.getMessage());
+            throw new AuthException(ResponseStatus.REFRESH_TOKEN_EXPIRED);
         }
 
-        String email = jwtProvider.getEmail(refreshTokenValue);
+        String email = claims.getSubject();
 
         RefreshToken savedToken = refreshTokenRepository.findById(email)
                 .orElseThrow(() -> new AuthException(ResponseStatus.INVALID_TOKEN));
 
         if (!savedToken.getToken().equals(refreshTokenValue)) {
+            log.warn("Refresh Token Mismatch! Email: {}", email);
             refreshTokenRepository.deleteById(email);
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
@@ -153,6 +148,7 @@ public class AuthService {
         String newRefreshToken = jwtProvider.createRefreshToken(email);
 
         saveRefreshTokenInCookie(email, newRefreshToken, response);
+
         return new TokenResponse(newAccessToken);
     }
 

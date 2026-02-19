@@ -7,6 +7,7 @@ import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserCrudService;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -51,8 +52,13 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             log.debug("token : {}", token.substring(0, 7));
 
             // 토큰 존재 여부 및 유효성 검사
-            if (!jwtProvider.validateToken(token)) {
-                log.error("[WS Auth] Invalid token");
+            try {
+                jwtProvider.validateToken(token);
+            } catch (ExpiredJwtException e) {
+                log.error("[WS Auth] Token Expired");
+                throw new WebSocketConnectionException(ResponseStatus.ACCESS_TOKEN_EXPIRED);
+            } catch (Exception e) {
+                log.error("[WS Auth] Invalid token: {}", e.getMessage());
                 throw new WebSocketConnectionException(ResponseStatus.INVALID_TOKEN);
             }
 

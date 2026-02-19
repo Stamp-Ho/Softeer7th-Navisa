@@ -69,6 +69,8 @@ public enum ResponseStatus {
     CHATROOM_ALREADY_EXISTS(400, "이미 채팅방이 존재합니다"),
     PROPOSAL_ALREADY_EXISTS(400, "해당 수임 제안이 존재합니다."),
     HTTP_METHOD_NOT_ALLOWED(405, "지원되지 않는 HTTP 메서드입니다"),
+    REFRESH_TOKEN_EXPIRED(499, "Refresh Token이 만료되었습니다"),
+    ACCESS_TOKEN_EXPIRED(498, "Access Token이 만료되었습니다"),
 
     /**
      * 서버 에러 (500번대)
