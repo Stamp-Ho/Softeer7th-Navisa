@@ -15,6 +15,8 @@ import com.navisa.be.global.web.resolver.LoginUserResolver;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.support.ForeignerFixture;
 import com.navisa.be.user.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,9 +65,12 @@ class ForeignerProfileControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        willDoNothing().given(jwtProvider).validateToken(anyString());
+        Claims mockClaims = Jwts.claims().subject(mockEmail).build();
+
+        given(jwtProvider.getClaims(anyString())).willReturn(mockClaims);
 
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
+
         given(loginUserResolver.supportsParameter(any())).willReturn(true);
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
     }
@@ -90,8 +95,8 @@ class ForeignerProfileControllerTest {
     @DisplayName("유효하지 않은 토큰으로 요청 시 401 Unauthorized를 반환한다.")
     void checkForeignerFilledStatus_InvalidToken() throws Exception {
         // given
-        willThrow(new AuthException(ResponseStatus.INVALID_TOKEN))
-                .given(jwtProvider).validateToken(anyString());
+        given(jwtProvider.getClaims(anyString()))
+                .willThrow(new AuthException(ResponseStatus.INVALID_TOKEN));
 
         // when & then
         mockMvc.perform(get("/api/foreigner/requirements")

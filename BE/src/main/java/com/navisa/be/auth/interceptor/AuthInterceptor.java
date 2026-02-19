@@ -3,6 +3,7 @@ package com.navisa.be.auth.interceptor;
 import com.navisa.be.auth.exception.AuthException;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.global.web.response.ResponseStatus;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,45 +24,38 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            return true;
-        }
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) return true;
 
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.toLowerCase().startsWith("bearer ")) {
+            log.warn("[인증 실패] 헤더 누락 또는 형식 오류: {}", authHeader);
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
 
-        String[] parts = authHeader.split(" ");
+        String[] parts = authHeader.trim().split("\\s+");
         if (parts.length != 2) {
+            log.warn("[인증 실패] 헤더 구조 이상: {}", authHeader);
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
 
         String token = parts[1];
 
-        // 유효성 검증
         try {
-            jwtProvider.validateToken(token);
+            Claims claims = jwtProvider.getClaims(token);
+            String email = claims.getSubject();
+
+            request.setAttribute("accessToken", token);
+            request.setAttribute("email", email);
+            return true;
+
         } catch (ExpiredJwtException e) {
-            log.warn("[인증] 액세스 토큰 만료됨 - 요청 URI: {}, 메시지: {}",
-                    request.getRequestURI(), e.getMessage());
+            log.warn("[인증] 액세스 토큰 만료됨 - URI: {}, 메시지: {}", request.getRequestURI(), e.getMessage());
             throw new AuthException(ResponseStatus.ACCESS_TOKEN_EXPIRED);
-        } catch (MalformedJwtException e) {
-            log.error("[인증] 보안 위반 - 잘못된 토큰 서명 또는 형식. 요청 URI: {}",
-                    request.getRequestURI());
-            throw new AuthException(ResponseStatus.INVALID_TOKEN);
         } catch (Exception e) {
-            // 그 외 기타 예외 상황
-            log.error("[인증] 토큰 검증 중 알 수 없는 에러 발생: {} ({})",
-                    e.getClass().getSimpleName(), e.getMessage());
+            log.error("[인증] 토큰 검증 중 에러 발생: {} ({}) - 토큰(앞7자): {}",
+                    e.getClass().getSimpleName(), e.getMessage(),
+                    token.length() > 7 ? token.substring(0, 7) + "..." : token);
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
-
-        String email = jwtProvider.getEmail(token);
-
-        request.setAttribute("accessToken", token);
-        request.setAttribute("email", email);
-
-        return true;
     }
 }

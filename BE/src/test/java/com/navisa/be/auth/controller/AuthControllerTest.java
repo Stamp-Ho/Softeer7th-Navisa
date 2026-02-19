@@ -10,6 +10,8 @@ import com.navisa.be.auth.dto.response.TokenResponse;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.user.model.enums.UserType;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.hamcrest.Matchers;
@@ -93,17 +95,22 @@ class AuthControllerTest {
     @Test
     @DisplayName("로그아웃 API: 성공 시 Set-Cookie 헤더를 통해 쿠키를 만료시킨다")
     void logout_success() throws Exception {
-        //given
-        willDoNothing().given(jwtProvider).validateToken(anyString());
-        given(jwtProvider.getEmail(anyString())).willReturn("test@test.com");
+        // given
+        String email = "test@test.com";
+        String accessToken = "access-token";
+
+        Claims claims = Jwts.claims().subject(email).build();
+        given(jwtProvider.getClaims(accessToken)).willReturn(claims);
 
         // when & then
         mockMvc.perform(post("/api/auth/logout")
-                        .header("Authorization", "Bearer access-token"))
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("Set-Cookie"))
+                // 쿠키 만료 및 보안 속성 검증
                 .andExpect(header().string("Set-Cookie", Matchers.containsString("Max-Age=0")))
-                .andExpect(header().string("Set-Cookie", Matchers.containsString("SameSite=None")));
+                .andExpect(header().string("Set-Cookie", Matchers.containsString("SameSite=None")))
+                .andExpect(header().string("Set-Cookie", Matchers.containsString("Secure")));
     }
 
     @Test
