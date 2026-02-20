@@ -5,15 +5,16 @@ import com.navisa.be.global.web.response.ResponseStatus;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtProvider {
 
     @Value("${jwt.secret}")
@@ -61,19 +62,17 @@ public class JwtProvider {
         try {
             return Jwts.parser()
                     .verifyWith(key)
-                    .clockSkewSeconds(60) // 검증 유예 시간 설정
+                    .clockSkewSeconds(60)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (ExpiredJwtException e) {
+            log.error("[JwtProvider] 토큰 만료 에러: {}", e.getMessage());
             throw e;
         } catch (JwtException | IllegalArgumentException e) {
+            log.error("[JwtProvider] 유효하지 않은 토큰 에러 - 타입: {}, 사유: {}, 토큰값: {}",
+                    e.getClass().getSimpleName(), e.getMessage(), token);
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
-    }
-
-    // 토큰 유효성 검사
-    public void validateToken(String token) {
-        getClaims(token);
     }
 }

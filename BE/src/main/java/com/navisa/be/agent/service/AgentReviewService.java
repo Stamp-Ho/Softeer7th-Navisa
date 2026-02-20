@@ -86,6 +86,7 @@ public class AgentReviewService {
                 .toList();
     }
 
+    @Transactional
     public void registerAgentReview(String loginUserEmail, CreateAgentReviewRequest request) {
         ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByEmail(loginUserEmail);
 

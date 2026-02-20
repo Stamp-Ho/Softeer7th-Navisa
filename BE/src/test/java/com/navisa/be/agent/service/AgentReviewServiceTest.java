@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -55,12 +56,6 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private AgentReviewRepository agentReviewRepository;
-
-    @Autowired
-    private AgentProfileRepository agentProfileRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private UserTestFixture userTestFixture;

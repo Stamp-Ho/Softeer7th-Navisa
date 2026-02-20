@@ -124,13 +124,17 @@ public class AuthService {
 
     // 토큰 재발급
     public TokenResponse reissue(String refreshTokenValue, HttpServletResponse response) {
+        log.info("==> [reissue] 서비스 진입 성공! 토큰값 존재여부: {}", (refreshTokenValue != null));
+
         Claims claims;
         try {
-            // 한 번의 파싱으로 검증과 데이터 확보 동시에 완료
             claims = jwtProvider.getClaims(refreshTokenValue);
         } catch (ExpiredJwtException e) {
             log.error("리프레시 토큰 만료됨: {}", e.getMessage());
             throw new AuthException(ResponseStatus.REFRESH_TOKEN_EXPIRED);
+        } catch (Exception e) {
+            log.error("==> [reissue] 토큰 파싱 중 예상치 못한 에러: {}", e.getMessage());
+            throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
 
         String email = claims.getSubject();
@@ -145,7 +149,6 @@ public class AuthService {
             log.error("[reissue 에러] 토큰 불일치! DB값: {}, 요청값: {}",
                     savedToken.getToken().substring(0, 10),
                     refreshTokenValue.substring(0, 10));
-            refreshTokenRepository.deleteById(email);
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
 
