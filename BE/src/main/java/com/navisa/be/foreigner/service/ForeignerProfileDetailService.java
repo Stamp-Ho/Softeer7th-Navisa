@@ -64,6 +64,7 @@ public class ForeignerProfileDetailService {
         return ForeignerQueryResponse.of(profile, education, careers, expectedCompany);
     }
 
+    @Transactional(readOnly = true)
     public ForeignerDetailResponse findForeignerDetail(ForeignerDetailRequest request) {
         ForeignerProfile foreignerProfile = foreignerProfileRepository.findById(request.foreignerId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));

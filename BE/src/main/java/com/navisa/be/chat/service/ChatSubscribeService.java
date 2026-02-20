@@ -6,26 +6,66 @@ import com.navisa.be.global.infra.redis.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 public class ChatSubscribeService {
+
     private final RedisMessageListenerContainer redisMessageListenerContainer;
     private final RedisSubscriber redisSubscriber;
-    private final StringRedisTemplate redisTemplate;
 
-    private static final String SESSION_COUNT_KEY_PREFIX = "user:ws:sessions:";
+    // 로컬 서버 인스턴스의 웹소켓 세션 관리용
+    private final Map<UUID, Set<String>> localSessions = new ConcurrentHashMap<>();
+
+    // 유저별 고유 락 객체 보관용
+    private final Map<UUID, Object> userLocks = new ConcurrentHashMap<>();
+
+    private Object getUserLock(UUID userId) {
+        return userLocks.computeIfAbsent(userId, k -> new Object());
+    }
+
+    public void addChatSubscription(UUID userId, String sessionId) {
+        if (userId == null || sessionId == null)
+            return;
+
+        synchronized (getUserLock(userId)) {
+            Set<String> sessions = localSessions.computeIfAbsent(userId, k -> ConcurrentHashMap.newKeySet());
+            boolean isFirstSession = sessions.isEmpty();
+            sessions.add(sessionId);
+
+            if (isFirstSession) {
+                subscribeUserAllRooms(userId);
+            }
+        }
+    }
+
+    public void removeChatSubscription(UUID userId, String sessionId) {
+        if (userId == null || sessionId == null)
+            return;
+
+        synchronized (getUserLock(userId)) {
+            Set<String> sessions = localSessions.get(userId);
+            if (sessions != null) {
+                sessions.remove(sessionId);
+                if (sessions.isEmpty()) {
+                    unsubscribeUserAllRooms(userId);
+                    localSessions.remove(userId);
+                    userLocks.remove(userId); // Lock 자원 정리
+                }
+            }
+        }
+    }
 
     /**
      * 서버가 해당 유저를 위한 메시지를 수신하기 위한 준비 로직
      */
-    @Transactional(readOnly = true)
-    public void subscribeUserAllRooms(UUID userId) {
+    private void subscribeUserAllRooms(UUID userId) {
         if (userId == null) {
             throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
         }
@@ -39,32 +79,12 @@ public class ChatSubscribeService {
     /**
      * 유저의 구독 정보를 정리하는 비즈니스 로직
      */
-    public void unsubscribeUserAllRooms(UUID userId) {
+    private void unsubscribeUserAllRooms(UUID userId) {
         if (userId == null) {
             throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
         }
 
         ChannelTopic topic = new ChannelTopic("user:ch:" + userId.toString());
         redisMessageListenerContainer.removeMessageListener(redisSubscriber, topic);
-    }
-
-    public void increaseSessionCount(UUID userId) {
-        if (userId == null)
-            return;
-
-        redisTemplate.opsForValue().increment(SESSION_COUNT_KEY_PREFIX + userId);
-    }
-
-    public void decreaseSessionCount(UUID userId) {
-        if (userId == null)
-            return;
-
-        String key = SESSION_COUNT_KEY_PREFIX + userId;
-        Long count = redisTemplate.opsForValue().decrement(key);
-
-        if (count != null && count <= 0) {
-            unsubscribeUserAllRooms(userId);
-            redisTemplate.delete(key);
-        }
     }
 }

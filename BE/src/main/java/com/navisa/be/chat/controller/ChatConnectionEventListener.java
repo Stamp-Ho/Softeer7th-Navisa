@@ -27,31 +27,14 @@ public class ChatConnectionEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
 
-        // TODO:: 추후 캐싱 전략 도입시 아래 주석 부분을 활성화
         log.info("[WS Connect] New connection attempt");
-
-        /*
-         * StompHeaderAccessor headerAccessor =
-         * StompHeaderAccessor.wrap(event.getMessage());
-         *
-         * if (headerAccessor.getSessionAttributes() == null) {
-         * throw new BaseException(ResponseStatus.SERVER_ERROR);
-         * }
-         *
-         * UUID userId = (UUID) headerAccessor.getSessionAttributes().get("userId");
-         *
-         * List<Long> subscribedRooms =
-         * chatSubscribeService.subscribeUserAllRooms(userId);
-         *
-         * log.info("[WS Connect] User: {}, Rooms: {}", userId, subscribedRooms);
-         */
 
         validateSessionAttributesAndUserId(sessionAttributes);
 
         String userIdStr = (String) sessionAttributes.get("userId");
         UUID userId = UUID.fromString(userIdStr);
-        chatSubscribeService.increaseSessionCount(userId);
-        log.info("[WS Connect] User: {}, Session Count Incremented", userId);
+        String sessionId = headerAccessor.getSessionId();
+        log.info("[WS Connect] User: {}, Session Id: {}, Session Count Incremented", userId, sessionId);
     }
 
     @EventListener
@@ -70,7 +53,9 @@ public class ChatConnectionEventListener {
 
         String userIdStr = (String) sessionAttributes.get("userId");
         UUID userId = UUID.fromString(userIdStr);
-        chatSubscribeService.subscribeUserAllRooms(userId);
+        String sessionId = headerAccessor.getSessionId();
+
+        chatSubscribeService.addChatSubscription(userId, sessionId);
 
         log.info("subscribe 성공");
     }
@@ -86,8 +71,9 @@ public class ChatConnectionEventListener {
 
         String userIdStr = (String) sessionAttributes.get("userId");
         UUID userId = UUID.fromString(userIdStr);
-        chatSubscribeService.decreaseSessionCount(userId);
-        log.info("[WS Disconnect] User: {}, Session Count Decremented", userId);
+        String sessionId = headerAccessor.getSessionId();
+        chatSubscribeService.removeChatSubscription(userId, sessionId);
+        log.info("[WS Disconnect] User: {}, Session Id: {}, Session Count Decremented", userId, sessionId);
     }
 
     private void validateSessionAttributesAndUserId(Map<String, Object> sessionAttributes) {

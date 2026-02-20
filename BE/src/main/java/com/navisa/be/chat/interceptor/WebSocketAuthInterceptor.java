@@ -37,8 +37,9 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (accessor == null || accessor.getCommand() == null)
-            throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
+        if (accessor == null || accessor.getCommand() == null) { // Heartbeat 등 Command가 없는 내부 메시지들은 그대로 통과
+            return message;
+        }
 
         if (accessor.getCommand().equals(StompCommand.CONNECT)) {
             String token = accessor.getFirstNativeHeader("Authorization");
