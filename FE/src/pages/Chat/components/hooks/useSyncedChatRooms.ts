@@ -25,7 +25,7 @@ export const useSyncedChatRooms = ({
   chatRooms: ChatRoomResponse[];
   socketMessages: Message[];
   selectedChatRoomId: number;
-  userId: string;
+  userId: string | null;
   selectedTab: "all" | "unread" | "matched";
 }) => {
   // react-query 캐시 무효화를 위한 client

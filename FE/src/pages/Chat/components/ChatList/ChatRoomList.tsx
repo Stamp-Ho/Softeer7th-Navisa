@@ -83,7 +83,6 @@ const ChatRoomList = ({
           onClick={() => onSelectChat(data.chatRoomId, data.profileImgUrl)}
         >
           <ChatRoomCard
-            chatRoomId={data.chatRoomId}
             profileImgUrl={data.profileImgUrl ?? ""}
             opponentName={data.opponentName}
             roomStatus={data.roomStatus}
@@ -95,7 +94,9 @@ const ChatRoomList = ({
       ))}
 
       {isFetchingNextPage && (
-        <div className="py-4 text-center text-gray-400">{t("chatRoom.loading")}</div>
+        <div className="py-4 text-center text-gray-400">
+          {t("chatRoom.loading")}
+        </div>
       )}
 
       <div ref={endRef} className="h-4" />
