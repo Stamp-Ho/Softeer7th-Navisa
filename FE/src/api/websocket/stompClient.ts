@@ -1,7 +1,7 @@
-import { Client } from "@stomp/stompjs";
-// import SockJS from "sockjs-client";
+import { Client, type IMessage } from "@stomp/stompjs";
 import type { Send, Message } from "./types";
 
+// 싱글톤 인스턴스
 let stompClient: Client | null = null;
 
 export const connectWebSocket = (
@@ -9,20 +9,24 @@ export const connectWebSocket = (
   onMessage: (msg: Message) => void,
   onConnectionChange?: (connected: boolean) => void,
 ) => {
-  if (stompClient?.active) return stompClient;
+  // 이미 연결된 클라이언트가 있다면 재사용 (중복 연결 방지)
+  if (stompClient && stompClient.active) {
+    onConnectionChange?.(true);
+    return stompClient;
+  }
 
-  stompClient = new Client({
+  const client = new Client({
     webSocketFactory: () => new WebSocket("wss://api.navisa.site/ws"),
-    // webSocketFactory: () => new WebSocket("ws://121.172.219.115:15533/ws"),
-
     connectHeaders: { Authorization: `Bearer ${token}` },
-
-    reconnectDelay: 10000,
+    reconnectDelay: 5000,
+    heartbeatIncoming: 4000,
+    heartbeatOutgoing: 4000,
 
     onConnect: () => {
       console.log("WebSocket Connected");
       onConnectionChange?.(true);
-      stompClient?.subscribe("/user/chat/subscribe", (frame) => {
+
+      client.subscribe("/user/chat/subscribe", (frame: IMessage) => {
         try {
           const message: Message = JSON.parse(frame.body);
           onMessage(message);
@@ -42,23 +46,42 @@ export const connectWebSocket = (
     },
   });
 
+  stompClient = client;
   stompClient.activate();
+
   return stompClient;
 };
 
-export const disconnectWebSocket = async () => {
-  await stompClient?.deactivate();
+export const disconnectWebSocket = () => {
+  // 1. 현재 클라이언트를 임시 변수에 담음
+  const clientToDeactivate = stompClient;
+
+  // 2. 전역 변수는 즉시 null로 초기화 (await 기다리지 않음)
+  // 다음 connectWebSocket이 실행될 때 깨끗한 상태에서 시작하거나
+  // 이미 생성된 새 인스턴스를 null로 덮어쓰지 않음
   stompClient = null;
+
+  // 3. 실제 연결 해제는 비동기로 진행
+  if (clientToDeactivate) {
+    clientToDeactivate
+      .deactivate()
+      .then(() => {
+        console.log("WebSocket Disconnected");
+      })
+      .catch((err) => {
+        console.error("Error during deactivation:", err);
+      });
+  }
 };
 
 export const sendMessageToServer = (payload: Send) => {
   if (!stompClient) {
-    console.warn("STOMP client is null");
+    console.error("Stomp Client is null. Connection might be closed.");
     return;
   }
 
   if (!stompClient.connected) {
-    console.warn("STOMP not connected yet. message skipped.");
+    console.warn("Stomp client exists but not connected yet.");
     return;
   }
 
@@ -71,16 +94,7 @@ export const sendMessageToServer = (payload: Send) => {
   });
 };
 
-// export const sendMessageToServer = (payload: Send) => {
-//   if (!stompClient || !stompClient.active) {
-//     console.error("STOMP Client not connected");
-//     return;
-//   }
-//   const des =
-//     payload.type === "READ" ? "/pub/room/message/read" : "/pub/chat/message";
-
-//   stompClient.publish({
-//     destination: des,
-//     body: JSON.stringify(payload),
-//   });
-// };
+// 현재 연결 상태 확인용
+export const isStompConnected = () => {
+  return stompClient?.connected ?? false;
+};

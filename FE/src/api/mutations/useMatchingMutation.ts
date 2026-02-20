@@ -83,10 +83,19 @@ export const usePostProposalCanceled = (roomId: number) => {
 
 export const usePostBlocked = (roomId: number) => {
   const { apiClient } = useApiClient();
+  const { userId } = useAuth();
 
   return useMutation({
     mutationFn: () => {
-      return chatService.postBlocked(apiClient, roomId);
+      const data: Send = {
+        roomId,
+        clientMessageId: uuidv4(),
+        senderId: userId,
+        content: "CHATROOM_BLOCKED",
+        type: "CHATROOM_BLOCKED",
+        sentAt: new Date().toISOString(),
+      };
+      return chatService.postBlocked(apiClient, roomId, data);
     },
   });
 };

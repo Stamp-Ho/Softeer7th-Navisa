@@ -7,7 +7,7 @@ export const RPMessage = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_2784_28943)">
+      <g clipPath="url(#clip0_2784_28943)">
         <circle
           cx="27.598"
           cy="28"
@@ -67,8 +67,8 @@ export const RPMessage = () => {
           y2="56"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stop-color="#E7E3FF" />
-          <stop offset="1" stop-color="#C5F5FC" />
+          <stop offset="0.5" stopColor="#E7E3FF" />
+          <stop offset="1" stopColor="#C5F5FC" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_2784_28943"
@@ -78,8 +78,8 @@ export const RPMessage = () => {
           y2="40.4027"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stop-color="#B3A8FF" />
-          <stop offset="1" stop-color="#71CCEB" />
+          <stop offset="0.5" stopColor="#B3A8FF" />
+          <stop offset="1" stopColor="#71CCEB" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_2784_28943"
@@ -89,8 +89,8 @@ export const RPMessage = () => {
           y2="40.0027"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7E99F1" />
-          <stop offset="1" stop-color="#B0A4FF" stop-opacity="0" />
+          <stop stopColor="#7E99F1" />
+          <stop offset="1" stopColor="#B0A4FF" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_2784_28943"
@@ -100,8 +100,8 @@ export const RPMessage = () => {
           y2="40.0027"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7E99F1" />
-          <stop offset="1" stop-color="#B0A4FF" stop-opacity="0" />
+          <stop stopColor="#7E99F1" />
+          <stop offset="1" stopColor="#B0A4FF" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_2784_28943"
@@ -111,8 +111,8 @@ export const RPMessage = () => {
           y2="36.9307"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E2FA6" />
-          <stop offset="1" stop-color="#9FAEFE" />
+          <stop stopColor="#3E2FA6" />
+          <stop offset="1" stopColor="#9FAEFE" />
         </linearGradient>
         <clipPath id="clip0_2784_28943">
           <rect width="56" height="56" rx="28" fill="white" />
@@ -131,7 +131,7 @@ export const RPPeople = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_2784_28975)">
+      <g clipPath="url(#clip0_2784_28975)">
         <circle
           cx="27.598"
           cy="28"
@@ -219,8 +219,8 @@ export const RPPeople = () => {
           y2="56"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stop-color="#E7E3FF" />
-          <stop offset="1" stop-color="#C5F5FC" />
+          <stop offset="0.5" stopColor="#E7E3FF" />
+          <stop offset="1" stopColor="#C5F5FC" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_2784_28975"
@@ -230,8 +230,8 @@ export const RPPeople = () => {
           y2="41.6054"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stop-color="#B3A8FF" />
-          <stop offset="1" stop-color="#71CCEB" />
+          <stop offset="0.5" stopColor="#B3A8FF" />
+          <stop offset="1" stopColor="#71CCEB" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_2784_28975"
@@ -241,8 +241,8 @@ export const RPPeople = () => {
           y2="40.9707"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stop-color="#B3A8FF" />
-          <stop offset="1" stop-color="#71CCEB" />
+          <stop offset="0.5" stopColor="#B3A8FF" />
+          <stop offset="1" stopColor="#71CCEB" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_2784_28975"
@@ -252,8 +252,8 @@ export const RPPeople = () => {
           y2="44.306"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stop-color="#B3A8FF" />
-          <stop offset="1" stop-color="#71CCEB" />
+          <stop offset="0.5" stopColor="#B3A8FF" />
+          <stop offset="1" stopColor="#71CCEB" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_2784_28975"
@@ -263,8 +263,8 @@ export const RPPeople = () => {
           y2="41.6717"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#005251" />
-          <stop offset="1" stop-color="#005251" stop-opacity="0" />
+          <stop stopColor="#005251" />
+          <stop offset="1" stopColor="#005251" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_2784_28975"
@@ -274,8 +274,8 @@ export const RPPeople = () => {
           y2="42.3359"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint6_linear_2784_28975"
@@ -285,8 +285,8 @@ export const RPPeople = () => {
           y2="25.106"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#005251" />
-          <stop offset="1" stop-color="#005251" stop-opacity="0" />
+          <stop stopColor="#005251" />
+          <stop offset="1" stopColor="#005251" stopOpacity="0" />
         </linearGradient>
         <linearGradient
           id="paint7_linear_2784_28975"
@@ -296,8 +296,8 @@ export const RPPeople = () => {
           y2="25.3422"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <clipPath id="clip0_2784_28975">
           <rect width="56" height="56" rx="28" fill="white" />
@@ -316,7 +316,7 @@ export const RPDocument = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_2784_29022)">
+      <g clipPath="url(#clip0_2784_29022)">
         <circle
           cx="27.598"
           cy="28"
@@ -357,28 +357,28 @@ export const RPDocument = () => {
         <path
           d="M21 21H36"
           stroke="#3E2FA6"
-          stroke-opacity="0.5"
+          strokeOpacity="0.5"
           strokeWidth="1.2"
           stroke-linecap="round"
         />
         <path
           d="M21 25H36"
           stroke="#3E2FA6"
-          stroke-opacity="0.5"
+          strokeOpacity="0.5"
           strokeWidth="1.2"
           stroke-linecap="round"
         />
         <path
           d="M21 29H36"
           stroke="#3E2FA6"
-          stroke-opacity="0.5"
+          strokeOpacity="0.5"
           strokeWidth="1.2"
           stroke-linecap="round"
         />
         <path
           d="M21 33H31"
           stroke="#3E2FA6"
-          stroke-opacity="0.5"
+          strokeOpacity="0.5"
           strokeWidth="1.2"
           stroke-linecap="round"
         />
@@ -392,8 +392,8 @@ export const RPDocument = () => {
           y2="56"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stop-color="#E7E3FF" />
-          <stop offset="1" stop-color="#C5F5FC" />
+          <stop offset="0.5" stopColor="#E7E3FF" />
+          <stop offset="1" stopColor="#C5F5FC" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_2784_29022"
@@ -403,8 +403,8 @@ export const RPDocument = () => {
           y2="26.2102"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.5" stop-color="#B3A8FF" />
-          <stop offset="1" stop-color="#71CCEB" />
+          <stop offset="0.5" stopColor="#B3A8FF" />
+          <stop offset="1" stopColor="#71CCEB" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_2784_29022"
@@ -414,8 +414,8 @@ export const RPDocument = () => {
           y2="33.0217"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#222CBB" />
-          <stop offset="1" stop-color="#222CBB" stop-opacity="0" />
+          <stop stopColor="#222CBB" />
+          <stop offset="1" stopColor="#222CBB" stopOpacity="0" />
         </linearGradient>
         <clipPath id="clip0_2784_29022">
           <rect width="56" height="56" rx="28" fill="white" />

@@ -3,10 +3,11 @@ import ChatBody from "./ChatRoomBody/ChatBody";
 import ChatRoomFooter from "./ChatRoomFooter/ChatRoomFooter";
 import ChatRoomHeader from "./ChatRoomHeader/ChatRoomHeader";
 import { useAuth } from "../../../../contexts/AuthContextProvider";
-import { useChatRoom } from "../hooks/useChatRoom";
 import { useChatParticipantsInfoQuery } from "../../../../api/queries/useChatParticipantsInfoQuery";
+import { ChatRoomProvider } from "../context/ChatRoomContext";
 
 type ChatRoomParams = {
+  pageType?: "CHAT" | "DOCUMENT";
   chatRoomId: number;
   onClose: () => void;
   onModalAction: (num: number) => void;
@@ -14,6 +15,7 @@ type ChatRoomParams = {
 };
 
 const ChatRoom = ({
+  pageType = "CHAT",
   chatRoomId,
   onClose,
   onModalAction,
@@ -21,7 +23,6 @@ const ChatRoom = ({
 }: ChatRoomParams) => {
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
-  const { chatStatus } = useChatRoom(chatRoomId, false);
   const { data: participants } = useChatParticipantsInfoQuery(chatRoomId);
 
   const headerData: ChatRoomHeaderData = isAgent
@@ -29,16 +30,16 @@ const ChatRoom = ({
     : { type: "AGENT", data: participants?.agentInfo };
 
   return (
-    <>
+    <ChatRoomProvider chatRoomId={chatRoomId}>
       <ChatRoomHeader
-        chatRoomId={chatRoomId}
+        pageType={pageType}
         headerData={headerData}
-        roomStatus={chatStatus}
         onClose={onClose}
         onModalAction={onModalAction}
       />
+      <div className="w-full pt-10" />
       <ChatBody
-        chatRoomId={chatRoomId}
+        pageType={pageType}
         onModalAction={onModalAction}
         profileImg={profileImg}
         opponentName={
@@ -52,8 +53,9 @@ const ChatRoom = ({
             : participants?.foreignerInfo?.nickname
         }
       />
-      <ChatRoomFooter roomStatus={chatStatus} chatRoomId={chatRoomId} />
-    </>
+      <div className="w-full pt-28" />
+      <ChatRoomFooter chatRoomId={chatRoomId} pageType={pageType} />
+    </ChatRoomProvider>
   );
 };
 

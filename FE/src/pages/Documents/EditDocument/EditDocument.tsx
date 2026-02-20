@@ -30,12 +30,22 @@ const EditDocument = () => {
   const data = !!documentId ? agentQuery.data : foreignerQuery.data;
   const isLoading = agentQuery.isLoading || foreignerQuery.isLoading;
 
-  const postForm = useApplicationFormMutation(data?.applicationFormId ?? documentId ?? "", () => {
-    alertT("documents.savingSuccess");
-  });
+  const postForm = useApplicationFormMutation(
+    data?.applicationFormId ?? documentId ?? "",
+    () => {
+      alertT("documents.savingSuccess");
+    },
+  );
   const methods = useForm();
 
-  const { scrollRef, handleScroll, currentSectionIndex, goToSection, goTop, getMaskStyle } = useDocumentScroll();
+  const {
+    scrollRef,
+    handleScroll,
+    currentSectionIndex,
+    goToSection,
+    goTop,
+    getMaskStyle,
+  } = useDocumentScroll();
 
   const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const [imageUrl, setImageUrl] = useState("");
@@ -68,7 +78,8 @@ const EditDocument = () => {
     // 이미지 URL이 있으면 이미지를 입력한것으로 처리
     //const dataToApply = structuredClone(Object.values(fresherData.sections));
     let dataToApply = { ...fresherData.sections };
-    if (data.foreignerProfileImgUrl !== null) dataToApply[0].sectionData[0].values = [true];
+    if (data.foreignerProfileImgUrl !== null)
+      dataToApply[0].sectionData[0].values = [true];
 
     // inputLine(추가 입력)을 적용하여 초기 폼 구조에 line 추가
     const newStruct = structuredClone(editDocumentData);
@@ -76,17 +87,19 @@ const EditDocument = () => {
       .slice(0, 9)
       .forEach((section, sectionIndex) => {
         //@ts-ignore
-        section.sectionData.forEach((field: Record<string, any>, fieldIndex: number) => {
-          const targetField = newStruct[sectionIndex].fields[fieldIndex];
-          const tempField = field?.values ?? [];
-          for (let i = 1; i < tempField.length; i++) {
-            const newLine = {
-              ...JSON.parse(JSON.stringify(targetField.inputLines[0])),
-              rowId: i,
-            };
-            targetField.inputLines.push(newLine);
-          }
-        });
+        section.sectionData.forEach(
+          (field: Record<string, any>, fieldIndex: number) => {
+            const targetField = newStruct[sectionIndex].fields[fieldIndex];
+            const tempField = field?.values ?? [];
+            for (let i = 1; i < tempField.length; i++) {
+              const newLine = {
+                ...JSON.parse(JSON.stringify(targetField.inputLines[0])),
+                rowId: i,
+              };
+              targetField.inputLines.push(newLine);
+            }
+          },
+        );
       });
     setFormLayout(newStruct);
     setImageUrl(data.foreignerProfileImgUrl || "");
@@ -127,27 +140,60 @@ const EditDocument = () => {
   };
   if (isLoading || initializing) return <>loading...</>;
   if (!data) return <>{t("documents.errorOccurred")}</>;
-  const informationMessage = [t("documents.information1"), t("documents.information2"), t("documents.information3"), t("documents.information4")];
-  const informationMessageWhenDone = [t("documents.information1"), t("documents.information2"), t("documents.information4"), t("documents.information5")];
+  const informationMessage = [
+    t("documents.information1"),
+    t("documents.information2"),
+    t("documents.information3"),
+    t("documents.information4"),
+  ];
+  const informationMessageWhenDone = [
+    t("documents.information1"),
+    t("documents.information2"),
+    t("documents.information4"),
+    t("documents.information5"),
+  ];
   return (
     <FormProvider {...methods}>
-      <form className="flex flex-row overflow-y-auto w-fit" onSubmit={methods.handleSubmit(onSubmit, onError)}>
-        <div ref={scrollRef} onScroll={handleScroll} className={`w-284 overflow-auto scrollbar-hide ${getMaskStyle()}`} style={{ height: "calc(100vh - 100px)" }}>
+      <form
+        className="flex flex-row overflow-y-auto w-fit"
+        onSubmit={methods.handleSubmit(onSubmit, onError)}
+      >
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className={`w-284 overflow-auto scrollbar-hide ${getMaskStyle()}`}
+          style={{ height: "calc(100vh - 100px)" }}
+        >
           <div className="flex flex-col pb-15 pt-12">
             <h2 className="headline-m-bold text-text-base mb-3">
               {t("documents.documentWrite")}
               {data.isDone ? t("documents.completedSuffix") : ""}
             </h2>
-            <a className="body-l-medium text-text-base mb-5">{t("documents.description")}</a>
+            <a className="body-l-medium text-text-base mb-5">
+              {t("documents.description")}
+            </a>
             <ul className="flex flex-col bg-green-bright body-l-medium text-green-vivid gap-1.5 rounded-[20px] py-7 px-5.25">
-              {(data.isDone ? informationMessageWhenDone : informationMessage).map((text, idx) => (
-                <li className="flex flex-row items-center gap-0.5" key={`inform_${idx}`}>
+              {(data.isDone
+                ? informationMessageWhenDone
+                : informationMessage
+              ).map((text, idx) => (
+                <li
+                  className="flex flex-row items-center gap-0.5"
+                  key={`inform_${idx}`}
+                >
                   <IcDot size={16} color="var(--green-vivid)" />
                   {text}
                 </li>
               ))}
             </ul>
-            <NavisaForm formData={formLayout} addIndex={true} startsWithImage={true} imageUrl={imageUrl} imageFile={imageFile} setImageFile={setImageFile} />
+            <NavisaForm
+              formData={formLayout}
+              addIndex={true}
+              startsWithImage={true}
+              imageUrl={imageUrl}
+              imageFile={imageFile}
+              setImageFile={setImageFile}
+            />
           </div>
         </div>
         <EditDocumentWidget
@@ -159,6 +205,7 @@ const EditDocument = () => {
           goToSection={goToSection}
           goTop={goTop}
           documentId={data?.applicationFormId ?? documentId ?? ""}
+          chatRoomId={data.chatRoomId}
         />
       </form>
     </FormProvider>

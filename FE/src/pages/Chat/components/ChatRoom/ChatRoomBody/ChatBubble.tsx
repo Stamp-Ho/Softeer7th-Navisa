@@ -4,6 +4,7 @@ import type { ChatHistoryResponse } from "../../../../../api/types/chat";
 import CalcChattedTime from "../../../../../utils/CalcChattedTime";
 
 type ChatBubbleProps = {
+  pageType: "CHAT" | "DOCUMENT";
   message: ChatHistoryResponse;
   opponentName: string;
   myName: string;
@@ -15,6 +16,7 @@ type ChatBubbleProps = {
 };
 
 const ChatBubble = ({
+  pageType,
   message,
   opponentName,
   myName,
@@ -26,18 +28,21 @@ const ChatBubble = ({
 }: ChatBubbleProps) => {
   const { t } = useTranslation(["components"]);
   const { type, content, isSentByMe } = message;
+  const size = pageType === "DOCUMENT" ? "max-w-[300px]" : "max-w-[500px]";
 
-  if (type === "TEXT") {
-    return (
-      <div className="flex flex-row gap-3 items-end">
-        {/* 내 메시지일 때 시간/읽음 표시 (좌측) */}
+  return (
+    <div className="flex flex-row gap-3 items-end">
+      {/* 내 메시지일 때 시간/읽음 표시 (좌측) */}
+      {isSentByMe && (
         <div className="flex flex-col gap-[2px] justify-end items-end caption-l-regular text-text-sub">
-          {isSentByMe && !isRead && <div>{t("chatRoom.unread")}</div>}
-          {isSentByMe && isLast && <div>{CalcChattedTime(message.sentAt)}</div>}
+          {!isRead && <div>{t("chatRoom.unread")}</div>}
+          {isLast && <div>{CalcChattedTime(message.sentAt)}</div>}
         </div>
+      )}
 
+      {type === "TEXT" && (
         <div
-          className={`max-w-[500px] px-6 py-5 bg-background-sub whitespace-pre-wrap ${
+          className={`${size} px-6 ${pageType === "DOCUMENT" ? "py-3" : "py-5"} bg-background-sub whitespace-pre-wrap break-words ${
             isSentByMe
               ? "rounded-tl-[10px] rounded-tr-[2px] rounded-b-[10px]"
               : "rounded-tl-[2px] rounded-tr-[10px] rounded-b-[10px]"
@@ -45,32 +50,28 @@ const ChatBubble = ({
         >
           {content}
         </div>
+      )}
 
-        {/* 상대 메시지일 때 시간 표시 (우측) */}
+      {["PROPOSAL", "ACCEPTED", "REJECTED", "CANCELED"].includes(type) && (
+        <ChatSystemMessage
+          type={type as any}
+          onModalAction={onModalAction}
+          senderName={isSentByMe ? myName : opponentName}
+          agentName={isAgent ? myName : opponentName}
+          isSentByMe={isSentByMe}
+          showReplyButton={showReplyButton}
+          pageType={pageType}
+        />
+      )}
+
+      {/* 상대 메시지일 때 시간 표시 (우측) */}
+      {!isSentByMe && isLast && (
         <div className="flex flex-col gap-[2px] caption-l-regular text-text-sub">
-          {!isSentByMe && isLast && (
-            <div>{CalcChattedTime(message.sentAt)}</div>
-          )}
+          {CalcChattedTime(message.sentAt)}
         </div>
-      </div>
-    );
-  }
-
-  // 시스템 메시지류 (PROPOSAL, ACCEPTED, REJECTED, CANCELED)
-  if (["PROPOSAL", "ACCEPTED", "REJECTED", "CANCELED"].includes(type)) {
-    return (
-      <ChatSystemMessage
-        type={type as any}
-        onModalAction={onModalAction}
-        senderName={isSentByMe ? myName : opponentName}
-        agentName={isAgent ? myName : opponentName}
-        isSentByMe={isSentByMe}
-        showReplyButton={showReplyButton}
-      />
-    );
-  }
-
-  return null;
+      )}
+    </div>
+  );
 };
 
 export default ChatBubble;

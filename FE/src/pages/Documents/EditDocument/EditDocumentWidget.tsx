@@ -6,18 +6,32 @@ import GoTopFloating from "../../../components/common/GoTopFloating";
 import ProgressStepWidget from "../../../components/form/ProgressStepWidget";
 import type { FormSection } from "../../../types/formType";
 import { useEffect, useState } from "react";
+import FloatingChatModal from "./FloatingChatModal";
 import { useGeneratePdf } from "./hooks/useGeneratePdf";
 import ConfirmToExportModal from "./ConfirmToExportModal";
 import { usePatchFormStatusMutation } from "../../../api/mutations/usePatchFormStatusMutation";
 import { useNavigate } from "react-router-dom";
 
-const EditDocumentWidget = ({ editDocumentData, currentSectionIndex, isAgent, isDone, imageUrl, goToSection, goTop, documentId }: EditDocumentWidgetProps) => {
+const EditDocumentWidget = ({
+  editDocumentData,
+  currentSectionIndex,
+  isAgent,
+  isDone,
+  imageUrl,
+  goToSection,
+  goTop,
+  documentId,
+  chatRoomId,
+}: EditDocumentWidgetProps) => {
   const { t } = useTranslation(["pages"]);
   const filledFormData = useWatch();
   const navigate = useNavigate();
   const { previewPdf, downloadPdf } = useGeneratePdf();
-  const patchStatus = usePatchFormStatusMutation(() => onCancel());
   const [confirmModalOn, setConfirmModalOn] = useState(false);
+  const patchStatus = usePatchFormStatusMutation(() =>
+    setConfirmModalOn(false),
+  );
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const formValues = Object.values(filledFormData).slice(0, 9);
@@ -25,6 +39,7 @@ const EditDocumentWidget = ({ editDocumentData, currentSectionIndex, isAgent, is
       updatedAt: new Date(),
       sections: formValues.map((section, i) => ({
         sectionId: i + 1,
+
         sectionData: section.sectionData.map((field: Record<string, any>) => ({
           ...field,
           values: Object.values(field.values),
@@ -36,7 +51,11 @@ const EditDocumentWidget = ({ editDocumentData, currentSectionIndex, isAgent, is
 
   const handlePreviewPdf = () => previewPdf(filledFormData, imageUrl);
   const handleDownloadPdf = () => {
-    isAgent && !isDone ? setConfirmModalOn(true) : downloadPdf(filledFormData, imageUrl);
+    if (isAgent && !isDone) {
+      setConfirmModalOn(true);
+    } else {
+      downloadPdf(filledFormData, imageUrl);
+    }
   };
 
   const onCancel = () => setConfirmModalOn(false);
@@ -49,20 +68,35 @@ const EditDocumentWidget = ({ editDocumentData, currentSectionIndex, isAgent, is
     <>
       <div className="w-full pt-px -mb-1 bg-border-normal" />
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="grayLine" className="flex items-center justify-center gap-2" onClick={handlePreviewPdf}>
+        <Button
+          variant="grayLine"
+          className="flex items-center justify-center gap-2"
+          onClick={handlePreviewPdf}
+        >
           <IcFile2 /> {t("documents.previewPdf")}
         </Button>
-        <Button variant="grayLine" className="flex items-center justify-center gap-2" onClick={handleDownloadPdf}>
-          <IcDownload /> {isDone ? t("documents.downloadPdf") : t("documents.exportPdf")}
+        <Button
+          variant="grayLine"
+          className="flex items-center justify-center gap-2"
+          onClick={handleDownloadPdf}
+        >
+          <IcDownload />{" "}
+          {isDone ? t("documents.downloadPdf") : t("documents.exportPdf")}
         </Button>
       </div>
     </>
   );
   return (
     <div className="w-fit ml-4 left-0 mt-17 flex flex-row">
-      {confirmModalOn && <ConfirmToExportModal onCancel={onCancel} onConfirm={onConfirm} />}
+      {confirmModalOn && (
+        <ConfirmToExportModal onCancel={onCancel} onConfirm={onConfirm} />
+      )}
       <div className="flex flex-col w-92 gap-5 ">
-        <Button variant="primary" className="drop-shadow-[0_0_7px_#6860A040]" type="submit">
+        <Button
+          variant="primary"
+          className="drop-shadow-[0_0_7px_#6860A040]"
+          type="submit"
+        >
           {t("documents.save")}
         </Button>
         <ProgressStepWidget
@@ -74,11 +108,23 @@ const EditDocumentWidget = ({ editDocumentData, currentSectionIndex, isAgent, is
           elementAfterSteps={elementAfterSteps}
         />
       </div>
-      <div className="flex flex-col self-end">
-        <GoTopFloating onClick={goTop} className="m-4 mt-auto" />
-        <button className="m-4 mt-auto rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-black w-16 h-16 pb-0.5 flex items-center justify-center" onClick={() => {}}>
-          <IcMessage color="white" />
-        </button>
+      <div className="relative flex flex-row self-end">
+        {isChatOpen && (
+          <FloatingChatModal
+            onClose={() => setIsChatOpen(!isChatOpen)}
+            chatRoomId={chatRoomId}
+          />
+        )}
+        <div className="flex flex-col">
+          <GoTopFloating onClick={goTop} className="m-4 mt-auto" />
+          <button
+            type="button"
+            className="m-4 mt-auto rounded-full cursor-pointer drop-shadow-[0_0_7px_#6860A040] bg-black w-16 h-16 pb-0.5 flex items-center justify-center"
+            onClick={() => setIsChatOpen(!isChatOpen)}
+          >
+            <IcMessage color="white" />
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -95,4 +141,5 @@ type EditDocumentWidgetProps = {
   goToSection: (i: number) => void;
   goTop: () => void;
   documentId: string;
+  chatRoomId: number;
 };

@@ -14,7 +14,7 @@ export type ChatRoomStatus =
   | "MATCHED"
   | "REJECTED"
   | "CANCELED"
-  | "BLOCKED";
+  | "CHATROOM_BLOCKED";
 
 export const useChatRoom = (
   chatRoomId: number,
@@ -128,7 +128,7 @@ export const useChatRoom = (
   }, [allMessages, isConnected, userId, chatRoomId, sendMessage, isRoomActive]);
 
   // 6. 채팅방 수임 상태 실시간 반영
-  const chatStatus: ChatRoomStatus = useMemo(() => {
+  const chatRoomStatus: ChatRoomStatus = useMemo(() => {
     if (!allMessages || allMessages.length === 0) return "DEFAULT";
 
     // 시스템 메시지 타입들만 추적하기 위해 역순으로 탐색
@@ -136,7 +136,13 @@ export const useChatRoom = (
     const lastSystemMsg = [...allMessages]
       .reverse()
       .find((m) =>
-        ["PROPOSAL", "ACCEPTED", "REJECTED", "CANCELED"].includes(m.type),
+        [
+          "PROPOSAL",
+          "ACCEPTED",
+          "REJECTED",
+          "CANCELED",
+          "CHATROOM_BLOCKED",
+        ].includes(m.type),
       );
 
     if (!lastSystemMsg) return "DEFAULT";
@@ -150,6 +156,8 @@ export const useChatRoom = (
         return "DEFAULT";
       case "CANCELED":
         return "DEFAULT";
+      case "CHATROOM_BLOCKED":
+        return "CHATROOM_BLOCKED";
       default:
         return "DEFAULT";
     }
@@ -166,7 +174,7 @@ export const useChatRoom = (
 
   return {
     groupedChats,
-    chatStatus,
+    chatRoomStatus,
     isLoading,
     isError,
     scrollRef,

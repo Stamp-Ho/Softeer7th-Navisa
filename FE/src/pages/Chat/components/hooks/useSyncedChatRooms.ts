@@ -13,6 +13,7 @@ const PROPOSAL_TYPES = new Set([
   "PROPOSAL",
   "REJECTED",
 ]);
+const NO_ROOM_SELECTED = -1;
 
 export const useSyncedChatRooms = ({
   chatRooms, // 서버에서 받아온 채팅방 목록
@@ -130,17 +131,8 @@ export const useSyncedChatRooms = ({
     );
   }, [chatRooms, roomRealtimeMap, selectedChatRoomId]);
 
-  // 전체 unread 계산
-  const realTimeTotalUnread = useMemo(() => {
-    return syncedChatRooms.reduce((acc, room) => acc + room.noneReadCount, 0);
-  }, [syncedChatRooms]);
-
-  // const lastMessageId = socketMessages.at(-1)?.messageId;
-
   // 소켓 메시지 수신 시 서버 데이터 재요청
   useEffect(() => {
-    // if (!lastMessageId) return;
-
     const lastMsg = socketMessages.at(-1);
     if (!lastMsg) return;
 
@@ -148,38 +140,23 @@ export const useSyncedChatRooms = ({
       queryClient.refetchQueries({
         queryKey: ["chatRooms", selectedTab],
       });
+      queryClient.refetchQueries({ queryKey: ["chatUnreadCount"] });
+      queryClient.refetchQueries({ queryKey: ["chatMatchedUnreadCount"] });
     }
-  }, [socketMessages, selectedTab]);
+  }, [socketMessages, selectedTab, userId, queryClient]);
 
   // 채팅방 입장시 서버 데이터 재요청
   useEffect(() => {
-    if (!selectedChatRoomId) return;
+    if (selectedChatRoomId === NO_ROOM_SELECTED) return;
 
     queryClient.refetchQueries({
       queryKey: ["chatRooms", selectedTab],
     });
-  }, [selectedChatRoomId, selectedTab]);
-
-  // useEffect(() => {
-  //   const lastMsg = socketMessages.at(-1);
-  //   if (!lastMsg) return;
-
-  //   // 내가 보낸 메시지는 unread 변화 없음
-  //   if (lastMsg.senderId !== userId) {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["chatRooms", selectedTab],
-  //     });
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["chatUnreadCount"],
-  //     });
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["chatMatchedUnreadCount"],
-  //     });
-  //   }
-  // }, [lastMessageId, selectedTab, selectedChatRoomId]);
+    queryClient.refetchQueries({ queryKey: ["chatUnreadCount"] });
+    queryClient.refetchQueries({ queryKey: ["chatMatchedUnreadCount"] });
+  }, [selectedChatRoomId, selectedTab, queryClient]);
 
   return {
     syncedChatRooms, // 실시간 반영된 채팅방 목록
-    realTimeTotalUnread, // 전체 unread 합계
   };
 };

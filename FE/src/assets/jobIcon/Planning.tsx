@@ -12,7 +12,7 @@ export const Planning = (props: IProps) => {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g clip-path="url(#clip0_648_39921)">
+      <g clipPath="url(#clip0_648_39921)">
         <g opacity="0.7">
           <path
             d="M65.4638 29.1657C64.2552 26.5737 61.1742 25.4523 58.5823 26.661L53.8892 28.8494L58.266 38.2356L62.9591 36.0472C65.5511 34.8386 66.6725 31.7576 65.4638 29.1657Z"

@@ -3,6 +3,7 @@ import ChatBubble from "./ChatBubble";
 import type { ChatHistoryResponse } from "../../../../../api/types/chat";
 
 type Props = {
+  pageType: "CHAT" | "DOCUMENT";
   group: ChatHistoryResponse[];
   opponentName: string;
   myName: string;
@@ -13,6 +14,7 @@ type Props = {
 };
 
 const ChatMessageGroup = ({
+  pageType,
   group,
   opponentName,
   myName,
@@ -28,18 +30,27 @@ const ChatMessageGroup = ({
   // 상대방 프로필 렌더링 헬퍼
   const renderProfile = () => {
     if (isMe) return null;
+    const size =
+      pageType === "CHAT" ? "w-[56px] h-[56px]" : "w-[40px] h-[40px]";
     if (isAgent) {
       return (
-        <div className="flex flex-row justify-center items-center w-[56px] h-[56px] rounded-full bg-violet-25 title-l-bold text-violet-500 shrink-0">
+        <div
+          className={`flex flex-row justify-center items-center rounded-full bg-violet-25 title-l-bold text-violet-500 shrink-0 ${size}`}
+        >
           {opponentName[0] ?? "?"}
         </div>
       );
     }
     return (
       <img
-        src={profileImg ?? "https://placehold.co/56x56"}
+        src={
+          profileImg ??
+          (pageType === "CHAT"
+            ? "https://placehold.co/56x56"
+            : "https://placehold.co/40x40")
+        }
         alt={t("chatRoom.profileImageAlt")}
-        className="w-[56px] h-[56px] mr-2 object-cover rounded-full shrink-0"
+        className={`mr-2 object-cover rounded-full flex-shrink-0 ${size}`}
       />
     );
   };
@@ -70,6 +81,7 @@ const ChatMessageGroup = ({
                   showReplyButton={pendingProposalId === msg.chatMessageId}
                   isRead={msg.isRead}
                   isLast={isLast}
+                  pageType={pageType}
                 />
               </div>
             );

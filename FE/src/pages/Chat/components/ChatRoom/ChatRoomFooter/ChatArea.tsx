@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useChatSender } from "../../../../../api/websocket/useChatSender";
+import type { ChatRoomStatus } from "../../hooks/useChatRoom";
 
 interface ChatAreaProps {
   className?: string;
@@ -8,6 +9,7 @@ interface ChatAreaProps {
   value: string;
   setValue: (v: string) => void;
   roomId: number;
+  roomStatus: ChatRoomStatus;
 }
 
 const ChatArea = ({
@@ -16,6 +18,7 @@ const ChatArea = ({
   value,
   setValue,
   roomId,
+  roomStatus,
 }: ChatAreaProps) => {
   const { t } = useTranslation(["components"]);
   const chatAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -41,6 +44,8 @@ const ChatArea = ({
 
   // Enter / Shift+Enter
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (roomStatus === "CHATROOM_BLOCKED") return; // 차단된 채팅방이면 무시
+
     if (isComposing.current) return; // 한글 입력 중이면 무시
 
     if (e.key === "Enter") {
@@ -55,12 +60,24 @@ const ChatArea = ({
     }
   };
 
+  if (roomStatus === "CHATROOM_BLOCKED")
+    return (
+      <div
+        className={`
+        flex flex-row items-center
+        pl-6 pr-12 py-3 w-208 bg-background-sub rounded-[24px] text-gray-300
+          ${className}`}
+      >
+        차단되었습니다.
+      </div>
+    );
+
   return (
     <textarea
       ref={chatAreaRef}
       className={`focus:outline-gray-300 focus:outline-2 
         flex flex-row items-center scrollbar-hide
-         pl-6 pr-12 py-3 w-208 bg-background-sub rounded-6
+         pl-6 pr-12 py-3 w-208 bg-background-sub rounded-[24px]
          resize-none ${className}`}
       placeholder={messagePlaceholder}
       value={value}

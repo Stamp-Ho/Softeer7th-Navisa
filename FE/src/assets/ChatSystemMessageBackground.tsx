@@ -1,4 +1,551 @@
-const ChatSystemMessageBackground = () => {
+const ChatSystemMessageBackground = ({
+  pageType,
+}: {
+  pageType: "CHAT" | "DOCUMENT";
+}) => {
+  if (pageType === "DOCUMENT") return backgroundSmall();
+  return backgroundNormal();
+};
+
+export default ChatSystemMessageBackground;
+
+const backgroundSmall = () => {
+  return (
+    <svg
+      width="300"
+      height="140"
+      viewBox="0 0 300 140"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clipPath="url(#clip0_1401_133589)">
+        <rect
+          width="300"
+          height="140"
+          fill="url(#paint0_linear_1401_133589)"
+          fillOpacity="0.35"
+        />
+        <g
+          style={{ mixBlendMode: "lighten" }}
+          opacity="0.5"
+          filter="url(#filter0_f_1401_133589)"
+        >
+          <g opacity="0.4">
+            <rect
+              x="-18.5244"
+              y="-11.9629"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="19.5293"
+              y="-11.9629"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="57.583"
+              y="-11.9629"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="95.6372"
+              y="-11.9629"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+          </g>
+          <g opacity="0.4">
+            <rect
+              x="-18.5244"
+              y="30.6218"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="19.5293"
+              y="30.6218"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="57.583"
+              y="30.6218"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="95.6372"
+              y="30.6218"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+          </g>
+          <g opacity="0.4">
+            <rect
+              x="-18.5244"
+              y="73.2061"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="19.5293"
+              y="73.2061"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="57.583"
+              y="73.2061"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="95.6372"
+              y="73.2061"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+          </g>
+          <g opacity="0.4">
+            <rect
+              x="-18.5244"
+              y="115.79"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="19.5293"
+              y="115.79"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="57.583"
+              y="115.79"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="95.6372"
+              y="115.79"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+          </g>
+          <g opacity="0.4">
+            <rect
+              x="133.691"
+              y="-11.9629"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="171.746"
+              y="-11.9629"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="209.799"
+              y="-11.9629"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="247.854"
+              y="-11.9629"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="285.908"
+              y="-11.9629"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+          </g>
+          <g opacity="0.4">
+            <rect
+              x="133.691"
+              y="30.6218"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="171.746"
+              y="30.6218"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="209.799"
+              y="30.6218"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="247.854"
+              y="30.6218"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="285.908"
+              y="30.6218"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+          </g>
+          <g opacity="0.4">
+            <rect
+              x="133.691"
+              y="73.2061"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="171.746"
+              y="73.2061"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="209.799"
+              y="73.2061"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="247.854"
+              y="73.2061"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="285.908"
+              y="73.2061"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+          </g>
+          <g opacity="0.4">
+            <rect
+              x="133.691"
+              y="115.79"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="171.746"
+              y="115.79"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="209.799"
+              y="115.79"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="247.854"
+              y="115.79"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+            <rect
+              x="285.908"
+              y="115.79"
+              width="36.2419"
+              height="40.7722"
+              fill="white"
+            />
+          </g>
+        </g>
+        <foreignObject
+          x="52.8186"
+          y="-17.3211"
+          width="233.687"
+          height="233.687"
+        >
+          <div
+            style={{
+              backdropFilter: "blur(15.56px)",
+              clipPath: "url(#bgblur_1_1401_133589_clip_path)",
+              height: "100%",
+              width: "100%",
+            }}
+          ></div>
+        </foreignObject>
+        <g
+          filter="url(#filter1_di_1401_133589)"
+          data-figma-bg-blur-radius="31.1111"
+        >
+          <rect
+            x="120.165"
+            y="13.79"
+            width="140"
+            height="140"
+            rx="13.6111"
+            transform="rotate(15 120.165 13.79)"
+            fill="url(#paint1_linear_1401_133589)"
+          />
+          <rect
+            x="120.508"
+            y="14.3854"
+            width="139.028"
+            height="139.028"
+            rx="13.125"
+            transform="rotate(15 120.508 14.3854)"
+            stroke="white"
+            strokeWidth="0.972222"
+          />
+          <rect
+            x="131.044"
+            y="53.3208"
+            width="97.9972"
+            height="68.598"
+            rx="8.16643"
+            transform="rotate(15 131.044 53.3208)"
+            fill="url(#paint2_linear_1401_133589)"
+          />
+          <mask
+            id="mask0_1401_133589"
+            style={{ maskType: "alpha" }}
+            maskUnits="userSpaceOnUse"
+            x="115"
+            y="55"
+            width="109"
+            height="89"
+          >
+            <rect
+              x="131.047"
+              y="53.321"
+              width="97.9972"
+              height="68.598"
+              rx="8.16643"
+              transform="rotate(15 131.047 53.321)"
+              fill="#787F8B"
+            />
+          </mask>
+          <g mask="url(#mask0_1401_133589)">
+            <path
+              d="M109.61 120.704L153.927 100.451"
+              stroke="url(#paint3_linear_1401_133589)"
+              strokeWidth="2.72214"
+            />
+            <path
+              d="M210.578 147.758L182.324 108.061"
+              stroke="url(#paint4_linear_1401_133589)"
+              strokeWidth="2.72214"
+            />
+            <path
+              d="M162.879 102.678L128.631 49.7146L159.116 113.859C161.275 118.401 166.987 119.931 171.127 117.077L229.6 76.769L173.459 105.513C169.727 107.423 165.155 106.198 162.879 102.678Z"
+              fill="url(#paint5_linear_1401_133589)"
+            />
+          </g>
+        </g>
+      </g>
+      <defs>
+        <filter
+          id="filter0_f_1401_133589"
+          x="-287.168"
+          y="-99.3962"
+          width="1258.5"
+          height="343.392"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          />
+          <feGaussianBlur
+            stdDeviation="1.13256"
+            result="effect1_foregroundBlur_1401_133589"
+          />
+        </filter>
+        <filter
+          id="filter1_di_1401_133589"
+          x="52.8186"
+          y="-17.3211"
+          width="233.687"
+          height="233.687"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dx="3.11111" dy="3.11111" />
+          <feGaussianBlur stdDeviation="3.11111" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0.470588 0 0 0 0 0.498039 0 0 0 0 0.545098 0 0 0 0.4 0"
+          />
+          <feBlend
+            mode="normal"
+            in2="BackgroundImageFix"
+            result="effect1_dropShadow_1401_133589"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_dropShadow_1401_133589"
+            result="shape"
+          />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dx="3.11111" dy="3.11111" />
+          <feGaussianBlur stdDeviation="3.11111" />
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0.470588 0 0 0 0 0.498039 0 0 0 0 0.545098 0 0 0 0.2 0"
+          />
+          <feBlend
+            mode="normal"
+            in2="shape"
+            result="effect2_innerShadow_1401_133589"
+          />
+        </filter>
+        <clipPath
+          id="bgblur_1_1401_133589_clip_path"
+          transform="translate(-52.8186 17.3211)"
+        >
+          <rect
+            x="120.165"
+            y="13.79"
+            width="140"
+            height="140"
+            rx="13.6111"
+            transform="rotate(15 120.165 13.79)"
+          />
+        </clipPath>
+        <linearGradient
+          id="paint0_linear_1401_133589"
+          x1="0"
+          y1="70"
+          x2="300"
+          y2="70"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#8D7EED" />
+          <stop offset="1" stopColor="#54D7D5" />
+        </linearGradient>
+        <linearGradient
+          id="paint1_linear_1401_133589"
+          x1="123.022"
+          y1="13.79"
+          x2="271.176"
+          y2="31.7874"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#D4CDFF" />
+          <stop offset="1" stopColor="#C7FCFF" />
+        </linearGradient>
+        <linearGradient
+          id="paint2_linear_1401_133589"
+          x1="132.794"
+          y1="53.1248"
+          x2="229.041"
+          y2="121.956"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0.5" stopColor="#B3A8FF" />
+          <stop offset="1" stopColor="#71CCEB" />
+        </linearGradient>
+        <linearGradient
+          id="paint3_linear_1401_133589"
+          x1="159.45"
+          y1="98.4445"
+          x2="115.243"
+          y2="118.936"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#7E99F1" />
+          <stop offset="1" stopColor="#B0A4FF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient
+          id="paint4_linear_1401_133589"
+          x1="178.544"
+          y1="103.561"
+          x2="206.583"
+          y2="143.411"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#7E99F1" />
+          <stop offset="1" stopColor="#B0A4FF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient
+          id="paint5_linear_1401_133589"
+          x1="178.376"
+          y1="66.0027"
+          x2="163.232"
+          y2="122.519"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#3E2FA6" />
+          <stop offset="1" stopColor="#9FAEFE" />
+        </linearGradient>
+        <clipPath id="clip0_1401_133589">
+          <rect width="300" height="140" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
+
+const backgroundNormal = () => {
   return (
     <svg
       width="368"
@@ -409,5 +956,3 @@ const ChatSystemMessageBackground = () => {
     </svg>
   );
 };
-
-export default ChatSystemMessageBackground;

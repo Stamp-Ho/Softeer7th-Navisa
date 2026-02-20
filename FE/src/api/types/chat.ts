@@ -8,7 +8,7 @@ export interface ChatRoomResponse {
     | "PROPOSED"
     | "MATCHED"
     | "REJECTED"
-    | "BLOCKED"
+    | "CHATROOM_BLOCKED"
     | "CANCELED";
   lastMessage: string;
   noneReadCount: number;
@@ -29,6 +29,7 @@ export interface ChatHistoryResponse {
     | "ACCEPTED"
     | "REJECTED"
     | "CANCELED"
+    | "CHATROOM_BLOCKED"
     | "SYSTEM"
     | "READ";
   content: string;

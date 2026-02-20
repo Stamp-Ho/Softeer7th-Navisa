@@ -18,7 +18,7 @@ const Chip = ({
   switch (type) {
     case "chips_square_request":
       style +=
-        "gap-1 px-6 py-3 rounded-[6px] bg-violet-25 border border-violet-50 text-violet-500";
+        "gap-1 px-6 py-3 rounded-[6px] bg-violet-25 outline outline-1 outline-violet-50 text-violet-500";
       return (
         <Component className={`${style}  ${className}`}>
           <IcPencilLine color="var(--violet-500)" size="18" />
@@ -54,6 +54,17 @@ const Chip = ({
           리뷰 작성하기
           <div className="flex items-center -rotate-90">
             <IcArrows stroke="var(--violet-500)" size={20} />
+          </div>
+        </Component>
+      );
+
+    case "chips_square_chatroom":
+      style += "gap-[2px] pl-4 pr-2 py-2 text-text-base caption-l-semibold";
+      return (
+        <Component className={`${style}  ${className}`}>
+          메시지창 바로가기
+          <div className="flex items-center -rotate-90">
+            <IcArrows stroke="var(--text-base)" size={20} />
           </div>
         </Component>
       );

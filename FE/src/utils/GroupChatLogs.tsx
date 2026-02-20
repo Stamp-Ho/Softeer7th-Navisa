@@ -15,6 +15,7 @@ const groupChatLogs = (logs: ChatHistoryResponse[]) => {
       groups.push([log]);
       return;
     }
+    if (log.type === "CHATROOM_BLOCKED") return;
 
     const prev = logs[index - 1];
     const lastGroup = groups[groups.length - 1];

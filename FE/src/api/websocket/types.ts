@@ -10,7 +10,8 @@ export type Send = {
     | "REJECTED"
     | "CANCELED"
     | "SYSTEM"
-    | "READ";
+    | "READ"
+    | "CHATROOM_BLOCKED";
   sentAt: string; // UTC 기준 ISO 8601
 };
 
@@ -28,7 +29,8 @@ export type Message = {
     | "REJECTED"
     | "CANCELED"
     | "SYSTEM"
-    | "READ";
+    | "READ"
+    | "CHATROOM_BLOCKED";
   sentAt: string; // UTC 기준 ISO 8601
   createdAt: string; // 정렬 기준
   isRead: boolean;

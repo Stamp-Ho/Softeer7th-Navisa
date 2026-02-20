@@ -95,6 +95,6 @@ export const chatService = {
       data,
     ),
 
-  postBlocked: (api: apiClientType, roomId: number) =>
-    api.post<BaseResponse<string>>(`/api/chatroom/${roomId}/block`),
+  postBlocked: (api: apiClientType, roomId: number, data: Send) =>
+    api.post<BaseResponse<string>>(`/api/chatroom/${roomId}/block`, data),
 };

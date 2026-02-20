@@ -12,7 +12,7 @@ export const Tour = (props: IProps) => {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g clip-path="url(#clip0_648_40019)">
+      <g clipPath="url(#clip0_648_40019)">
         <g opacity="0.7">
           <mask
             id="mask0_648_40019"

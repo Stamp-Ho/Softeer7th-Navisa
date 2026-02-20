@@ -43,7 +43,10 @@ export const useGeneratePdf = () => {
     });
   };
 
-  const generatePdf = async (filledFormData: Record<string, any>, imageUrl: string): Promise<string> => {
+  const generatePdf = async (
+    filledFormData: Record<string, any>,
+    imageUrl: string,
+  ): Promise<string> => {
     // 1. 공식 서식 PDF 가져오기 (원본 파일)
     const formUrl = "/APPLICATION_FORM.pdf";
     const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
@@ -75,7 +78,11 @@ export const useGeneratePdf = () => {
         const jpgImageBytes = await convertWebpToJpg(imageUrl);
         const jpgImage = await pdfDoc.embedJpg(jpgImageBytes);
         const jpgDims = jpgImage.scaleToFit(100, 125);
-        pages[0].drawImage(jpgImage, { ...jpgDims, x: 111 - jpgDims.width / 2, y: 518 - jpgDims.height / 2 });
+        pages[0].drawImage(jpgImage, {
+          ...jpgDims,
+          x: 111 - jpgDims.width / 2,
+          y: 518 - jpgDims.height / 2,
+        });
       } catch (error) {
         console.error("WebP 변환 또는 이미지 삽입 실패:", error);
       }
@@ -103,7 +110,13 @@ export const useGeneratePdf = () => {
         if (!pageTarget) return;
 
         // 공통 텍스트 그리기 함수 (클로저 내부 정의)
-        const draw = (text: string, x: number, y: number, isToRight: boolean = false, isToCenter: boolean = false) => {
+        const draw = (
+          text: string,
+          x: number,
+          y: number,
+          isToRight: boolean = false,
+          isToCenter: boolean = false,
+        ) => {
           if (!text || text === "undefined" || text === "null") return;
 
           const currentFont = config.isHanja ? kpa : pretendard;
@@ -147,13 +160,20 @@ export const useGeneratePdf = () => {
             const text = config.format ? config.format(val) : String(val);
             const dynamicY = config.y - rowIdx * (config.spacing || 15);
 
-            draw(text, config.x || 0, dynamicY, config.toRight, config.toCenter);
+            draw(
+              text,
+              config.x || 0,
+              dynamicY,
+              config.toRight,
+              config.toCenter,
+            );
           });
           return;
         } else {
           // --- CASE 2: Single Field (단일 데이터) ---
           const rawValue: string | number = fieldData.values[0]?.[iIdx];
-          if (rawValue === undefined || rawValue === null || rawValue === "") return;
+          if (rawValue === undefined || rawValue === null || rawValue === "")
+            return;
 
           // 라디오 버튼/체크박스 처리
           if (config.type === "radio") {
@@ -166,8 +186,18 @@ export const useGeneratePdf = () => {
           }
           // 일반 텍스트 필드 처리
           else {
-            const formattedValue = config.continued && iIdx > 0 ? fieldData.values[0]?.[iIdx - 1] : "" + (config.format ? config.format(rawValue) : String(rawValue));
-            draw(formattedValue, config.x || 100, config.y, config.toRight || false, config.toCenter || false);
+            const formattedValue =
+              config.continued && iIdx > 0
+                ? fieldData.values[0]?.[iIdx - 1]
+                : "" +
+                  (config.format ? config.format(rawValue) : String(rawValue));
+            draw(
+              formattedValue,
+              config.x || 100,
+              config.y,
+              config.toRight || false,
+              config.toCenter || false,
+            );
           }
         }
       });
@@ -184,13 +214,19 @@ export const useGeneratePdf = () => {
     return url;
   };
 
-  const previewPdf = async (filledFormData: Record<string, any>, imageUrl: string) => {
+  const previewPdf = async (
+    filledFormData: Record<string, any>,
+    imageUrl: string,
+  ) => {
     const url = await generatePdf(filledFormData, imageUrl);
     if (url) {
       window.open(url);
     }
   };
-  const downloadPdf = async (filledFormData: Record<string, any>, imageUrl: string) => {
+  const downloadPdf = async (
+    filledFormData: Record<string, any>,
+    imageUrl: string,
+  ) => {
     const url = await generatePdf(filledFormData, imageUrl);
     if (url) {
       const link = document.createElement("a"); //가상의 <a> 태그를 만들어 클릭 이벤트 발생
@@ -239,9 +275,28 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
       { x: 505, y: 513 },
     ],
   }, // 성별
-  "0-4-0": { pageIdx: 0, x: 350, y: 484, toRight: true, format: (v: string | number) => String(v).replaceAll("-", ".") }, // 생년월일
-  "0-5-0": { pageIdx: 0, x: 538, y: 484, toRight: true, manyInOneField: true, format: (v: string | number) => nationList[Number(v)] }, // 국적
-  "0-6-0": { pageIdx: 0, x: 350, y: 458, toRight: true, format: (v: string | number) => nationList[Number(v)] }, // 출생국가
+  "0-4-0": {
+    pageIdx: 0,
+    x: 350,
+    y: 484,
+    toRight: true,
+    format: (v: string | number) => String(v).replaceAll("-", "."),
+  }, // 생년월일
+  "0-5-0": {
+    pageIdx: 0,
+    x: 538,
+    y: 484,
+    toRight: true,
+    manyInOneField: true,
+    format: (v: string | number) => nationList[Number(v)],
+  }, // 국적
+  "0-6-0": {
+    pageIdx: 0,
+    x: 350,
+    y: 458,
+    toRight: true,
+    format: (v: string | number) => nationList[Number(v)],
+  }, // 출생국가
   "0-7-0": { pageIdx: 0, x: 538, y: 458, toRight: true }, // 국가신분증번호
   "0-8-disabled": {
     pageIdx: 0,
@@ -277,10 +332,28 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
     ],
   }, // 여권 종류
   "1-1-0": { pageIdx: 0, x: 214, y: 243, toRight: true }, // 여권번호
-  "1-2-0": { pageIdx: 0, x: 377, y: 243, toRight: true, format: (v: string | number) => nationList[Number(v)] }, // 발급국가
+  "1-2-0": {
+    pageIdx: 0,
+    x: 377,
+    y: 243,
+    toRight: true,
+    format: (v: string | number) => nationList[Number(v)],
+  }, // 발급국가
   "1-3-0": { pageIdx: 0, x: 535, y: 243, toRight: true }, // 발급지
-  "1-4-0": { pageIdx: 0, x: 214, y: 207, toRight: true, format: (v: string | number) => String(v).replaceAll("-", ".") }, // 발급일자
-  "1-5-0": { pageIdx: 0, x: 377, y: 207, toRight: true, format: (v: string | number) => String(v).replaceAll("-", ".") }, // 만료일자
+  "1-4-0": {
+    pageIdx: 0,
+    x: 214,
+    y: 207,
+    toRight: true,
+    format: (v: string | number) => String(v).replaceAll("-", "."),
+  }, // 발급일자
+  "1-5-0": {
+    pageIdx: 0,
+    x: 377,
+    y: 207,
+    toRight: true,
+    format: (v: string | number) => String(v).replaceAll("-", "."),
+  }, // 만료일자
   "1-6-0": {
     pageIdx: 0,
     y: 0,
@@ -293,16 +366,36 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
 
   // --- PAGE 2 (pageIdx: 1) ---
   "2-0-0": { pageIdx: 1, x: 525, y: 740, toRight: true }, // 본국주소 상세 ["베이커스트릿 221B", "런던", 55(나라 id)]
-  "2-0-2": { pageIdx: 1, x: 525, y: 754, toRight: true, continued: true, format: (v: string | number) => nationList[Number(v)] },
+  "2-0-2": {
+    pageIdx: 1,
+    x: 525,
+    y: 754,
+    toRight: true,
+    continued: true,
+    format: (v: string | number) => nationList[Number(v)],
+  },
   "2-1-0": { pageIdx: 1, x: 525, y: 686, toRight: true }, // 현 거주지 상세
-  "2-1-2": { pageIdx: 1, x: 525, y: 698, toRight: true, continued: true, format: (v: string | number) => nationList[Number(v)] }, // 국가, 도시
+  "2-1-2": {
+    pageIdx: 1,
+    x: 525,
+    y: 698,
+    toRight: true,
+    continued: true,
+    format: (v: string | number) => nationList[Number(v)],
+  }, // 국가, 도시
   "2-2-0": { pageIdx: 1, x: 205, y: 654, toRight: true }, // 휴대전화
   "2-3-0": { pageIdx: 1, x: 358, y: 654, toRight: true }, // 일반 전화
   "2-4-0": { pageIdx: 1, x: 525, y: 654, toRight: true }, // 이메일
   // ["John Watson", "Friend", 55, "1121414"],
   "2-5-0": { pageIdx: 1, x: 287, y: 608, toRight: true }, // 비상연락 성명
   "2-5-1": { pageIdx: 1, x: 525, y: 580, toRight: true }, // 관계
-  "2-5-2": { pageIdx: 1, x: 525, y: 608, toRight: true, format: (v: string | number) => nationList[Number(v)] }, // 국적
+  "2-5-2": {
+    pageIdx: 1,
+    x: 525,
+    y: 608,
+    toRight: true,
+    format: (v: string | number) => nationList[Number(v)],
+  }, // 국적
   "2-5-3": { pageIdx: 1, x: 287, y: 580, toRight: true }, // 전화번호
 
   "3-0-0": {
@@ -317,7 +410,13 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
   }, // 혼인사항 ["아", "내", "2023-05-02", 2, "내 마음속", "01010341"]
   "3-1-0": { pageIdx: 1, x: 288, y: 463, toRight: true }, // 배우자 성
   "3-1-1": { pageIdx: 1, x: 525, y: 463, toRight: true }, // 배우자 명
-  "3-1-2": { pageIdx: 1, x: 288, y: 433, toRight: true, format: (v: string | number) => String(v).replaceAll("-", ".") }, // 생년월일
+  "3-1-2": {
+    pageIdx: 1,
+    x: 288,
+    y: 433,
+    toRight: true,
+    format: (v: string | number) => String(v).replaceAll("-", "."),
+  }, // 생년월일
   "3-1-3": { pageIdx: 1, x: 525, y: 433, toRight: true }, // 국적
   "3-1-4": { pageIdx: 1, x: 288, y: 402, toRight: true }, // 거주지
   "3-1-5": { pageIdx: 1, x: 525, y: 402, toRight: true }, // 연락처
@@ -330,7 +429,13 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
       { x: 307, y: 369 },
     ],
   }, // 자녀유무
-  "3-2-0": { pageIdx: 1, x: 511, y: 369, toRight: true, format: (v: string | number) => String(Number(v) % 100) }, // 자녀 수 [cite: 81]
+  "3-2-0": {
+    pageIdx: 1,
+    x: 511,
+    y: 369,
+    toRight: true,
+    format: (v: string | number) => String(Number(v) % 100),
+  }, // 자녀 수 [cite: 81]
 
   "4-0-0": {
     pageIdx: 1,
@@ -366,7 +471,13 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
   "5-0-1": { pageIdx: 1, x: 501, y: 278, toRight: true }, //기타 시 상세정보
   "5-1-0": { pageIdx: 1, x: 361, y: 97, toRight: true }, // 직장명 ["내회사", "사장", 2, "우주어딘가", "0201042"]
   "5-1-1": { pageIdx: 1, x: 525, y: 97, toRight: true }, //직위
-  "5-1-2": { pageIdx: 1, x: 361, y: 75, toRight: true, format: (v: string | number) => nationList[Number(v)] }, //국가
+  "5-1-2": {
+    pageIdx: 1,
+    x: 361,
+    y: 75,
+    toRight: true,
+    format: (v: string | number) => nationList[Number(v)],
+  }, //국가
   "5-1-3": { pageIdx: 1, x: 361, y: 62, toRight: true }, //주소
   "5-1-4": { pageIdx: 1, x: 525, y: 62, toRight: true }, //전화번호
 
@@ -392,7 +503,13 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
   }, // 입국 목적
   "6-0-1": { pageIdx: 2, x: 491, y: 660, toRight: true }, //기타 시 상세정보
   "6-1-0": { pageIdx: 2, x: 297, y: 580.5, toRight: true }, // 체류예정기간 ["100일"]
-  "6-2-0": { pageIdx: 2, x: 535, y: 580.5, toRight: true, format: (v: string | number) => String(v).replaceAll("-", ".") }, // 입국예정일 ["2026-03-03"]
+  "6-2-0": {
+    pageIdx: 2,
+    x: 535,
+    y: 580.5,
+    toRight: true,
+    format: (v: string | number) => String(v).replaceAll("-", "."),
+  }, // 입국예정일 ["2026-03-03"]
   "6-3-1": { pageIdx: 2, x: 377, y: 548, toRight: true, continued: true }, // 체류예정지["서울", "길거리 어디든 비바람 막히는 곳"]
   "6-4-0": { pageIdx: 2, x: 535, y: 548, toRight: true }, // 한국 내 연락처
   "6-5-disabled": {
@@ -417,10 +534,40 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
       { x: 199, y: 460 },
     ],
   }, //5년 내 여행 국가
-  "6-6-0": { pageIdx: 2, x: 147, y: 418.5, spacing: 15.2, isGetMany: true, toCenter: true, format: (v: string | number) => nationList[Number(v)] }, // 국가명
-  "6-6-1": { pageIdx: 2, x: 315, y: 418.5, spacing: 15.2, isGetMany: true, toCenter: true }, // 방문목적
-  "6-6-2": { pageIdx: 2, x: 470, y: 418.5, spacing: 15.2, isGetMany: true, toRight: true, format: (v: string | number) => String(v).replaceAll("-", ".") + " ~ " }, // 시작일
-  "6-6-3": { pageIdx: 2, x: 470, y: 418.5, spacing: 15.2, isGetMany: true, format: (v: string | number) => String(v).replaceAll("-", ".") }, // 종료일
+  "6-6-0": {
+    pageIdx: 2,
+    x: 147,
+    y: 418.5,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+    format: (v: string | number) => nationList[Number(v)],
+  }, // 국가명
+  "6-6-1": {
+    pageIdx: 2,
+    x: 315,
+    y: 418.5,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+  }, // 방문목적
+  "6-6-2": {
+    pageIdx: 2,
+    x: 470,
+    y: 418.5,
+    spacing: 15.2,
+    isGetMany: true,
+    toRight: true,
+    format: (v: string | number) => String(v).replaceAll("-", ".") + " ~ ",
+  }, // 시작일
+  "6-6-3": {
+    pageIdx: 2,
+    x: 470,
+    y: 418.5,
+    spacing: 15.2,
+    isGetMany: true,
+    format: (v: string | number) => String(v).replaceAll("-", "."),
+  }, // 종료일
 
   // 국내 체류 가족 [cite: 137, 139]
   // { values: [["650295", 4, 1, "2023-05-02", "2020-04-04"]], disabled: false },
@@ -433,10 +580,42 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
       { x: 191, y: 329 },
     ],
   }, //국내 체류 가족
-  "6-7-0": { pageIdx: 2, x: 147, y: 291, spacing: 15.2, isGetMany: true, toCenter: true }, // 이름
-  "6-7-1": { pageIdx: 2, x: 287, y: 291, spacing: 15.2, isGetMany: true, toCenter: true, format: (v: string | number) => String(v).replaceAll("-", ".") }, // 생년월일
-  "6-7-2": { pageIdx: 2, x: 385, y: 291, spacing: 15.2, isGetMany: true, toCenter: true, format: (v: string | number) => nationList[Number(v)] }, // 국적
-  "6-7-3": { pageIdx: 2, x: 488, y: 291, spacing: 15.2, isGetMany: true, toCenter: true, format: (v: string | number) => ["부", "모", "형제", "자식", "조부모", "친척"][Number(v)] }, // 관계
+  "6-7-0": {
+    pageIdx: 2,
+    x: 147,
+    y: 291,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+  }, // 이름
+  "6-7-1": {
+    pageIdx: 2,
+    x: 287,
+    y: 291,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+    format: (v: string | number) => String(v).replaceAll("-", "."),
+  }, // 생년월일
+  "6-7-2": {
+    pageIdx: 2,
+    x: 385,
+    y: 291,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+    format: (v: string | number) => nationList[Number(v)],
+  }, // 국적
+  "6-7-3": {
+    pageIdx: 2,
+    x: 488,
+    y: 291,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+    format: (v: string | number) =>
+      ["부", "모", "형제", "자식", "조부모", "친척"][Number(v)],
+  }, // 관계
 
   "6-8-disabled": {
     pageIdx: 2,
@@ -447,10 +626,42 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
       { x: 190, y: 191 },
     ],
   }, //동반입국 가족 유무
-  "6-8-0": { pageIdx: 2, x: 147, y: 140, spacing: 15.2, isGetMany: true, toCenter: true }, // 이름
-  "6-8-1": { pageIdx: 2, x: 287, y: 140, spacing: 15.2, isGetMany: true, toCenter: true, format: (v: string | number) => String(v).replaceAll("-", ".") }, // 생년월일
-  "6-8-2": { pageIdx: 2, x: 385, y: 140, spacing: 15.2, isGetMany: true, toCenter: true, format: (v: string | number) => nationList[Number(v)] }, // 국적
-  "6-8-3": { pageIdx: 2, x: 488, y: 140, spacing: 15.2, isGetMany: true, toCenter: true, format: (v: string | number) => ["부", "모", "형제", "자식", "조부모", "친척"][Number(v)] }, // 관계
+  "6-8-0": {
+    pageIdx: 2,
+    x: 147,
+    y: 140,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+  }, // 이름
+  "6-8-1": {
+    pageIdx: 2,
+    x: 287,
+    y: 140,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+    format: (v: string | number) => String(v).replaceAll("-", "."),
+  }, // 생년월일
+  "6-8-2": {
+    pageIdx: 2,
+    x: 385,
+    y: 140,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+    format: (v: string | number) => nationList[Number(v)],
+  }, // 국적
+  "6-8-3": {
+    pageIdx: 2,
+    x: 488,
+    y: 140,
+    spacing: 15.2,
+    isGetMany: true,
+    toCenter: true,
+    format: (v: string | number) =>
+      ["부", "모", "형제", "자식", "조부모", "친척"][Number(v)],
+  }, // 관계
 
   // --- PAGE 4 (pageIdx: 3) ---
   "7-0-disabled": {
@@ -463,9 +674,21 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
     ],
   }, //작성 도움 여부 [["챗지피티", 2, "샘 알트만네 번호", "2022-10-30"]]
   "7-0-0": { pageIdx: 3, x: 177, y: 696, toCenter: true }, // 작성 도움 성명
-  "7-0-1": { pageIdx: 3, x: 515, y: 696, toCenter: true, format: (v: string | number) => ["행정사", "가족", "친구/지인"][Number(v)] }, // 관계
+  "7-0-1": {
+    pageIdx: 3,
+    x: 515,
+    y: 696,
+    toCenter: true,
+    format: (v: string | number) => ["행정사", "가족", "친구/지인"][Number(v)],
+  }, // 관계
   "7-0-2": { pageIdx: 3, x: 416, y: 696, toCenter: true }, // 연락처
-  "7-0-3": { pageIdx: 3, x: 314, y: 696, toCenter: true, format: (v: string | number) => String(v).replaceAll("-", ".") }, // 생년월일
+  "7-0-3": {
+    pageIdx: 3,
+    x: 314,
+    y: 696,
+    toCenter: true,
+    format: (v: string | number) => String(v).replaceAll("-", "."),
+  }, // 생년월일
 
   "8-0-disabled": {
     pageIdx: 3,
