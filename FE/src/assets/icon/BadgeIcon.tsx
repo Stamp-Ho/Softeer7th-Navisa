@@ -1,5 +1,14 @@
-const BadgeIcon = ({ badgeIndex, color, size }: { badgeIndex: number; color?: string; size?: number }) => {
-  const renderPath = ICON_RENDERER[badgeIndex % ICON_RENDERER.length] || ICON_RENDERER[0];
+const BadgeIcon = ({
+  badgeIndex,
+  color,
+  size,
+}: {
+  badgeIndex: number;
+  color?: string;
+  size?: number;
+}) => {
+  const renderPath =
+    ICON_RENDERER[badgeIndex % ICON_RENDERER.length] || ICON_RENDERER[0];
   return (
     <svg
       width={size ? size : "24"}
@@ -63,7 +72,10 @@ const ICON_RENDERER = [
   // 2: Layer
   (color?: string) => (
     <>
-      <path d="M12 2.75L21.25 7.49134L12 12.2327L2.75 7.49134L12 2.75Z" fill={color || "#5994FF"} />
+      <path
+        d="M12 2.75L21.25 7.49134L12 12.2327L2.75 7.49134L12 2.75Z"
+        fill={color || "#5994FF"}
+      />
       <path
         d="M21.25 11.976L12 16.7174L2.75 11.976M21.25 16.5087L12 21.25L2.75 16.5087M12 2.75L21.25 7.49134L12 12.2327L2.75 7.49134L12 2.75Z"
         stroke={color || "#5994FF"}

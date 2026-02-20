@@ -57,7 +57,7 @@ const ChatRoomHeader = ({ pageType, headerData, onClose, onModalAction }: Header
           </div>
         </div>
 
-        {pageType === "DOCUMENT" ? (
+        {/* {pageType === "DOCUMENT" ? (
           <div className="flex flex-row justify-end w-full px-6 py-[2px] bg-violet-50">
             <Chip type="chips_square_chatroom" />
           </div>
@@ -71,7 +71,7 @@ const ChatRoomHeader = ({ pageType, headerData, onClose, onModalAction }: Header
               <Chip type="chips_square_review" />
             </div>
           )
-        )}
+        )} */}
       </div>
     </>
   );

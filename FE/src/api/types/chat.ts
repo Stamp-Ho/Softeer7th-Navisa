@@ -50,6 +50,7 @@ export interface ChatParticipantsInfo {
     agentId: string;
     top2BadgeIds: number[];
     name: string;
+    applicationFormId?: string | null;
   };
   foreignerInfo: {
     foreignerId: string;
@@ -57,5 +58,6 @@ export interface ChatParticipantsInfo {
     expectedJob: string;
     expectedStartDate: string;
     nationalityIds: number[];
+    isReviewRequired?: boolean;
   };
 }

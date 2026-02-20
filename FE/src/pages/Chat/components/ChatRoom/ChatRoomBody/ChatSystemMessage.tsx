@@ -79,11 +79,11 @@ const ChatSystemMessage = ({
               </div>
             </div>
           </div>
-          {pageType === "CHAT" && chatRoomStatus === "MATCHED" && (
+          {/* {pageType === "CHAT" && chatRoomStatus === "MATCHED" && (
             <button className="rounded-[6px] h-12 body-l-semibold bg-violet-50-transpar cursor-pointer">
               {t("chatRoom.visaApplicationLink")}
             </button>
-          )}
+          )} */}
         </div>
       );
 

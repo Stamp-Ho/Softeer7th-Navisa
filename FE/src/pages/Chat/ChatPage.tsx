@@ -84,7 +84,7 @@ const ChatPage = () => {
       )}
 
       {/* ================= 메인 레이아웃 ================= */}
-      <div className="relative flex flex-row justify-between mt-12 h-[904px]">
+      <div className="relative flex flex-row justify-between mt-12 h-[824px]">
         {/* ===== 왼쪽: 탭 + 목록 ===== */}
         <div className="flex flex-col">
           <div className="headline-m-bold text-gray-1000 mb-13">{t("chat.title")}</div>
@@ -169,8 +169,8 @@ const ChatPage = () => {
         )}
       </div>
 
-      <button onClick={() => setReviewModal(1)}>리뷰1</button>
-      <button onClick={() => setReviewModal(2)}>리뷰2</button>
+      {/* <button onClick={() => setReviewModal(1)}>리뷰1</button>
+      <button onClick={() => setReviewModal(2)}>리뷰2</button> */}
     </>
   );
 };

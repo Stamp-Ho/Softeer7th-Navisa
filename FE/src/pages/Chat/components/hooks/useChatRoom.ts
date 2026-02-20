@@ -85,21 +85,40 @@ export const useChatRoom = (
     fetchNextPage,
   });
 
-  // 4. "수임 제안" 버튼 활성화 여부 계산 logic
-  const pendingProposalId = useMemo(() => {
-    const latestProposal = [...allMessages]
-      .reverse()
-      .find((m) => m.type === "PROPOSAL");
-    if (!latestProposal) return null;
+  const lastSystemMessage = useMemo(() => {
+    for (let i = allMessages.length - 1; i >= 0; i--) {
+      const m = allMessages[i];
+      if (
+        [
+          "PROPOSAL",
+          "ACCEPTED",
+          "REJECTED",
+          "CANCELED",
+          "CHATROOM_BLOCKED",
+        ].includes(m.type)
+      ) {
+        return m;
+      }
+    }
+    return null;
+  }, [allMessages]);
 
+  // 4. "수임 제안" 버튼 활성화 여부 계산
+  const pendingProposalId = useMemo(() => {
+    // 가장 최신 시스템 메시지가 PROPOSAL이 아닐 경우
+    if (!lastSystemMessage || lastSystemMessage.type !== "PROPOSAL") {
+      return null;
+    }
+
+    // PROPOSAL 이후 ACCEPTED / REJECTED가 있는지 확인
     const hasReplied = allMessages.some(
       (m) =>
         (m.type === "ACCEPTED" || m.type === "REJECTED") &&
-        new Date(m.sentAt) > new Date(latestProposal.sentAt),
+        new Date(m.sentAt) > new Date(lastSystemMessage.sentAt),
     );
 
-    return !hasReplied ? latestProposal.chatMessageId : null;
-  }, [allMessages]);
+    return hasReplied ? null : lastSystemMessage.chatMessageId;
+  }, [lastSystemMessage, allMessages]);
 
   // 5. 읽음 처리 (READ) 이펙트 통합
   useEffect(() => {
@@ -129,39 +148,25 @@ export const useChatRoom = (
 
   // 6. 채팅방 수임 상태 실시간 반영
   const chatRoomStatus: ChatRoomStatus = useMemo(() => {
-    if (!allMessages || allMessages.length === 0) return "DEFAULT";
+    if (!lastSystemMessage) return "DEFAULT";
 
-    // 시스템 메시지 타입들만 추적하기 위해 역순으로 탐색
-    // (가장 최신 메시지가 현재 상태를 결정하므로)
-    const lastSystemMsg = [...allMessages]
-      .reverse()
-      .find((m) =>
-        [
-          "PROPOSAL",
-          "ACCEPTED",
-          "REJECTED",
-          "CANCELED",
-          "CHATROOM_BLOCKED",
-        ].includes(m.type),
-      );
-
-    if (!lastSystemMsg) return "DEFAULT";
-
-    switch (lastSystemMsg.type) {
+    switch (lastSystemMessage.type) {
       case "PROPOSAL":
         return "PROPOSED";
       case "ACCEPTED":
         return "MATCHED";
-      case "REJECTED":
-        return "DEFAULT";
-      case "CANCELED":
-        return "DEFAULT";
       case "CHATROOM_BLOCKED":
         return "CHATROOM_BLOCKED";
       default:
         return "DEFAULT";
     }
-  }, [allMessages]);
+  }, [lastSystemMessage]);
+
+  const documentId = useMemo(() => {
+    if (!lastSystemMessage) return null;
+    if (lastSystemMessage.type === "ACCEPTED") return lastSystemMessage.content;
+    return null;
+  }, [lastSystemMessage]);
 
   // 7. 자동 스크롤
   useEffect(() => {
@@ -181,5 +186,6 @@ export const useChatRoom = (
     handleScroll,
     isFetchingNextPage,
     pendingProposalId, // UI에서 어떤 메시지에 버튼을 띄울지 결정하는 ID
+    documentId, // ACCEPTED 메시지의 content를 문서 ID로 활용
   };
 };
