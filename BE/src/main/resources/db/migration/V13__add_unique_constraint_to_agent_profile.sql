@@ -1,0 +1,1 @@
+ALTER TABLE agent_profile ADD CONSTRAINT uk_agent_profile_user_id UNIQUE (user_id);

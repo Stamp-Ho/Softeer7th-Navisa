@@ -22,11 +22,6 @@ public class AdminService {
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new AdminDomainException(ResponseStatus.INVALID_USER));
 
-        // 사용자가 승인 대기 중인 행정사가 아니면 예외 발생
-        if(user.getUserType() != UserType.INVALID_AGENT){
-            throw new AdminDomainException(ResponseStatus.CANNOT_PERMIT_AS_VALID_AGENT);
-        }
-
         // 행정사 승인 처리
         user.upgradeToValidAgent();
     }

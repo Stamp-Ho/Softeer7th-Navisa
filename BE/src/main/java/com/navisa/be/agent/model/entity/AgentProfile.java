@@ -54,7 +54,7 @@ public class AgentProfile extends BaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false, unique = true)
     private UUID userId;
 
     @OneToMany(mappedBy = "agentProfile")

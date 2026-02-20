@@ -59,8 +59,9 @@ public class User extends BaseEntity {
     }
 
     public void upgradeToValidAgent() {
+        // 사용자가 승인 대기 중인 행정사가 아니면 예외 발생
         if(this.userType != UserType.INVALID_AGENT){
-            throw new UserException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE);
+            throw new UserException(ResponseStatus.CANNOT_PERMIT_AS_VALID_AGENT);
         }
         this.userType = UserType.VALID_AGENT;
     }

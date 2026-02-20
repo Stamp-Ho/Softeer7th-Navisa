@@ -16,7 +16,7 @@ import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -90,21 +90,26 @@ class AgentProfileRegistrationServiceTest extends IntegrationTestSupport {
         AgentProfile result = agentProfileRegistrationService.registerAgentProfile(request, scrivenerUser.getEmail());
 
         // then
+        User user = userRepository.findById(scrivenerUser.getId()).orElseThrow();
+
         assertAll(
-                () -> Assertions.assertNotNull(result.getId()),
-                () -> Assertions.assertEquals(request.basicInfo().officeName(), result.getOfficeName()),
-                () -> Assertions.assertEquals(scrivenerUser.getId(), result.getUserId()),
-                () -> Assertions.assertEquals(request.basicInfo().businessTime(), result.getBusinessTime()),
+                () -> assertNotNull(result.getId()),
+                () -> assertEquals(request.basicInfo().officeName(), result.getOfficeName()),
+                () -> assertEquals(scrivenerUser.getId(), result.getUserId()),
+                () -> assertEquals(request.basicInfo().businessTime(), result.getBusinessTime()),
                 () -> {
                     // 전문 직무 저장 확인
                     long mappingCount = specializedJobCodeRepository.countByAgentProfile(result);
-                    Assertions.assertEquals(2L, mappingCount);
+                    assertEquals(2L, mappingCount);
                 },
                 () -> {
                     // 사용 가능 언어 저장 확인
                     long mappingCount = agentLanguageRepository.countByAgentProfile(result);
-                    Assertions.assertEquals(2L, mappingCount);
+                    assertEquals(2L, mappingCount);
                 });
+
+        // TODO :: 최종발표를 위해서 프로필을 등록하면 바로 VALID_AGENT가 되도록 수정
+        Assertions.assertThat(user.getUserType()).isEqualTo(UserType.VALID_AGENT);
     }
 
     @Test

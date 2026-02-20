@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(
-        name = "Admin",
-        description = "개발자 내부용 API"
-)
+// TODO :: 최종발표를 위해서 주석처리
+//@Tag(
+//        name = "Admin",
+//        description = "개발자 내부용 API"
+//)
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
 @RestController
@@ -25,14 +26,14 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @Operation(
-            summary = "새로운 행정사 승인 API",
-            description = "개발자가 새로운 행정사를 승인하기 위한 API입니다."
-    )
-    @HasUserType(UserType.ADMIN)
-    @PostMapping("/permit/agent")
-    public BaseResponse<Void> permitNewAgent(@Valid @RequestBody AgentPermitRequest request){
-        adminService.permitNewAgent(request);
-        return new BaseResponse<>(null);
-    }
+//    @Operation(
+//            summary = "새로운 행정사 승인 API",
+//            description = "개발자가 새로운 행정사를 승인하기 위한 API입니다."
+//    )
+//    @HasUserType(UserType.ADMIN)
+//    @PostMapping("/permit/agent")
+//    public BaseResponse<Void> permitNewAgent(@Valid @RequestBody AgentPermitRequest request){
+//        adminService.permitNewAgent(request);
+//        return new BaseResponse<>(null);
+//    }
 }

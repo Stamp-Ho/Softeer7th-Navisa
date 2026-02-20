@@ -71,6 +71,7 @@ public enum ResponseStatus {
     HTTP_METHOD_NOT_ALLOWED(405, "지원되지 않는 HTTP 메서드입니다"),
     REFRESH_TOKEN_EXPIRED(499, "Refresh Token이 만료되었습니다"),
     ACCESS_TOKEN_EXPIRED(498, "Access Token이 만료되었습니다"),
+    AGENT_PROFILE_ALREADY_EXISTS(400, "행정사 프로필이 이미 등록되었습니다"),
 
     /**
      * 서버 에러 (500번대)
