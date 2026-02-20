@@ -65,6 +65,20 @@ public class AgentReviewService {
                 .stream()
                 .collect(Collectors.toMap(AgentProfile::getId, Function.identity()));
 
+        List<UUID> foreignerProfileIds = reviews.stream()
+                .map(AgentReview::getForeignerProfileId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+
+
+        Map<UUID, String> foreignerNameMap = foreignerProfileCrudService.findAllById(foreignerProfileIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        ForeignerProfile::getId,
+                        ForeignerProfile::getNickname
+                ));
+
         return reviews.stream()
                 .map(review -> {
                     AgentProfile profile = profileMap.get(review.getAgentProfileId());
@@ -73,6 +87,7 @@ public class AgentReviewService {
                         throw new AgentException(ResponseStatus.REVIEWED_AGENT_NOT_FOUND);
                     }
 
+                    String foreignerName = foreignerNameMap.getOrDefault(review.getForeignerProfileId(), "Unknown");
                     String profileUrl = storageService.getImgUrl(ImageSize.SMALL, profile.getProfileObjectKey(), false);
 
                     return new FeedbackResponse(
@@ -80,7 +95,8 @@ public class AgentReviewService {
                             review.getFeedbackContent(),
                             profile.getId(),
                             profile.getName(),
-                            profileUrl
+                            profileUrl,
+                            foreignerName
                     );
                 })
                 .toList();

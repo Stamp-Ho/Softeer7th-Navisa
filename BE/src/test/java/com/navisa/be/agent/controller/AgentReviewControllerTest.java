@@ -66,7 +66,8 @@ class AgentReviewControllerTest {
                         "테스트 리뷰 1",
                         UUID.fromString("00000000-0000-0000-0000-000000000001"),
                         "김행정",
-                        "https://image.com/1"
+                        "https://image.com/1",
+                        "이외국인"
                 )
         );
         given(agentReviewService.getLatestFeedbacks()).willReturn(responses);

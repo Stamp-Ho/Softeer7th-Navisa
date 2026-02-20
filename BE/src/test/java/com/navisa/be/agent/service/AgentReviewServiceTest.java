@@ -19,6 +19,8 @@ import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.foreigner.exception.ForeignerException;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
+import com.navisa.be.foreigner.model.enums.ForeignerSearchStatus;
+import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
 import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.web.response.ResponseStatus;
@@ -67,6 +69,9 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
     private ForeignerProfileTestFixture foreignerProfileTestFixture;
 
     @Autowired
+    private ForeignerProfileRepository foreignerProfileRepository;
+
+    @Autowired
     private ChatRoomTestFixture chatRoomTestFixture;
 
     @Autowired
@@ -79,6 +84,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
     private AgentBadgeRepository agentBadgeRepository;
 
     @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private ApplicationEvents events;
 
     @Autowired
@@ -312,15 +318,19 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
     @Test
     void getLatestFeedbacks_Success() {
         // given
-        UUID mockForeignerUserId = UUID.randomUUID();
+        User foreignerUser = userTestFixture.createUser("foreigner@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileRepository.save(
+                new ForeignerProfile(foreignerUser.getId(), "외국인학생", ForeignerSearchStatus.IDLE)
+        );
+        UUID foreignerProfileId = foreignerProfile.getId();
 
-        User user = userTestFixture.createUser("test@test.com", UserType.VALID_AGENT);
-        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("김행정", "서울", user.getId());
+        User agentUser = userTestFixture.createUser("agent@test.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("김행정", "서울", agentUser.getId());
 
         for (int i = 1; i <= 5; i++) {
             AgentReview review = new AgentReview(
                     agentProfile.getId(),
-                    mockForeignerUserId,
+                    foreignerProfileId,
                     (long) i,
                     "피드백 내용 " + i,
                     new double[] { 0.8, 0.9 });
@@ -337,7 +347,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         // then
         assertThat(result).hasSize(3);
         assertThat(result.get(0).feedbackContent()).isEqualTo("피드백 내용 5");
-        assertThat(result.get(0).writerName()).isEqualTo("김행정");
+        assertThat(result.get(0).agentName()).isEqualTo("김행정");
     }
 
     @DisplayName("등록된 리뷰가 하나도 없을 경우 AGENT_REVIEW_NOT_FOUND 예외가 발생한다.")
