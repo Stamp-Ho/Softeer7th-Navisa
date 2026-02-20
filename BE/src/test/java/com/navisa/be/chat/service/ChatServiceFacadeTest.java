@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,14 +66,13 @@ class ChatServiceFacadeTest extends IntegrationTestSupport {
                 agentUser.getId());
 
         ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile,
-                ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+                ChatRoomStatus.DEFAULT);
 
         ChatMessageRequest request = new ChatMessageRequest(
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 "Hello World",
-                MessageType.TEXT,
-                ZonedDateTime.now());
+                MessageType.TEXT);
 
         // when
         // Controller에서는 chatRoom을 null로 넘기고 내부에서 조회하도록 함
@@ -109,7 +107,7 @@ class ChatServiceFacadeTest extends IntegrationTestSupport {
                 agentUser.getId());
 
         ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile,
-                ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+                ChatRoomStatus.DEFAULT);
 
         // 메시지 2개 생성 (읽지 않은 상태)
         ChatMessage msg1 = chatRoomTestFixture.createChatMessage(chatRoom, agentProfile.getId(), "Msg1", false);
@@ -120,8 +118,7 @@ class ChatServiceFacadeTest extends IntegrationTestSupport {
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 String.valueOf(msg2.getId()), // content field used for lastReadMessageId
-                MessageType.READ,
-                ZonedDateTime.now());
+                MessageType.READ);
 
         // when
         chatServiceFacade.saveAndPublishReadEventMessage(foreignerUser.getId(), request);

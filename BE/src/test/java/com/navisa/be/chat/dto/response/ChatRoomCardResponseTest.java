@@ -7,7 +7,7 @@ import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -25,7 +25,7 @@ class ChatRoomCardResponseTest {
 
         when(chatRoom.getId()).thenReturn(1L);
         when(chatRoom.getStatus()).thenReturn(ChatRoomStatus.DEFAULT);
-        when(chatRoom.getLastChattedAt()).thenReturn(ZonedDateTime.now());
+        when(chatRoom.getLastChattedAt()).thenReturn(LocalDateTime.now());
         when(chatRoom.getAgentProfile()).thenReturn(agentProfile);
         when(agentProfile.getName()).thenReturn("Agent Name");
 
@@ -53,7 +53,7 @@ class ChatRoomCardResponseTest {
 
         when(chatRoom.getId()).thenReturn(2L);
         when(chatRoom.getStatus()).thenReturn(ChatRoomStatus.DEFAULT);
-        when(chatRoom.getLastChattedAt()).thenReturn(ZonedDateTime.now());
+        when(chatRoom.getLastChattedAt()).thenReturn(LocalDateTime.now());
         when(chatRoom.getForeignerProfile()).thenReturn(foreignerProfile);
         when(foreignerProfile.getNickname()).thenReturn("Foreigner Nick");
 

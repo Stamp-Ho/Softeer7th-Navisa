@@ -5,6 +5,7 @@ import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.chat.dto.request.CreateChatRoomRequest;
 import com.navisa.be.chat.dto.response.CreateChatRoomResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
+import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.chat.repository.ChatRoomRepository;
@@ -59,7 +60,7 @@ public class ChatRoomCommandService {
         // 방을 생성
         ChatRoom chatRoom;
         try{
-            chatRoom = chatRoomRepository.save(new ChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, request.sendAt()));
+            chatRoom = chatRoomRepository.save(new ChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT));
             chatRoomRepository.flush();
         }
         catch (DataIntegrityViolationException e) {
@@ -69,7 +70,8 @@ public class ChatRoomCommandService {
 
         // 메시지를 저장
         UUID senderId = (loginUser.getUserType() == UserType.VALID_AGENT) ? agentProfile.getId() : foreignerProfile.getId();
-        chatMessageCommandService.create(chatRoom, senderId, request.content(), request.sendAt());
+        ChatMessage message = chatMessageCommandService.createFirstTextMessage(chatRoom, senderId, request.content());
+        chatRoom.updateLastChattedAt(message.getCreatedAt());
 
         return new CreateChatRoomResponse(chatRoom.getId());
     }

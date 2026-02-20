@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -462,7 +461,7 @@ class AgentProfileSearchServiceTest extends IntegrationTestSupport {
         User loginUser = userTestFixture.createUser("agent2@test.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(loginUser);
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // when
         AgentDetailResponse response = agentProfileSearchService.getAgentDetail(loginUser.getEmail(), agentProfile.getId());

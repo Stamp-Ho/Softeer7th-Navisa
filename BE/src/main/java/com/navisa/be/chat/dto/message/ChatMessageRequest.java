@@ -4,22 +4,20 @@ import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.MessageType;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public record ChatMessageRequest(
         Long roomId,          // 채팅방 id
         UUID clientMessageId, // 프론트에서 메시지를 식별하기 위해 사용하는 ID
         String content,       // 텍스트 메시지 내용or 비자신청서 ID String
-        MessageType type,     // 메시지 타입
-        ZonedDateTime sentAt  // ISO 8601 형식의 문자열
+        MessageType type     // 메시지 타입
 ) {
 
     public ChatMessage dtoToEntity(ChatRoom chatRoom, UUID senderId) {
-        return new ChatMessage(chatRoom, type, content, senderId, sentAt);
+        return new ChatMessage(chatRoom, type, content, senderId);
     }
 
     public ChatMessageRequest updateContent(String newContent) {
-        return new ChatMessageRequest(this.roomId, this.clientMessageId, newContent, this.type, this.sentAt);
+        return new ChatMessageRequest(this.roomId, this.clientMessageId, newContent, this.type);
     }
 }

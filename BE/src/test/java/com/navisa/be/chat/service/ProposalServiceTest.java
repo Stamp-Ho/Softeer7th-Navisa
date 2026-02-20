@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,15 +71,13 @@ class ProposalServiceTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentProp", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
-                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         ChatMessageRequest request = new ChatMessageRequest(
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 "제안합니다.",
-                MessageType.PROPOSAL,
-                ZonedDateTime.now());
+                MessageType.PROPOSAL);
 
         // when
         proposalService.createProposal(agentUser.getEmail(), chatRoom.getId(), request);
@@ -108,16 +105,14 @@ class ProposalServiceTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentMatch", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
-                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
         proposalRepository.save(new Proposal(chatRoom, agentProfile.getId()));
 
         ChatMessageRequest request = new ChatMessageRequest(
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 "수락합니다.",
-                MessageType.ACCEPTED,
-                ZonedDateTime.now());
+                MessageType.ACCEPTED);
 
         // when
         proposalService.updateProposalStatusMatched(foreignerUser.getEmail(), chatRoom.getId(), request);
@@ -148,16 +143,14 @@ class ProposalServiceTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentReject", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
-                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
         proposalRepository.save(new Proposal(chatRoom, agentProfile.getId()));
 
         ChatMessageRequest request = new ChatMessageRequest(
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 "거절합니다.",
-                MessageType.REJECTED,
-                ZonedDateTime.now());
+                MessageType.REJECTED);
 
         // when
         proposalService.updateProposalStatusRejected(foreignerUser.getEmail(), chatRoom.getId(), request);
@@ -188,8 +181,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
         form.updateAgentProfile(agentProfile);
         applicationFormRepository.saveAndFlush(form);
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
-                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
         Proposal proposal = new Proposal(chatRoom, agentProfile.getId());
         ReflectionTestUtils.setField(proposal, "status", ProposalStatus.MATCHED);
         proposalRepository.save(proposal);
@@ -198,8 +190,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 "취소합니다.",
-                MessageType.CANCELED,
-                ZonedDateTime.now());
+                MessageType.CANCELED);
 
         // when
         proposalService.updateProposalStatusCanceled(agentUser.getEmail(), chatRoom.getId(), request);
@@ -230,8 +221,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentFail", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(
-                foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         User otherUser = userTestFixture.createUser("other_agent@test.com", UserType.VALID_AGENT);
         agentProfileTestFixture.createAgentProfile("OtherAgent", "Address", otherUser.getId());
@@ -240,8 +230,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 "침입 시도",
-                MessageType.PROPOSAL,
-                ZonedDateTime.now());
+                MessageType.PROPOSAL);
 
         // when & then
         assertThatThrownBy(

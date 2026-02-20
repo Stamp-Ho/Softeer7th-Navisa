@@ -11,10 +11,10 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,8 @@ class WebSocketConnectionTest extends WebSocketIntegrationTestSupport {
 
         String url = String.format("ws://localhost:%d/ws", port);
         StompSession session = stompClient
-                .connectAsync(url, new WebSocketHttpHeaders(), connectHeaders, new StompSessionHandlerAdapter() {})
+                .connectAsync(url, new WebSocketHttpHeaders(), connectHeaders, new StompSessionHandlerAdapter() {
+                })
                 .get(20, TimeUnit.SECONDS);
 
         // 구독
@@ -57,9 +58,7 @@ class WebSocketConnectionTest extends WebSocketIntegrationTestSupport {
                 user.getId(),
                 user.getId(),
                 "Test Message Content",
-                MessageType.TEXT,
-                ZonedDateTime.now(),
-                LocalDateTime.now()
+                MessageType.TEXT, LocalDateTime.now()
         );
 
         // when 1

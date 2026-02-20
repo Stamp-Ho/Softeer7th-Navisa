@@ -29,7 +29,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -65,12 +64,9 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         User agentUser = userTestFixture.createUser("a@test.com", UserType.VALID_AGENT);
 
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
-        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Addr",
-                agentUser.getId());
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Addr", agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // Agent가 보낸 메시지 2개 (안 읽음)
         chatRoomTestFixture.createChatMessage(chatRoom, agentProfile.getId(), "Msg1", false);
@@ -98,9 +94,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Addr",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // Foreigner가 보낸 메시지 3개 (안 읽음)
         chatRoomTestFixture.createChatMessage(chatRoom, foreignerProfile.getId(), "Msg1", false);
@@ -130,9 +124,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         ForeignerProfile foreignerProfile2 = foreignerProfileTestFixture.createForeignerProfile(foreignerUser2);
 
         // 매칭된 방 (메시지 있음)
-        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile1, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile1, agentProfile, ChatRoomStatus.DEFAULT);
         Proposal proposal1 = new Proposal(chatRoom1, agentProfile.getId());
         ReflectionTestUtils.setField(proposal1, "status", ProposalStatus.MATCHED);
         proposalRepository.save(proposal1);
@@ -140,8 +132,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         chatRoomTestFixture.createChatMessage(chatRoom1, foreignerProfile1.getId(), "Hello", false);
 
         // 매칭 안된 방 (메시지 없음)
-        chatRoomTestFixture.createChatRoom(foreignerProfile2, agentProfile, ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        chatRoomTestFixture.createChatRoom(foreignerProfile2, agentProfile, ChatRoomStatus.DEFAULT);
 
         // when
         ChatMessageCountResponse response = chatMessageServiceFacade
@@ -162,8 +153,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Addr", agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile,
-                ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // 시간 기준 설정
         LocalDateTime now = LocalDateTime.now();
@@ -209,9 +199,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
                 agentUser.getId());
 
         // foreignerUserB가 속한 채팅방 생성
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfileB, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfileB, agentProfile, ChatRoomStatus.DEFAULT);
 
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
 
@@ -239,9 +227,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
                 agentUserB.getId());
 
         // agentUserB가 속한 채팅방 생성
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfileB,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfileB, ChatRoomStatus.DEFAULT);
 
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
 

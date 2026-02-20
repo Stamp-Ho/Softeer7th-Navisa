@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(
@@ -42,19 +42,19 @@ public class ChatRoom extends BaseEntity {
     @Column(name = "status", nullable = false)
     private ChatRoomStatus status;
 
-    @Column(name = "last_chatted_at", nullable = false)
-    private ZonedDateTime lastChattedAt;
+    @Column(name = "last_chatted_at")
+    private LocalDateTime lastChattedAt;
 
-    public ChatRoom(ForeignerProfile foreignerProfile, AgentProfile agentProfile, ChatRoomStatus status, ZonedDateTime lastChattedAt) {
+    public ChatRoom(ForeignerProfile foreignerProfile, AgentProfile agentProfile, ChatRoomStatus status) {
         this.foreignerProfile = foreignerProfile;
         this.agentProfile = agentProfile;
         this.status = status;
-        this.lastChattedAt = lastChattedAt;
+        this.lastChattedAt = null;
     }
 
     public void updateStatus(ChatRoomStatus status) {
         this.status = status;
     }
 
-    public void updateLastChattedAt(ZonedDateTime lastChattedAt) { this.lastChattedAt = lastChattedAt; }
+    public void updateLastChattedAt(LocalDateTime lastChattedAt) { this.lastChattedAt = lastChattedAt; }
 }

@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,8 +78,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture
-                .createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         Proposal proposal = proposalTestFixture.createProposal(chatRoom, agentProfile.getId(),
                 ProposalStatus.PROPOSED);
@@ -95,8 +93,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 "BLOCK_MESSAGE",
-                MessageType.CHATROOM_BLOCKED,
-                ZonedDateTime.now());
+                MessageType.CHATROOM_BLOCKED);
         chatRoomServiceFacade.updateBlockStatusToEntity("foreigner@test.com", chatRoom.getId(), request);
 
         // then
@@ -121,16 +118,14 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
                 agentUser.getId());
 
         // 채팅방만 생성하고 제안이나 신청서는 생성하지 않음
-        ChatRoom chatRoom = chatRoomTestFixture
-                .createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // when
         ChatMessageRequest request = new ChatMessageRequest(
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 "BLOCK_MESSAGE",
-                MessageType.CHATROOM_BLOCKED,
-                ZonedDateTime.now());
+                MessageType.CHATROOM_BLOCKED);
         chatRoomServiceFacade.updateBlockStatusToEntity("foreigner2@test.com", chatRoom.getId(), request);
 
         // then
@@ -148,8 +143,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentOwner", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture
-                .createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // 다른 유저 생성 (참여자 아님), 프로필도 생성해야 함(Validation 로직에서 조회하므로)
         User otherUser = userTestFixture.createUser("other_foreigner@test.com", UserType.FILLED_FOREIGNER);
@@ -160,8 +154,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
                 chatRoom.getId(),
                 UUID.randomUUID(),
                 "BLOCK_MESSAGE",
-                MessageType.CHATROOM_BLOCKED,
-                ZonedDateTime.now());
+                MessageType.CHATROOM_BLOCKED);
         assertThatThrownBy(
                 () -> chatRoomServiceFacade.updateBlockStatusToEntity("other_foreigner@test.com", chatRoom.getId(), request))
                 .isInstanceOf(ChatRoomException.class)

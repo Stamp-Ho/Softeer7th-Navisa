@@ -20,9 +20,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -74,8 +72,7 @@ public class ApplicationFormEmailServiceTest extends IntegrationTestSupport {
         User foreignerUser = userTestFixture.createUser("foreigner@navisa.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
-        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
-                LocalDate.now().atStartOfDay().plusHours(9).atZone(ZoneId.systemDefault()));
+        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         JobCode jobCode = agentProfileTestFixture.createJobCode("E7", "특수활동");
         ApplicationForm form = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile,
@@ -104,8 +101,7 @@ public class ApplicationFormEmailServiceTest extends IntegrationTestSupport {
         User foreignerUser = userTestFixture.createUser("foreigner@navisa.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
-        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
-                LocalDate.now().atStartOfDay().plusHours(9).atZone(ZoneId.systemDefault()));
+        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         JobCode jobCode = agentProfileTestFixture.createJobCode("E7", "특수활동");
         ApplicationForm form = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile,
@@ -118,7 +114,6 @@ public class ApplicationFormEmailServiceTest extends IntegrationTestSupport {
         LocalDateTime firstExportedAt = applicationFormRepository.findById(form.getId())
                 .orElseThrow()
                 .getExportedAt();
-
 
         // when
         applicationFormForAgentService.updateApplicationStatus(agentUser.getEmail(), form.getId(), true);

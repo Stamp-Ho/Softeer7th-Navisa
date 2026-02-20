@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -241,7 +240,7 @@ public class ForeignerProfileDetailServiceTest extends IntegrationTestSupport {
 
         ForeignerDetailRequest command = new ForeignerDetailRequest(agentUser.getEmail(), foreignerProfile.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // when
         ForeignerDetailResponse response = foreignerProfileDetailService.findForeignerDetail(command);

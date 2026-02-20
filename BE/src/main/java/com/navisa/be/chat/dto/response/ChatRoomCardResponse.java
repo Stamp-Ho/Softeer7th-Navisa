@@ -3,7 +3,7 @@ package com.navisa.be.chat.dto.response;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 public record ChatRoomCardResponse(
         Long chatRoomId,
@@ -12,7 +12,7 @@ public record ChatRoomCardResponse(
         ChatRoomStatus roomStatus,
         String lastMessage,
         Long noneReadCount,
-        ZonedDateTime lastChattedAt,
+        LocalDateTime lastChattedAt,
         Boolean proposed,
         Boolean proposalMatched
 ) {

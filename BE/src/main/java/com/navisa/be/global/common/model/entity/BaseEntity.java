@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
+    // EC2 서버를 UTC 시간대로 기준을 잡아뒀기에 UTC를 기준으로 저장
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;

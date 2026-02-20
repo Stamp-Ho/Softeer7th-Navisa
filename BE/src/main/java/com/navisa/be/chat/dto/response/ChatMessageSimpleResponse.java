@@ -4,7 +4,6 @@ import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.enums.MessageType;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public record ChatMessageSimpleResponse(
@@ -12,7 +11,6 @@ public record ChatMessageSimpleResponse(
         boolean isSentByMe,
         MessageType type,
         String content,
-        ZonedDateTime sentAt,
         LocalDateTime createdAt,
         boolean isRead
 ) {
@@ -22,7 +20,6 @@ public record ChatMessageSimpleResponse(
                 message.getSenderId().equals(profileId),
                 message.getMessageType(),
                 message.getContent(),
-                message.getSentAt(),
                 message.getCreatedAt(),
                 message.getIsReadByOther()
         );

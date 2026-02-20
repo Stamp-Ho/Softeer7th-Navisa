@@ -11,7 +11,6 @@ import com.navisa.be.agent.model.entity.AgentReview;
 import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.model.enums.BadgeName;
 import com.navisa.be.agent.repository.AgentBadgeRepository;
-import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
@@ -26,21 +25,16 @@ import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.support.*;
 import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -112,7 +106,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         foreignerSimilarityRepository.save(similarity);
 
         // ChatRoom 저장
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // Proposal 저장, status는 MATCHED
         proposalTestFixture.createProposal(chatRoom, foreignerProfile.getId(), ProposalStatus.MATCHED);
@@ -190,7 +184,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         ForeignerSimilarity similarity = new ForeignerSimilarity(null, foreignerProfile.getId(), sims, jobIds);
         foreignerSimilarityRepository.save(similarity);
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
         proposalTestFixture.createProposal(chatRoom, foreignerProfile.getId(), ProposalStatus.MATCHED);
         visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile, foreignerProfile, jobCode, true);
 
@@ -225,7 +219,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         ForeignerSimilarity similarity = new ForeignerSimilarity(null, foreignerProfile.getId(), sims, jobIds);
         foreignerSimilarityRepository.save(similarity);
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
         proposalTestFixture.createProposal(chatRoom, foreignerProfile.getId(), ProposalStatus.MATCHED);
         visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile, foreignerProfile, j1, true);
 
@@ -258,7 +252,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         User agentUser = userTestFixture.createUser("agent_feedback@test.com", UserType.VALID_AGENT);
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent Name", "Seoul", agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
         var proposal = proposalTestFixture.createProposal(chatRoom, foreignerUser.getId(), ProposalStatus.MATCHED);
 
         AgentReview review = new AgentReview(agentProfile.getId(), foreignerProfile.getId(), proposal.getId());
@@ -284,7 +278,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         User agentUser = userTestFixture.createUser("agent_no_review@test.com", UserType.VALID_AGENT);
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent Name", "Seoul", agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
         proposalTestFixture.createProposal(chatRoom, foreignerUser.getId(), ProposalStatus.MATCHED);
 
         // when & then
@@ -302,7 +296,7 @@ class AgentReviewServiceTest extends IntegrationTestSupport {
         User agentUser = userTestFixture.createUser("agent_already@test.com", UserType.VALID_AGENT);
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent Name", "Seoul", agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
         var proposal = proposalTestFixture.createProposal(chatRoom, foreignerUser.getId(), ProposalStatus.MATCHED);
 
         AgentReview review = new AgentReview(agentProfile.getId(), foreignerProfile.getId(), proposal.getId());

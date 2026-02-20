@@ -4,7 +4,6 @@ import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.enums.MessageType;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public record ChatMessageResponse(
@@ -15,7 +14,6 @@ public record ChatMessageResponse(
         UUID receiverId,        // 메시지를 수신할 클라이언트의 세션을 식별하기 위한 userId
         String content,         // 메시지 내용 or 비자신청서 ID String
         MessageType type,       // 메시지 타입
-        ZonedDateTime sentAt,   // 클라이언트가 보낸 시간 (ISO 8601)
         LocalDateTime createdAt // 서버 DB 저장 시간
 ) {
 
@@ -28,7 +26,6 @@ public record ChatMessageResponse(
                 receiverId,
                 request.content(),
                 request.type(),
-                request.sentAt(),
                 chatMessage.getCreatedAt());
     }
 
@@ -41,7 +38,6 @@ public record ChatMessageResponse(
                 receiverId,
                 request.content(),
                 MessageType.READ,
-                null,
                 null
         );
     }
@@ -55,7 +51,6 @@ public record ChatMessageResponse(
                 receiverId,
                 null,
                 MessageType.REVIEW_REQUIRED,
-                null,
                 null
         );
     }

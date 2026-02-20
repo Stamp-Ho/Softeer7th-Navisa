@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Schema(description = "채팅방 요청 DTO")
@@ -15,10 +14,6 @@ public record CreateChatRoomRequest(
 
         @Schema(description = "첫 채팅 메시지 내용")
         @NotBlank(message = "채팅 내용은 비어 있을 수 없습니다")
-        String content,
-
-        @Schema(description = "보낸 시간")
-        @NotNull(message = "보낸 시간은 null일 수 없습니다")
-        ZonedDateTime sendAt
+        String content
 ) {
 }

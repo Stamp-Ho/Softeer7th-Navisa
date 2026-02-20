@@ -16,8 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -26,17 +24,21 @@ class ChatRoomCommandServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private ChatRoomCommandService chatRoomCommandService;
+
     @Autowired
     private AgentProfileTestFixture agentProfileTestFixture;
+
     @Autowired
     private UserTestFixture userTestFixture;
+
     @Autowired
     private ForeignerProfileTestFixture foreignerProfileTestFixture;
+
     @Autowired
     private ChatRoomRepository chatRoomRepository;
+
     @Autowired
     private ChatRoomTestFixture chatRoomTestFixture;
-
 
     @Test
     @DisplayName("VALID_AGENT는 FILLED_FOREIGNER와의 채팅방 생성에 성공한다")
@@ -49,8 +51,7 @@ class ChatRoomCommandServiceTest extends IntegrationTestSupport {
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
         String content = "안녕";
-        ZonedDateTime sentAt = ZonedDateTime.now();
-        CreateChatRoomRequest request = new CreateChatRoomRequest(foreignerProfile.getId(), content, sentAt);
+        CreateChatRoomRequest request = new CreateChatRoomRequest(foreignerProfile.getId(), content);
 
         // when
         CreateChatRoomResponse response = chatRoomCommandService.create(request, agentuser.getEmail());
@@ -71,8 +72,7 @@ class ChatRoomCommandServiceTest extends IntegrationTestSupport {
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
         String content = "안녕";
-        ZonedDateTime sentAt = ZonedDateTime.now();
-        CreateChatRoomRequest request = new CreateChatRoomRequest(foreignerProfile.getId(), content, sentAt);
+        CreateChatRoomRequest request = new CreateChatRoomRequest(foreignerProfile.getId(), content);
 
         // when & then
         assertThatThrownBy(() -> chatRoomCommandService.create(request, agentuser.getEmail()))
@@ -91,11 +91,10 @@ class ChatRoomCommandServiceTest extends IntegrationTestSupport {
         User foreignerUser = userTestFixture.createUser("foreigner", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
-        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now().minusDays(3));
+        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         String content = "안녕";
-        ZonedDateTime sentAt = ZonedDateTime.now();
-        CreateChatRoomRequest request = new CreateChatRoomRequest(foreignerProfile.getId(), content, sentAt);
+        CreateChatRoomRequest request = new CreateChatRoomRequest(foreignerProfile.getId(), content);
 
         // when & then
         assertThatThrownBy(() -> chatRoomCommandService.create(request, agentuser.getEmail()))

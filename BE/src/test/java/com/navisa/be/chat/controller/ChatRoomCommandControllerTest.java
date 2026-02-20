@@ -22,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsString;
@@ -70,8 +69,7 @@ class ChatRoomCommandControllerTest {
         // given
         UUID opponentProfileId = UUID.randomUUID();
         String content = "안녕하세요";
-        ZonedDateTime sendAt = ZonedDateTime.now();
-        CreateChatRoomRequest request = new CreateChatRoomRequest(opponentProfileId, content, sendAt);
+        CreateChatRoomRequest request = new CreateChatRoomRequest(opponentProfileId, content);
         String mockEmail = "agent@navisa.com";
         Long createdChatRoomId = 1L;
 
@@ -100,7 +98,7 @@ class ChatRoomCommandControllerTest {
     void createChatRoom_InvalidAgent() throws Exception {
         // given
         UUID opponentProfileId = UUID.randomUUID();
-        CreateChatRoomRequest request = new CreateChatRoomRequest(opponentProfileId, "안녕하세요", ZonedDateTime.now());
+        CreateChatRoomRequest request = new CreateChatRoomRequest(opponentProfileId, "안녕하세요");
         String mockEmail = "invalid@navisa.com";
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
@@ -124,7 +122,7 @@ class ChatRoomCommandControllerTest {
     void createChatroom_shouldThrowException_whenEmptyMessage() throws Exception {
         // given
         UUID opponentProfileId = UUID.randomUUID();
-        CreateChatRoomRequest request = new CreateChatRoomRequest(opponentProfileId, "", ZonedDateTime.now()); //
+        CreateChatRoomRequest request = new CreateChatRoomRequest(opponentProfileId, ""); //
         String mockEmail = "invalid@navisa.com";
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);

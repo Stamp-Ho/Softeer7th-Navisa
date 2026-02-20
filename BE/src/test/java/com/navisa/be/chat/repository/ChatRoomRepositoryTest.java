@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,8 +52,7 @@ class ChatRoomRepositoryTest extends IntegrationTestSupport {
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Addr", agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // when
         Optional<ChatRoom> result = chatRoomRepository.findByAgentIdAndForeignerId(agentProfile.getId(),
@@ -77,11 +76,9 @@ class ChatRoomRepositoryTest extends IntegrationTestSupport {
         AgentProfile agentProfile2 = agentProfileTestFixture.createAgentProfile("Agent2", "Addr", agentUser2.getId());
 
         // Room 1 (Earliest)
-        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile1, ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now().minusMinutes(10));
+        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile1, ChatRoomStatus.DEFAULT, LocalDateTime.now().minusMinutes(10));
         // Room 2 (Latest)
-        ChatRoom chatRoom2 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile2, ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom2 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile2, ChatRoomStatus.DEFAULT, LocalDateTime.now());
 
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
 
@@ -91,6 +88,7 @@ class ChatRoomRepositoryTest extends IntegrationTestSupport {
         // then
         assertThat(result).hasSize(2);
         assertThat(result.get(0).chatRoomId()).isEqualTo(chatRoom2.getId()); // 최신순
+
         assertThat(result.get(0).partnerName()).isEqualTo(agentProfile2.getName());
         assertThat(result.get(1).chatRoomId()).isEqualTo(chatRoom1.getId());
         assertThat(result.get(1).partnerName()).isEqualTo(agentProfile1.getName());
@@ -107,9 +105,7 @@ class ChatRoomRepositoryTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Addr",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
 

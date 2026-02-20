@@ -9,7 +9,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ public class ChatRoomQueryDslImpl implements ChatRoomQueryDsl {
     public List<ChatRoomInfoProjection> findByNoOffset(UUID profileId, SliceRequest<Long> slice, boolean isForeignerId,
                                                        ChatRoomFilterType filter) {
         // 커서 데이터 조회
-        ZonedDateTime lastChattedAt = null;
+        LocalDateTime lastChattedAt = null;
         if (slice.lastElementId() != null) {
             lastChattedAt = queryFactory
                     .select(chatRoom.lastChattedAt)
@@ -115,7 +115,7 @@ public class ChatRoomQueryDslImpl implements ChatRoomQueryDsl {
      * lastChattedAt 기준 No-Offset 커서 조건 (상수 비교 방식)
      * 정렬 기준: lastChattedAt DESC, id ASC
      */
-    private BooleanExpression cursorCondition(ZonedDateTime lastChattedAt, Long lastId) {
+    private BooleanExpression cursorCondition(LocalDateTime lastChattedAt, Long lastId) {
         if (lastChattedAt == null || lastId == null) {
             return null;
         }

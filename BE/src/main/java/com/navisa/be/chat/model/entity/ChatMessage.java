@@ -7,8 +7,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
@@ -39,26 +37,10 @@ public class ChatMessage extends BaseEntity {
     @Column(name = "is_read_by_other", nullable = false)
     private Boolean isReadByOther = false;
 
-    @Column(name = "sent_at", nullable = false)
-    private ZonedDateTime sentAt;
-
     public ChatMessage(ChatRoom chatRoom, MessageType messageType, String content, UUID senderId) {
         this.chatRoom = chatRoom;
         this.messageType = messageType;
         this.content = content;
         this.senderId = senderId;
-    }
-
-    public ChatMessage(ChatRoom chatRoom, MessageType messageType, String content, UUID senderId, ZonedDateTime sentAt) {
-        this.chatRoom = chatRoom;
-        this.messageType = messageType;
-        this.content = content;
-        this.senderId = senderId;
-        this.sentAt = sentAt;
-    }
-
-    @PrePersist
-    public void prePersist() { // 저장 직전, 현재 시각을 항상 UTC 타임존으로 설정
-        this.sentAt = ZonedDateTime.now(ZoneOffset.UTC);
     }
 }

@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -21,15 +20,17 @@ public class ChatMessageCommandService {
     private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
-    public ChatMessage create(ChatRoom chatRoom, UUID senderId, ChatMessageRequest request) {
+    public ChatMessage createFirstTextMessage(ChatRoom chatRoom, UUID senderId, ChatMessageRequest request) {
         ChatMessage message = chatMessageRepository.save(request.dtoToEntity(chatRoom, senderId));
         chatMessageRepository.flush();
         return message;
     }
 
     @Transactional
-    public ChatMessage create(ChatRoom chatRoom, UUID senderId, String content, ZonedDateTime sentAt){
-        return chatMessageRepository.save(new ChatMessage(chatRoom, MessageType.TEXT, content, senderId, sentAt));
+    public ChatMessage createFirstTextMessage(ChatRoom chatRoom, UUID senderId, String content){
+        ChatMessage message = chatMessageRepository.save(new ChatMessage(chatRoom, MessageType.TEXT, content, senderId));
+        chatMessageRepository.flush();
+        return message;
     }
 
     @Transactional

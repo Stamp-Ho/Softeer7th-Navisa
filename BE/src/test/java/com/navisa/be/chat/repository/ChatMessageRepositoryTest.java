@@ -24,7 +24,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,12 +63,8 @@ class ChatMessageRepositoryTest extends IntegrationTestSupport {
         User foreignerUser2 = userTestFixture.createUser("foreigner2@test.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile2 = foreignerProfileTestFixture.createForeignerProfile(foreignerUser2);
 
-        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile1, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
-        ChatRoom chatRoom2 = chatRoomTestFixture.createChatRoom(foreignerProfile2, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile1, agentProfile, ChatRoomStatus.DEFAULT);
+        ChatRoom chatRoom2 = chatRoomTestFixture.createChatRoom(foreignerProfile2, agentProfile, ChatRoomStatus.DEFAULT);
 
         chatRoomTestFixture.createChatMessage(chatRoom1, foreignerProfile1.getId(), "Room1 Msg1", true);
         ChatMessage lastMsg1 = chatRoomTestFixture.createChatMessage(chatRoom1, agentProfile.getId(),
@@ -106,12 +101,8 @@ class ChatMessageRepositoryTest extends IntegrationTestSupport {
         User foreignerUser = userTestFixture.createUser("foreigner@test.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
-        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile1,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
-        ChatRoom chatRoom2 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile2,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile1, ChatRoomStatus.DEFAULT);
+        ChatRoom chatRoom2 = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile2, ChatRoomStatus.DEFAULT);
 
         // Room 1: Agent가 보낸 메시지 2개 (안 읽음), Foreigner가 보낸 메시지 1개
         chatRoomTestFixture.createChatMessage(chatRoom1, agentProfile1.getId(), "Msg1", false);
@@ -147,9 +138,7 @@ class ChatMessageRepositoryTest extends IntegrationTestSupport {
         AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Address",
                 agentUser.getId());
 
-        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // Agent -> Foreigner (안 읽음) 2개
         chatRoomTestFixture.createChatMessage(chatRoom, agentProfile.getId(), "Msg1", false);
@@ -179,9 +168,7 @@ class ChatMessageRepositoryTest extends IntegrationTestSupport {
                 agentUser.getId());
 
         // Room 1: 메시지 있음 (매칭됨)
-        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile1, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom1 = chatRoomTestFixture.createChatRoom(foreignerProfile1, agentProfile, ChatRoomStatus.DEFAULT);
         Proposal proposal1 = new Proposal(chatRoom1, agentProfile.getId());
         ReflectionTestUtils.setField(proposal1, "status", ProposalStatus.MATCHED);
         proposalRepository.save(proposal1);
@@ -189,9 +176,7 @@ class ChatMessageRepositoryTest extends IntegrationTestSupport {
         chatRoomTestFixture.createChatMessage(chatRoom1, foreignerProfile1.getId(), "Hello", false);
 
         // Room 2: 메시지 없음 (매칭 안됨)
-        ChatRoom chatRoom2 = chatRoomTestFixture.createChatRoom(foreignerProfile2, agentProfile,
-                ChatRoomStatus.DEFAULT,
-                ZonedDateTime.now());
+        ChatRoom chatRoom2 = chatRoomTestFixture.createChatRoom(foreignerProfile2, agentProfile, ChatRoomStatus.DEFAULT);
 
         // when
         Long count = chatMessageRepository.findMatchedNonReadCountByAgentId(agentProfile.getId());
@@ -214,13 +199,10 @@ class ChatMessageRepositoryTest extends IntegrationTestSupport {
         AgentProfile agentProfile2 = agentProfileTestFixture.createAgentProfile("Agent", "Address",
                 agentUser2.getId());
 
-        // LocalDateTime으로 시간 기준 설정 (BaseEntity 타입과 일치)
         LocalDateTime now = LocalDateTime.now();
 
-        ChatRoom targetRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile1,
-                ChatRoomStatus.DEFAULT, ZonedDateTime.now());
-        ChatRoom otherRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile2,
-                ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+        ChatRoom targetRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile1, ChatRoomStatus.DEFAULT);
+        ChatRoom otherRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile2, ChatRoomStatus.DEFAULT);
 
         // 타겟 채팅방 메시지 30개 생성
         for (int i = 1; i <= 30; i++) {
