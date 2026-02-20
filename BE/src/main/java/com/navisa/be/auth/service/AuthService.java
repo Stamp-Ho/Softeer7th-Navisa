@@ -139,7 +139,6 @@ public class AuthService {
                 .orElseThrow(() -> new AuthException(ResponseStatus.INVALID_TOKEN));
 
         if (!savedToken.getToken().equals(refreshTokenValue)) {
-            log.warn("Refresh Token Mismatch! Email: {}", email);
             refreshTokenRepository.deleteById(email);
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
