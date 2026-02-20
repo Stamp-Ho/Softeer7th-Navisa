@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IcArrows } from "../../../assets/icon/StratisUi";
 import { useFormContext } from "react-hook-form";
 import { englishNationList, nationList, nationMap } from "../../../constants/nations";

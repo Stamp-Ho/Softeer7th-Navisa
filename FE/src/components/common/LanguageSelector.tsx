@@ -78,10 +78,3 @@ const LanguageSelector = () => {
 };
 
 export default LanguageSelector;
-
-const flagTag = {
-  25: "ko",
-  7: "ch",
-  61: "en",
-  22: "ja",
-};
