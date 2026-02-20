@@ -45,4 +45,18 @@ public record ChatMessageResponse(
                 null
         );
     }
+
+    public static ChatMessageResponse createReviewRequiredEventMessage(UUID receiverId, Long roomId) {
+        return new ChatMessageResponse(
+                null,
+                roomId,
+                null,
+                null,
+                receiverId,
+                null,
+                MessageType.REVIEW_REQUIRED,
+                null,
+                null
+        );
+    }
 }

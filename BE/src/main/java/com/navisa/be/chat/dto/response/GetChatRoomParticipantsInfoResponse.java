@@ -16,6 +16,33 @@ public record GetChatRoomParticipantsInfoResponse(
         ForeignerInfo foreignerInfo
 ) {
 
+    public static GetChatRoomParticipantsInfoResponse entityToDto(
+            AgentProfile agentProfile,
+            List<Long> top2BadgeIds,
+            ForeignerProfile foreignerProfile,
+            ForeignerExpectedCompany expectedCompany,
+            List<Long> foreignerNationalityIds,
+            Boolean isReviewRequired,
+            UUID applicationFormId
+    ) {
+        return new GetChatRoomParticipantsInfoResponse(
+                new AgentInfo(
+                        agentProfile.getId(),
+                        top2BadgeIds,
+                        agentProfile.getName(),
+                        applicationFormId
+                ),
+                new ForeignerInfo(
+                        foreignerProfile.getId(),
+                        foreignerProfile.getNickname(),
+                        expectedCompany.getJobTitle(),
+                        expectedCompany.getStartDate(),
+                        foreignerNationalityIds,
+                        isReviewRequired
+                )
+        );
+    }
+
     @Schema(description = "행정사 정보")
     public record AgentInfo(
             @Schema(description = "행정사 id")
@@ -23,7 +50,9 @@ public record GetChatRoomParticipantsInfoResponse(
             @Schema(description = "많이 받은 배지 id 리스트")
             List<Long> top2BadgeIds,
             @Schema(description = "행정사 이름")
-            String name
+            String name,
+            @Schema(description = "행정사가 위임받은 비자신청서 id")
+            UUID applicationFormId
     ) {
 
     }
@@ -39,33 +68,10 @@ public record GetChatRoomParticipantsInfoResponse(
             @Schema(description = "입사 예정일")
             LocalDate expectedStartDate,
             @Schema(description = "국적 id 리스트")
-            List<Long> nationalityIds
+            List<Long> nationalityIds,
+            @Schema(description = "리뷰 필요 여부")
+            Boolean isReviewRequired
     ) {
 
     }
-
-    public static GetChatRoomParticipantsInfoResponse entityToDto(AgentProfile agentProfile, List<Long> top2BadgeIds) {
-        return new GetChatRoomParticipantsInfoResponse(
-                new AgentInfo(
-                        agentProfile.getId(),
-                        top2BadgeIds,
-                        agentProfile.getName()
-                ),
-                null
-        );
-    }
-
-    public static GetChatRoomParticipantsInfoResponse entityToDto(ForeignerProfile foreignerProfile, ForeignerExpectedCompany expectedCompany, List<Long> foreignerNationalityIds) {
-        return new GetChatRoomParticipantsInfoResponse(
-                null,
-                new ForeignerInfo(
-                        foreignerProfile.getId(),
-                        foreignerProfile.getNickname(),
-                        expectedCompany.getJobTitle(),
-                        expectedCompany.getStartDate(),
-                        foreignerNationalityIds
-                )
-        );
-    }
-
 }

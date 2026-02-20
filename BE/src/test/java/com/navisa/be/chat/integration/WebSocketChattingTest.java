@@ -1,6 +1,8 @@
 package com.navisa.be.chat.integration;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.application.model.entity.ApplicationForm;
+import com.navisa.be.application.service.ApplicationFormForAgentService;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.dto.message.ChatMessageResponse;
 import com.navisa.be.chat.model.entity.ChatMessage;
@@ -8,6 +10,7 @@ import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.chat.model.enums.MessageType;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
+import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.support.*;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
@@ -40,6 +43,12 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
 
     @Autowired
     private ChatRoomTestFixture chatRoomTestFixture;
+
+    @Autowired
+    private VisaApplicationFormTestFixture visaApplicationFormTestFixture;
+
+    @Autowired
+    private ApplicationFormForAgentService applicationCommandService;
 
     @Test
     @DisplayName("행정사가 외국인에게 메시지를 전송하면 외국인 구독 경로로 메시지가 수신된다")
@@ -214,6 +223,45 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
         assertThat(response.roomId()).isEqualTo(chatRoom.getId());
 
         agentSession.disconnect();
+        foreignerSession.disconnect();
+    }
+
+    @Test
+    @DisplayName("비자 신청서 작성이 완료되면 외국인에게 리뷰 요청 메시지가 전송된다")
+    void testReviewRequiredEvent_WhenApplicationIsDone() throws Exception {
+        // given
+        User agentUser = userTestFixture.createUser("agent_review@example.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("박행정", "서울시", agentUser.getId());
+        User foreignerUser = userTestFixture.createUser("foreigner_review@example.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT, ZonedDateTime.now());
+
+        JobCode jobCode = agentProfileTestFixture.createJobCode("E-7", "특정활동");
+        ApplicationForm form = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile, foreignerProfile, jobCode, false);
+
+        // WebSocket 연결
+        String foreignerToken = jwtProvider.createAccessToken(foreignerUser.getEmail());
+        StompSession foreignerSession = connectSession(foreignerToken);
+
+        // 외국인이 자신의 채널 구독
+        CompletableFuture<ChatMessageResponse> foreignerFuture = new CompletableFuture<>();
+        foreignerSession.subscribe("/user/chat/subscribe", new CustomFrameHandler(foreignerFuture));
+
+        // 구독 대기
+        Thread.sleep(1000);
+
+        // when 행정사가 비자 신청서 작성 완료 처리
+        applicationCommandService.updateApplicationStatus(agentUser.getEmail(), form.getId(), true);
+
+        // then 외국인이 리뷰 요청 메시지를 수신하는지 확인
+        ChatMessageResponse response = foreignerFuture.get(10, TimeUnit.SECONDS);
+
+        assertThat(response).isNotNull();
+        assertThat(response.type()).isEqualTo(MessageType.REVIEW_REQUIRED);
+        assertThat(response.receiverId()).isEqualTo(foreignerProfile.getUserId());
+        assertThat(response.roomId()).isEqualTo(chatRoom.getId());
+
         foreignerSession.disconnect();
     }
 

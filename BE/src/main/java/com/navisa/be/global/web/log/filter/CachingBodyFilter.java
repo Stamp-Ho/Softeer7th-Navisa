@@ -1,4 +1,4 @@
-package com.navisa.be.global.web.log;
+package com.navisa.be.global.web.log.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

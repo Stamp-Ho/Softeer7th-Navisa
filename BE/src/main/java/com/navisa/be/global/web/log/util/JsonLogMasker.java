@@ -1,4 +1,4 @@
-package com.navisa.be.global.web.log;
+package com.navisa.be.global.web.log.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

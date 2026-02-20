@@ -2,7 +2,7 @@ package com.navisa.be.global.config;
 
 import com.navisa.be.auth.interceptor.AuthInterceptor;
 import com.navisa.be.auth.interceptor.UserTypeCheckInterceptor;
-import com.navisa.be.global.web.log.LoggingInterceptor;
+import com.navisa.be.global.web.log.interceptor.LoggingInterceptor;
 import com.navisa.be.global.web.resolver.LoginUserResolver;
 import com.navisa.be.global.web.resolver.SliceInfoArgumentResolver;
 import lombok.RequiredArgsConstructor;

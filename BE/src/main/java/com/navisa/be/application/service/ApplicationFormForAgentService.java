@@ -9,7 +9,8 @@ import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ProposalStatus;
-import com.navisa.be.chat.service.ChatRoomQueryService;
+import com.navisa.be.chat.service.ChatRoomCrudService;
+import com.navisa.be.chat.service.ChatServiceFacade;
 import com.navisa.be.chat.service.ProposalCrudService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
@@ -29,8 +30,9 @@ public class ApplicationFormForAgentService {
     private final UserCrudService userCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final ApplicationFormRepository applicationFormRepository;
-    private final ChatRoomQueryService chatRoomQueryService;
     private final ProposalCrudService proposalCrudService;
+    private final ChatRoomCrudService chatRoomCrudService;
+    private final ChatServiceFacade chatServiceFacade;
 
     @Transactional
     public ApplicationFormIdResponse updateApplicationStatus(String email, UUID formId, Boolean isDone) {
@@ -41,8 +43,15 @@ public class ApplicationFormForAgentService {
 
         validateAgentOwnership(user, form);
 
-        form.updateStatus(isDone);
-        applicationFormRepository.saveAndFlush(form);
+        if(isDone && form.getExportedAt() == null){
+            form.updateStatus(isDone);
+            applicationFormRepository.saveAndFlush(form);
+            ChatRoom chatRoom = chatRoomCrudService.findByAgentIdAndForeignerId(form.getAgentProfile().getId(), form.getForeignerProfile().getId());
+            chatServiceFacade.publishReviewRequiredEventMessage(chatRoom.getId(), form.getForeignerProfile().getUserId());
+        }
+        else{
+            form.updateStatus(isDone);
+        }
 
         return new ApplicationFormIdResponse(form.getId(), form.getUpdatedAt());
     }
@@ -98,7 +107,7 @@ public class ApplicationFormForAgentService {
 
     private void updateRelatedProposalToCompleted(ApplicationForm form) {
         if (form.getAgentProfile() != null && form.getForeignerProfile() != null) {
-            chatRoomQueryService.findByAgentIdAndForeignerId(
+            chatRoomCrudService.findOptionalByAgentIdAndForeignerId(
                     form.getAgentProfile().getId(),
                     form.getForeignerProfile().getId()).flatMap(proposalCrudService::findFirstByChatRoomOrderByIdDesc)
                     .ifPresent(proposal -> {

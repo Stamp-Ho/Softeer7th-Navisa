@@ -19,12 +19,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProposalCrudService {
 
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatRoomCrudService chatRoomQueryService;
     private final ProposalRepository proposalRepository;
+
+
+    @Transactional(readOnly = true)
+    public Optional<Proposal> findOptionalLatestProposalByChatRoom(ChatRoom chatRoom) {
+        return proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom);
+    }
 
     @Transactional(readOnly = true)
     public Proposal findLatestProposalByAgentIdAndForeignerId(UUID agentId, UUID foreignerId) {
-        ChatRoom chatRoom = chatRoomQueryService.findByAgentIdAndForeignerId(agentId, foreignerId)
+        ChatRoom chatRoom = chatRoomQueryService.findOptionalByAgentIdAndForeignerId(agentId, foreignerId)
                 .orElseThrow(() -> new ProposalException(ResponseStatus.NOT_FOUND_CHATROOM));
 
         Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom)

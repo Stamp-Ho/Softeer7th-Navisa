@@ -3,10 +3,15 @@ package com.navisa.be.chat.service;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.service.AgentBadgeService;
 import com.navisa.be.chat.dto.projection.ChatRoomInfoProjection;
+import com.navisa.be.agent.service.AgentReviewCrudService;
+import com.navisa.be.application.model.entity.ApplicationForm;
+import com.navisa.be.application.service.ApplicationFormCrudService;
 import com.navisa.be.chat.dto.response.GetChatRoomParticipantsInfoResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
+import com.navisa.be.chat.model.entity.Proposal;
 import com.navisa.be.chat.model.enums.ChatRoomFilterType;
+import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.web.request.SliceRequest;
@@ -16,7 +21,6 @@ import com.navisa.be.foreigner.model.entity.ForeignerExpectedCompany;
 import com.navisa.be.foreigner.model.entity.ForeignerNationality;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,8 +38,10 @@ public class ChatRoomQueryService {
     private final UserCrudService userCrudService;
     private final AgentBadgeService agentBadgeService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
+    private final ApplicationFormCrudService applicationFormCrudService;
+    private final ProposalCrudService proposalCrudService;
+    private final AgentReviewCrudService agentReviewCrudService;
 
-    // 외국인이 자신의 채팅방을 조회
     public List<ChatRoomInfoProjection> findChatRoomByProfileId(
             UUID foreignerId, SliceRequest<Long> slice, boolean isForeignerId, ChatRoomFilterType filter) {
 
@@ -68,7 +74,7 @@ public class ChatRoomQueryService {
         return chatRoomRepository.existsByAgentProfileIdAndForeignerProfileId(agentId, foreignerId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GetChatRoomParticipantsInfoResponse findParticipantsInfoById(Long roomId, String loginUserEmail) {
         User loginUser = userCrudService.findByEmail(loginUserEmail);
 
@@ -81,26 +87,39 @@ public class ChatRoomQueryService {
             throw new ChatRoomException(ResponseStatus.NOT_ALLOWED_TO_ACCESS_CHATROOM);
         }
 
-        // 행정사는 외국인의 정보를 조회
-        if (loginUser.getUserType() == UserType.VALID_AGENT) {
-            ForeignerProfile foreignerProfile = chatRoom.getForeignerProfile();
-            ForeignerExpectedCompany expectedCompany = foreignerProfileCrudService
-                    .findExpectedCompanyByForeignerProfileId(foreignerProfile.getId());
-            List<Long> nationalityIds = foreignerProfile.getForeignerNationalities().stream()
-                    .map(ForeignerNationality::getNationality)
-                    .map(Nationality::getId)
-                    .toList();
+        ForeignerProfile foreignerProfile = chatRoom.getForeignerProfile();
+        ForeignerExpectedCompany expectedCompany = foreignerProfileCrudService.findExpectedCompanyByForeignerProfileId(foreignerProfile.getId());
+        List<Long> nationalityIds = foreignerProfile.getForeignerNationalities().stream()
+                .map(ForeignerNationality::getNationality)
+                .map(Nationality::getId)
+                .toList();
 
-            return GetChatRoomParticipantsInfoResponse.entityToDto(foreignerProfile, expectedCompany, nationalityIds);
-        }
-
-        // 외국인은 행정사의 정보를 조회
         AgentProfile agentProfile = chatRoom.getAgentProfile();
         List<Long> top2BadgeIds = agentBadgeService.getTop2BadgeIds(agentProfile.getId());
 
+        Optional<ApplicationForm> form = applicationFormCrudService.findOptionalCurrentApplicationForm(foreignerProfile.getId(), agentProfile.getId());
+        Optional<Proposal> proposal = proposalCrudService.findOptionalLatestProposalByChatRoom(chatRoom);
+
+        boolean isReviewRequired = false;
+        if (proposal.isPresent() && form.isPresent()) {
+            boolean reviewExists = agentReviewCrudService.existsByProposalId(proposal.get().getId());
+            isReviewRequired = form.get().isDone() && !reviewExists;
+        }
+
+        UUID applicationFormId = null;
+        if (proposal.isPresent() && proposal.get().getStatus() == ProposalStatus.MATCHED && form.isPresent()) {
+            applicationFormId = form.get().getId();
+        }
+
         return GetChatRoomParticipantsInfoResponse.entityToDto(
                 agentProfile,
-                top2BadgeIds);
+                top2BadgeIds,
+                foreignerProfile,
+                expectedCompany,
+                nationalityIds,
+                isReviewRequired,
+                applicationFormId
+        );
     }
 
     public Optional<ChatRoom> findByAgentIdAndForeignerId(UUID agentId, UUID foreignerId) {

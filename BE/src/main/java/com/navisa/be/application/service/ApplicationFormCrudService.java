@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -32,6 +33,11 @@ public class ApplicationFormCrudService {
     public ApplicationForm findRecentApplicationFormByForeignerId(UUID foreignerId) {
         return applicationFormRepository.findFirstByForeignerProfile_IdOrderByCreatedAtDesc(foreignerId)
                 .orElseThrow(() -> new ApplicationFormException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ApplicationForm> findOptionalCurrentApplicationForm(UUID foreignerId, UUID agentId) {
+        return applicationFormRepository.findCurrentAppFormNative(foreignerId, agentId);
     }
 
     @Transactional(readOnly = true)

@@ -1,5 +1,6 @@
-package com.navisa.be.global.web.log;
+package com.navisa.be.global.web.log.interceptor;
 
+import com.navisa.be.global.web.log.util.JsonLogMasker;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

@@ -1,18 +1,14 @@
 package com.navisa.be.application.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
+import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.global.common.model.entity.JobCode;
-import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
-import com.navisa.be.support.IntegrationTestSupport;
+import com.navisa.be.support.*;
 import com.navisa.be.user.model.entity.User;
-import com.navisa.be.user.model.enums.LoginType;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.repository.UserRepository;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.persistence.EntityManager;
@@ -25,6 +21,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -46,16 +44,19 @@ public class ApplicationFormEmailServiceTest extends IntegrationTestSupport {
     private ApplicationFormRepository applicationFormRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserTestFixture userTestFixture;
 
     @Autowired
-    private AgentProfileRepository agentProfileRepository;
+    private AgentProfileTestFixture agentProfileTestFixture;
 
     @Autowired
-    private ForeignerProfileRepository foreignerProfileRepository;
+    private ForeignerProfileTestFixture foreignerProfileTestFixture;
 
     @Autowired
-    private JobCodeRepository jobCodeRepository;
+    private ChatRoomTestFixture chatRoomTestFixture;
+
+    @Autowired
+    private VisaApplicationFormTestFixture visaApplicationFormTestFixture;
 
     @Autowired
     private EntityManager em;
@@ -67,13 +68,23 @@ public class ApplicationFormEmailServiceTest extends IntegrationTestSupport {
     @DisplayName("비자 신청서 상태를 완료(isDone=true)로 변경하면 exportedAt 시각이 기록된다.")
     void updateApplicationStatus_RecordsExportedAt() {
         // given
-        String email = "agent@navisa.com";
-        User loginUser = saveUser(email, UserType.VALID_AGENT);
-        ApplicationForm form = setupInitialForm(loginUser);
+        User agentUser = userTestFixture.createUser("agent@navisa.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("김행정", "서울", agentUser.getId());
+
+        User foreignerUser = userTestFixture.createUser("foreigner@navisa.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
+                LocalDate.now().atStartOfDay().plusHours(9).atZone(ZoneId.systemDefault()));
+
+        JobCode jobCode = agentProfileTestFixture.createJobCode("E7", "특수활동");
+        ApplicationForm form = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile,
+                foreignerProfile, jobCode, false);
+
         UUID visaFormId = form.getId();
 
         // when
-        applicationFormForAgentService.updateApplicationStatus(email, visaFormId, true);
+        applicationFormForAgentService.updateApplicationStatus(agentUser.getEmail(), visaFormId, true);
         em.flush();
         em.clear();
 
@@ -87,23 +98,39 @@ public class ApplicationFormEmailServiceTest extends IntegrationTestSupport {
     @DisplayName("이미 완료된 서류의 상태를 다시 true로 변경해도 exportedAt 시각은 변하지 않는다.")
     void updateApplicationStatus_DoesNotOverrideExportedAt() {
         // given
-        String email = "agent@navisa.com";
-        User loginUser = saveUser(email, UserType.VALID_AGENT);
-        ApplicationForm form = setupInitialForm(loginUser);
+        User agentUser = userTestFixture.createUser("agent@navisa.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("김행정", "서울", agentUser.getId());
 
-        applicationFormForAgentService.updateApplicationStatus(email, form.getId(), true);
+        User foreignerUser = userTestFixture.createUser("foreigner@navisa.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT,
+                LocalDate.now().atStartOfDay().plusHours(9).atZone(ZoneId.systemDefault()));
+
+        JobCode jobCode = agentProfileTestFixture.createJobCode("E7", "특수활동");
+        ApplicationForm form = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile,
+                foreignerProfile, jobCode, false);
+
+        applicationFormForAgentService.updateApplicationStatus(agentUser.getEmail(), form.getId(), true);
         em.flush();
         em.clear();
 
-        java.time.LocalDateTime firstExportedAt = applicationFormRepository.findById(form.getId()).get().getExportedAt();
+        LocalDateTime firstExportedAt = applicationFormRepository.findById(form.getId())
+                .orElseThrow()
+                .getExportedAt();
+
 
         // when
-        applicationFormForAgentService.updateApplicationStatus(email, form.getId(), true);
+        applicationFormForAgentService.updateApplicationStatus(agentUser.getEmail(), form.getId(), true);
         em.flush();
         em.clear();
 
         // then
-        java.time.LocalDateTime secondExportedAt = applicationFormRepository.findById(form.getId()).get().getExportedAt();
+        LocalDateTime secondExportedAt = applicationFormRepository.findById(form.getId())
+                .orElseThrow()
+                .getExportedAt();
+
+        assertThat(firstExportedAt).isNotNull();
         assertThat(secondExportedAt).isEqualTo(firstExportedAt);
     }
 
@@ -122,23 +149,5 @@ public class ApplicationFormEmailServiceTest extends IntegrationTestSupport {
         verify(mailSender).createMimeMessage();
         verify(mailSender).send(any(MimeMessage.class));
         verifyNoMoreInteractions(mailSender);
-    }
-
-    private ApplicationForm setupInitialForm(User owner) {
-        AgentProfile agent = saveAgentProfile(owner.getId());
-        User foreignerUser = saveUser("foreigner_owner@test.com", UserType.FILLED_FOREIGNER);
-        ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(foreignerUser.getId(), null));
-        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수활동", null, null));
-        return applicationFormRepository.save(new ApplicationForm(agent, foreigner, jobCode, false, 100, 0));
-    }
-
-    private User saveUser(String email, UserType type) {
-        return userRepository.save(new User(email, "pw", type, LoginType.EMAIL, true));
-    }
-
-    private AgentProfile saveAgentProfile(UUID userId) {
-        return agentProfileRepository.save(new AgentProfile(
-                "김행정", LocalDate.now(), "key", "09:00", "사무소", "주소", "상세", "이력",
-                "010-1234-1234", userId, "LIC123", LocalDate.now(), "P123", "M123", "코멘트"));
     }
 }

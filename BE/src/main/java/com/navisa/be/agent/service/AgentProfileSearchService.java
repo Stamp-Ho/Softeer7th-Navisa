@@ -11,7 +11,7 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentReviewRepository;
 import com.navisa.be.chat.model.entity.ChatRoom;
-import com.navisa.be.chat.service.ChatRoomQueryService;
+import com.navisa.be.chat.service.ChatRoomCrudService;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.global.web.request.SliceRequest;
@@ -43,7 +43,7 @@ public class AgentProfileSearchService {
     private final AgentSpecializedJobService agentSpecializedJobService;
     private final AgentBadgeService agentBadgeService;
     private final StorageService storageService;
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatRoomCrudService chatRoomCrudService;
     private final AgentReviewRepository agentReviewRepository;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
 
@@ -108,8 +108,7 @@ public class AgentProfileSearchService {
         User loginUser = userCrudService.findByEmail(loginUserEmail);
         if (loginUser.getUserType() == UserType.FILLED_FOREIGNER) {
             ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByUserId(loginUser.getId());
-            optChatRoom = chatRoomQueryService.findByAgentIdAndForeignerId(agentId,
-                    foreignerProfile.getId());
+            optChatRoom = chatRoomCrudService.findOptionalByAgentIdAndForeignerId(agentId, foreignerProfile.getId());
         }
 
         long reviewCount = agentReviewRepository.countByAgentProfileId(agentId);

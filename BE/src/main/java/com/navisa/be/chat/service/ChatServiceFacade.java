@@ -68,7 +68,7 @@ public class ChatServiceFacade {
         } catch (NumberFormatException e) {
             throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
         }
-        
+
         chatMessageCommandService.updateReadStatusBeforeChatMessageSentAt
                 (lastReadMessageId, getSenderProfileId(findChatRoom, senderId), findChatRoom.getId());
 
@@ -90,21 +90,33 @@ public class ChatServiceFacade {
     }
 
     private UUID getSenderProfileId(ChatRoom chatRoom, UUID senderId) {
-        if(chatRoom.getAgentProfile().getUserId().equals(senderId)){
+        if (chatRoom.getAgentProfile().getUserId().equals(senderId)) {
             return chatRoom.getAgentProfile().getId();
         }
-        if(chatRoom.getForeignerProfile().getUserId().equals(senderId)){
+        if (chatRoom.getForeignerProfile().getUserId().equals(senderId)) {
             return chatRoom.getForeignerProfile().getId();
         }
         throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
     }
 
     private UUID getReceiverId(UUID senderId, ChatRoom chatRoom) {
-        if(chatRoom.getAgentProfile().getUserId().equals(senderId)){
+        if (chatRoom.getAgentProfile().getUserId().equals(senderId)) {
             ForeignerProfile foreignerProfile = chatRoom.getForeignerProfile();
             return foreignerProfile.getUserId();
         }
         AgentProfile agentProfile = chatRoom.getAgentProfile();
         return agentProfile.getUserId();
+    }
+
+    public void publishReviewRequiredEventMessage(Long roomId, UUID receiverId) {
+        // Redis 발행은 트랜잭션 커밋 후 실행
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                log.debug("REVIEW REQUIRED receiverId : {}", receiverId);
+                ChatMessageResponse response = ChatMessageResponse.createReviewRequiredEventMessage(receiverId, roomId);
+                redisTemplate.convertAndSend("user:ch:" + receiverId, response);
+            }
+        });
     }
 }

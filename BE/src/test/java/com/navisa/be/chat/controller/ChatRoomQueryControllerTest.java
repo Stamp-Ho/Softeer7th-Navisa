@@ -139,7 +139,7 @@ class ChatRoomQueryControllerTest {
         Long chatRoomId = 1L;
         UUID agentId = UUID.randomUUID();
         GetChatRoomParticipantsInfoResponse response = new GetChatRoomParticipantsInfoResponse(
-                new GetChatRoomParticipantsInfoResponse.AgentInfo(agentId, List.of(1L, 2L), "행정사"),
+                new GetChatRoomParticipantsInfoResponse.AgentInfo(agentId, List.of(1L, 2L), "행정사", null),
                 null
         );
 
