@@ -41,14 +41,27 @@
       "topDestinations": "Top Destinations",
       "countries": "+60 Countries"
     },
-    "loginRequired": "로그인이 필요합니다"
+    "loginRequired": "로그인이 필요합니다",
+    "recommendPanel": {
+      "title": "추천 패널",
+      "consultMessage": "언제든 부담없이\n행정사에게 상담 메시지로 질문해요.",
+      "withAttorney": "혼자 고민하지 말고\n행정사와 함께 비자 신청서를 작성해요.",
+      "feedback": "제출 전까지 꼼꼼하게\n행정사의 피드백으로 서류 완성도를 높여요.",
+      "registerButton": "내 요건 등록하러가기"
+    }
   },
   "chat": {
     "title": "상담 메시지",
     "noChat": "진행 중인 상담이 없어요.",
     "searchForeigner": "의뢰인 탐색하기",
     "searchAgent": "행정사 탐색하기",
-    "registerRequirement": "내 요건 등록하고 상담하기"
+    "registerRequirement": "내 요건 등록하고 상담하기",
+    "selectMessage": "대화를 선택해주세요",
+    "tabs": {
+      "all": "전체",
+      "unread": "안읽음",
+      "inContract": "수임중"
+    }
   },
   "search": {
     "loading": "로딩 중...",
@@ -76,7 +89,12 @@
     "sendMessage": "메시지 보내기",
     "jobLabel": "직무",
     "companyNameLabel": "회사명",
-    "invalidAccess": "잘못된 접근입니다."
+    "invalidAccess": "잘못된 접근입니다.",
+    "agentBlog": "행정사의 블로그",
+    "totalReviews": "총",
+    "clientReviewCount": "명의 의뢰인이 평가했어요",
+    "consult": "상담하기",
+    "continueConsult": "상담 계속하기"
   },
   "onboard": {
     "agentTitle": "내 정보 등록하기",
@@ -194,7 +212,8 @@
     "previewPdf": "PDF 미리보기",
     "save": "저장",
     "applicationForm": "신청서",
-    "completedSuffix": " (작성완료)"
+    "completedSuffix": " (작성완료)",
+    "requiredFieldsError": "형식이 올바르지 않습니다."
   },
   "auth": {
     "login": {
@@ -211,6 +230,7 @@
       "title": "회원가입",
       "email": "이메일",
       "password": "비밀번호",
+      "confirmPassword": "비밀번호 확인",
       "agreeAll": "모두 동의합니다",
       "termsAgreement": "(필수) 서비스 약관 동의",
       "privacyAgreement": "(필수) 개인정보 처리방침 동의",

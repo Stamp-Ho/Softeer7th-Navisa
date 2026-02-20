@@ -181,25 +181,25 @@ const AgentOnboard = () => {
     const param = {
       basicInfo: {
         profileImageUrl: imgObjectKey,
-        agentName: data[0][0].values[0].agentName,
-        birthDate: data[0][1].values[0].birthDate, // date string
-        phoneNumber: data[0][2].values[0].phoneNumber,
-        officeName: data[0][3].values[0].officeName,
-        officeAddress: data[0][3].values[0].officeAddress,
-        officeAddressDetail: data[0][3].values[0].officeAddressDetail,
-        businessTime: data[0][3].values[0].businessTime,
+        agentName: data[0].sectionData[0].values[0].agentName,
+        birthDate: data[0].sectionData[1].values[0].birthDate, // date string
+        phoneNumber: data[0].sectionData[2].values[0].phoneNumber,
+        officeName: data[0].sectionData[3].values[0].officeName,
+        officeAddress: data[0].sectionData[3].values[0].officeAddress,
+        officeAddressDetail: data[0].sectionData[3].values[0].officeAddressDetail,
+        businessTime: data[0].sectionData[3].values[0].businessTime,
       },
       licenseInfo: {
-        licenseNo: data[1][1].disabled ? null : data[1][1].values[0].licenseNo,
-        licenseIssuedAt: data[1][2].disabled ? null : data[1][2].values[0].licenseIssuedAt,
-        licenseInnerPageNo: data[1][3].disabled ? null : data[1][3].values[0].licenseInnerPageNo,
-        licenseManagementNo: data[1][4].disabled ? null : data[1][4].values[0].licenseManagementNo,
+        licenseNo: data[1].sectionData[1].disabled ? null : data[1].sectionData[1].values[0].licenseNo,
+        licenseIssuedAt: data[1].sectionData[2].disabled ? null : data[1].sectionData[2].values[0].licenseIssuedAt,
+        licenseInnerPageNo: data[1].sectionData[3].disabled ? null : data[1].sectionData[3].values[0].licenseInnerPageNo,
+        licenseManagementNo: data[1].sectionData[4].disabled ? null : data[1].sectionData[4].values[0].licenseManagementNo,
       },
       detailedInfo: {
-        specializedJobCodeIdList: getLeafValues(data[2][0]), //number[]
-        availableLanguageIdList: getLeafValues(data[2][1]), //number[]
-        agentComment: data[2][2].values[0].agentComment,
-        additionalHistory: data[2][3].values[0].additionalHistory,
+        specializedJobCodeIdList: getLeafValues(data[2].sectionData[0]), //number[]
+        availableLanguageIdList: getLeafValues(data[2].sectionData[1]), //number[]
+        agentComment: data[2].sectionData[2].values[0].agentComment,
+        additionalHistory: data[2].sectionData[3].values[0].additionalHistory,
       },
     };
     updateProfileMutation.mutate(param);

@@ -30,22 +30,12 @@ const EditDocument = () => {
   const data = !!documentId ? agentQuery.data : foreignerQuery.data;
   const isLoading = agentQuery.isLoading || foreignerQuery.isLoading;
 
-  const postForm = useApplicationFormMutation(
-    data?.applicationFormId ?? documentId ?? "",
-    () => {
-      alertT("documents.savingSuccess");
-    },
-  );
+  const postForm = useApplicationFormMutation(data?.applicationFormId ?? documentId ?? "", () => {
+    alertT("components.form.savingSuccess");
+  });
   const methods = useForm();
 
-  const {
-    scrollRef,
-    handleScroll,
-    currentSectionIndex,
-    goToSection,
-    goTop,
-    getMaskStyle,
-  } = useDocumentScroll();
+  const { scrollRef, handleScroll, currentSectionIndex, goToSection, goTop, getMaskStyle } = useDocumentScroll();
 
   const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const [imageUrl, setImageUrl] = useState("");
@@ -60,6 +50,10 @@ const EditDocument = () => {
     }
     // 서버 데이터와 로컬 데이터 중 최근 저장된 데이터로 폼 초기화
     let fresherData = data;
+    if (!data.sections[0].sectionData) {
+      setInitializing(false);
+      return;
+    }
     const localRawData = window.localStorage.getItem(data.applicationFormId);
     if (localRawData && !data.isDone) {
       try {
@@ -78,8 +72,7 @@ const EditDocument = () => {
     // 이미지 URL이 있으면 이미지를 입력한것으로 처리
     //const dataToApply = structuredClone(Object.values(fresherData.sections));
     let dataToApply = { ...fresherData.sections };
-    if (data.foreignerProfileImgUrl !== null)
-      dataToApply[0].sectionData[0].values = [true];
+    if (data.foreignerProfileImgUrl !== null) dataToApply[0].sectionData[0].values = [true];
 
     // inputLine(추가 입력)을 적용하여 초기 폼 구조에 line 추가
     const newStruct = structuredClone(editDocumentData);
@@ -87,19 +80,17 @@ const EditDocument = () => {
       .slice(0, 9)
       .forEach((section, sectionIndex) => {
         //@ts-ignore
-        section.sectionData.forEach(
-          (field: Record<string, any>, fieldIndex: number) => {
-            const targetField = newStruct[sectionIndex].fields[fieldIndex];
-            const tempField = field?.values ?? [];
-            for (let i = 1; i < tempField.length; i++) {
-              const newLine = {
-                ...JSON.parse(JSON.stringify(targetField.inputLines[0])),
-                rowId: i,
-              };
-              targetField.inputLines.push(newLine);
-            }
-          },
-        );
+        section.sectionData.forEach((field: Record<string, any>, fieldIndex: number) => {
+          const targetField = newStruct[sectionIndex].fields[fieldIndex];
+          const tempField = field?.values ?? [];
+          for (let i = 1; i < tempField.length; i++) {
+            const newLine = {
+              ...JSON.parse(JSON.stringify(targetField.inputLines[0])),
+              rowId: i,
+            };
+            targetField.inputLines.push(newLine);
+          }
+        });
       });
     setFormLayout(newStruct);
     setImageUrl(data.foreignerProfileImgUrl || "");
@@ -134,9 +125,8 @@ const EditDocument = () => {
 
     postForm.mutate(params);
   };
-  const onError = (errors: any) => {
-    console.log("유효성 검사 실패:", errors);
-    alertT("documents.requiredFieldsError");
+  const onError = () => {
+    alertT("pages.documents.requiredFieldsError");
   };
   if (isLoading || initializing) return <>loading...</>;
   if (!data) return <>{t("documents.errorOccurred")}</>;
@@ -154,10 +144,7 @@ const EditDocument = () => {
   ];
   return (
     <FormProvider {...methods}>
-      <form
-        className="flex flex-row overflow-y-auto w-fit"
-        onSubmit={methods.handleSubmit(onSubmit, onError)}
-      >
+      <form className="flex flex-row overflow-y-auto w-fit" onSubmit={methods.handleSubmit(onSubmit, onError)}>
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -169,18 +156,10 @@ const EditDocument = () => {
               {t("documents.documentWrite")}
               {data.isDone ? t("documents.completedSuffix") : ""}
             </h2>
-            <a className="body-l-medium text-text-base mb-5">
-              {t("documents.description")}
-            </a>
+            <a className="body-l-medium text-text-base mb-5">{t("documents.description")}</a>
             <ul className="flex flex-col bg-green-bright body-l-medium text-green-vivid gap-1.5 rounded-[20px] py-7 px-5.25">
-              {(data.isDone
-                ? informationMessageWhenDone
-                : informationMessage
-              ).map((text, idx) => (
-                <li
-                  className="flex flex-row items-center gap-0.5"
-                  key={`inform_${idx}`}
-                >
+              {(data.isDone ? informationMessageWhenDone : informationMessage).map((text, idx) => (
+                <li className="flex flex-row items-center gap-0.5" key={`inform_${idx}`}>
                   <IcDot size={16} color="var(--green-vivid)" />
                   {text}
                 </li>

@@ -63,7 +63,7 @@
   },
   "tag": {
     "close": "제거",
-    "noExpertise": "전문분야를 선택하지 않은 행정사입니다.",
+    "noExpertise": "전문분야를 선택치 않은 행정사입니다.",
     "loginRequired": "로그인 후 확인 가능합니다.",
     "completedStatus": "작성완료",
     "writingStatus": "작성중"

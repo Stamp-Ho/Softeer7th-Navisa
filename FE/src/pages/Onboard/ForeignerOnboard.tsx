@@ -155,28 +155,28 @@ const ForeignerOnboard = () => {
   //@ts-ignore
   const onSubmit = (data) => {
     const param = {
-      nationIdList: getLeafValues(data[0][0]),
-      languageIdList: getLeafValues(data[0][1]),
+      nationIdList: getLeafValues(data[0].sectionData[0]),
+      languageIdList: getLeafValues(data[0].sectionData[1]),
       education: {
-        degreeLevel: DegreeLevelList[data[0][2].values[0].degreeLevel],
-        schoolName: data[0][2].values[0].schoolName,
-        majorName: data[0][2].values[0].majorName,
+        degreeLevel: DegreeLevelList[data[0].sectionData[2].values[0].degreeLevel],
+        schoolName: data[0].sectionData[2].values[0].schoolName,
+        majorName: data[0].sectionData[2].values[0].majorName,
       },
-      foreignerCareers: data[0][3].disabled
+      foreignerCareers: data[0].sectionData[3].disabled
         ? []
         : [
             {
-              companyName: data[0][3].values[0].companyName,
-              jobTitle: data[0][3].values[0].jobTitle,
-              startDate: data[0][3].values[0].startDate,
-              endDate: data[0][3]?.values?.[0]?.endDate ?? null,
-              isWork: !!data[0][3]?.values?.[0]?.endDatedisabled,
+              companyName: data[0].sectionData[3].values[0].companyName,
+              jobTitle: data[0].sectionData[3].values[0].jobTitle,
+              startDate: data[0].sectionData[3].values[0].startDate,
+              endDate: data[0].sectionData[3]?.values?.[0]?.endDate ?? null,
+              isWork: !!data[0].sectionData[3]?.values?.[0]?.endDatedisabled,
             },
           ],
       expectedCompany: {
-        jobTitle: data[1][0].values[0].jobTitle,
-        companyName: data[1][1].values[0].companyName,
-        startDate: data[1][1].values[0].startDate,
+        jobTitle: data[1].sectionData[0].values[0].jobTitle,
+        companyName: data[1].sectionData[1].values[0].companyName,
+        startDate: data[1].sectionData[1].values[0].startDate,
       },
       isRequesting: isGettingOffer,
     };

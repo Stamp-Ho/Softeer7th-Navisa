@@ -9,7 +9,7 @@ const AgentOnboardWidget = ({ sections, currentSectionIndex, goToSection, goTop 
   return (
     <div className="w-fit ml-4 left-0 mt-19.75 flex flex-row">
       <div className="flex flex-col w-92 gap-5 ">
-        <Button variant="primary" size="medium" className="shadow">
+        <Button variant="primary" size="medium" className="shadow" type="submit">
           {t("onboard.save")}
         </Button>
         <ProgressStepWidget title={t("onboard.registerInfo")} formData={sections} currentSectionId={currentSectionIndex} onSectionClick={goToSection} stepBySection={false} />

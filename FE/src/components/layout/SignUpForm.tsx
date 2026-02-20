@@ -64,7 +64,7 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
             message: t("auth.validation.invalidEmail"),
           },
         })}
-        placeholder={t("placeholders.email")}
+        placeholder="navisa@gmail.com"
         isInvalid={!!errors.email}
         invalidMsg={errors.email?.message}
       />
@@ -78,7 +78,7 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
           },
         })}
         type="password"
-        placeholder={t("input.password")}
+        placeholder={t("auth.signup.password")}
         isInvalid={!!errors.pw}
         invalidMsg={errors.pw?.message}
       />
@@ -88,7 +88,7 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
           validate: (value) => value === pw || t("auth.validation.passwordMismatch"),
         })}
         type="password"
-        placeholder={t("input.confirmPassword")}
+        placeholder={t("auth.signup.confirmPassword")}
         isInvalid={!!errors.pwCheck}
         invalidMsg={errors.pwCheck?.message}
       />
@@ -96,13 +96,19 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
         <CheckBox label={t("auth.signup.agreeAll")} value={opt1 && opt2 && opt3} setValue={onTotalClick} />
         <CheckLine label={t("auth.signup.termsAgreement")} value={opt1} setValue={() => setValue("option1", !opt1)} />
         <CheckLine label={t("auth.signup.privacyAgreement")} value={opt2} setValue={() => setValue("option2", !opt2)} />
-        <CheckLine label={t("auth.signup.marketingAgreement")} value={opt3} setValue={() => setValue("option3", !opt3)} className="mb-4" />
+        <CheckLine
+          label={t("auth.signup.marketingAgreement")}
+          value={opt3}
+          setValue={() => setValue("option3", !opt3)}
+          className="mb-4"
+        />
       </div>
 
       <Button
         className="w-full -mb-8"
         variant="primary"
         disabled={!isValid || !(opt1 && opt2)} // 필수 동의 체크 여부 포함
+        type="submit"
       >
         {t("auth.signup.complete")}
       </Button>

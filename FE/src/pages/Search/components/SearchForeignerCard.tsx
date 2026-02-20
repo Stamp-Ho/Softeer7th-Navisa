@@ -6,10 +6,18 @@ import { Link } from "react-router-dom";
 import type { SearchForeignerCardType } from "../../../types/Cards";
 import { DegreeToKorean } from "../../../api/types/common";
 
-const SearchForeignerCard = ({ foreigner, withDetails = true }: { foreigner?: SearchForeignerCardType; withDetails?: boolean }) => {
+const SearchForeignerCard = ({
+  foreigner,
+  withDetails = true,
+}: {
+  foreigner?: SearchForeignerCardType;
+  withDetails?: boolean;
+}) => {
   if (!foreigner) return SkeletonUi(withDetails);
   return (
-    <div className={`flex flex-col py-7 px-6 w-92 h-fit rounded-2xl ${withDetails ? "shadow bg-white" : " bg-gray-30"}`}>
+    <div
+      className={`flex flex-col py-7 px-6 w-92 h-fit rounded-2xl ${withDetails ? " bg-gray-30" : "shadow bg-white"}`}
+    >
       <Link to={`/profile/foreigner/${foreigner.foreignerId}`}>
         <ul className="flex flex-row gap-2 items-center">
           {foreigner.nationIdList.slice(0, 5).map((nation) => (
@@ -52,7 +60,9 @@ const SearchForeignerCard = ({ foreigner, withDetails = true }: { foreigner?: Se
                   {languageList[lang]}
                 </Tag>
               ))}
-              {foreigner.languageIdList.length > 2 && <Tag variant="small_fill_gray">+{foreigner.languageIdList.length - 2}</Tag>}
+              {foreigner.languageIdList.length > 2 && (
+                <Tag variant="small_fill_gray">+{foreigner.languageIdList.length - 2}</Tag>
+              )}
             </div>
           </div>
         </div>

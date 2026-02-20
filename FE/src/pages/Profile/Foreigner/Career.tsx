@@ -38,12 +38,20 @@ const Career = ({
 }) => {
   const { t } = useTranslation(["pages"]);
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mx-3">
       <span className="headline-m-semibold text-gray-1000 mb-10">{t("profile.career")}</span>
       <ul className="flex flex-col gap-4 p-1">
         {foreignerCareerList.map((career, idx) => (
-          <li key={idx} className="flex flex-row items-center p-5 bg-gray-0 border border-border-light rounded-[12px] drop-shadow-[0_3px_3px_#6860A040]">
-            <CareerFrame companyName={career.companyName} jobTitle={career.jobTitle} period={career.period} durationMonths={career.durationMonths} />
+          <li
+            key={idx}
+            className="flex flex-row items-center p-5 bg-gray-0 border border-border-light rounded-[12px] drop-shadow-[0_3px_3px_#6860A040]"
+          >
+            <CareerFrame
+              companyName={career.companyName}
+              jobTitle={career.jobTitle}
+              period={career.period}
+              durationMonths={career.durationMonths}
+            />
           </li>
         ))}
       </ul>

@@ -71,14 +71,24 @@ const AgentProfilePanel = ({
       )}
 
       <div className="flex flex-col items-center bg-white w-92 rounded-[20px] overflow-hidden shadow">
-        <img className="w-187 h-113 object-cover" src={agentInfo.profileImageUrl || "https://placehold.co/748x462"} alt={t("agentProfile.profileImageAlt", { name: agentInfo.name })} />
+        <img
+          className="w-187 h-113 object-cover"
+          src={agentInfo.profileImageUrl || "https://placehold.co/748x462"}
+          alt={t("agentProfile.profileImageAlt", { name: agentInfo.name })}
+        />
         <div className="flex flex-col pt-6 pb-5 px-4 w-full">
-          <div className="headline-l-bold text-text-base mb-3">{agentInfo.name} {t("agentProfile.title")}</div>
+          <div className="headline-l-bold text-text-base mb-3">
+            {agentInfo.name} {t("agentProfile.title")}
+          </div>
           <div className="title-s-medium text-text-base">{officeName}</div>
-          <div className="flex flex-row justify-end">
+          <div className="flex flex-row justify-end mb-4">
             <ToolTipMessage message={CalcLastAccessDay(agentInfo.lastLoginAt)} />
           </div>
-          <Button variant="primary" className="w-full" onClick={() => (agentInfo.hasChatRoom ? navigate(`/chat`) : setViewMessageModal(true))}>
+          <Button
+            variant="primary"
+            className="w-full"
+            onClick={() => (agentInfo.hasChatRoom ? navigate(`/chat`) : setViewMessageModal(true))}
+          >
             {agentInfo.hasChatRoom ? t("agentProfile.continueConsult") : t("agentProfile.consult")}
           </Button>
         </div>

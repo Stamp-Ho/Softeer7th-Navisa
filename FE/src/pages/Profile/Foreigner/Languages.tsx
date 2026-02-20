@@ -15,7 +15,10 @@ const Languages = ({ languageIds = [13, 2] }: { languageIds?: number[] }) => {
       </div>
       <ul className="flex flex-row flex-wrap gap-spacing-300">
         {languageIds.map((id) => (
-          <li key={id} className="flex flex-row items-center gap-spacing-300 py-spacing-300 pl-spacing-300 pr-spacing-500 bg-green-50 text-green-800 rounded-radius-700 body-l-semibold">
+          <li
+            key={id}
+            className="flex flex-row items-center gap-spacing-300 py-spacing-300 pl-2.25 pr-spacing-500 bg-green-50 text-green-800 rounded-full body-l-semibold"
+          >
             <FlagIcon nationIndex={languageIconIdxList[id]} className="w-8 h-8" />
             <span>{languageList[id]}</span>
           </li>

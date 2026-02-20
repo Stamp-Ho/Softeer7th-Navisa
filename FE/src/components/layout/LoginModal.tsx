@@ -26,7 +26,10 @@ const LoginModal = ({ onClose = () => {}, setAuthMode = (_a: number) => {} }) =>
       <NavisaLogo height={10} />
       <TextInput className="mt-21 mb-3" placeholder={t("auth.login.email")} value={email} setValue={setEmail} />
       <TextInput className="mb-3" placeholder={t("auth.login.password")} type="password" value={pw} setValue={setPw} />
-      <a onClick={() => setStayLoggedIn((prev) => !prev)} className={`flex flex-row gap-2 w-full items-center cursor-pointer mb-10 ${stayLoggedIn ? "text-primary" : `text-text-sub`}`}>
+      <a
+        onClick={() => setStayLoggedIn((prev) => !prev)}
+        className={`flex flex-row gap-2 w-full items-center cursor-pointer mb-10 ${stayLoggedIn ? "text-primary" : `text-text-sub`}`}
+      >
         <IcCheckBroken activated={stayLoggedIn} />
         {t("auth.login.rememberMe")}
       </a>
@@ -39,7 +42,7 @@ const LoginModal = ({ onClose = () => {}, setAuthMode = (_a: number) => {} }) =>
         <a className="cursor-pointer">{t("auth.login.forgotEmail")}</a>
         <div className="border-r border-gray-200 h-2 w-px mt-auto mb-auto"></div>
         <a className="cursor-pointer" onClick={() => setAuthMode(2)}>
-          {t("button.signup")}
+          {t("auth.signup.title")}
         </a>
       </div>
     </Modal>

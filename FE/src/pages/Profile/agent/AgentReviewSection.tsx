@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import ReviewBar from "./ReviewBar";
 
 const AgentReviewSection = ({
@@ -16,14 +17,12 @@ const AgentReviewSection = ({
     strengths: { badgeId: number; badgeCount: number }[];
   };
 }) => {
+  const { t } = useTranslation(["pages"]);
   return (
     <>
       <div className="mb-13 headline-m-semibold text-gray-1000">
-        총{" "}
-        <span className="headline-m-bold text-violet-500">
-          {reviewSummary.totalCount}
-        </span>
-        명의 의뢰인이 평가했어요
+        {t("profile.totalReviews")} <span className="headline-m-bold text-violet-500">{reviewSummary.totalCount}</span>{" "}
+        {t("profile.clientReviewCount")}
       </div>
       <div className="grid grid-cols-2 grid-rows-3 gap-4">
         {reviewSummary.strengths.map((item) => (

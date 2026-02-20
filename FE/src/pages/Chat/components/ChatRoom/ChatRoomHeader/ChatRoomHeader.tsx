@@ -14,12 +14,7 @@ type HeaderParams = {
   onModalAction: (num: number) => void;
 };
 
-const ChatRoomHeader = ({
-  pageType,
-  headerData,
-  onClose,
-  onModalAction,
-}: HeaderParams) => {
+const ChatRoomHeader = ({ pageType, headerData, onClose, onModalAction }: HeaderParams) => {
   const { t } = useTranslation(["components"]);
   const { chatRoomStatus } = useChatRoomContext();
   return (
@@ -27,7 +22,7 @@ const ChatRoomHeader = ({
       <div className="absolute w-full top-0">
         {/* 채팅창 헤더, 외국인인가 행정사인가에 따라 출력 달라짐 */}
         <div className="flex flex-row justify-between items-center p-6 bg-white/80 backdrop-blur-[2px]">
-          <div className="w-[500px]">
+          <div className="w-fit mr-auto">
             {headerData.type === "FOREIGNER" ? (
               <ForeignerHeaderInfo data={headerData.data} />
             ) : (

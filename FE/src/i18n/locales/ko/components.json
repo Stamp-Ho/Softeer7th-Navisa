@@ -3,7 +3,7 @@
     "title": "행정사",
     "expertise": "전문 분야",
     "office": "사무실 위치",
-    "noExpertise": "전문분야를 선택하지 않은 행정사입니다.",
+    "noExpertise": "전문분야를 선택치 않은 행정사입니다.",
     "loginRequired": "로그인 후 확인 가능합니다."
   },
   "documentCard": {
@@ -30,6 +30,7 @@
     "formatGuide": "JPG, JPEG, PNG 형식의 이미지만 업로드 가능합니다.",
     "fileSizeError": "파일 용량이 너무 큽니다. 400KB 이하의 이미지만 업로드 가능합니다.",
     "fileTypeError": "JPG, JPEG, PNG 형식의 이미지만 업로드 가능합니다.",
+    "imageSizeError": "이미지 크기가 너무 큽니다. 2500px × 2500px 이하의 이미지만 업로드 가능합니다.",
     "noImage": "프로필 이미지가 없습니다",
     "fileSizeGuide": "400KB 이하의 파일만 업로드 가능합니다"
   },
@@ -111,5 +112,12 @@
     "serviceDescription": "비자 발급 과정에서 느낀 점을 남겨주세요.",
     "servicePlaceholder": "예) 설명이 이해하기 쉬웠어요. 진행 상황을 계속 안내해줘서 안심됐어요.",
     "next": "다음"
+  },
+  "chip": {
+    "retainerProposal": "수임 제안",
+    "cancelRetainer": "수임 취소",
+    "visaApplicationLink": "비자 신청서 바로가기",
+    "writeReview": "리뷰 작성하기",
+    "messageLink": "메시지창 바로가기"
   }
 }

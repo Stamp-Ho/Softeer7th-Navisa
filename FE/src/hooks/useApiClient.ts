@@ -82,9 +82,11 @@ const useApiClient = () => {
       headers: { "Content-Type": "application/json", ...options?.headers },
     });
 
-  apiClient.delete = <T = any>(url: string, options?: FetchOptions): Promise<T> => apiClient<T>(url, { ...options, method: "DELETE" });
+  apiClient.delete = <T = any>(url: string, options?: FetchOptions): Promise<T> =>
+    apiClient<T>(url, { ...options, method: "DELETE" });
 
-  apiClient.put = <T = any>(url: string, options?: FetchOptions): Promise<T> => apiClient<T>(url, { ...options, method: "PUT" });
+  apiClient.put = <T = any>(url: string, options?: FetchOptions): Promise<T> =>
+    apiClient<T>(url, { ...options, method: "PUT" });
 
   apiClient.patch = <T = any>(url: string, body?: any, options?: FetchOptions): Promise<T> =>
     apiClient<T>(url, {
@@ -121,7 +123,10 @@ const useApiClient = () => {
           throw new Error("refresh token 시간 만료");
         }
       } finally {
-        refreshPromise = null; // 완료 후 초기화
+        // API 응답 직후 몰려오는 다른 401 요청들이 새로운 reissue를 쏘지 않도록 방어막 형성
+        setTimeout(() => {
+          refreshPromise = null;
+        }, 500);
       }
     })();
 
@@ -134,7 +139,7 @@ export default useApiClient;
 
 export type apiClientType = {
   <T = any>(url: string, options: FetchOptions): Promise<T>;
-  get<T = any>(url: string, params?: Record<string, any>, options?: FetchOptions, additionalParams?: string): Promise<T>;
+  get<T = any>(url: string, params?: Record<string, any>, options?: FetchOptions): Promise<T>;
   post<T = any>(url: string, body?: any, options?: FetchOptions): Promise<T>;
   delete<T = any>(url: string, options?: FetchOptions): Promise<T>;
   put<T = any>(url: string, options?: FetchOptions): Promise<T>;

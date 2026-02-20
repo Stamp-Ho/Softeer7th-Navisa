@@ -117,9 +117,12 @@ const SuggestedAgents = () => {
     </>
   ) : (
     <>
-      <AgentCard key={1} className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `} />
       {data?.map((agent, idx) => (
-        <AgentCard key={idx} agent={agent} className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `} />
+        <AgentCard
+          key={idx}
+          agent={agent}
+          className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
+        />
       ))}
     </>
   );

@@ -41,14 +41,27 @@
       "topDestinations": "热门目的地",
       "countries": "+60个国家"
     },
-    "loginRequired": "需要登录"
+    "loginRequired": "需要登录",
+    "recommendPanel": {
+      "title": "推荐面板",
+      "consultMessage": "随时随地可以通过咨询信息\n向律师提出问题，无需担心。",
+      "withAttorney": "不要独自苦恼\n和律师一起准备签证申请。",
+      "feedback": "在提交前获取律师的详细反馈\n提高您的文件完成度。",
+      "registerButton": "去注册我的要求"
+    }
   },
   "chat": {
     "title": "咨询消息",
-    "noChat": "没有进行中的咨询",
+    "noChat": "没有受任中的咨询",
     "searchForeigner": "搜索申请人",
     "searchAgent": "搜索律师",
-    "registerRequirement": "注册要求并咨询"
+    "registerRequirement": "注册要求并咨询",
+    "selectMessage": "请选择对话",
+    "tabs": {
+      "all": "全部",
+      "unread": "未读",
+      "inContract": "受任中"
+    }
   },
   "search": {
     "loading": "正在加载...",
@@ -76,7 +89,12 @@
     "sendMessage": "发送消息",
     "jobLabel": "职务",
     "companyNameLabel": "公司",
-    "invalidAccess": "访问无效。"
+    "invalidAccess": "访问无效。",
+    "agentBlog": "律师博客",
+    "totalReviews": "总共",
+    "clientReviewCount": "位客户已评价",
+    "consult": "咨询",
+    "continueConsult": "继续咨询"
   },
   "onboard": {
     "agentTitle": "注册我的信息",
@@ -171,7 +189,7 @@
   "documents": {
     "title": "文件盒",
     "allTab": "全部",
-    "inProgressTab": "进行中",
+    "inProgressTab": "受任中",
     "completedTab": "已完成",
     "error": "无法加载文件",
     "documentWrite": "签证申请表（签证颁发认可证书）",
@@ -194,7 +212,8 @@
     "previewPdf": "PDF预览",
     "save": "保存",
     "applicationForm": "申请书",
-    "completedSuffix": "（已完成）"
+    "completedSuffix": "（已完成）",
+    "requiredFieldsError": "格式不正确。"
   },
   "auth": {
     "login": {
@@ -211,6 +230,7 @@
       "title": "注册",
       "email": "邮箱",
       "password": "密码",
+      "confirmPassword": "确认密码",
       "agreeAll": "我同意全部",
       "termsAgreement": "（必需）服务条款同意",
       "privacyAgreement": "（必需）隐私政策同意",

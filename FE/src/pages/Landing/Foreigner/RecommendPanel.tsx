@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { RPDocument, RPMessage, RPPeople } from "../../../assets/icon/RecommendPanelIcon";
 import { IcPencilLine } from "../../../assets/icon/StratisUi";
 import Button from "../../../components/common/Button";
@@ -6,6 +7,7 @@ import { useAuth } from "../../../contexts/AuthContextProvider";
 import { alertT } from "../../../i18n/alerts";
 
 const RecommendPanel = () => {
+  const { t } = useTranslation(["pages"]);
   const { userType } = useAuth();
   const navigate = useNavigate();
   const handleClick = () => {
@@ -17,14 +19,14 @@ const RecommendPanel = () => {
   };
   return (
     <section className="flex flex-row mt-7 p-10 border-[1.5px] border-violet-200 rounded-2xl">
-      {recommendations.map((rec) => (
-        <div className="flex flex-col w-85 gap-4">
+      {recommendations(t).map((rec, idx) => (
+        <div key={idx} className="flex flex-col w-85 gap-4">
           <rec.icon />
           {rec.message}
         </div>
       ))}
-      <Button variant="primary" size="large" className="w-58 gap-2 ml-auto mt-auto" onClick={handleClick}>
-        내 요건 등록하러가기
+      <Button variant="primary" size="large" className="px-5 gap-2 ml-auto mt-auto" onClick={handleClick}>
+        {t("landing.recommendPanel.registerButton")}
         <IcPencilLine color="white" />
       </Button>
     </section>
@@ -32,14 +34,20 @@ const RecommendPanel = () => {
 };
 
 export default RecommendPanel;
-const recommendations = [
+
+const recommendations = (t: any) => [
   {
     icon: RPMessage,
     message: (
       <>
-        언제든 부담없이
-        <br />
-        행정사에게 상담 메시지로 질문해요.
+        {t("landing.recommendPanel.consultMessage")
+          .split("\n")
+          .map((line: string, idx: number) => (
+            <span key={idx}>
+              {line}
+              {idx < t("landing.recommendPanel.consultMessage").split("\n").length - 1 && <br />}
+            </span>
+          ))}
       </>
     ),
   },
@@ -47,9 +55,14 @@ const recommendations = [
     icon: RPPeople,
     message: (
       <>
-        혼자 고민하지 말고
-        <br />
-        행정사와 함께 비자 신청서를 작성해요.
+        {t("landing.recommendPanel.withAttorney")
+          .split("\n")
+          .map((line: string, idx: number) => (
+            <span key={idx}>
+              {line}
+              {idx < t("landing.recommendPanel.withAttorney").split("\n").length - 1 && <br />}
+            </span>
+          ))}
       </>
     ),
   },
@@ -57,9 +70,14 @@ const recommendations = [
     icon: RPDocument,
     message: (
       <>
-        제출 전까지 꼼꼼하게
-        <br />
-        행정사의 피드백으로 서류 완성도를 높여요.
+        {t("landing.recommendPanel.feedback")
+          .split("\n")
+          .map((line: string, idx: number) => (
+            <span key={idx}>
+              {line}
+              {idx < t("landing.recommendPanel.feedback").split("\n").length - 1 && <br />}
+            </span>
+          ))}
       </>
     ),
   },

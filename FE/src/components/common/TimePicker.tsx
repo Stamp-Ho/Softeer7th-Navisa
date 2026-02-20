@@ -40,7 +40,7 @@ const TimePicker = ({
   };
 
   return (
-    <div className="relative w-full max-w-50" ref={wrapperRef}>
+    <div className="relative w-full max-w-50" ref={wrapperRef} tabIndex={0}>
       {/* 입력창 영역: 클릭하면 열리고, 직접 타이핑도 가능 */}
       <div
         onClick={() => setIsOpen(true)}
@@ -48,12 +48,29 @@ const TimePicker = ({
           outline-gray-300 focus-within:outline-2 ${isOpen && "outline-2"}`}
       >
         <div className="flex items-center space-x-1 body-l-medium  text-gray-700">
-          <input type="text" value={time.hour} onChange={(e) => handleInputChange(e, "hour")} className="w-7 bg-transparent outline-none text-center" placeholder={t("timePicker.hour")} />
+          <input
+            type="text"
+            value={time.hour}
+            onChange={(e) => handleInputChange(e, "hour")}
+            className="w-7 bg-transparent outline-none text-center"
+            placeholder={t("timePicker.hour")}
+          />
           <span>:</span>
-          <input type="text" value={time.minute} onChange={(e) => handleInputChange(e, "minute")} className="w-7 bg-transparent outline-none text-center" placeholder={t("timePicker.minute")} />
+          <input
+            type="text"
+            value={time.minute}
+            onChange={(e) => handleInputChange(e, "minute")}
+            className="w-7 bg-transparent outline-none text-center"
+            placeholder={t("timePicker.minute")}
+          />
         </div>
         <svg className="w-5 h-5 text-gray-400 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
       </div>
 

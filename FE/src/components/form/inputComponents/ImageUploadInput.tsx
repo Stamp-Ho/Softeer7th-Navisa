@@ -46,11 +46,35 @@ const ImageUploadInput = ({
       alertT("components.imageUpload.fileTypeError");
       return;
     }
-    if (imagePreview) URL.revokeObjectURL(imagePreview);
-    let image = window.URL.createObjectURL(file);
-    setValue("0.sectionData.0.values.0", true);
-    setImagePreview(image);
-    setImageFile(file);
+
+    // 이미지 크기 검증 (2500px * 2500px)
+    const img = new Image();
+    const tempUrl = window.URL.createObjectURL(file);
+    img.onload = () => {
+      const MAX_WIDTH = 2500;
+      const MAX_HEIGHT = 2500;
+
+      if (img.width > MAX_WIDTH || img.height > MAX_HEIGHT) {
+        alertT("components.imageUpload.imageSizeError");
+        e.target.value = "";
+        window.URL.revokeObjectURL(tempUrl);
+        return;
+      }
+
+      // 검증 통과 시 이미지 설정
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+      setValue("0.sectionData.0.values.0", true);
+      setImagePreview(tempUrl);
+      setImageFile(file);
+    };
+
+    img.onerror = () => {
+      alertT("components.imageUpload.fileTypeError");
+      e.target.value = "";
+      window.URL.revokeObjectURL(tempUrl);
+    };
+
+    img.src = tempUrl;
   };
 
   useEffect(() => {
@@ -70,9 +94,18 @@ const ImageUploadInput = ({
   }, [imagePreview, imageUrl]);
   return (
     <div className="grid-cols-3 flex flex-row gap-5">
-      <div onClick={handleDivClick} className="rounded-xl flex items-center justify-center bg-white w-52.5 h-67.5 cursor-pointer hover:bg-gray-50 transition-colors overflow-hidden">
+      <div
+        onClick={handleDivClick}
+        className="rounded-xl flex items-center justify-center bg-white w-52.5 h-67.5 cursor-pointer hover:bg-gray-50 transition-colors overflow-hidden"
+      >
         {/* 숨겨진 파일 인풋 */}
-        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/png, image/jpeg, image/jpg" />
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+          accept="image/png, image/jpeg, image/jpg"
+        />
 
         {(!loadingImage && imageFile !== undefined) || imageUrl ? (
           <div>

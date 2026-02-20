@@ -30,6 +30,7 @@
     "formatGuide": "Only JPG, JPEG, PNG format images can be uploaded",
     "fileSizeError": "File size is too large. Only images under 400KB can be uploaded",
     "fileTypeError": "Only JPG, JPEG, PNG format images can be uploaded",
+    "imageSizeError": "Image size is too large. Only images under 2500px × 2500px can be uploaded",
     "noImage": "No profile image",
     "fileSizeGuide": "Only images under 400KB can be uploaded"
   },
@@ -111,5 +112,12 @@
     "serviceDescription": "Please share your thoughts on the visa issuance process.",
     "servicePlaceholder": "Example) The explanation was easy to understand. I was relieved to be kept updated on the progress.",
     "next": "Next"
+  },
+  "chip": {
+    "retainerProposal": "Retainer Proposal",
+    "cancelRetainer": "Cancel Retainer",
+    "visaApplicationLink": "Go to Visa Application",
+    "writeReview": "Write Review",
+    "messageLink": "Go to Message"
   }
 }

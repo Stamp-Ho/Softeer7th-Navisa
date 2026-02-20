@@ -41,14 +41,27 @@
       "topDestinations": "人気の目的地",
       "countries": "+60ヶ国"
     },
-    "loginRequired": "ログインが必要です"
+    "loginRequired": "ログインが必要です",
+    "recommendPanel": {
+      "title": "推奨パネル",
+      "consultMessage": "いつでも気軽に\n行政書士に相談メッセージで質問してください。",
+      "withAttorney": "一人で悩まずに\n行政書士と一緒にビザ申請書を作成してください。",
+      "feedback": "提出前に丁寧に\n行政書士のフィードバックで書類の完成度を高めてください。",
+      "registerButton": "私の要件を登録する"
+    }
   },
   "chat": {
     "title": "相談メッセージ",
     "noChat": "進行中の相談がありません",
     "searchForeigner": "依頼者を検索",
     "searchAgent": "行政書士を検索",
-    "registerRequirement": "要件を登録して相談"
+    "registerRequirement": "要件を登録して相談する",
+    "selectMessage": "会話を選択してください",
+    "tabs": {
+      "all": "すべて",
+      "unread": "未読",
+      "inContract": "受任中"
+    }
   },
   "search": {
     "loading": "読み込み中...",
@@ -76,7 +89,12 @@
     "sendMessage": "メッセージを送る",
     "jobLabel": "職務",
     "companyNameLabel": "会社名",
-    "invalidAccess": "不正なアクセスです。"
+    "invalidAccess": "不正なアクセスです。",
+    "agentBlog": "行政書士ブログ",
+    "totalReviews": "計",
+    "clientReviewCount": "人の依頼人が評価しました",
+    "consult": "相談する",
+    "continueConsult": "相談を続ける"
   },
   "onboard": {
     "agentTitle": "自分の情報を登録",
@@ -194,7 +212,8 @@
     "previewPdf": "PDFプレビュー",
     "save": "保存",
     "applicationForm": "申請書",
-    "completedSuffix": "（完了）"
+    "completedSuffix": "（完了）",
+    "requiredFieldsError": "形式が正しくありません。"
   },
   "auth": {
     "login": {
@@ -211,6 +230,7 @@
       "title": "登録",
       "email": "メール",
       "password": "パスワード",
+      "confirmPassword": "パスワード確認",
       "agreeAll": "すべてに同意します",
       "termsAgreement": "（必須）利用規約に同意",
       "privacyAgreement": "（必須）プライバシーポリシーに同意",

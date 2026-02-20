@@ -50,9 +50,16 @@ const ExpectedCompany = ({
   return (
     <>
       {showToast && <Toast message={t("agentProfile.consultMessageSent")} />}
-      {viewMessageModal && <ChatActivateModal onClose={() => setViewMessageModal(false)} opponentProfileId={opponentProfileId} onSendSuccess={() => setShowToast(true)} isAgent={isAgent} />}
-      <div className="fixed right-48 shadow">
-        <div className="flex flex-col w-92 px-5 py-8 border border-border-normal rounded-radius-400 bg-white">
+      {viewMessageModal && (
+        <ChatActivateModal
+          onClose={() => setViewMessageModal(false)}
+          opponentProfileId={opponentProfileId}
+          onSendSuccess={() => setShowToast(true)}
+          isAgent={isAgent}
+        />
+      )}
+      <div className="">
+        <div className="shadow flex flex-col w-92 px-5 py-8 border border-border-normal rounded-radius-400 bg-white">
           <div className="headline-l-bold text-text-base">{nickname}</div>
           <div className="py-px w-full bg-border-light my-7"></div>
           <div className="flex flex-row gap-2 items-center title-m-semibold text-text-base">
@@ -80,10 +87,15 @@ const ExpectedCompany = ({
               <span className="body-l-medium text-text-sub">{calcDDay(startDate)}</span>
             </li>
           </ul>
-          <div className="flex flex-col items-end mt-2.25">
+          <div className="flex flex-col items-end mt-4.25">
             <ToolTipMessage message={CalcLastAccessDay(lastAccessDay)} />
-            <Button variant="primary" size="large" className="w-full" onClick={() => (hasChatRoomBetween ? navigate(`/chat`) : setViewMessageModal(true))}>
-              {hasChatRoomBetween ? t("agentProfile.continueConsult") : t("agentProfile.consult")}
+            <Button
+              variant="primary"
+              size="large"
+              className="w-full"
+              onClick={() => (hasChatRoomBetween ? navigate(`/chat`) : setViewMessageModal(true))}
+            >
+              {hasChatRoomBetween ? t("profile.continueConsult") : t("profile.consult")}
             </Button>
           </div>
         </div>

@@ -9,17 +9,15 @@ import { useForeignerProfileDetailQuery } from "../../../api/queries/useForeigne
 
 function ProfileOfForeigner() {
   const { foreignerId } = useParams();
-  const { data, isLoading, isError } = useForeignerProfileDetailQuery(
-    foreignerId!,
-  );
+  const { data, isLoading, isError } = useForeignerProfileDetailQuery(foreignerId!);
   if (!foreignerId) return <div>잘못된 접근입니다.</div>;
   if (isLoading) return <div>로딩 중...</div>;
   const dataToRender = isError ? (
     <>
       <section className="flex flex-col overflow-auto scrollbar-hide">
         <Header />
-        <div className="flex flex-col gap-5 mt-15">
-          <div className="flex flex-row gap-4 mb-20">
+        <div className="flex flex-col gap-5 mt-15 overflow-visible">
+          <div className="flex flex-row gap-4 mb-20 px-3.5">
             <Education />
             <Languages />
           </div>
@@ -31,12 +29,9 @@ function ProfileOfForeigner() {
   ) : (
     <>
       <section className="flex flex-col overflow-auto scrollbar-hide">
-        <Header
-          nationIdList={data?.basicInfo.nationIdList}
-          nickname={data?.basicInfo.nickname}
-        />
-        <div className="flex flex-col gap-5 mt-15">
-          <div className="flex flex-row gap-4 mb-20">
+        <Header nationIdList={data?.basicInfo.nationIdList} nickname={data?.basicInfo.nickname} />
+        <div className="flex flex-col gap-5 mt-15 overflow-visible">
+          <div className="flex flex-row gap-4 mb-20 px-3.5">
             <Education
               school={data?.educationInfo.school}
               degreeLevel={data?.educationInfo.degreeLevel}
@@ -62,9 +57,7 @@ function ProfileOfForeigner() {
   return (
     <>
       <BannerBackground />
-      <div className="flex flex-row justify-between mt-20 mb-20">
-        {dataToRender}
-      </div>
+      <div className="flex flex-row justify-between mt-20 mb-20">{dataToRender}</div>
     </>
   );
 }

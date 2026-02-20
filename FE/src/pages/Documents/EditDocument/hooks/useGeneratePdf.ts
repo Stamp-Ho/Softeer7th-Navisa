@@ -43,10 +43,7 @@ export const useGeneratePdf = () => {
     });
   };
 
-  const generatePdf = async (
-    filledFormData: Record<string, any>,
-    imageUrl: string,
-  ): Promise<string> => {
+  const generatePdf = async (filledFormData: Record<string, any>, imageUrl: string): Promise<string> => {
     // 1. 공식 서식 PDF 가져오기 (원본 파일)
     const formUrl = "/APPLICATION_FORM.pdf";
     const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
@@ -110,13 +107,7 @@ export const useGeneratePdf = () => {
         if (!pageTarget) return;
 
         // 공통 텍스트 그리기 함수 (클로저 내부 정의)
-        const draw = (
-          text: string,
-          x: number,
-          y: number,
-          isToRight: boolean = false,
-          isToCenter: boolean = false,
-        ) => {
+        const draw = (text: string, x: number, y: number, isToRight: boolean = false, isToCenter: boolean = false) => {
           if (!text || text === "undefined" || text === "null") return;
 
           const currentFont = config.isHanja ? kpa : pretendard;
@@ -160,20 +151,13 @@ export const useGeneratePdf = () => {
             const text = config.format ? config.format(val) : String(val);
             const dynamicY = config.y - rowIdx * (config.spacing || 15);
 
-            draw(
-              text,
-              config.x || 0,
-              dynamicY,
-              config.toRight,
-              config.toCenter,
-            );
+            draw(text, config.x || 0, dynamicY, config.toRight, config.toCenter);
           });
           return;
         } else {
           // --- CASE 2: Single Field (단일 데이터) ---
           const rawValue: string | number = fieldData.values[0]?.[iIdx];
-          if (rawValue === undefined || rawValue === null || rawValue === "")
-            return;
+          if (rawValue === undefined || rawValue === null || rawValue === "") return;
 
           // 라디오 버튼/체크박스 처리
           if (config.type === "radio") {
@@ -189,15 +173,8 @@ export const useGeneratePdf = () => {
             const formattedValue =
               config.continued && iIdx > 0
                 ? fieldData.values[0]?.[iIdx - 1]
-                : "" +
-                  (config.format ? config.format(rawValue) : String(rawValue));
-            draw(
-              formattedValue,
-              config.x || 100,
-              config.y,
-              config.toRight || false,
-              config.toCenter || false,
-            );
+                : "" + (config.format ? config.format(rawValue) : String(rawValue));
+            draw(formattedValue, config.x || 100, config.y, config.toRight || false, config.toCenter || false);
           }
         }
       });
@@ -214,19 +191,13 @@ export const useGeneratePdf = () => {
     return url;
   };
 
-  const previewPdf = async (
-    filledFormData: Record<string, any>,
-    imageUrl: string,
-  ) => {
+  const previewPdf = async (filledFormData: Record<string, any>, imageUrl: string) => {
     const url = await generatePdf(filledFormData, imageUrl);
     if (url) {
       window.open(url);
     }
   };
-  const downloadPdf = async (
-    filledFormData: Record<string, any>,
-    imageUrl: string,
-  ) => {
+  const downloadPdf = async (filledFormData: Record<string, any>, imageUrl: string) => {
     const url = await generatePdf(filledFormData, imageUrl);
     if (url) {
       const link = document.createElement("a"); //가상의 <a> 태그를 만들어 클릭 이벤트 발생
@@ -290,13 +261,7 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
     manyInOneField: true,
     format: (v: string | number) => nationList[Number(v)],
   }, // 국적
-  "0-6-0": {
-    pageIdx: 0,
-    x: 350,
-    y: 458,
-    toRight: true,
-    format: (v: string | number) => nationList[Number(v)],
-  }, // 출생국가
+  "0-6-0": { pageIdx: 0, x: 350, y: 458, toRight: true, format: (v: string | number) => nationList[Number(v)] }, // 출생국가
   "0-7-0": { pageIdx: 0, x: 538, y: 458, toRight: true }, // 국가신분증번호
   "0-8-disabled": {
     pageIdx: 0,
@@ -510,7 +475,8 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
     toRight: true,
     format: (v: string | number) => String(v).replaceAll("-", "."),
   }, // 입국예정일 ["2026-03-03"]
-  "6-3-1": { pageIdx: 2, x: 377, y: 548, toRight: true, continued: true }, // 체류예정지["서울", "길거리 어디든 비바람 막히는 곳"]
+  "6-3-0": { pageIdx: 2, x: 377, y: 561, toRight: true }, // 체류예정지 도시
+  "6-3-1": { pageIdx: 2, x: 377, y: 548, toRight: true }, // 체류예정지 상세
   "6-4-0": { pageIdx: 2, x: 535, y: 548, toRight: true }, // 한국 내 연락처
   "6-5-disabled": {
     pageIdx: 2,
@@ -543,14 +509,7 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
     toCenter: true,
     format: (v: string | number) => nationList[Number(v)],
   }, // 국가명
-  "6-6-1": {
-    pageIdx: 2,
-    x: 315,
-    y: 418.5,
-    spacing: 15.2,
-    isGetMany: true,
-    toCenter: true,
-  }, // 방문목적
+  "6-6-1": { pageIdx: 2, x: 315, y: 418.5, spacing: 15.2, isGetMany: true, toCenter: true }, // 방문목적
   "6-6-2": {
     pageIdx: 2,
     x: 470,
@@ -580,14 +539,7 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
       { x: 191, y: 329 },
     ],
   }, //국내 체류 가족
-  "6-7-0": {
-    pageIdx: 2,
-    x: 147,
-    y: 291,
-    spacing: 15.2,
-    isGetMany: true,
-    toCenter: true,
-  }, // 이름
+  "6-7-0": { pageIdx: 2, x: 147, y: 291, spacing: 15.2, isGetMany: true, toCenter: true }, // 이름
   "6-7-1": {
     pageIdx: 2,
     x: 287,
@@ -613,8 +565,7 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
     spacing: 15.2,
     isGetMany: true,
     toCenter: true,
-    format: (v: string | number) =>
-      ["부", "모", "형제", "자식", "조부모", "친척"][Number(v)],
+    format: (v: string | number) => ["부", "모", "형제", "자식", "조부모", "친척"][Number(v)],
   }, // 관계
 
   "6-8-disabled": {
@@ -626,14 +577,7 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
       { x: 190, y: 191 },
     ],
   }, //동반입국 가족 유무
-  "6-8-0": {
-    pageIdx: 2,
-    x: 147,
-    y: 140,
-    spacing: 15.2,
-    isGetMany: true,
-    toCenter: true,
-  }, // 이름
+  "6-8-0": { pageIdx: 2, x: 147, y: 140, spacing: 15.2, isGetMany: true, toCenter: true }, // 이름
   "6-8-1": {
     pageIdx: 2,
     x: 287,
@@ -659,8 +603,7 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
     spacing: 15.2,
     isGetMany: true,
     toCenter: true,
-    format: (v: string | number) =>
-      ["부", "모", "형제", "자식", "조부모", "친척"][Number(v)],
+    format: (v: string | number) => ["부", "모", "형제", "자식", "조부모", "친척"][Number(v)],
   }, // 관계
 
   // --- PAGE 4 (pageIdx: 3) ---

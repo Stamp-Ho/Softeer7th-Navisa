@@ -36,7 +36,10 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
   if (!agent || loadingImage) return skeletonUI();
   return (
     <div>
-      <Link to={`/profile/agent/${agent.agentId}`} className="flex flex-row items-center  gap-8 py-6 px-7 bg-gray-30 w-124 h-fit rounded-2xl ">
+      <Link
+        to={`/profile/agent/${agent.agentId}`}
+        className="flex flex-row items-center  gap-8 py-6 px-7 bg-gray-30 w-124 h-fit rounded-2xl "
+      >
         <div className="flex w-35 h-35 rounded-full overflow-hidden  items-center justify-center">
           <div className=" shrink-0">
             <img src={agent.profileImgUrl} width={imageSize.width} height={imageSize.height} />
@@ -45,30 +48,41 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
         <div className="flex flex-col gap-3">
           <div className="flex flex-row gap-3">
             {agent.badgeTop2.length === 0 ? (
-              <div className="h-[16.8px] w-18 bg-gray-100 rounded-4xl" />
+              <div className="flex flex-row gap-1 items-center caption-m-medium text-text-sub ">
+                등록된 리뷰가 없습니다
+              </div>
             ) : (
               agent.badgeTop2.map((badgeId) => (
-                <div key={`badgeId_${badgeId}`} className="flex flex-row gap-1 items-center caption-m-medium text-primary ">
+                <div
+                  key={`badgeId_${badgeId}`}
+                  className="flex flex-row gap-1 items-center caption-m-medium text-primary "
+                >
                   <BadgeIcon badgeIndex={badgeId} size={12} color="var(--primary)" />
                   {badgeDescription[badgeId]}
                 </div>
               ))
             )}
           </div>
-          <span className="title-m-bold -mt-2">{agent.agentName} {t("agentCard.title")}</span>
+          <span className="title-m-bold -mt-2">
+            {agent.agentName} {t("agentCard.title")}
+          </span>
           <div className="flex-col flex gap-1.5">
             <span className="flex flex-row items-center gap-1.5 caption-m-medium">
               <IcGraduation size={14} /> {t("agentCard.expertise")}
             </span>
             {authed ? (
               <ol className="flex flex-row gap-1">
-                {agent.agentSpecialityTop2.length === 0 && <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>}
+                {agent.agentSpecialityTop2.length === 0 && (
+                  <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>
+                )}
                 {agent.agentSpecialityTop2.slice(0, 2).map((jobId) => (
                   <Tag key={`agent_special_job_${jobId}`} variant={"small_fill_violet_max"}>
                     {jobListLabels[jobId]}
                   </Tag>
                 ))}
-                {agent.agentSpecialityTop2.length > 2 && <Tag variant="small_fill_gray">+{agent.agentSpecialityTop2.length - 2}</Tag>}
+                {agent.agentSpecialityTop2.length > 2 && (
+                  <Tag variant="small_fill_gray">+{agent.agentSpecialityTop2.length - 2}</Tag>
+                )}
               </ol>
             ) : (
               <Tag variant={"small_fill_gray"}>{t("agentCard.loginRequired")}</Tag>

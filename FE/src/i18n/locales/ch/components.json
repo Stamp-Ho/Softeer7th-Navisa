@@ -9,7 +9,7 @@
   "documentCard": {
     "title": "文件",
     "completedStatus": "已完成",
-    "writingStatus": "进行中",
+    "writingStatus": "受任中",
     "lastModified": "最后修改",
     "pdfButton": "pdf",
     "editButton": "编辑",
@@ -30,6 +30,7 @@
     "formatGuide": "只能上传JPG、JPEG、PNG格式的图片",
     "fileSizeError": "文件大小过大。只能上传400KB以下的图片",
     "fileTypeError": "只能上传JPG、JPEG、PNG格式的图片",
+    "imageSizeError": "图片尺寸过大。只能上传2500px × 2500px以下的图片",
     "noImage": "没有档案照片",
     "fileSizeGuide": "只能上传400KB以下的图片"
   },
@@ -111,5 +112,12 @@
     "serviceDescription": "请分享您对签证发放过程的看法。",
     "servicePlaceholder": "例如)解释易于理解。不断收到进度更新让我放心。",
     "next": "下一步"
+  },
+  "chip": {
+    "retainerProposal": "委托提案",
+    "cancelRetainer": "取消委托",
+    "visaApplicationLink": "查看签证申请表",
+    "writeReview": "撰写评论",
+    "messageLink": "转到消息"
   }
 }

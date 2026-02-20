@@ -26,7 +26,7 @@ const ForeignerOnboardWidget = ({
   return (
     <div className="w-fit ml-4 left-0 mt-19.75 flex flex-row">
       <div className="flex flex-col w-92 gap-5 ">
-        <Button variant="primary" className="shadow">
+        <Button variant="primary" className="shadow" type="submit">
           {t("onboard.save")}
         </Button>
         <div className="flex flex-col bg-green-bright shadow gap-7 rounded-[20px] py-7.75 px-5.25">

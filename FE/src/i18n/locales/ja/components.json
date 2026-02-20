@@ -30,6 +30,7 @@
     "formatGuide": "JPG、JPEG、PNG形式の画像のみアップロードできます。",
     "fileSizeError": "ファイルサイズが大きすぎます。400KB以下の画像のみアップロードできます",
     "fileTypeError": "JPG、JPEG、PNG形式の画像のみアップロードできます",
+    "imageSizeError": "画像サイズが大きすぎます。2500px × 2500px以下の画像のみアップロードできます",
     "noImage": "プロフィール画像がありません",
     "fileSizeGuide": "400KB以下の画像のみアップロードできます"
   },
@@ -111,5 +112,12 @@
     "serviceDescription": "ビザ発行プロセスについてのご意見をお聞かせください。",
     "servicePlaceholder": "例）説明がわかりやすかったです。進行状況を常に案内してくれて安心しました。",
     "next": "次へ"
+  },
+  "chip": {
+    "retainerProposal": "委任提案",
+    "cancelRetainer": "委任キャンセル",
+    "visaApplicationLink": "ビザ申請フォームへ移動",
+    "writeReview": "レビューを書く",
+    "messageLink": "メッセージへ移動"
   }
 }

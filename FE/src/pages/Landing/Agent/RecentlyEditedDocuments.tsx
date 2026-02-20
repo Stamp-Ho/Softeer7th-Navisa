@@ -15,7 +15,7 @@ const RecentlyEditedDocuments = () => {
       {data?.map((doc, index) => (
         <DocumentCard key={`doc_${index}`} document={doc} />
       ))}
-      {Array.from({ length: 5 - (data?.length || 0) }).map((_, index) => (
+      {Array.from({ length: 1 - (data?.length || 0) }).map((_, index) => (
         <DocumentCard key={`doc_${index}`} />
       ))}
     </>

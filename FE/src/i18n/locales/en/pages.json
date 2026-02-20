@@ -41,14 +41,27 @@
       "topDestinations": "Top Destinations",
       "countries": "+60 Countries"
     },
-    "loginRequired": "Login is required"
+    "loginRequired": "Login is required",
+    "recommendPanel": {
+      "title": "Recommend Panel",
+      "consultMessage": "Feel free to ask immigration attorneys\nquestions through consultation messages anytime.",
+      "withAttorney": "Don't worry alone\nand prepare your visa application with an attorney.",
+      "feedback": "Get thorough feedback from the attorney\nto improve your document quality before submission.",
+      "registerButton": "Register My Requirements"
+    }
   },
   "chat": {
     "title": "Consultation Messages",
     "noChat": "No consultations in progress",
     "searchForeigner": "Search for clients",
     "searchAgent": "Search for attorneys",
-    "registerRequirement": "Register requirements and consult"
+    "registerRequirement": "Register requirements and consult",
+    "selectMessage": "Please select a conversation",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread",
+      "inContract": "In Contract"
+    }
   },
   "search": {
     "loading": "Loading...",
@@ -76,7 +89,12 @@
     "sendMessage": "Send message",
     "jobLabel": "Job",
     "companyNameLabel": "Company",
-    "invalidAccess": "Invalid access."
+    "invalidAccess": "Invalid access.",
+    "agentBlog": "Attorney Blog",
+    "totalReviews": "Total",
+    "clientReviewCount": "clients have rated",
+    "consult": "Consult",
+    "continueConsult": "Continue Consultation"
   },
   "onboard": {
     "agentTitle": "Register My Information",
@@ -194,7 +212,8 @@
     "previewPdf": "Preview PDF",
     "save": "Save",
     "applicationForm": "Application Form",
-    "completedSuffix": " (Completed)"
+    "completedSuffix": " (Completed)",
+    "requiredFieldsError": "Invalid format."
   },
   "auth": {
     "login": {
@@ -211,6 +230,7 @@
       "title": "Sign Up",
       "email": "Email",
       "password": "Password",
+      "confirmPassword": "Confirm Password",
       "agreeAll": "I agree to all",
       "termsAgreement": "(Required) Service Terms Agreement",
       "privacyAgreement": "(Required) Privacy Policy Agreement",

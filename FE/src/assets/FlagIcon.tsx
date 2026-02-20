@@ -9,7 +9,7 @@ interface FlagIconProps {
 const FlagIcon = ({ nationIndex = 0, className, onClick, title, "data-testid": testId }: FlagIconProps) => {
   // 인덱스 범위를 벗어날 경우를 대비한 안전 장치
   //const flagSrc = FLAG_IMAGES[nationIndex] || FLAG_IMAGES[0];
-  const flagSrc = `/flag/${COUNTRY_NAMES[nationIndex]}.png`;
+  const flagSrc = `/flag/${COUNTRY_NAMES[nationIndex % COUNTRY_NAMES.length]}.png`;
 
   return (
     <div className={className} onClick={onClick} title={title} data-testid={testId}>
@@ -67,15 +67,15 @@ const COUNTRY_NAMES: string[] = [
   "Russia",
   "SaudiArabia",
   "SouthAfrica",
-  "SouthCambodia",
-  "SouthIndonesia",
-  "SouthLaos",
-  "SouthMalaysia",
-  "SouthMyanmar",
-  "SouthPhilippines",
-  "SouthSingapore",
-  "SouthThailand",
-  "SouthVietnam",
+  "Cambodia",
+  "Indonesia",
+  "Laos",
+  "Malaysia",
+  "Myanmar",
+  "Philippines",
+  "Singapore",
+  "Thailand",
+  "Vietnam",
   "Spain",
   "SriLanka",
   "Sweden",

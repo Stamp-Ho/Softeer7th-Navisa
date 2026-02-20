@@ -8,7 +8,15 @@ import { useResizeImage } from "../../hooks/useResizeImage";
 import { useJobListLabels } from "../../assets/JobIcon";
 import { useTranslation } from "react-i18next";
 
-const AgentCard = ({ hasAnimation = true, agent, className = "" }: { hasAnimation?: boolean; agent?: AgentCardResponse; className: string }) => {
+const AgentCard = ({
+  hasAnimation = true,
+  agent,
+  className = "",
+}: {
+  hasAnimation?: boolean;
+  agent?: AgentCardResponse;
+  className: string;
+}) => {
   const context = useContext(AuthContext);
   const { t } = useTranslation(["components"]);
   const jobListLabels = useJobListLabels();
@@ -33,20 +41,26 @@ const AgentCard = ({ hasAnimation = true, agent, className = "" }: { hasAnimatio
           </div>
         </div>
         <div className="flex flex-col gap-3 pb-5 px-4 h-44.75">
-          <h4 className="title-m-bold pt-5">{agent.agentName} {t("agentCard.title")}</h4>
+          <h4 className="title-m-bold pt-5">
+            {agent.agentName} {t("agentCard.title")}
+          </h4>
           <div className="flex-col flex gap-1">
             <a className="flex flex-row items-center gap-1.5 caption-m-medium">
               <IcGraduation size={14} /> {t("agentCard.expertise")}
             </a>
             {userType !== "NOT_AUTHED" ? (
               <ol className="flex flex-row gap-1">
-                {agent.agentSpecialityTop2?.length === 0 && <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>}
+                {agent.agentSpecialityTop2?.length === 0 && !agent.agentSpecialityTop2 && (
+                  <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>
+                )}
                 {agent.agentSpecialityTop2?.slice(0, 2).map((jobId) => (
                   <Tag key={`agent_special_job_${jobId}`} variant={"small_fill_violet_max"}>
                     {jobListLabels[jobId]}
                   </Tag>
                 ))}
-                {(agent.agentSpecialityTop2?.length ?? 0) > 2 && <Tag variant="small_fill_gray">{(agent.agentSpecialityTop2?.length ?? 0) - 2}</Tag>}
+                {(agent.agentSpecialityTop2?.length ?? 0) > 2 && (
+                  <Tag variant="small_fill_gray">{(agent.agentSpecialityTop2?.length ?? 0) - 2}</Tag>
+                )}
               </ol>
             ) : (
               <Tag variant={"small_fill_gray"} className="w-fit">

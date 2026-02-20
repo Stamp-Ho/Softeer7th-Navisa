@@ -66,7 +66,7 @@
     "noExpertise": "未选择专业领域的移民律师",
     "loginRequired": "登录后可查看",
     "completedStatus": "已完成",
-    "writingStatus": "进行中"
+    "writingStatus": "受任中"
   },
   "chip": {
     "contractProposal": "委托提议",
@@ -96,10 +96,10 @@
   },
   "tabs": {
     "all": "全部",
-    "writing": "进行中",
+    "writing": "受任中",
     "completed": "已完成",
     "unread": "未读",
-    "inContract": "进行中的委托"
+    "inContract": "受任中的委托"
   },
   "placeholders": {
     "email": "navisa@gmail.com",
