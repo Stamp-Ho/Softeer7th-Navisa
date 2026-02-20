@@ -136,9 +136,15 @@ public class AuthService {
         String email = claims.getSubject();
 
         RefreshToken savedToken = refreshTokenRepository.findById(email)
-                .orElseThrow(() -> new AuthException(ResponseStatus.INVALID_TOKEN));
+                .orElseThrow(() -> {
+                    log.error("[reissue 에러] DB에 토큰 없음. Email: {}", email);
+                    return new AuthException(ResponseStatus.INVALID_TOKEN);
+                });
 
         if (!savedToken.getToken().equals(refreshTokenValue)) {
+            log.error("[reissue 에러] 토큰 불일치! DB값: {}, 요청값: {}",
+                    savedToken.getToken().substring(0, 10),
+                    refreshTokenValue.substring(0, 10));
             refreshTokenRepository.deleteById(email);
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
