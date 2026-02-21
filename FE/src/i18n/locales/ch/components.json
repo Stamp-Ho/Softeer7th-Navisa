@@ -95,7 +95,7 @@
     "cancelRetainerDesc": "取消后，律师的签证申请表填写权限将失效。",
     "cancel": "取消",
     "blockUserTitle": "是否屏蔽该用户？",
-    "blockUserDesc": "可随时在聊天中解除屏蔽。",
+    "blockUserDesc": "一旦屏蔽，将无法解除。",
     "blockButton": "屏蔽",
     "blockFailed": "屏蔽失败。"
   },

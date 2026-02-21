@@ -172,6 +172,7 @@ const ChatPage = () => {
         {/* ===== 오른쪽: 채팅창 ===== */}
         {selectedTab === "unread" &&
         unreadCount === 0 &&
+        selectedChatRoomId === -1 &&
         !isChatRoomsError &&
         !isChatRoomsLoading ? (
           <div className="absolute flex justify-center top-[40%] w-full headline-s-medium text-gray-500 ">

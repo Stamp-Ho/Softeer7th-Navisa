@@ -95,7 +95,7 @@
     "cancelRetainerDesc": "キャンセルすると、行政書士のビザ申請書作成権限がなくなります。",
     "cancel": "キャンセル",
     "blockUserTitle": "このユーザーをブロックしますか？",
-    "blockUserDesc": "いつでもチャットでブロックを解除できます。",
+    "blockUserDesc": "ブロック後は解除することができません。",
     "blockButton": "ブロックする",
     "blockFailed": "ブロックに失敗しました。"
   },

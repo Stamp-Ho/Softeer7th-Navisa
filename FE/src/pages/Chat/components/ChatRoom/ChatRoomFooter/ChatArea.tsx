@@ -20,6 +20,7 @@ const ChatArea = ({
   roomId,
   roomStatus,
 }: ChatAreaProps) => {
+  const MAX_CHAT_LENGTH = 500;
   const { t } = useTranslation(["components"]);
   const chatAreaRef = useRef<HTMLTextAreaElement>(null);
   const messagePlaceholder = placeholder ?? t("chatRoom.messagePlaceholder");
@@ -81,7 +82,13 @@ const ChatArea = ({
          resize-none ${className}`}
       placeholder={messagePlaceholder}
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={(e) => {
+        const value = e.target.value;
+        if (value.length <= MAX_CHAT_LENGTH) {
+          setValue(value);
+        }
+      }}
+      maxLength={MAX_CHAT_LENGTH}
       onCompositionStart={() => (isComposing.current = true)}
       onCompositionEnd={() => (isComposing.current = false)}
       onKeyDown={handleKeyDown}

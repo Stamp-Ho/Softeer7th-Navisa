@@ -95,7 +95,7 @@
     "cancelRetainerDesc": "Upon cancellation, the attorney's visa application authority will be revoked.",
     "cancel": "Cancel",
     "blockUserTitle": "Would you like to block this user?",
-    "blockUserDesc": "You can unblock them anytime in the chat.",
+    "blockUserDesc": "Once blocked, you cannot unblock this user.",
     "blockButton": "Block",
     "blockFailed": "Block failed."
   },

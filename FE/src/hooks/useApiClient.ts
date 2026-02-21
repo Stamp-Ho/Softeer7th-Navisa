@@ -5,11 +5,15 @@ import { useAuth } from "../contexts/AuthContextProvider";
 const BASEURL = "https://api.navisa.site";
 // const BASEURL = "http://121.172.219.115:15533";
 
-let refreshPromise: Promise<any> | null;
+export let refreshPromise: Promise<string> | null = null;
+
 const useApiClient = () => {
   const navigate = useNavigate();
   const { accessToken, setAccessToken, setUserId, setUserType } = useAuth();
-  const apiClient: apiClientType = async <T = any>(url: string, options: FetchOptions): Promise<T> => {
+  const apiClient: apiClientType = async <T = any>(
+    url: string,
+    options: FetchOptions,
+  ): Promise<T> => {
     const headers = new Headers(options.headers);
     const currentToken = options.manualToken || accessToken;
     if (!options.skipAuth && currentToken) {
@@ -24,7 +28,8 @@ const useApiClient = () => {
         if (!res.ok) {
           if (res.status === 401 && !options.skipAuth) {
             // 이미 재시도를 한 요청인데 또 401이라면 중단 (무한루프 방지)
-            if (options._retry) throw new Error("Unauthorized even after retry");
+            if (options._retry)
+              throw new Error("Unauthorized even after retry");
 
             const newToken = await refreshAccessToken();
             return apiClient<T>(url, {
@@ -43,7 +48,11 @@ const useApiClient = () => {
       });
   };
   // 각 메서드 주입 시 제네릭 적용
-  apiClient.get = (url: string, params?: Record<string, any>, options?: FetchOptions) => {
+  apiClient.get = (
+    url: string,
+    params?: Record<string, any>,
+    options?: FetchOptions,
+  ) => {
     const getQueryString = (params: Record<string, any>) => {
       if (!params) return "";
 
@@ -74,7 +83,11 @@ const useApiClient = () => {
 
     return apiClient(`${url}${queryString}`, { ...options, method: "GET" });
   };
-  apiClient.post = <T = any>(url: string, body?: any, options?: FetchOptions): Promise<T> =>
+  apiClient.post = <T = any>(
+    url: string,
+    body?: any,
+    options?: FetchOptions,
+  ): Promise<T> =>
     apiClient<T>(url, {
       ...options,
       method: "POST",
@@ -82,13 +95,19 @@ const useApiClient = () => {
       headers: { "Content-Type": "application/json", ...options?.headers },
     });
 
-  apiClient.delete = <T = any>(url: string, options?: FetchOptions): Promise<T> =>
-    apiClient<T>(url, { ...options, method: "DELETE" });
+  apiClient.delete = <T = any>(
+    url: string,
+    options?: FetchOptions,
+  ): Promise<T> => apiClient<T>(url, { ...options, method: "DELETE" });
 
   apiClient.put = <T = any>(url: string, options?: FetchOptions): Promise<T> =>
     apiClient<T>(url, { ...options, method: "PUT" });
 
-  apiClient.patch = <T = any>(url: string, body?: any, options?: FetchOptions): Promise<T> =>
+  apiClient.patch = <T = any>(
+    url: string,
+    body?: any,
+    options?: FetchOptions,
+  ): Promise<T> =>
     apiClient<T>(url, {
       ...options,
       method: "PATCH",
@@ -139,7 +158,11 @@ export default useApiClient;
 
 export type apiClientType = {
   <T = any>(url: string, options: FetchOptions): Promise<T>;
-  get<T = any>(url: string, params?: Record<string, any>, options?: FetchOptions): Promise<T>;
+  get<T = any>(
+    url: string,
+    params?: Record<string, any>,
+    options?: FetchOptions,
+  ): Promise<T>;
   post<T = any>(url: string, body?: any, options?: FetchOptions): Promise<T>;
   delete<T = any>(url: string, options?: FetchOptions): Promise<T>;
   put<T = any>(url: string, options?: FetchOptions): Promise<T>;

@@ -14,6 +14,7 @@ import {
 } from "../api/websocket/stompClient";
 import type { Message, Send } from "../api/websocket/types";
 import { useAuth } from "./AuthContextProvider";
+import { refreshPromise } from "../hooks/useApiClient";
 
 type WebSocketContextType = {
   messages: Message[];
@@ -29,7 +30,7 @@ export const WebSocketProvider = ({
   children: React.ReactNode;
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const { accessToken, userId } = useAuth();
+  const { accessToken, userId, userType } = useAuth();
 
   const [isConnected, setIsConnected] = useState(false);
   const isConnectedRef = useRef(false);
@@ -44,40 +45,78 @@ export const WebSocketProvider = ({
     // 토큰이 없으면 연결 시도 X
     if (!accessToken) return;
 
-    // 연결 시작
-    connectWebSocket(
-      accessToken,
-      (msg: Message) => {
-        setMessages((prev) => {
-          if (msg.type === "READ") {
-            return prev.map((m) => {
-              if (
-                userIdRef.current &&
-                m.roomId === msg.roomId &&
-                m.senderId === userIdRef.current
-              ) {
-                return { ...m, isRead: true };
-              }
-              return m;
-            });
-          }
-          return [...prev, { ...msg, isRead: false }];
-        });
-      },
-      (connected: boolean) => {
-        // 상태 업데이트
-        setIsConnected(connected);
-        isConnectedRef.current = connected;
-      },
-    );
+    // 권한이 없는 사용자라면 연결 시도 X
+    if (
+      userType !== "FILLED_FOREIGNER" &&
+      userType !== "VALID_AGENT" &&
+      userType !== "ADMIN"
+    )
+      return;
+
+    // 현재 토큰 재발급이 진행 중이라면 완료될 때까지 await으로 기다림
+    let cancelled = false;
+
+    const connectWebSocketWithSync = async () => {
+      let tokenToUse = accessToken;
+
+      if (refreshPromise) {
+        console.log(
+          "토큰 재발급이 진행 중입니다. 완료 후 웹소켓을 연결합니다.",
+        );
+        try {
+          const newToken = await refreshPromise;
+          // 🚩 언마운트 후라면 연결하지 않음
+          if (cancelled) return;
+          tokenToUse = newToken || accessToken;
+        } catch (error) {
+          // 토큰 재발급 실패 (세션 만료 등) — 연결 중단
+          console.warn("토큰 재발급 실패로 웹소켓 연결을 취소합니다.", error);
+          return;
+        }
+      }
+
+      // 🚩 언마운트 후라면 연결하지 않음
+      if (cancelled) return;
+
+      // 연결 시작
+      connectWebSocket(
+        tokenToUse,
+        (msg: Message) => {
+          setMessages((prev) => {
+            if (msg.type === "READ") {
+              return prev.map((m) => {
+                if (
+                  userIdRef.current &&
+                  m.roomId === msg.roomId &&
+                  m.senderId === userIdRef.current
+                ) {
+                  return { ...m, isRead: true };
+                }
+                return m;
+              });
+            }
+            return [...prev, { ...msg, isRead: false }];
+          });
+        },
+        (connected: boolean) => {
+          // 상태 업데이트
+          setIsConnected(connected);
+          isConnectedRef.current = connected;
+        },
+      );
+    };
+
+    // 연결 시작 (재발급 대기 포함)
+    connectWebSocketWithSync();
 
     // Cleanup: 컴포넌트 언마운트 시 연결 해제
     return () => {
+      cancelled = true;
       disconnectWebSocket();
       setIsConnected(false);
       isConnectedRef.current = false;
     };
-  }, [accessToken]); // accessToken이 변경될 때만 재실행
+  }, [accessToken, userType]); // accessToken, userType이 변경될 때만 재실행
 
   const handleSendMessage = useCallback((payload: Send) => {
     // 1. Context 상태 확인

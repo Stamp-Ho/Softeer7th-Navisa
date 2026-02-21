@@ -95,7 +95,7 @@
     "cancelRetainerDesc": "취소 시, 행정사의 비자 신청서 작성 권한이 사라져요.",
     "cancel": "취소하기",
     "blockUserTitle": "해당 사용자를 차단하시겠습니까?",
-    "blockUserDesc": "언제든 상담 메시지 창에서 차단을 해제할 수 있어요.",
+    "blockUserDesc": "차단 후에는 해제가 불가능합니다.",
     "blockButton": "차단하기",
     "blockFailed": "차단에 실패했습니다."
   },
