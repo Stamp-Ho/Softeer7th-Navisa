@@ -1,7 +1,6 @@
 import AlarmBadge from "../../../../assets/icon/AlarmBadge";
 import Tag from "../../../../components/common/Tag";
 import CalcLastChattedAt from "../../../../utils/CalcLastChattedAt";
-import { type ChatRoomStatus } from "../hooks/useChatRoom";
 import { useAuth } from "../../../../contexts/AuthContextProvider";
 import { IcPin } from "../../../../assets/icon/StratisUi";
 import { useTranslation } from "react-i18next";
@@ -9,24 +8,25 @@ import { useTranslation } from "react-i18next";
 type ChatRoomCardParams = {
   profileImgUrl: string;
   opponentName: string;
-  roomStatus: ChatRoomStatus;
   lastMessage: string;
   noneRead: number;
   lastChattedAt: string;
+  proposed: boolean;
+  proposalMatched: boolean;
 };
 
 const ChatRoomCard = ({
   profileImgUrl = "https://placehold.co/80x80",
   opponentName,
-  roomStatus,
   lastMessage,
   noneRead,
   lastChattedAt,
+  proposed,
+  proposalMatched,
 }: ChatRoomCardParams) => {
   const { t } = useTranslation(["components"]);
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
-
   return (
     <div className={`flex flex-row gap-6 items-center p-3 cursor-pointer`}>
       {isAgent ? (
@@ -45,17 +45,17 @@ const ChatRoomCard = ({
           <div>
             <span className="flex flex-row items-center gap-3 title-s-semibold text-text-base">
               {opponentName}
-              {roomStatus === "MATCHED" ? (
+              {proposalMatched ? (
                 <Tag variant="small_fill_icon" className="min-w-[83px]">
                   <IcPin size="14" />
                   {t("chatRoom.retainerConfirmed")}
                 </Tag>
-              ) : roomStatus === "PROPOSED" ? (
-                <div className="caption-l-medium text-violet-500">
-                  {t("chatRoom.retainerProposalArrived")}
-                </div>
               ) : (
-                <></>
+                proposed && (
+                  <div className="caption-l-medium text-violet-500">
+                    {t("chatRoom.retainerProposalArrived")}
+                  </div>
+                )
               )}
             </span>
           </div>

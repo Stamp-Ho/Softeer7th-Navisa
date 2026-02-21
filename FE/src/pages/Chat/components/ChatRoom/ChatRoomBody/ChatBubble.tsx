@@ -36,7 +36,7 @@ const ChatBubble = ({
       {isSentByMe && (
         <div className="flex flex-col gap-[2px] justify-end items-end caption-l-regular text-text-sub">
           {!isRead && <div>{t("chatRoom.unread")}</div>}
-          {isLast && <div>{CalcChattedTime(message.sentAt)}</div>}
+          {isLast && <div>{CalcChattedTime(message.createdAt)}</div>}
         </div>
       )}
 
@@ -67,7 +67,7 @@ const ChatBubble = ({
       {/* 상대 메시지일 때 시간 표시 (우측) */}
       {!isSentByMe && isLast && (
         <div className="flex flex-col gap-[2px] caption-l-regular text-text-sub">
-          {CalcChattedTime(message.sentAt)}
+          {CalcChattedTime(message.createdAt)}
         </div>
       )}
     </div>

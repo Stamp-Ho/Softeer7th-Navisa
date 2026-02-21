@@ -12,7 +12,6 @@ export type Send = {
     | "SYSTEM"
     | "READ"
     | "CHATROOM_BLOCKED";
-  sentAt: string; // UTC 기준 ISO 8601
 };
 
 export type Message = {
@@ -31,7 +30,6 @@ export type Message = {
     | "SYSTEM"
     | "READ"
     | "CHATROOM_BLOCKED";
-  sentAt: string; // UTC 기준 ISO 8601
   createdAt: string; // 정렬 기준
   isRead: boolean;
 };

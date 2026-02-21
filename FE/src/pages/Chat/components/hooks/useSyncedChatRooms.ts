@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { deriveStatusFromMessageType } from "../utils/getChatStatus";
-import type { ChatRoomStatus } from "./useChatRoom";
+import { determineRoomStatus } from "../utils/determineRoomStatus";
 import type { Message } from "../../../../api/websocket/types";
 import type { ChatRoomResponse } from "../../../../api/types/chat";
 import { useQueryClient } from "@tanstack/react-query";
@@ -60,7 +60,7 @@ export const useSyncedChatRooms = ({
           lastMessage: EXCLUDE_FROM_LAST_MESSAGE.has(msg.type)
             ? ""
             : msg.content,
-          lastChattedAt: msg.sentAt,
+          lastChattedAt: msg.createdAt,
           hasNewMessage: false,
         });
       }
@@ -70,11 +70,11 @@ export const useSyncedChatRooms = ({
       // 마지막 메시지 갱신
       // 더 최신 createdAt이면 덮어쓰기
       if (
-        msg.sentAt > roomData.lastChattedAt &&
+        msg.createdAt > roomData.lastChattedAt &&
         !EXCLUDE_FROM_LAST_MESSAGE.has(msg.type)
       ) {
         roomData.lastMessage = msg.content;
-        roomData.lastChattedAt = msg.sentAt;
+        roomData.lastChattedAt = msg.createdAt;
       }
 
       // 상대방 메시지 & 현재 보고 있는 방이 아닐 경우
@@ -87,10 +87,11 @@ export const useSyncedChatRooms = ({
       // 수임 관련 메시지면 상태 저장
       if (
         PROPOSAL_TYPES.has(msg.type) &&
-        (!roomData.latestProposalAt || msg.sentAt > roomData.latestProposalAt)
+        (!roomData.latestProposalAt ||
+          msg.createdAt > roomData.latestProposalAt)
       ) {
         roomData.latestProposalType = msg.type;
-        roomData.latestProposalAt = msg.sentAt;
+        roomData.latestProposalAt = msg.createdAt;
       }
     }
 
@@ -104,19 +105,27 @@ export const useSyncedChatRooms = ({
     const updated = chatRooms.map((room) => {
       const realtime = roomRealtimeMap.get(room.chatRoomId);
 
-      // 해당 방에 대한 소켓 이벤트가 없다면 그대로 사용
-      if (!realtime) return room;
+      // 해당 방에 대한 소켓 이벤트가 없다면 기본값으로 사용
+      const initialRoomStatus = determineRoomStatus(
+        room.roomStatus,
+        room.proposed,
+        room.proposalMatched,
+      );
+
+      // 소켓 메시지가 있으면 가장 최신의 제안 관련 메시지로 상태 업데이트
+      // 없으면 초기 상태 유지
+      const finalRoomStatus = realtime?.latestProposalType
+        ? deriveStatusFromMessageType(
+            realtime.latestProposalType,
+            initialRoomStatus,
+          )
+        : initialRoomStatus;
 
       return {
         ...room,
-        lastMessage: realtime.lastMessage, // 마지막 메시지
-        lastChattedAt: realtime.lastChattedAt, // 마지막 메시지 시간
-        roomStatus: realtime.latestProposalType // 수임 상태 변경
-          ? deriveStatusFromMessageType(
-              realtime.latestProposalType,
-              room.roomStatus as ChatRoomStatus,
-            )
-          : room.roomStatus,
+        lastMessage: realtime?.lastMessage || room.lastMessage, // 마지막 메시지
+        lastChattedAt: realtime?.lastChattedAt ?? room.lastChattedAt, // 마지막 메시지 시간
+        roomStatus: finalRoomStatus,
         // 안읽음 카운트는 서버기준
         noneReadCount:
           selectedChatRoomId === room.chatRoomId ? 0 : room.noneReadCount,
@@ -136,7 +145,17 @@ export const useSyncedChatRooms = ({
     const lastMsg = socketMessages.at(-1);
     if (!lastMsg) return;
 
-    if (lastMsg.senderId !== userId) {
+    // 수임 관련 메시지(내가 보낸 것 포함) 또는 상대방 메시지면 refetch
+    const PROPOSAL_MESSAGE_TYPES = new Set([
+      "PROPOSAL",
+      "ACCEPTED",
+      "REJECTED",
+      "CANCELED",
+    ]);
+    const isProposalRelated = PROPOSAL_MESSAGE_TYPES.has(lastMsg.type);
+    const isFromOther = lastMsg.senderId !== userId;
+
+    if (isProposalRelated || isFromOther) {
       queryClient.refetchQueries({
         queryKey: ["chatRooms", selectedTab],
       });

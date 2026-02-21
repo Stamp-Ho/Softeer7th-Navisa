@@ -3,7 +3,10 @@ import useApiClient from "../../hooks/useApiClient";
 import { chatService } from "../services/chat";
 import type { ChatHistoryResponse, ChatPageResponse } from "../types/chat";
 
-export const useChatHistoryQuery = (chatRoomId: number) => {
+export const useChatHistoryQuery = (
+  chatRoomId: number,
+  isRoomActive: boolean = false,
+) => {
   const { apiClient } = useApiClient();
 
   return useInfiniteQuery<ChatPageResponse<ChatHistoryResponse>>({
@@ -24,7 +27,7 @@ export const useChatHistoryQuery = (chatRoomId: number) => {
       if (!lastPage.existsNext || !lastPage.lastElementId) return undefined;
       return lastPage.lastElementId;
     },
-    enabled: chatRoomId > 0,
+    enabled: chatRoomId > 0 && isRoomActive,
     retry: false,
   });
 };

@@ -33,7 +33,6 @@ export interface ChatHistoryResponse {
     | "SYSTEM"
     | "READ";
   content: string;
-  sentAt: string;
   createdAt: string;
   isRead: boolean;
 }

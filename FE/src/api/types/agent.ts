@@ -14,11 +14,12 @@ export interface AgentCardResponse {
 
 // 행정사 블로그 응답
 export interface AgentRecentFeedbackResponse {
-  feedbackId: number;
+  agentName: string;
+  agentProfileImgUrl: string;
   feedbackContent: string | null;
-  writerId: string;
-  writerName: string;
-  writerProfileImgUrl: string;
+  feedbackId: number;
+  foreignerName: string;
+  writerId: string; // 작성자 ID 추가 확장성 고려
 }
 
 // 행정사 상세 조회 응답

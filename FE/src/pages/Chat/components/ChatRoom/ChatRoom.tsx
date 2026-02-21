@@ -12,6 +12,8 @@ type ChatRoomParams = {
   onClose: () => void;
   onModalAction: (num: number) => void;
   profileImg: string | null;
+  onGoToChat?: () => void;
+  initialRoomStatus?: string;
 };
 
 const ChatRoom = ({
@@ -20,6 +22,8 @@ const ChatRoom = ({
   onClose,
   onModalAction,
   profileImg,
+  onGoToChat,
+  initialRoomStatus,
 }: ChatRoomParams) => {
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
@@ -30,11 +34,16 @@ const ChatRoom = ({
     : { type: "AGENT", data: participants?.agentInfo };
 
   return (
-    <ChatRoomProvider chatRoomId={chatRoomId}>
+    <ChatRoomProvider
+      chatRoomId={chatRoomId}
+      isActive={true}
+      initialRoomStatus={initialRoomStatus}
+    >
       <ChatRoomHeader
         pageType={pageType}
         headerData={headerData}
         onClose={onClose}
+        onGoToChat={onGoToChat}
         onModalAction={onModalAction}
       />
       <div className="w-full pt-10" />
@@ -54,7 +63,11 @@ const ChatRoom = ({
         }
       />
       <div className="w-full pt-28" />
-      <ChatRoomFooter chatRoomId={chatRoomId} pageType={pageType} />
+      <ChatRoomFooter
+        chatRoomId={chatRoomId}
+        pageType={pageType}
+        applicationFormId={participants?.agentInfo?.applicationFormId}
+      />
     </ChatRoomProvider>
   );
 };

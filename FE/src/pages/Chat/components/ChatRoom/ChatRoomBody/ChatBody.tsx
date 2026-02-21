@@ -65,7 +65,7 @@ const ChatBody = ({
               >
                 <div className="py-[1px] bg-gray-100 flex-1" />
                 <Tag variant="small_fill_gray">
-                  {CalcDateSystemMessage(firstMsg.sentAt)}
+                  {CalcDateSystemMessage(firstMsg.createdAt)}
                 </Tag>
                 <div className="py-[1px] bg-gray-100 flex-1" />
               </div>

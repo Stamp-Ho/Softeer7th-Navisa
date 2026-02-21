@@ -8,28 +8,34 @@ import Chip from "../../../../../components/common/Chip";
 import { useChatSender } from "../../../../../api/websocket/useChatSender";
 import { useChatRoomContext } from "../../context/ChatRoomContext";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../../../../contexts/AuthContextProvider";
 
 type ChatRoomFooterParams = {
   chatRoomId: number;
   pageType: "CHAT" | "DOCUMENT";
+  applicationFormId?: string | null;
 };
 
-const ChatRoomFooter = ({ chatRoomId, pageType }: ChatRoomFooterParams) => {
+const ChatRoomFooter = ({
+  chatRoomId,
+  pageType,
+  applicationFormId,
+}: ChatRoomFooterParams) => {
   const [message, setMessage] = useState<string>("");
   const { sendChat } = useChatSender();
   const { chatRoomStatus, documentId } = useChatRoomContext();
-  const { userType } = useAuth();
 
+  const formRoute = documentId
+    ? `/document/${documentId}`
+    : applicationFormId
+      ? `/document/${applicationFormId}`
+      : null;
   return (
     <div className="absolute bottom-8 w-full flex flex-col px-6">
-      {chatRoomStatus === "MATCHED" &&
-        pageType === "CHAT" &&
-        userType === "VALID_AGENT" && (
-          <Link to={`/document/${documentId}`} className="w-fit mb-3">
-            <Chip type="chips_square_form_view" />
-          </Link>
-        )}
+      {chatRoomStatus === "MATCHED" && pageType === "CHAT" && formRoute && (
+        <Link to={formRoute} className="w-fit mb-3">
+          <Chip type="chips_square_form_view" />
+        </Link>
+      )}
       <div className="flex justify-center w-full relative">
         <ChatArea
           value={message}

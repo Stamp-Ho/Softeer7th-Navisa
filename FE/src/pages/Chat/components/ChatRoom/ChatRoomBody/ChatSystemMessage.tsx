@@ -5,6 +5,7 @@ import {
 } from "../../../../../assets/icon/StratisUi";
 import ChatSystemMessageBackground from "../../../../../assets/ChatSystemMessageBackground";
 import { useChatRoomContext } from "../../context/ChatRoomContext";
+import { Link } from "react-router-dom";
 
 type ChatSystemMessageParams = {
   pageType: "CHAT" | "DOCUMENT";
@@ -28,7 +29,7 @@ const ChatSystemMessage = ({
 }: ChatSystemMessageParams) => {
   const size = pageType === "DOCUMENT" ? "w-[300px]" : "w-[368px]";
   const { t } = useTranslation(["components"]);
-  const { chatRoomStatus } = useChatRoomContext(); // 채팅방 상태 가져오기
+  const { chatRoomStatus, documentId } = useChatRoomContext(); // 채팅방 상태 가져오기
 
   switch (type) {
     case "PROPOSAL":
@@ -79,11 +80,16 @@ const ChatSystemMessage = ({
               </div>
             </div>
           </div>
-          {/* {pageType === "CHAT" && chatRoomStatus === "MATCHED" && (
-            <button className="rounded-[6px] h-12 body-l-semibold bg-violet-50-transpar cursor-pointer">
-              {t("chatRoom.visaApplicationLink")}
-            </button>
-          )} */}
+          {pageType === "CHAT" &&
+            chatRoomStatus === "MATCHED" &&
+            documentId && (
+              <Link
+                to={`/document/${documentId}`}
+                className="flex justify-center items-center rounded-[6px] h-12 body-l-semibold bg-violet-50-transpar cursor-pointer"
+              >
+                {t("chatRoom.visaApplicationLink")}
+              </Link>
+            )}
         </div>
       );
 

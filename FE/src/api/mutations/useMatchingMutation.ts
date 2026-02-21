@@ -17,7 +17,6 @@ export const usePostProposal = (roomId: number) => {
         senderId: userId,
         content: "PROPOSAL",
         type: "PROPOSAL",
-        sentAt: new Date().toISOString(),
       };
       return chatService.postProposal(apiClient, roomId, data);
     },
@@ -36,7 +35,6 @@ export const usePostProposalRejected = (roomId: number) => {
         senderId: userId,
         content: "REJECTED",
         type: "REJECTED",
-        sentAt: new Date().toISOString(),
       };
       return chatService.postRejected(apiClient, roomId, data);
     },
@@ -55,7 +53,6 @@ export const usePostProposalAccepted = (roomId: number) => {
         senderId: userId,
         content: "ACCEPTED",
         type: "ACCEPTED",
-        sentAt: new Date().toISOString(),
       };
       return chatService.postAccepted(apiClient, roomId, data);
     },
@@ -74,7 +71,6 @@ export const usePostProposalCanceled = (roomId: number) => {
         senderId: userId,
         content: "CANCELED",
         type: "CANCELED",
-        sentAt: new Date().toISOString(),
       };
       return chatService.postCanceled(apiClient, roomId, data);
     },
@@ -93,7 +89,6 @@ export const usePostBlocked = (roomId: number) => {
         senderId: userId,
         content: "CHATROOM_BLOCKED",
         type: "CHATROOM_BLOCKED",
-        sentAt: new Date().toISOString(),
       };
       return chatService.postBlocked(apiClient, roomId, data);
     },

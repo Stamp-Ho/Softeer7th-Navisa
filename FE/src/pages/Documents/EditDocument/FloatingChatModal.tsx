@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import ChatRoom from "../../Chat/components/ChatRoom/ChatRoom";
 
 type FloatingChatModalProps = {
@@ -6,6 +7,12 @@ type FloatingChatModalProps = {
 };
 
 const FloatingChatModal = ({ onClose, chatRoomId }: FloatingChatModalProps) => {
+  const navigate = useNavigate();
+
+  const handleGoToChat = () => {
+    navigate("/chat", { state: { selectedChatRoomId: chatRoomId } });
+    onClose();
+  };
   return (
     <div
       role="dialog"
@@ -19,6 +26,7 @@ const FloatingChatModal = ({ onClose, chatRoomId }: FloatingChatModalProps) => {
         onModalAction={() => {}}
         profileImg={null}
         pageType="DOCUMENT"
+        onGoToChat={handleGoToChat}
       />
     </div>
   );

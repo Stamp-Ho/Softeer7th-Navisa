@@ -24,8 +24,8 @@ const groupChatLogs = (logs: ChatHistoryResponse[]) => {
       "isSentByMe" in log &&
       "isSentByMe" in prev &&
       prev.isSentByMe === log.isSentByMe;
-    const sameMinute = isSameMinute(prev.sentAt, log.sentAt);
-    const isNextDay = isDateChanged(prev.sentAt, log.sentAt);
+    const sameMinute = isSameMinute(prev.createdAt, log.createdAt);
+    const isNextDay = isDateChanged(prev.createdAt, log.createdAt);
 
     if (!isNextDay && sameSender && sameMinute) {
       lastGroup.push(log);
@@ -33,11 +33,10 @@ const groupChatLogs = (logs: ChatHistoryResponse[]) => {
       if (isNextDay) {
         groups.push([
           {
-            chatMessageId: -new Date(log.sentAt).getTime(),
+            chatMessageId: -new Date(log.createdAt).getTime(),
             isSentByMe: true,
             type: "SYSTEM",
             content: "DATE_REMINDER",
-            sentAt: log.sentAt,
             createdAt: log.createdAt,
             isRead: true,
           },

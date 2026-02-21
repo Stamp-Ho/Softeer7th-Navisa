@@ -12,9 +12,16 @@ type HeaderParams = {
   headerData: ChatRoomHeaderData;
   onClose: () => void;
   onModalAction: (num: number) => void;
+  onGoToChat?: () => void;
 };
 
-const ChatRoomHeader = ({ pageType, headerData, onClose, onModalAction }: HeaderParams) => {
+const ChatRoomHeader = ({
+  pageType,
+  headerData,
+  onClose,
+  onModalAction,
+  onGoToChat,
+}: HeaderParams) => {
   const { t } = useTranslation(["components"]);
   const { chatRoomStatus } = useChatRoomContext();
   return (
@@ -57,21 +64,25 @@ const ChatRoomHeader = ({ pageType, headerData, onClose, onModalAction }: Header
           </div>
         </div>
 
-        {/* {pageType === "DOCUMENT" ? (
-          <div className="flex flex-row justify-end w-full px-6 py-[2px] bg-violet-50">
-            <Chip type="chips_square_chatroom" />
-          </div>
-        ) : (
-          chatRoomStatus !== "CHATROOM_BLOCKED" && (
-            <div className="flex flex-row justify-between w-full px-6 py-[2px] bg-gradient-to-r from-violet-50 to-green-50">
-              <div className="flex flex-row items-center gap-2 body-s-semibold text-text-base">
-                <span>{t("chatRoom.systemNotice")}</span>
-                <span>{t("chatRoom.reviewPrompt")}</span>
+        {pageType === "DOCUMENT"
+          ? onGoToChat && (
+              <button
+                type="button"
+                onClick={onGoToChat}
+                className="flex flex-row justify-end items-center w-full px-6 py-2 bg-violet-50 gap-2"
+              >
+                <Chip type="chips_square_chatroom" />
+              </button>
+            )
+          : chatRoomStatus !== "CHATROOM_BLOCKED" && (
+              <div className="flex flex-row justify-between w-full px-6 py-[2px] bg-gradient-to-r from-violet-50 to-green-50">
+                <div className="flex flex-row items-center gap-2 body-s-semibold text-text-base">
+                  <span>{t("chatRoom.systemNotice")}</span>
+                  <span>{t("chatRoom.reviewPrompt")}</span>
+                </div>
+                <Chip type="chips_square_review" />
               </div>
-              <Chip type="chips_square_review" />
-            </div>
-          )
-        )} */}
+            )}
       </div>
     </>
   );

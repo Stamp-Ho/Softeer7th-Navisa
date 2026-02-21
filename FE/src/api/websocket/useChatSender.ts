@@ -22,7 +22,6 @@ export const useChatSender = () => {
       clientMessageId: uuidv4(), // echo 처리용
       content,
       type,
-      sentAt: new Date().toISOString(),
     };
 
     sendMessage(payload);

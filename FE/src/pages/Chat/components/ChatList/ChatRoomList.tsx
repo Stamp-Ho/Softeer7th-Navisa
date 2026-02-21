@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ChatRoomCard from "./ChatRoomCard";
 import type { ChatRoomResponse } from "../../../../api/types/chat";
+import { ChatRoomProvider } from "../context/ChatRoomContext";
 
 type ChatRoomListProps = {
   chatRooms: ChatRoomResponse[];
@@ -82,14 +83,20 @@ const ChatRoomList = ({
           }
           onClick={() => onSelectChat(data.chatRoomId, data.profileImgUrl)}
         >
-          <ChatRoomCard
-            profileImgUrl={data.profileImgUrl ?? ""}
-            opponentName={data.opponentName}
-            roomStatus={data.roomStatus}
-            lastMessage={data.lastMessage}
-            noneRead={data.noneReadCount}
-            lastChattedAt={data.lastChattedAt}
-          />
+          <ChatRoomProvider
+            chatRoomId={data.chatRoomId}
+            isActive={selectedChatRoomId === data.chatRoomId}
+          >
+            <ChatRoomCard
+              profileImgUrl={data.profileImgUrl ?? ""}
+              opponentName={data.opponentName}
+              lastMessage={data.lastMessage}
+              noneRead={data.noneReadCount}
+              lastChattedAt={data.lastChattedAt}
+              proposed={data.proposed}
+              proposalMatched={data.proposalMatched}
+            />
+          </ChatRoomProvider>
         </div>
       ))}
 
