@@ -2,6 +2,7 @@ package com.navisa.be.auth.jwt;
 
 import com.navisa.be.auth.exception.AuthException;
 import com.navisa.be.global.web.response.ResponseStatus;
+import com.navisa.be.user.model.enums.UserType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -21,7 +23,7 @@ public class JwtProvider {
     private String secretKey;
 
     private SecretKey key;
-    private final long accessTokenValidity = 1000L * 60 * 60; // 1시간
+    private final long accessTokenValidity = 1000L * 60 * 10; // 10분
     private final long refreshTokenValidity = 1000L * 60 * 60 * 24 * 7; //  7일
 
     // 빈 초기화 시점에 문자열 키를 Key 객체로 변환
@@ -31,22 +33,24 @@ public class JwtProvider {
     }
 
     // Access Token 생성
-    public String createAccessToken(String email) {
-        return createToken(email, accessTokenValidity);
+    public String createAccessToken(String email, UUID userId, UserType userType) {
+        return createToken(email, userId, userType, accessTokenValidity);
     }
 
     // Refresh Token 생성
-    public String createRefreshToken(String email) {
-        return createToken(email, refreshTokenValidity);
+    public String createRefreshToken(String email, UUID userId, UserType userType) {
+        return createToken(email, userId, userType, refreshTokenValidity);
     }
 
     // 공통 토큰 생성 로직
-    private String createToken(String email, long validityTime) {
+    private String createToken(String email, UUID userId, UserType userType, long validityTime) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + validityTime);
 
         return Jwts.builder()
                 .subject(email)
+                .claim("userId", userId.toString())
+                .claim("userType", userType.name())
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(key)

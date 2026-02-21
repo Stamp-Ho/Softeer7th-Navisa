@@ -21,6 +21,9 @@ public record BaseResponse<T>(
         this(ResponseStatus.SUCCESS.getCode(), ResponseStatus.SUCCESS.getMessage(), result);
     }
 
+    // 응답 상태 지정 결과값 응답
+    public BaseResponse(ResponseStatus status, T result) { this(status.getCode(), status.getMessage(), result); }
+
     // 메시지 직접 지정 성공 응답
     public BaseResponse(String message, T result) {
         this(ResponseStatus.SUCCESS.getCode(), message, result);

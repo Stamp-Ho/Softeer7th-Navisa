@@ -5,15 +5,12 @@ import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.global.web.response.ResponseStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import java.security.SignatureException;
 
 @Component
 @RequiredArgsConstructor
@@ -43,9 +40,16 @@ public class AuthInterceptor implements HandlerInterceptor {
         try {
             Claims claims = jwtProvider.getClaims(token);
             String email = claims.getSubject();
+            String userType = claims.get("userType", String.class);
+
+            // 리팩토링 내용 배포 전에 발행된 토큰에 대해서 토큰 재발급 유도를 하는 로직
+            if (userType == null) {
+                throw new AuthException(ResponseStatus.ACCESS_TOKEN_EXPIRED);
+            }
 
             request.setAttribute("accessToken", token);
             request.setAttribute("email", email);
+            request.setAttribute("userType", userType);
             return true;
 
         } catch (ExpiredJwtException e) {

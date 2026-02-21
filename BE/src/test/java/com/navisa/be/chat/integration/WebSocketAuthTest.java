@@ -23,7 +23,7 @@ class WebSocketAuthTest extends WebSocketIntegrationTestSupport {
     void connect_WithValidToken_Succeeds() throws ExecutionException, InterruptedException, TimeoutException {
         // given
         User user = userTestFixture.createUser("valid@example.com", UserType.FILLED_FOREIGNER);
-        String accessToken = jwtProvider.createAccessToken(user.getEmail());
+        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getId(), user.getUserType());
 
         String url = String.format("ws://localhost:%d/ws", port);
         StompHeaders connectHeaders = new StompHeaders();
@@ -76,7 +76,7 @@ class WebSocketAuthTest extends WebSocketIntegrationTestSupport {
     void connect_WithInvalidUserType_Fails() {
         // given
         User user = userTestFixture.createUser("unfilled@example.com", UserType.UNFILLED_FOREIGNER);
-        String accessToken = jwtProvider.createAccessToken(user.getEmail());
+        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getId(), user.getUserType());
 
         String url = String.format("ws://localhost:%d/ws", port);
         StompHeaders connectHeaders = new StompHeaders();

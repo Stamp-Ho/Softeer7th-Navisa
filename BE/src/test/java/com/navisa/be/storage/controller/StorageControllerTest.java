@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.global.common.dto.request.IssuedPresignedUrlRequest;
 import com.navisa.be.support.IntegrationTestSupport;
+import com.navisa.be.user.model.enums.UserType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -59,7 +61,7 @@ class StorageControllerTest extends IntegrationTestSupport {
         when(s3Presigner.presignPutObject(any(PutObjectPresignRequest.class)))
                 .thenReturn(mockPresignedRequest);
 
-        String accessToken = jwtProvider.createAccessToken("email");
+        String accessToken = jwtProvider.createAccessToken("email", UUID.randomUUID(), UserType.VALID_AGENT);
 
         // when & then
         mockMvc.perform(post("/api/storage/presigned-url")

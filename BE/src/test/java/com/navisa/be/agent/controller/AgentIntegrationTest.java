@@ -6,12 +6,15 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.model.enums.BadgeName;
 import com.navisa.be.auth.jwt.JwtProvider;
+import com.navisa.be.auth.model.entity.RefreshToken;
+import com.navisa.be.auth.repository.RefreshTokenRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.common.model.entity.Language;
 import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.support.*;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
@@ -56,27 +60,40 @@ class AgentIntegrationTest extends IntegrationTestSupport {
     @Autowired
     private ForeignerProfileTestFixture foreignerProfileTestFixture;
 
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+
     @Test
     @DisplayName("에이전트 프로필 등록 성공에 성공한다")
     void registerAgentProfile_shouldReturnOk() throws Exception {
         // given
         User user = userTestFixture.createUser("email", UserType.INVALID_AGENT);
-        String accessToken = jwtProvider.createAccessToken(user.getEmail());
+
+        // JwtProvider로 직접 토큰 생성 후 refreshToken을 Redis에 저장
+        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getId(), user.getUserType());
+        String refreshTokenValue = jwtProvider.createRefreshToken(user.getEmail(), user.getId(), user.getUserType());
+        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshTokenValue));
 
         JobCode jobCode = agentProfileTestFixture.createJobCode("코드1", "직무1");
         Language lang = agentProfileTestFixture.createLanguage("언어");
 
-        AgentProfileRegistrationRequest request = AgentFixture.createAgentProfileRegistrationRequest(List.of(jobCode.getId()), List.of(lang.getId()), new AgentProfileRegistrationRequest.LicenseInfoDto("자격증 번호",
-                LocalDate.now(),
-                "Page-10",
-                null));
+        AgentProfileRegistrationRequest request = AgentFixture.createAgentProfileRegistrationRequest(
+                List.of(jobCode.getId()), List.of(lang.getId()),
+                new AgentProfileRegistrationRequest.LicenseInfoDto("자격증 번호",
+                        LocalDate.now(),
+                        "Page-10",
+                        null));
 
         // when & then
         mockMvc.perform(post("/api/agent/profile")
                         .header("Authorization", "Bearer " + accessToken)
+                        .cookie(new Cookie("refreshToken", refreshTokenValue))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(201))
+                .andExpect(jsonPath("$.result.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.result.userType").value("VALID_AGENT"))
                 .andDo(print()); // 요청 응답 로그 출력
     }
 
@@ -84,9 +101,10 @@ class AgentIntegrationTest extends IntegrationTestSupport {
     @DisplayName("에이전트 프로필 등록 요청의 필드가 null이면 400에러를 반환한다")
     void registerAgentProfile_shouldReturnBadRequest_whenRequestConsistOfNull() throws Exception {
         // given
-        AgentProfileRegistrationRequest request = AgentFixture.getAgentProfileRegistrationRequestConsistingOfNull();
+        AgentProfileRegistrationRequest request = AgentFixture
+                .getAgentProfileRegistrationRequestConsistingOfNull();
 
-        String accessToken = jwtProvider.createAccessToken("email");
+        String accessToken = jwtProvider.createAccessToken("email", UUID.randomUUID(), UserType.VALID_AGENT);
 
         // when & then
         mockMvc.perform(post("/api/agent/profile")
@@ -105,7 +123,7 @@ class AgentIntegrationTest extends IntegrationTestSupport {
         jobCodeRepository.save(new JobCode(null, "C001", "백엔드 개발자", new float[512], null));
         jobCodeRepository.save(new JobCode(null, "C002", "프론트엔드 개발자", new float[512], null));
 
-        String accessToken = jwtProvider.createAccessToken("email");
+        String accessToken = jwtProvider.createAccessToken("email", UUID.randomUUID(), UserType.VALID_AGENT);
 
         // when & then
         mockMvc.perform(get("/api/agent/register-form/jobcodes")
@@ -136,7 +154,8 @@ class AgentIntegrationTest extends IntegrationTestSupport {
         User loginUser = userTestFixture.createUser("agent2@test.com", UserType.FILLED_FOREIGNER);
         foreignerProfileTestFixture.createForeignerProfile(loginUser);
 
-        String accessToken = jwtProvider.createAccessToken(loginUser.getEmail());
+        String accessToken = jwtProvider.createAccessToken(loginUser.getEmail(), loginUser.getId(),
+                loginUser.getUserType());
 
         // when & then
         mockMvc.perform(get("/api/agent/" + agentProfile.getId())

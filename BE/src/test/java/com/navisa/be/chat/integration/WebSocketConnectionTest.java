@@ -33,7 +33,7 @@ class WebSocketConnectionTest extends WebSocketIntegrationTestSupport {
     void verifyAutoSubscriptionOnConnect() throws Exception {
         // given
         User user = userTestFixture.createUser("ws@example.com", UserType.FILLED_FOREIGNER);
-        String accessToken = jwtProvider.createAccessToken(user.getEmail());
+        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getId(), user.getUserType());
 
         StompHeaders connectHeaders = new StompHeaders();
         connectHeaders.add("Authorization", "Bearer " + accessToken);

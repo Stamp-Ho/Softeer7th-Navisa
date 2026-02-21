@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -43,6 +44,23 @@ public class GlobalExceptionHandler {
         log.error("Validation Error - Field: {}, Message: {}", firstError.getField(), firstError.getDefaultMessage());
 
         BaseResponse<Void> response = new BaseResponse<>(ResponseStatus.BAD_REQUEST, errorMessage);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ResponseStatus.BAD_REQUEST.getCode()));
+    }
+
+    /**
+     * 스프링 @CookieValue 어노테이션에 대해서 쿠키를 같이 전송하지 않았을 때의 예외처리
+     */
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<BaseResponse<Void>> handleMissingRequestCookieException(MissingRequestCookieException e) {
+        // 1. 누락된 쿠키 이름 추출
+        String missingCookieName = e.getCookieName();
+
+        // 2. 메시지 커스텀 (예: "필수 쿠키인 'refreshToken'이 누락되었습니다.")
+        String customMessage = String.format("필수 쿠키('%s')가 누락되었습니다.", missingCookieName);
+
+        // 3. 응답 객체 생성
+        BaseResponse<Void> response = new BaseResponse<>(ResponseStatus.BAD_REQUEST, customMessage);
+
         return new ResponseEntity<>(response, HttpStatus.valueOf(ResponseStatus.BAD_REQUEST.getCode()));
     }
 

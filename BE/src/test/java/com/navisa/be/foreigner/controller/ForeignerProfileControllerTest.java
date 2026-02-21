@@ -65,7 +65,7 @@ class ForeignerProfileControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        Claims mockClaims = Jwts.claims().subject(mockEmail).build();
+        Claims mockClaims = Jwts.claims().subject(mockEmail).add("userId", java.util.UUID.randomUUID().toString()).add("userType", "FILLED_FOREIGNER").build();
 
         given(jwtProvider.getClaims(anyString())).willReturn(mockClaims);
 
@@ -109,7 +109,7 @@ class ForeignerProfileControllerTest {
     @DisplayName("행정사의 외국인 상세 조회 성공 시 200 OK를 반환한다.")
     void findForeignerDetail_Success() throws Exception {
         // given
-        given(authService.checkUserType(any(), any())).willReturn(true);
+        given(authService.checkUserType(anyString(), any())).willReturn(true);
         ForeignerDetailResponse response = ForeignerFixture.createFindForeignerDetailResponse();
         given(foreignerProfileDetailService.findForeignerDetail(any(ForeignerDetailRequest.class))).willReturn(response);
 
@@ -127,7 +127,7 @@ class ForeignerProfileControllerTest {
     void getForeignerProgress_Success() throws Exception {
         // given
         ForeignerProgressResponse mockResponse = new ForeignerProgressResponse(true, false, true, true, 134L);
-        given(authService.checkUserType(any(), any())).willReturn(true);
+        given(authService.checkUserType(anyString(), any())).willReturn(true);
         given(foreignerProfileDetailService.getForeignerProgress(mockEmail)).willReturn(mockResponse);
 
         // when & then
@@ -156,7 +156,7 @@ class ForeignerProfileControllerTest {
     @DisplayName("매칭 내역이 없는 외국인이 진행 상태 조회 시 초기 상태 객체를 반환한다.")
     void getForeignerProgress_EmptyData() throws Exception {
         // given
-        given(authService.checkUserType(any(), any())).willReturn(true);
+        given(authService.checkUserType(anyString(), any())).willReturn(true);
         given(foreignerProfileDetailService.getForeignerProgress(mockEmail))
                 .willReturn(new ForeignerProgressResponse(false, false, false, false, null));
 

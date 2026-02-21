@@ -77,16 +77,17 @@ class ChatRoomCommandControllerTest {
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
         given(loginUserResolver.supportsParameter(any())).willReturn(true);
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
-        given(authService.checkUserType(eq(mockEmail), any())).willReturn(true);
+        given(authService.checkUserType(anyString(), any())).willReturn(true);
         given(chatRoomCommandService.create(any(CreateChatRoomRequest.class), anyString()))
                 .willReturn(new CreateChatRoomResponse(createdChatRoomId));
 
         // when & then
         mockMvc.perform(post("/api/chatroom")
-                .header("Authorization", "Bearer test-token")
-                .requestAttr("email", mockEmail)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                        .header("Authorization", "Bearer test-token")
+                        .requestAttr("email", mockEmail)
+                        .requestAttr("userType", "VALID_AGENT")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
@@ -108,10 +109,11 @@ class ChatRoomCommandControllerTest {
 
         // when & then
         mockMvc.perform(post("/api/chatroom")
-                .header("Authorization", "Bearer test-token")
-                .requestAttr("email", mockEmail)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                        .header("Authorization", "Bearer test-token")
+                        .requestAttr("email", mockEmail)
+                        .requestAttr("userType", "VALID_AGENT")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value(ResponseStatus.FORBIDDEN.getMessage()));
@@ -128,12 +130,13 @@ class ChatRoomCommandControllerTest {
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
 
-        given(authService.checkUserType(eq(mockEmail), any())).willReturn(true);
+        given(authService.checkUserType(anyString(), any())).willReturn(true);
 
         // when & then
         mockMvc.perform(post("/api/chatroom")
                         .header("Authorization", "Bearer test-token")
                         .requestAttr("email", mockEmail)
+                        .requestAttr("userType", "VALID_AGENT")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())

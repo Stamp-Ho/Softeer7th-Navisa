@@ -61,8 +61,8 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
         ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // 두 사용자 모두 연결
-        String agentToken = jwtProvider.createAccessToken(agentUser.getEmail());
-        String foreignerToken = jwtProvider.createAccessToken(foreignerUser.getEmail());
+        String agentToken = jwtProvider.createAccessToken(agentUser.getEmail(), agentUser.getId(), agentUser.getUserType());
+        String foreignerToken = jwtProvider.createAccessToken(foreignerUser.getEmail(), foreignerUser.getId(), foreignerUser.getUserType());
         StompSession agentSession = connectSession(agentToken);
         StompSession foreignerSession = connectSession(foreignerToken);
 
@@ -136,7 +136,7 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
                 agentProfile,
                 ChatRoomStatus.DEFAULT);
 
-        String agentToken = jwtProvider.createAccessToken(agentUser.getEmail());
+        String agentToken = jwtProvider.createAccessToken(agentUser.getEmail(), agentUser.getId(), agentUser.getUserType());
 
         // 행정사의 두 가지 세션 연결
         StompSession agentSession1 = connectSession(agentToken);
@@ -187,8 +187,8 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
                 agentProfile.getId(), "Hello", false);
 
         // WebSocket 연결
-        String agentToken = jwtProvider.createAccessToken(agentUser.getEmail());
-        String foreignerToken = jwtProvider.createAccessToken(foreignerUser.getEmail());
+        String agentToken = jwtProvider.createAccessToken(agentUser.getEmail(), agentUser.getId(), agentUser.getUserType());
+        String foreignerToken = jwtProvider.createAccessToken(foreignerUser.getEmail(), foreignerUser.getId(), foreignerUser.getUserType());
         StompSession agentSession = connectSession(agentToken);
         StompSession foreignerSession = connectSession(foreignerToken);
 
@@ -235,7 +235,7 @@ public class WebSocketChattingTest extends WebSocketIntegrationTestSupport {
                 jobCode, false);
 
         // WebSocket 연결
-        String foreignerToken = jwtProvider.createAccessToken(foreignerUser.getEmail());
+        String foreignerToken = jwtProvider.createAccessToken(foreignerUser.getEmail(), foreignerUser.getId(), foreignerUser.getUserType());
         StompSession foreignerSession = connectSession(foreignerToken);
 
         // 외국인이 자신의 채널 구독

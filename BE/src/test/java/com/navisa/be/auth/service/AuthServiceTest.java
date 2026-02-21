@@ -3,7 +3,6 @@ package com.navisa.be.auth.service;
 import com.navisa.be.agent.service.AgentProfileCrudService;
 import com.navisa.be.auth.dto.request.GoogleLoginRequest;
 import com.navisa.be.auth.dto.request.LoginRequest;
-import com.navisa.be.auth.dto.request.LogoutRequest;
 import com.navisa.be.auth.dto.request.SignupRequest;
 import com.navisa.be.auth.dto.response.LoginResponse;
 import com.navisa.be.auth.dto.response.SignupResponse;
@@ -30,14 +29,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,8 +70,8 @@ class AuthServiceTest {
 
         given(userRepository.findByEmail(anyString())).willReturn(Optional.empty());
         given(userRepository.save(any(User.class))).willReturn(user);
-        given(jwtProvider.createAccessToken(anyString())).willReturn("access-token");
-        given(jwtProvider.createRefreshToken(anyString())).willReturn("refresh-token");
+        given(jwtProvider.createAccessToken(anyString(), any(), any())).willReturn("access-token");
+        given(jwtProvider.createRefreshToken(anyString(), any(), any())).willReturn("refresh-token");
 
         SignupResponse responseResult = authService.signup(request, response);
 
@@ -97,8 +94,8 @@ class AuthServiceTest {
         LoginRequest request = new LoginRequest(email, rawPassword);
 
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
-        given(jwtProvider.createAccessToken(email)).willReturn("access-token");
-        given(jwtProvider.createRefreshToken(email)).willReturn("refresh-token");
+        given(jwtProvider.createAccessToken(eq(email), any(), any())).willReturn("access-token");
+        given(jwtProvider.createRefreshToken(eq(email), any(), any())).willReturn("refresh-token");
 
         LoginResponse responseResult = authService.login(request, response);
 
@@ -167,8 +164,8 @@ class AuthServiceTest {
         // NPE 방지: save 호출 시 인자로 받은 유저 객체를 그대로 반환하도록 설정
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        when(jwtProvider.createAccessToken(anyString())).thenReturn("test-access-token");
-        when(jwtProvider.createRefreshToken(anyString())).thenReturn("test-refresh-token");
+        when(jwtProvider.createAccessToken(anyString(), any(), any())).thenReturn("test-access-token");
+        when(jwtProvider.createRefreshToken(anyString(), any(), any())).thenReturn("test-refresh-token");
 
         SignupResponse responseResult = authService.signup(request, response);
 
@@ -217,13 +214,17 @@ class AuthServiceTest {
         String oldRefreshToken = "old-rt";
         String email = "test@test.com";
         RefreshToken savedToken = new RefreshToken(email, oldRefreshToken);
+        String hashedPw = BCrypt.hashpw("correct-password", BCrypt.gensalt());
+        User user = new User(email, hashedPw, UserType.INVALID_AGENT, LoginType.EMAIL, true);
 
-        Claims claims = Jwts.claims().subject(email).build();
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+
+        Claims claims = Jwts.claims().subject(email).add("userId", UUID.randomUUID().toString()).add("userType", "VALID_AGENT").build();
         given(jwtProvider.getClaims(oldRefreshToken)).willReturn(claims);
 
         given(refreshTokenRepository.findById(email)).willReturn(Optional.of(savedToken));
-        given(jwtProvider.createAccessToken(email)).willReturn("new-at");
-        given(jwtProvider.createRefreshToken(email)).willReturn("new-rt");
+        given(jwtProvider.createAccessToken(eq(email), any(), any())).willReturn("new-at");
+        given(jwtProvider.createRefreshToken(eq(email), any(), any())).willReturn("new-rt");
 
         // when
         TokenResponse responseResult = authService.reissue(oldRefreshToken, response);
@@ -248,8 +249,8 @@ class AuthServiceTest {
         LoginRequest request = new LoginRequest(email, password);
 
         given(userRepository.findByEmail(email)).willReturn(Optional.of(agent));
-        given(jwtProvider.createAccessToken(anyString())).willReturn("at");
-        given(jwtProvider.createRefreshToken(anyString())).willReturn("rt");
+        given(jwtProvider.createAccessToken(anyString(), any(), any())).willReturn("at");
+        given(jwtProvider.createRefreshToken(anyString(), any(), any())).willReturn("rt");
         given(agentProfileCrudService.existsByUserId(agent.getId())).willReturn(true);
 
         // when
@@ -271,8 +272,8 @@ class AuthServiceTest {
         LoginRequest request = new LoginRequest(email, password);
 
         given(userRepository.findByEmail(email)).willReturn(Optional.of(foreigner));
-        given(jwtProvider.createAccessToken(anyString())).willReturn("at");
-        given(jwtProvider.createRefreshToken(anyString())).willReturn("rt");
+        given(jwtProvider.createAccessToken(anyString(), any(), any())).willReturn("at");
+        given(jwtProvider.createRefreshToken(anyString(), any(), any())).willReturn("rt");
 
         // when
         authService.login(request, response);
@@ -296,8 +297,8 @@ class AuthServiceTest {
 
         given(agentProfileCrudService.existsByUserId(any())).willReturn(true);
 
-        given(jwtProvider.createAccessToken(anyString())).willReturn("at");
-        given(jwtProvider.createRefreshToken(anyString())).willReturn("rt");
+        given(jwtProvider.createAccessToken(anyString(), any(), any())).willReturn("at");
+        given(jwtProvider.createRefreshToken(anyString(), any(), any())).willReturn("rt");
 
         // when
         authService.googleLogin(request, response);

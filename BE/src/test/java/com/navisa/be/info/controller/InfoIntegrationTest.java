@@ -5,6 +5,7 @@ import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.global.common.model.entity.Language;
 import com.navisa.be.global.common.repository.LanguageRepository;
 import com.navisa.be.support.IntegrationTestSupport;
+import com.navisa.be.user.model.enums.UserType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -41,7 +43,7 @@ class InfoIntegrationTest extends IntegrationTestSupport {
         // given
         List<Language> languages = languageRepository.saveAll(List.of(new Language(null, "한국어"), new Language(null, "영어")));
 
-        String accessToken = jwtProvider.createAccessToken("email");
+        String accessToken = jwtProvider.createAccessToken("email", UUID.randomUUID(), UserType.VALID_AGENT);
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/info/languages")

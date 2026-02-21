@@ -71,7 +71,7 @@ class ChatRoomQueryControllerTest {
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-        given(authService.checkUserType(eq(mockEmail), any())).willReturn(true);
+        given(authService.checkUserType(anyString(), any())).willReturn(true);
         given(chatRoomServiceFacade.findAllChatRoomsByNoOffset(eq(mockEmail), any(), any(SliceRequest.class)))
                 .willReturn(response);
 
@@ -79,6 +79,7 @@ class ChatRoomQueryControllerTest {
         mockMvc.perform(get("/api/chatrooms")
                         .header("Authorization", "Bearer test-token")
                         .requestAttr("email", mockEmail)
+                        .requestAttr("userType", "VALID_AGENT")
                         .param("size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -94,14 +95,15 @@ class ChatRoomQueryControllerTest {
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-        given(authService.checkUserType(eq(mockEmail), any())).willReturn(true);
+        given(authService.checkUserType(anyString(), any())).willReturn(true);
         given(chatMessageServiceFacade.findNonReadCountByUserEmail(mockEmail))
                 .willReturn(response);
 
         // when & then
         mockMvc.perform(get("/api/chatrooms/nonread/count")
                         .header("Authorization", "Bearer test-token")
-                        .requestAttr("email", mockEmail))
+                        .requestAttr("email", mockEmail)
+                        .requestAttr("userType", "VALID_AGENT"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
@@ -117,14 +119,15 @@ class ChatRoomQueryControllerTest {
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-        given(authService.checkUserType(eq(mockEmail), any())).willReturn(true);
+        given(authService.checkUserType(anyString(), any())).willReturn(true);
         given(chatMessageServiceFacade.findMatchedNonReadCountByUserEmail(mockEmail))
                 .willReturn(response);
 
         // when & then
         mockMvc.perform(get("/api/chatrooms/matched/count")
                         .header("Authorization", "Bearer test-token")
-                        .requestAttr("email", mockEmail))
+                        .requestAttr("email", mockEmail)
+                        .requestAttr("userType", "VALID_AGENT"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
@@ -145,14 +148,15 @@ class ChatRoomQueryControllerTest {
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
-        given(authService.checkUserType(eq(mockEmail), any())).willReturn(true);
+        given(authService.checkUserType(anyString(), any())).willReturn(true);
         given(chatRoomQueryService.findParticipantsInfoById(chatRoomId, mockEmail))
                 .willReturn(response);
 
         // when & then
         mockMvc.perform(get("/api/chatrooms/{roomId}/participants-info", chatRoomId)
                         .header("Authorization", "Bearer test-token")
-                        .requestAttr("email", mockEmail))
+                        .requestAttr("email", mockEmail)
+                        .requestAttr("userType", "VALID_AGENT"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))

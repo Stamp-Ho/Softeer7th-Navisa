@@ -36,7 +36,7 @@ class WebSocketSessionManagementTest extends WebSocketIntegrationTestSupport {
     void sessionCountShouldIncrementAndDecrement() throws ExecutionException, InterruptedException, TimeoutException {
         // Given
         User user = userTestFixture.createUser("test@example.com", UserType.FILLED_FOREIGNER);
-        String token = jwtProvider.createAccessToken(user.getEmail());
+        String token = jwtProvider.createAccessToken(user.getEmail(), user.getId(), user.getUserType());
         String userIdStr = user.getId().toString();
 
         StompHeaders headers = new StompHeaders();

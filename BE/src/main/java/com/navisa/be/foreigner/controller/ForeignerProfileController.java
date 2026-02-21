@@ -1,12 +1,14 @@
 package com.navisa.be.foreigner.controller;
 
+import com.navisa.be.auth.dto.response.LoginResponse;
+import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.foreigner.dto.request.ForeignerDetailRequest;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.dto.response.ForeignerDetailResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerProgressResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerQueryResponse;
 import com.navisa.be.foreigner.dto.response.ForeignerStatusResponse;
-import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
+import com.navisa.be.foreigner.exception.ForeignerException;
 import com.navisa.be.foreigner.service.ForeignerProfileDetailService;
 import com.navisa.be.foreigner.service.ForeignerRegistrationService;
 import com.navisa.be.global.web.annotation.HasUserType;
@@ -17,6 +19,7 @@ import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,18 +34,26 @@ public class ForeignerProfileController {
 
     private final ForeignerRegistrationService foreignerRegistrationService;
     private final ForeignerProfileDetailService foreignerProfileDetailService;
-    private final ForeignerProfileCrudService foreignerProfileCrudService;
+    private final AuthService authService;
 
     @Operation(summary = "외국인 프로필 등록/수정 API",
             description = "외국인 회원의 프로필 정보를 등록하거나 수정합니다. 모든 하위 정보(경력, 학력 등)를 포함하여 저장합니다.")
     @PostMapping("/profile")
     @HasUserType({UserType.UNFILLED_FOREIGNER, UserType.FILLED_FOREIGNER})
-    public BaseResponse<Void> registerForeignerProfile(
+    public BaseResponse<LoginResponse> registerForeignerProfile(
             @Parameter(hidden = true) @LoginUser String email,
-            @Valid @RequestBody ForeignerRegisterRequest request) {
+            @Valid @RequestBody ForeignerRegisterRequest request,
+            @CookieValue(name = "refreshToken") String refreshToken,
+            HttpServletResponse httpServletResponse) {
 
         foreignerRegistrationService.registerAllForeignerInfo(request, email);
-        return new BaseResponse<>(ResponseStatus.CREATED_FOREIGNER_PROFILE, null);
+        LoginResponse updatedUserTypeResponse;
+        try {
+            updatedUserTypeResponse = authService.updateTokenUserTypeByReissue(refreshToken, httpServletResponse);
+        } catch (Exception e) {
+            throw new ForeignerException(ResponseStatus.ACCESS_TOKEN_EXPIRED, "권한 승격에 따라 액세스 토큰 재발급하는 과정에서 실패했습니다. reissue 요청 부탁드립니다.");
+        }
+        return new BaseResponse<>(ResponseStatus.CREATED_FOREIGNER_PROFILE, updatedUserTypeResponse);
     }
 
     @Operation(summary = "내 프로필 조회", description = "현재 로그인한 외국인 회원의 전체 프로필 정보를 조회합니다.")

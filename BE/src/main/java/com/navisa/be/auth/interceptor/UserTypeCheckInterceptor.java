@@ -35,14 +35,14 @@ public class UserTypeCheckInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // 요청에서 이메일을 추출하고 사용자가 역할을 가지는지 확인
-        String email = (String) request.getAttribute("email");
-        if(email == null || email.isBlank()){
+        // 요청에서 userType을 추출하고 사용자가 역할을 가지는지 확인
+        String userType = (String) request.getAttribute("userType");
+        if(userType == null || userType.isBlank()){
             throw new AuthException(ResponseStatus.FORBIDDEN);
         }
 
         // 사용자의 역할과 어노테이션에 명시된 역할이 다르면 예외 발생
-        if(!authService.checkUserType(email, hasUserType.value())){
+        if(!authService.checkUserType(userType, hasUserType.value())){
             throw new AuthException(ResponseStatus.FORBIDDEN);
         }
 

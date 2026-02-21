@@ -51,7 +51,7 @@ class UserTypeCheckInterceptorTest extends IntegrationTestSupport {
         // given
         User foreigner = new User("email1", "hash", UserType.FILLED_FOREIGNER, LoginType.EMAIL, true);
         User savedForeigner = userRepository.save(foreigner);
-        String accessToken = jwtProvider.createAccessToken(savedForeigner.getEmail());
+        String accessToken = jwtProvider.createAccessToken(savedForeigner.getEmail(), savedForeigner.getId(), savedForeigner.getUserType());
 
         // when & then
         mockMvc.perform(get("/api/test/usertype/based/auth")
@@ -65,7 +65,7 @@ class UserTypeCheckInterceptorTest extends IntegrationTestSupport {
         // given
         User agent = new User("email1", "hash", UserType.VALID_AGENT, LoginType.EMAIL, true);
         User savedAgent = userRepository.save(agent);
-        String accessToken = jwtProvider.createAccessToken(savedAgent.getEmail());
+        String accessToken = jwtProvider.createAccessToken(savedAgent.getEmail(), savedAgent.getId(), savedAgent.getUserType());
 
         // when & then
         mockMvc.perform(get("/api/test/usertype/based/auth")
@@ -79,7 +79,7 @@ class UserTypeCheckInterceptorTest extends IntegrationTestSupport {
         // given
         User admin = new User("email1", "hash", UserType.ADMIN, LoginType.EMAIL, true);
         User savedAdmin = userRepository.save(admin);
-        String accessToken = jwtProvider.createAccessToken(savedAdmin.getEmail());
+        String accessToken = jwtProvider.createAccessToken(savedAdmin.getEmail(), savedAdmin.getId(), savedAdmin.getUserType());
 
         // when & then
         mockMvc.perform(get("/api/test/usertype/based/auth")

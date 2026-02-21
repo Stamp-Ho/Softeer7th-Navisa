@@ -3,7 +3,10 @@ package com.navisa.be.agent.controller;
 import com.navisa.be.agent.dto.request.*;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.dto.response.JobCodeListResponse;
+import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.service.*;
+import com.navisa.be.auth.dto.response.LoginResponse;
+import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.global.common.service.JobCodeService;
 import com.navisa.be.global.web.annotation.HasUserType;
 import com.navisa.be.agent.dto.response.AgentDetailResponse;
@@ -11,12 +14,14 @@ import com.navisa.be.global.web.annotation.LoginUser;
 import com.navisa.be.global.web.annotation.SliceInfo;
 import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.global.web.response.BaseResponse;
+import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.global.web.response.SliceResponse;
 import com.navisa.be.user.model.enums.UserType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -33,16 +38,26 @@ public class AgentProfileController {
     private final AgentProfileRegistrationService agentProfileRegistrationService;
     private final AgentProfileSearchService agentProfileSearchService;
     private final JobCodeService jobCodeService;
+    private final AuthService authService;
 
     @Operation(
             summary = "행정사 프로필 등록 API",
             description = "행정사가 프로필을 등록하기 위해서 사용하는 API입니다."
     )
     @PostMapping("/profile")
-    public BaseResponse<Void> registerAgentProfile(@Valid @RequestBody AgentProfileRegistrationRequest request,
-                                                   @Parameter(hidden = true) @LoginUser String loginUserEmail) {
+    public BaseResponse<LoginResponse> registerAgentProfile(@Valid @RequestBody AgentProfileRegistrationRequest request,
+                                                   @Parameter(hidden = true) @LoginUser String loginUserEmail,
+                                                   @CookieValue(name = "refreshToken") String refreshToken,
+                                                   HttpServletResponse httpServletResponse) {
+
         agentProfileRegistrationService.registerAgentProfile(request, loginUserEmail);
-        return new BaseResponse<>(null);
+        LoginResponse updatedUserTypeResponse;
+        try {
+            updatedUserTypeResponse = authService.updateTokenUserTypeByReissue(refreshToken, httpServletResponse);
+        } catch (Exception e) {
+            throw new AgentException(ResponseStatus.ACCESS_TOKEN_EXPIRED, "권한 승격에 따라 액세스 토큰 재발급하는 과정에서 실패했습니다. reissue 요청 부탁드립니다.");
+        }
+        return new BaseResponse<>(ResponseStatus.CREATED_AGENT_PROFILE, updatedUserTypeResponse);
     }
 
     @Operation(

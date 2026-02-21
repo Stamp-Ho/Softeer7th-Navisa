@@ -58,8 +58,8 @@ public class AuthService {
 
         syncAgentActivityIfPresent(user);
 
-        String accessToken = jwtProvider.createAccessToken(user.getEmail());
-        String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
+        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getId(), user.getUserType());
+        String refreshToken = jwtProvider.createRefreshToken(user.getEmail(), user.getId(), user.getUserType());
 
         saveRefreshTokenInCookie(user.getEmail(), refreshToken, response);
         return new LoginResponse(accessToken, user.getId(), user.getUserType());
@@ -88,8 +88,8 @@ public class AuthService {
         User savedUser = userRepository.save(newUser);
         syncAgentActivityIfPresent(savedUser);
 
-        String accessToken = jwtProvider.createAccessToken(savedUser.getEmail());
-        String refreshToken = jwtProvider.createRefreshToken(savedUser.getEmail());
+        String accessToken = jwtProvider.createAccessToken(savedUser.getEmail(), savedUser.getId(), savedUser.getUserType());
+        String refreshToken = jwtProvider.createRefreshToken(savedUser.getEmail(), savedUser.getId(), savedUser.getUserType());
 
         saveRefreshTokenInCookie(savedUser.getEmail(), refreshToken, response);
         return new SignupResponse(accessToken, savedUser.getId(), savedUser.getUserType());
@@ -107,8 +107,8 @@ public class AuthService {
 
         syncAgentActivityIfPresent(user);
 
-        String accessToken = jwtProvider.createAccessToken(user.getEmail());
-        String refreshToken = jwtProvider.createRefreshToken(user.getEmail());
+        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getId(), user.getUserType());
+        String refreshToken = jwtProvider.createRefreshToken(user.getEmail(), user.getId(), user.getUserType());
 
         saveRefreshTokenInCookie(user.getEmail(), refreshToken, response);
         return new LoginResponse(accessToken, user.getId(), user.getUserType());
@@ -122,10 +122,27 @@ public class AuthService {
         }
     }
 
-    // 토큰 재발급
-    public TokenResponse reissue(String refreshTokenValue, HttpServletResponse response) {
-        log.info("==> [reissue] 서비스 진입 성공! 토큰값 존재여부: {}", (refreshTokenValue != null));
+    public LoginResponse updateTokenUserTypeByReissue(String refreshTokenValue, HttpServletResponse response) {
+        User user = validateAndGetUserByRefreshToken(refreshTokenValue);
 
+        String newAccessToken = jwtProvider.createAccessToken(user.getEmail(), user.getId(), user.getUserType());
+        String newRefreshToken = jwtProvider.createRefreshToken(user.getEmail(), user.getId(), user.getUserType());
+        saveRefreshTokenInCookie(user.getEmail(), newRefreshToken, response);
+
+        return new LoginResponse(newAccessToken, user.getId(), user.getUserType());
+    }
+
+    public TokenResponse reissue(String refreshTokenValue, HttpServletResponse response) {
+        User user = validateAndGetUserByRefreshToken(refreshTokenValue);
+
+        String newAccessToken = jwtProvider.createAccessToken(user.getEmail(), user.getId(), user.getUserType());
+        String newRefreshToken = jwtProvider.createRefreshToken(user.getEmail(), user.getId(), user.getUserType());
+        saveRefreshTokenInCookie(user.getEmail(), newRefreshToken, response);
+
+        return new TokenResponse(newAccessToken);
+    }
+
+    private User validateAndGetUserByRefreshToken(String refreshTokenValue) {
         Claims claims;
         try {
             claims = jwtProvider.getClaims(refreshTokenValue);
@@ -133,31 +150,22 @@ public class AuthService {
             log.error("리프레시 토큰 만료됨: {}", e.getMessage());
             throw new AuthException(ResponseStatus.REFRESH_TOKEN_EXPIRED);
         } catch (Exception e) {
-            log.error("==> [reissue] 토큰 파싱 중 예상치 못한 에러: {}", e.getMessage());
+            log.error("==> [reissue] 토큰 파싱 중 에러: {}", e.getMessage());
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
 
         String email = claims.getSubject();
 
         RefreshToken savedToken = refreshTokenRepository.findById(email)
-                .orElseThrow(() -> {
-                    log.error("[reissue 에러] DB에 토큰 없음. Email: {}", email);
-                    return new AuthException(ResponseStatus.INVALID_TOKEN);
-                });
+                .orElseThrow(() -> new AuthException(ResponseStatus.INVALID_TOKEN));
 
         if (!savedToken.getToken().equals(refreshTokenValue)) {
-            log.error("[reissue 에러] 토큰 불일치! DB값: {}, 요청값: {}",
-                    savedToken.getToken().substring(0, 10),
-                    refreshTokenValue.substring(0, 10));
+            log.error("[reissue 에러] 토큰 불일치!");
             throw new AuthException(ResponseStatus.INVALID_TOKEN);
         }
 
-        String newAccessToken = jwtProvider.createAccessToken(email);
-        String newRefreshToken = jwtProvider.createRefreshToken(email);
-
-        saveRefreshTokenInCookie(email, newRefreshToken, response);
-
-        return new TokenResponse(newAccessToken);
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(ResponseStatus.INVALID_USER));
     }
 
     private void saveRefreshTokenInCookie(String email, String refreshToken, HttpServletResponse response) {
@@ -181,15 +189,13 @@ public class AuthService {
         }
     }
 
-    public boolean checkUserType(String email, UserType[] userTypes) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthException(ResponseStatus.FORBIDDEN));
+    public boolean checkUserType(String userTypeStr, UserType[] userTypes) {
+        UserType requestUserType = UserType.valueOf(userTypeStr);
 
-        log.info("user.userType {}", user.getUserType());
+        log.info("user.userType {}", requestUserType);
         log.info("userTypes {}", Arrays.toString(userTypes));
 
-        return Arrays.stream(userTypes)
-                .anyMatch(userType -> userType.equals(user.getUserType()));
+        return Arrays.asList(userTypes).contains(requestUserType);
     }
 
     private void syncAgentActivityIfPresent(User user) {

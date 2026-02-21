@@ -27,6 +27,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.UUID;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,7 +54,7 @@ class AuthFlowTest extends IntegrationTestSupport {
     @DisplayName("실제 로그인 API를 호출하여 컨트롤러를 테스트한다")
     void login_controller_test() throws Exception {
         LoginRequest request = new LoginRequest("test@test.com", "password123");
-        LoginResponse loginResponse = new LoginResponse("access-token", java.util.UUID.randomUUID(), UserType.INVALID_AGENT);
+        LoginResponse loginResponse = new LoginResponse("access-token", UUID.randomUUID(), UserType.INVALID_AGENT);
 
         given(authService.login(any(LoginRequest.class), any(HttpServletResponse.class)))
                 .willReturn(loginResponse);
@@ -92,7 +95,7 @@ class AuthFlowTest extends IntegrationTestSupport {
     @DisplayName("유효한 토큰으로 접근 시 인증에 성공해야 한다")
     void auth_success_test() throws Exception {
         String email = "test@navisa.com";
-        String token = jwtProvider.createAccessToken(email);
+        String token = jwtProvider.createAccessToken(email, UUID.randomUUID(), UserType.VALID_AGENT);
 
         mockMvc.perform(get("/api/test/me")
                         .header("Authorization", "Bearer " + token))

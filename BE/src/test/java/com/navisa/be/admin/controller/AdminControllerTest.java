@@ -44,7 +44,7 @@ class AdminControllerTest extends IntegrationTestSupport {
 //        // given
 //        User admin = new User("email1", "hash", UserType.ADMIN, LoginType.EMAIL, true);
 //        User savedAdmin = userRepository.save(admin);
-//        String accessToken = jwtProvider.createAccessToken(savedAdmin.getEmail());
+//        String accessToken = jwtProvider.createAccessToken(savedAdmin.getEmail(), savedAdmin.getId(), savedAdmin.getUserType());
 //
 //        User newAgent = new User("email2", null, UserType.INVALID_AGENT, LoginType.GOOGLE, true);
 //        User savedAgent = userRepository.save(newAgent);
@@ -69,7 +69,7 @@ class AdminControllerTest extends IntegrationTestSupport {
 //        // given
 //        User NON_ADMIN_USER = new User("email1", "hash", UserType.FILLED_FOREIGNER, LoginType.EMAIL, true);
 //        User SAVED_NON_ADMIN = userRepository.save(NON_ADMIN_USER);
-//        String accessToken = jwtProvider.createAccessToken(SAVED_NON_ADMIN.getEmail());
+//        String accessToken = jwtProvider.createAccessToken(SAVED_NON_ADMIN.getEmail(), SAVED_NON_ADMIN.getId(), SAVED_NON_ADMIN.getUserType());
 //
 //        User newAgent = new User("email2", null, UserType.INVALID_AGENT, LoginType.GOOGLE, true);
 //        User savedAgent = userRepository.save(newAgent);

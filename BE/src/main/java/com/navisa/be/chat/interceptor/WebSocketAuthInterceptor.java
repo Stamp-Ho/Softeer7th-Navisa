@@ -4,9 +4,7 @@ import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.chat.exception.WebSocketConnectionException;
 import com.navisa.be.chat.model.entity.ChatUserPrincipal;
 import com.navisa.be.global.web.response.ResponseStatus;
-import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
-import com.navisa.be.user.service.UserCrudService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +27,6 @@ import java.util.Map;
 public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
     private final JwtProvider jwtProvider;
-    private final UserCrudService userCrudService;
 
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
@@ -57,7 +54,6 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             try {
                 // getClaims 하나로 검증과 데이터 추출을 동시에 완료 (60초 유예 적용)
                 Claims claims = jwtProvider.getClaims(token);
-                String email = claims.getSubject();
 
                 // 세션 속성 확인
                 Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
@@ -66,18 +62,20 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                 }
 
                 // 사용자 조회 및 권한 체크
-                User findUser = userCrudService.findByEmail(email);
-                if (!findUser.getUserType().equals(UserType.FILLED_FOREIGNER)
-                        && !findUser.getUserType().equals(UserType.VALID_AGENT)) {
+                String email = claims.getSubject();
+                String requestUserIdStr = claims.get("userId", String.class);
+                UserType requestUserType = UserType.valueOf(claims.get("userType", String.class));
+                if (!requestUserType.equals(UserType.FILLED_FOREIGNER)
+                        && !requestUserType.equals(UserType.VALID_AGENT)) {
                     throw new WebSocketConnectionException(ResponseStatus.INVALID_USER);
                 }
 
                 // Principal 설정 및 세션 저장
-                Principal principal = new ChatUserPrincipal(findUser.getId().toString());
+                Principal principal = new ChatUserPrincipal(requestUserIdStr);
                 accessor.setUser(principal);
-                sessionAttributes.put("userId", findUser.getId().toString());
+                sessionAttributes.put("userId", requestUserIdStr);
 
-                log.info("[WS Auth] 인증 성공 - User: {}, ID: {}", email, findUser.getId());
+                log.info("[WS Auth] 인증 성공 - User: {}, ID: {}", email, requestUserIdStr);
             } catch (WebSocketConnectionException e) {
                 throw e;
             } catch (ExpiredJwtException e) {

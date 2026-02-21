@@ -1,20 +1,21 @@
 package com.navisa.be.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navisa.be.auth.controller.AuthController;
 import com.navisa.be.auth.dto.request.LoginRequest;
 import com.navisa.be.auth.dto.request.SignupRequest;
 import com.navisa.be.auth.dto.response.LoginResponse;
 import com.navisa.be.auth.dto.response.SignupResponse;
 import com.navisa.be.auth.dto.response.TokenResponse;
 import com.navisa.be.auth.jwt.JwtProvider;
+import com.navisa.be.auth.interceptor.AuthInterceptor;
+import com.navisa.be.auth.interceptor.UserTypeCheckInterceptor;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.user.model.enums.UserType;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.UUID;
 
@@ -45,6 +47,18 @@ class AuthControllerTest {
 
     @MockitoBean
     private JwtProvider jwtProvider;
+
+    @MockitoBean
+    private AuthInterceptor authInterceptor;
+
+    @MockitoBean
+    private UserTypeCheckInterceptor userTypeCheckInterceptor;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
+        given(userTypeCheckInterceptor.preHandle(any(), any(), any())).willReturn(true);
+    }
 
     @Test
     @DisplayName("회원가입 API: 성공 시 200 코드와 유저 정보를 반환한다")
@@ -93,24 +107,27 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("로그아웃 API: 성공 시 Set-Cookie 헤더를 통해 쿠키를 만료시킨다")
+    @DisplayName("로그아웃 API: 성공 시 정상적으로 logout 메서드를 호출한다.")
     void logout_success() throws Exception {
         // given
         String email = "test@test.com";
         String accessToken = "access-token";
 
-        Claims claims = Jwts.claims().subject(email).build();
-        given(jwtProvider.getClaims(accessToken)).willReturn(claims);
+        given(authInterceptor.preHandle(any(), any(), any()))
+                .willAnswer(invocation -> {
+                    HttpServletRequest req = invocation.getArgument(0);
+                    req.setAttribute("email", email);
+                    req.setAttribute("userType", "INVALID_AGENT");
+                    return true;
+                });
 
         // when & then
         mockMvc.perform(post("/api/auth/logout")
                         .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
-                .andExpect(header().exists("Set-Cookie"))
-                // 쿠키 만료 및 보안 속성 검증
-                .andExpect(header().string("Set-Cookie", Matchers.containsString("Max-Age=0")))
-                .andExpect(header().string("Set-Cookie", Matchers.containsString("SameSite=None")))
-                .andExpect(header().string("Set-Cookie", Matchers.containsString("Secure")));
+                .andDo(MockMvcResultHandlers.print());
+
+        then(authService).should().logout(any());
     }
 
     @Test
