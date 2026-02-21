@@ -13,7 +13,7 @@
     "loadingStep3": "당신에게 꼭 맞는 행정사 탐색 중",
     "loadingStep4": "조금만 더 기다려주세요",
     "loadingStep5": "거의 다 되었습니다!",
-    "exploreJobs": "직군별 의뢰인 탐색 / 직군별 행정사 탐색",
+    "exploreJobs": "직군별 행정사 탐색",
     "badgeRecommendation": "뱃지별 행정사 추천",
     "actualConsultationReviews": "실제 상담 후기",
     "tagline": "복잡한 E-7 비자 발급,",
@@ -57,6 +57,7 @@
     "searchAgent": "행정사 탐색하기",
     "registerRequirement": "내 요건 등록하고 상담하기",
     "selectMessage": "대화를 선택해주세요",
+    "noUnreadMessages": "읽지 않은 메시지가 없습니다.",
     "tabs": {
       "all": "전체",
       "unread": "안읽음",

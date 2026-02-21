@@ -13,7 +13,7 @@
     "loadingStep3": "正在为您匹配律师",
     "loadingStep4": "请稍候",
     "loadingStep5": "即将完成！",
-    "exploreJobs": "按工作类别搜索申请人 / 按工作类别搜索律师",
+    "exploreJobs": "按工作类别搜索律师",
     "badgeRecommendation": "基于徽章的律师推荐",
     "actualConsultationReviews": "实际咨询评论",
     "tagline": "复杂的E-7签证发放，",
@@ -57,6 +57,7 @@
     "searchAgent": "搜索律师",
     "registerRequirement": "注册要求并咨询",
     "selectMessage": "请选择对话",
+    "noUnreadMessages": "没有未读消息",
     "tabs": {
       "all": "全部",
       "unread": "未读",

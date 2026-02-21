@@ -48,7 +48,12 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
         {document.foreignerProfileImgUrl ? (
           <div className="w-18.75 h-26.25 overflow-hidden rounded-xl flex items-center justify-center outline outline-border-normal">
             <div>
-              <img src={document.foreignerProfileImgUrl} width={imageSize.width} height={imageSize.height} alt={t("documentCard.profileImage")} />
+              <img
+                src={document.foreignerProfileImgUrl}
+                width={imageSize.width}
+                height={imageSize.height}
+                alt={t("documentCard.profileImage")}
+              />
             </div>
           </div>
         ) : (
@@ -56,21 +61,35 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
         )}
         <div className="flex flex-col flex-1">
           <div className="flex flex-row gap-1.5">
-            <Tag variant="small_fill_violet_max">{document.isDone ? t("documentCard.completedStatus") : t("documentCard.writingStatus")}</Tag>
-            <Tag variant="small_fill_green_max">{document.currentStep}/138{t("documentCard.cells")}</Tag>
+            <Tag variant="small_fill_violet_max">
+              {document.isDone ? t("documentCard.completedStatus") : t("documentCard.writingStatus")}
+            </Tag>
+            <Tag variant="small_fill_green_max">
+              {document.currentStep}/138{t("documentCard.cells")}
+            </Tag>
             <div className="ml-auto caption-m-medium text-text-sub">
               {t("documentCard.lastModified")} · {formattedTime}
             </div>
           </div>
           <h4 className="title-m-bold mt-3">{document.title}</h4>
           <div className="ml-auto flex flex-row gap-3">
-            <Button variant="grayLine" onClick={onPreview} size="tiny" className="w-10 flex items-center justify-center relative font-[pretendard] text-[8px]">
+            <Button
+              variant="grayLine"
+              onClick={onPreview}
+              size="tiny"
+              className="w-10 flex items-center justify-center relative font-[pretendard] text-[8px]"
+            >
               <div className="absolute">
                 <IcFile2 />
               </div>
               pdf
             </Button>
-            <Button variant={document.isDone ? "grayLine" : "primary"} size="tiny" className="w-30" onClick={document.isDone ? onResumeClicked : onOpen}>
+            <Button
+              variant={document.isDone ? "grayLine" : "primary"}
+              size="tiny"
+              className="w-30"
+              onClick={document.isDone ? onResumeClicked : onOpen}
+            >
               {document.isDone ? t("documentCard.editButton") : t("documentCard.writeButton")}
             </Button>
           </div>

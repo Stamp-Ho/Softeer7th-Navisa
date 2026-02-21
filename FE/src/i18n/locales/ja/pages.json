@@ -13,7 +13,7 @@
     "loadingStep3": "あなたにぴったりの行政書士を検索中",
     "loadingStep4": "少々お待ちください",
     "loadingStep5": "もうすぐです！",
-    "exploreJobs": "職業別に依頼者を検索 / 職業別に行政書士を検索",
+    "exploreJobs": "職業別に行政書士を検索",
     "badgeRecommendation": "バッジベースの行政書士推奨",
     "actualConsultationReviews": "実際の相談レビュー",
     "tagline": "複雑なE-7ビザ発行、",
@@ -57,6 +57,7 @@
     "searchAgent": "行政書士を検索",
     "registerRequirement": "要件を登録して相談する",
     "selectMessage": "会話を選択してください",
+    "noUnreadMessages": "未読のメッセージがありません",
     "tabs": {
       "all": "すべて",
       "unread": "未読",

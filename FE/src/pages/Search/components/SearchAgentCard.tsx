@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 import BadgeIcon, { badgeDescription } from "../../../assets/icon/BadgeIcon";
 import { IcGraduation, IcLocation } from "../../../assets/icon/StratisUi";
 import Tag from "../../../components/common/Tag";
-import { useJobListLabels } from "../../../assets/JobIcon";
 import type { SearchAgentCardType } from "../../../types/Cards";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { useResizeImage } from "../../../hooks/useResizeImage";
 import { useTranslation } from "react-i18next";
+import { jobCodeList } from "../../../constants/job";
 
 /**
  * 
@@ -24,7 +24,6 @@ import { useTranslation } from "react-i18next";
 const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
   const context = useContext(AuthContext);
   const { t } = useTranslation(["components"]);
-  const jobListLabels = useJobListLabels();
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
   if (!context) return null;
   const { userType } = context;
@@ -77,7 +76,7 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
                 )}
                 {agent.agentSpecialityTop2.slice(0, 2).map((jobId) => (
                   <Tag key={`agent_special_job_${jobId}`} variant={"small_fill_violet_max"}>
-                    {jobListLabels[jobId]}
+                    {jobCodeList[jobId % jobCodeList.length]}
                   </Tag>
                 ))}
                 {agent.agentSpecialityTop2.length > 2 && (

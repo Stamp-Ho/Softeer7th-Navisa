@@ -57,6 +57,7 @@
     "searchAgent": "Search for attorneys",
     "registerRequirement": "Register requirements and consult",
     "selectMessage": "Please select a conversation",
+    "noUnreadMessages": "No unread messages",
     "tabs": {
       "all": "All",
       "unread": "Unread",

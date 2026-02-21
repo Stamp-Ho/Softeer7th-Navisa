@@ -578,6 +578,13 @@
   }
 }
 @layer base {
+  a {
+    &:focus {
+      outline: 3px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+
   /* 1. 기본 입력창 스타일 초기화 및 커스텀 */
   input[type="time"] {
   }

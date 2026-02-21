@@ -1,20 +1,8 @@
 export const RPMessage = () => {
   return (
-    <svg
-      width="56"
-      height="56"
-      viewBox="0 0 56 56"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_2784_28943)">
-        <circle
-          cx="27.598"
-          cy="28"
-          r="28"
-          transform="rotate(-45 27.598 28)"
-          fill="url(#paint0_linear_2784_28943)"
-        />
+        <circle cx="27.598" cy="28" r="28" transform="rotate(-45 27.598 28)" fill="url(#paint0_linear_2784_28943)" />
         <rect
           x="11.2002"
           y="16.8706"
@@ -32,26 +20,11 @@ export const RPMessage = () => {
           width="34"
           height="25"
         >
-          <rect
-            x="11.2009"
-            y="16.8701"
-            width="33.599"
-            height="23.5193"
-            rx="2.79992"
-            fill="#787F8B"
-          />
+          <rect x="11.2009" y="16.8701" width="33.599" height="23.5193" rx="2.79992" fill="#787F8B" />
         </mask>
         <g mask="url(#mask0_2784_28943)">
-          <path
-            d="M10.0808 41.0879L22.9604 30.4482"
-            stroke="url(#paint2_linear_2784_28943)"
-            strokeWidth="0.933306"
-          />
-          <path
-            d="M45.9197 41.0879L33.0401 30.4482"
-            stroke="url(#paint3_linear_2784_28943)"
-            strokeWidth="0.933306"
-          />
+          <path d="M10.0808 41.0879L22.9604 30.4482" stroke="url(#paint2_linear_2784_28943)" strokeWidth="0.933306" />
+          <path d="M45.9197 41.0879L33.0401 30.4482" stroke="url(#paint3_linear_2784_28943)" strokeWidth="0.933306" />
           <path
             d="M26.1227 30.3912L10.0808 15.8901L25.8687 34.4278C26.9866 35.7405 29.014 35.7405 30.1319 34.4278L45.9198 15.8901L29.8779 30.3912C28.8117 31.355 27.1889 31.355 26.1227 30.3912Z"
             fill="url(#paint4_linear_2784_28943)"
@@ -124,21 +97,9 @@ export const RPMessage = () => {
 
 export const RPPeople = () => {
   return (
-    <svg
-      width="56"
-      height="56"
-      viewBox="0 0 56 56"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_2784_28975)">
-        <circle
-          cx="27.598"
-          cy="28"
-          r="28"
-          transform="rotate(-45 27.598 28)"
-          fill="url(#paint0_linear_2784_28975)"
-        />
+        <circle cx="27.598" cy="28" r="28" transform="rotate(-45 27.598 28)" fill="url(#paint0_linear_2784_28975)" />
         <mask
           id="mask0_2784_28975"
           style={{ maskType: "alpha" }}
@@ -195,12 +156,7 @@ export const RPPeople = () => {
           width="13"
           height="13"
         >
-          <circle
-            cx="23.4695"
-            cy="19.053"
-            r="6.05298"
-            fill="url(#paint6_linear_2784_28975)"
-          />
+          <circle cx="23.4695" cy="19.053" r="6.05298" fill="url(#paint6_linear_2784_28975)" />
         </mask>
         <g mask="url(#mask2_2784_28975)">
           <path
@@ -309,21 +265,9 @@ export const RPPeople = () => {
 
 export const RPDocument = () => {
   return (
-    <svg
-      width="56"
-      height="56"
-      viewBox="0 0 56 56"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_2784_29022)">
-        <circle
-          cx="27.598"
-          cy="28"
-          r="28"
-          transform="rotate(-45 27.598 28)"
-          fill="url(#paint0_linear_2784_29022)"
-        />
+        <circle cx="27.598" cy="28" r="28" transform="rotate(-45 27.598 28)" fill="url(#paint0_linear_2784_29022)" />
         <mask
           id="mask0_2784_29022"
           style={{ maskType: "alpha" }}
@@ -333,55 +277,20 @@ export const RPDocument = () => {
           width="25"
           height="30"
         >
-          <rect
-            x="16.5"
-            y="44"
-            width="30"
-            height="24"
-            rx="2.8"
-            transform="rotate(-90 16.5 44)"
-            fill="#B3A8FF"
-          />
+          <rect x="16.5" y="44" width="30" height="24" rx="2.8" transform="rotate(-90 16.5 44)" fill="#B3A8FF" />
         </mask>
         <g mask="url(#mask0_2784_29022)">
-          <path
-            d="M40.5 39L35 44H16.5V14H40.5V39Z"
-            fill="url(#paint1_linear_2784_29022)"
-          />
+          <path d="M40.5 39L35 44H16.5V14H40.5V39Z" fill="url(#paint1_linear_2784_29022)" />
         </g>
         <path
           opacity="0.5"
           d="M35 44H18.5C31.3333 40.4375 37.4444 35.6875 40.5 25V39H36C35.4477 39 35 39.4477 35 40V44Z"
           fill="url(#paint2_linear_2784_29022)"
         />
-        <path
-          d="M21 21H36"
-          stroke="#3E2FA6"
-          strokeOpacity="0.5"
-          strokeWidth="1.2"
-          stroke-linecap="round"
-        />
-        <path
-          d="M21 25H36"
-          stroke="#3E2FA6"
-          strokeOpacity="0.5"
-          strokeWidth="1.2"
-          stroke-linecap="round"
-        />
-        <path
-          d="M21 29H36"
-          stroke="#3E2FA6"
-          strokeOpacity="0.5"
-          strokeWidth="1.2"
-          stroke-linecap="round"
-        />
-        <path
-          d="M21 33H31"
-          stroke="#3E2FA6"
-          strokeOpacity="0.5"
-          strokeWidth="1.2"
-          stroke-linecap="round"
-        />
+        <path d="M21 21H36" stroke="#3E2FA6" strokeOpacity="0.5" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M21 25H36" stroke="#3E2FA6" strokeOpacity="0.5" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M21 29H36" stroke="#3E2FA6" strokeOpacity="0.5" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M21 33H31" stroke="#3E2FA6" strokeOpacity="0.5" strokeWidth="1.2" strokeLinecap="round" />
       </g>
       <defs>
         <linearGradient

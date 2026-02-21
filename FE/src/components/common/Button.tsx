@@ -10,7 +10,15 @@ interface ButtonProps {
   type?: "button" | "submit" | "reset" | undefined;
 }
 
-const Button = ({ variant = "lightGray", size = "medium", className = "", children, onClick, disabled = false, type = "button" }: ButtonProps) => {
+const Button = ({
+  variant = "lightGray",
+  size = "medium",
+  className = "",
+  children,
+  onClick,
+  disabled = false,
+  type = "button",
+}: ButtonProps) => {
   const getButtonStyle = () => {
     if (disabled) return "bg-gray-200 text-white cursor-not-allowed";
     return (variant === "skeleton" ? "cursor-default " : "cursor-pointer ") + (styles[variant] || styles.lightGray);
@@ -21,6 +29,7 @@ const Button = ({ variant = "lightGray", size = "medium", className = "", childr
       disabled={disabled}
       onClick={!disabled ? onClick : undefined}
       className={`
+        focus:ring-2 focus:ring-primary focus:outline-none focus:ring-offset-1
         flex items-center justify-center transition-all
         ${getButtonStyle()} 
         ${sizes[size] || sizes.medium} 

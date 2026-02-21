@@ -12,17 +12,21 @@ const AgentCard = ({
   hasAnimation = true,
   agent,
   className = "",
+  tabIndex = 0,
+  disabled = false,
 }: {
   hasAnimation?: boolean;
   agent?: AgentCardResponse;
   className: string;
+  tabIndex?: number;
+  disabled?: boolean;
 }) => {
   const context = useContext(AuthContext);
   const { t } = useTranslation(["components"]);
   const jobListLabels = useJobListLabels();
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
 
-  const animationStyle = hasAnimation ? "transition-all duration-150 ease-out hover:scale-107 hover:m-2" : "";
+  const animationStyle = hasAnimation ? "transition-all duration-75 ease-out hover:scale-107 hover:m-2" : "";
 
   useEffect(() => {
     if (agent?.profileImgUrl) resizeImage(agent.profileImgUrl, 240, 192);
@@ -32,9 +36,12 @@ const AgentCard = ({
   return (
     <li
       className={`${animationStyle} ${className}
+        focus-within:ring-3 focus-within:ring-primary
         flex flex-col bg-white w-60 rounded-[10px] overflow-hidden shadow-[0px_0px_7px_0px_rgba(104,96,160,0.25)]`}
+      tabIndex={-1}
+      inert={disabled ? true : undefined}
     >
-      <Link to={`/profile/agent/${agent.agentId}`}>
+      <Link to={`/profile/agent/${agent.agentId}`} tabIndex={tabIndex}>
         <div className="flex w-60 h-48 overflow-hidden items-center justify-center">
           <div className="shrink-0">
             <img src={agent.profileImgUrl} width={imageSize.width} height={imageSize.height} />
@@ -45,9 +52,9 @@ const AgentCard = ({
             {agent.agentName} {t("agentCard.title")}
           </h4>
           <div className="flex-col flex gap-1">
-            <a className="flex flex-row items-center gap-1.5 caption-m-medium">
+            <h5 className="flex flex-row items-center gap-1.5 caption-m-medium">
               <IcGraduation size={14} /> {t("agentCard.expertise")}
-            </a>
+            </h5>
             {userType !== "NOT_AUTHED" ? (
               <ol className="flex flex-row gap-1">
                 {agent.agentSpecialityTop2?.length === 0 && !agent.agentSpecialityTop2 && (
@@ -69,10 +76,10 @@ const AgentCard = ({
             )}
           </div>
           <div className="flex-col flex gap-1">
-            <a className="flex flex-row items-center gap-1.5 caption-m-medium">
+            <h5 className="flex flex-row items-center gap-1.5 caption-m-medium">
               <IcLocation size={14} /> {t("agentCard.office")}
-            </a>
-            <a className="text-text-base body-m-medium">{agent.officeAddress}</a>
+            </h5>
+            <p className="text-text-base body-m-medium">{agent.officeAddress}</p>
           </div>
         </div>
       </Link>
@@ -85,7 +92,7 @@ export default AgentCard;
 const SkeletonUi = (className = "") => {
   return (
     <li
-      className={`transition-all duration-150 ease-out hover:scale-107 hover:m-2 ${className}
+      className={`transition-all duration-75 ease-out hover:scale-107 hover:m-2 ${className}
         flex flex-col bg-white w-60 rounded-[10px] overflow-hidden shadow-[0px_0px_7px_0px_rgba(104,96,160,0.25)]`}
     >
       <div className="w-60 h-48 bg-gray-100" />

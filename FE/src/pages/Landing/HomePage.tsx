@@ -9,10 +9,12 @@ import RecentFeedback from "./Foreigner/RecentFeedback";
 import BadgeReview from "./Foreigner/BadgeReview";
 import { useAuth } from "../../contexts/AuthContextProvider";
 import Footer from "./Footer";
+import AgentBanner from "./Agent/AgentBanner";
 
 const HomePage = () => {
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
+  const isInvalidAgent = userType === "INVALID_AGENT";
 
   return (
     <>
@@ -21,6 +23,10 @@ const HomePage = () => {
         <>
           <RecentlyEditedDocuments />
           <SuggestedForeigners />
+        </>
+      ) : isInvalidAgent ? (
+        <>
+          <AgentBanner />
         </>
       ) : (
         <>

@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext, type feUserType } from "./AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useApiClient from "../hooks/useApiClient";
+import { alertT } from "../i18n/alerts";
 
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { refreshAccessToken } = useApiClient();
   const navigate = useNavigate();
   const [initialLized, setInitialized] = useState(false);
+  const location = useLocation();
   const [userType, setUserType] = useState<feUserType>(() => {
     const savedUserType = localStorage.getItem("userType");
     return savedUserType ? JSON.parse(savedUserType) : null;
@@ -27,6 +29,13 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     navigate("/");
     localStorage.clear();
   };
+
+  useEffect(() => {
+    if (location.pathname !== "/" && (userType === "NOT_AUTHED" || !userType)) {
+      alertT("pages.landing.loginRequired");
+      navigate("/", { replace: true });
+    }
+  }, [location.pathname, userType]);
 
   // 2. 유저 상태가 바뀔 때마다 로컬 스토리지 업데이트
   useEffect(() => {

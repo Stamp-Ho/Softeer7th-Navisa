@@ -11,11 +11,8 @@ const RecommendPanel = () => {
   const { userType } = useAuth();
   const navigate = useNavigate();
   const handleClick = () => {
-    if (userType === "NOT_AUTHED") {
-      alertT("pages.landing.loginRequired");
-    } else {
-      navigate("/onboard/foreigner");
-    }
+    if (userType === "NOT_AUTHED") alertT("pages.landing.loginRequired");
+    else navigate("/onboard/foreigner");
   };
   return (
     <section className="flex flex-row mt-7 p-10 border-[1.5px] border-violet-200 rounded-2xl">

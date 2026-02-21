@@ -8,8 +8,8 @@ const ForeignerBanner = () => {
     <div className="flex flex-col gap-9 my-50">
       <NavisaLogo height={12} />
       <div className="flex flex-col gap-3">
-        <a className="banner-title">{t("landing.foreignerBanner")}</a>
-        <a className="headline-m-medium text-gray-600">{t("landing.foreignerDescription")}</a>
+        <h2 className="banner-title">{t("landing.foreignerBanner")}</h2>
+        <p className="headline-m-medium text-gray-600">{t("landing.foreignerDescription")}</p>
       </div>
     </div>
   );

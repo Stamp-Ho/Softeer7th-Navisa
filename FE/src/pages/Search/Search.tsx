@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSearchScroll } from "./hooks/useSearchScroll";
 
@@ -12,9 +12,13 @@ import type { SearchAgentCardType, SearchForeignerCardType } from "../../types/C
 import { useSearchInfiniteQuery } from "../../api/queries/useSearchInfiniteQuery";
 import { useJobListLabels } from "../../assets/JobIcon";
 import { regionList } from "../../constants/regions";
+import { useAuth } from "../../contexts/AuthContextProvider";
+import { useEffect } from "react";
 
 const Search = () => {
   const { t } = useTranslation(["pages"]);
+  const navigate = useNavigate();
+  const { userType } = useAuth();
   const jobListLabels = useJobListLabels();
   const { targetType } = useParams();
   const [searchParams] = useSearchParams();
@@ -42,6 +46,11 @@ const Search = () => {
     useSearchInfiniteQuery(targetType || null, params);
 
   const { scrollRef, handleScroll, searchResultStyle, goTop } = useSearchScroll(() => fetchNextPage());
+
+  useEffect(() => {
+    if (userType === "NOT_AUTHED") navigate("/", { replace: true });
+    else if (!isAgent && userType !== "VALID_AGENT") navigate("/", { replace: true });
+  }, [userType, isAgent]);
 
   const Filter = isAgent ? SearchAgentFilter : SearchforeignerFilter;
 
@@ -74,7 +83,7 @@ const Search = () => {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className={`grid mt-9 p-4 -m-4 pb-10 gap-4 h-fit min-h-150 overflow-auto scrollbar-hide
+        className={`grid mt-9 p-4 -m-4 pb-10 gap-4 h-fit min-h-100 overflow-auto scrollbar-hide
             ${isAgent ? "grid-cols-3" : "grid-cols-4"} ${searchResultStyle()}`}
         style={{ maxHeight: "calc(100vh - 350px)" }}
       >

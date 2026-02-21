@@ -38,27 +38,33 @@ const SuggestedAgents = () => {
   }, []);
 
   useEffect(() => {
-    const scrollContainer = scrollRef.current;
-    if (scrollContainer) {
-      const olElement = scrollContainer.childNodes[1] as HTMLElement;
-      const onWheel = (event: WheelEvent) => {
-        if (!isLoading && !loading && !isError && olElement) {
-          // 1. olElement의 실제 콘텐츠 너비가 컨테이너보다 작거나 같으면 스크롤 방지
-          if (olElement.scrollWidth <= scrollContainer.clientWidth) {
-            return; // 아무것도 하지 않음
-          }
-          event.preventDefault();
-          if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) scrollContainer.scrollLeft += event.deltaX;
-          else scrollContainer.scrollLeft += event.deltaY;
-        }
-      };
+    // 로딩 완료 후에만 wheel 이벤트 핸들러 등록
+    if (isLoading || loading || isError) return;
 
-      scrollContainer.addEventListener("wheel", onWheel);
-      return () => {
-        scrollContainer.removeEventListener("wheel", onWheel);
-      };
-    }
-  }, []);
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer) return;
+
+    const olElement = scrollContainer.childNodes[0] as HTMLElement;
+    if (!olElement) return;
+
+    const onWheel = (event: WheelEvent) => {
+      // olElement의 실제 콘텐츠 너비가 컨테이너보다 작거나 같으면 스크롤 방지
+      if (olElement.scrollWidth <= scrollContainer.clientWidth) {
+        return; // 아무것도 하지 않음
+      }
+      event.preventDefault();
+      // 가로 스크롤이 더 크면 deltaX 사용, 세로 스크롤이 더 크면 deltaY를 가로 스크롤로 변환
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+        scrollContainer.scrollLeft += event.deltaX;
+      } else {
+        scrollContainer.scrollLeft += event.deltaY;
+      }
+    };
+    scrollContainer.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      scrollContainer.removeEventListener("wheel", onWheel);
+    };
+  }, [isLoading, loading, isError]);
 
   // 3. 상태에 따른 마스크 스타일 결정
   const getMaskStyle = () => {
@@ -112,7 +118,12 @@ const SuggestedAgents = () => {
   const dataToRender = isError ? (
     <>
       {Array.from({ length: 12 }).map((_, idx) => (
-        <AgentCard key={idx} className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `} />
+        <AgentCard
+          key={idx}
+          className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
+          tabIndex={isTilted ? -1 : 0}
+          disabled={isTilted}
+        />
       ))}
     </>
   ) : (
@@ -122,6 +133,8 @@ const SuggestedAgents = () => {
           key={idx}
           agent={agent}
           className={`${isTilted ? "-rotate-10 -mr-4" : "rotate-0"} duration-500 transition-all `}
+          tabIndex={isTilted ? -1 : 0}
+          disabled={isTilted}
         />
       ))}
     </>

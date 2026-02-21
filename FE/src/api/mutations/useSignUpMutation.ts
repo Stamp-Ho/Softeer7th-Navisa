@@ -17,8 +17,12 @@ export const useSignUpMutation = (onSignUpSuccess?: () => void) => {
       if (onSignUpSuccess) onSignUpSuccess();
     },
     onError: (error) => {
+      if (String(error).includes("409")) {
+        alert("이미 존재하는 이메일입니다.");
+      } else {
+        alert("회원가입에 실패했습니다.");
+      }
       console.error("회원가입 실패: ", error);
-      alert("회원가입에 실패했습니다.");
     },
   });
 };
