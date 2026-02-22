@@ -1,4 +1,4 @@
-package com.navisa.be.common.resolver;
+package com.navisa.be.global.web.resolver;
 
 import com.navisa.be.global.web.annotation.SliceInfo;
 import com.navisa.be.global.web.request.SliceRequest;

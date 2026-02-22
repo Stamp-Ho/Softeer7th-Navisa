@@ -1,4 +1,4 @@
-package com.navisa.be.common.service;
+package com.navisa.be.global.common.service;
 
 import com.navisa.be.agent.service.AgentBadgeService;
 import com.navisa.be.agent.dto.response.BadgeResponse;

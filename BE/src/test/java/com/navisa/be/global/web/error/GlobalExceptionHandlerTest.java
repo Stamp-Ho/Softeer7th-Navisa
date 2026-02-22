@@ -1,6 +1,5 @@
-package com.navisa.be.common.web;
+package com.navisa.be.global.web.error;
 
-import com.navisa.be.global.web.error.GlobalExceptionHandler;
 import com.navisa.be.global.web.response.ResponseStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

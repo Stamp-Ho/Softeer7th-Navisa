@@ -1,4 +1,4 @@
-package com.navisa.be.common.service;
+package com.navisa.be.global.common.service;
 
 import com.navisa.be.agent.dto.projection.JobCodeProjection;
 import com.navisa.be.agent.dto.response.JobCodeListResponse;

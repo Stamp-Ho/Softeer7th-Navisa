@@ -1,9 +1,8 @@
-package com.navisa.be.info.service;
+package com.navisa.be.global.common.service;
 
 import com.navisa.be.global.common.model.entity.Language;
 import com.navisa.be.global.common.repository.LanguageRepository;
 import com.navisa.be.global.common.dto.response.LanguageListResponse;
-import com.navisa.be.global.common.service.LanguageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

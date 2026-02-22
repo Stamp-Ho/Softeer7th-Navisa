@@ -15,7 +15,8 @@ public enum MessageType {
     SYSTEM("시스템 메시지"),
     READ("읽음처리 메시지"),
     CHATROOM_BLOCKED("채팅방 차단 처리 완료 메시지"),
-    REVIEW_REQUIRED("리뷰 요청");
+    REVIEW_REQUIRED("리뷰 요청"),
+    FEEDBACK_REQUIRED("피드백 요청");
 
     private final String description;
 }

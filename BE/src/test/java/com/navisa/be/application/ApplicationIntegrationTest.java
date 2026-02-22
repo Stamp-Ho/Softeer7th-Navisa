@@ -6,6 +6,9 @@ import com.navisa.be.application.dto.response.ApplicationFormFinishedStatusRespo
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.application.service.ApplicationFormForAgentService;
+import com.navisa.be.chat.model.entity.ChatRoom;
+import com.navisa.be.chat.model.enums.ChatRoomStatus;
+import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
@@ -46,6 +49,8 @@ class ApplicationIntegrationTest extends IntegrationTestSupport {
     private JobCodeRepository jobCodeRepository;
     @Autowired
     private ApplicationFormForAgentService applicationFormForAgentService;
+    @Autowired
+    private ChatRoomRepository chatRoomRepository;
 
     @Test
     @DisplayName("행정사가 수임 종료를 요청하면 전체 비자 갱신 프로세스가 완료된다.")
@@ -54,7 +59,8 @@ class ApplicationIntegrationTest extends IntegrationTestSupport {
         ApplicationForm form = setupInitialForm(agentUser);
 
         // 수임 종료 API 호출
-        ApplicationFormFinishedStatusResponse response = applicationFormForAgentService.finishApplication(agentUser.getEmail(), form.getId(), true);
+        ApplicationFormFinishedStatusResponse response = applicationFormForAgentService
+                .finishApplication(agentUser.getEmail(), form.getId(), true);
 
         // 데이터베이스 최종 상태 검증
         List<ApplicationForm> allForms = applicationFormRepository.findAll();
@@ -84,8 +90,7 @@ class ApplicationIntegrationTest extends IntegrationTestSupport {
                 "password123!",
                 userType,
                 LoginType.EMAIL,
-                true
-        ));
+                true));
     }
 
     private ApplicationForm setupInitialForm(User agentUser) {
@@ -93,22 +98,26 @@ class ApplicationIntegrationTest extends IntegrationTestSupport {
                 "김행정", LocalDate.of(1980, 1, 1), "profile_key", "09:00-18:00",
                 "나비사 행정사무소", "서울시 강남구", "테헤란로 123", "자기소개",
                 "010-1234-5678", agentUser.getId(), "LIC-123", LocalDate.now(),
-                "seal_key", "cert_key", "매니저 코멘트"
-        ));
+                "seal_key", "cert_key", "매니저 코멘트"));
 
         User foreignerUser = saveUser("foreigner@navisa.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(
                 foreignerUser.getId(),
-                ForeignerSearchStatus.REQUESTING
-        ));
+                ForeignerSearchStatus.REQUESTING));
 
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E-7", "특수활동", null, null));
 
         ApplicationForm form = new ApplicationForm(agent, foreigner, jobCode, false, 150, 1);
 
-        Map<String, Object> sampleSection = Map.of("sectionId", 1, "fields", List.of(Map.of("fieldId", 101, "value", "Hong")));
+        Map<String, Object> sampleSection = Map.of("sectionId", 1, "fields",
+                List.of(Map.of("fieldId", 101, "value", "Hong")));
         form.updateSections(List.of(sampleSection), 150, 10);
 
-        return applicationFormRepository.save(form);
+        applicationFormRepository.save(form);
+
+        // 수임 종료 후 피드백 메세지 전송을 위해 ChatRoom 필요
+        chatRoomRepository.save(new ChatRoom(foreigner, agent, ChatRoomStatus.DEFAULT));
+
+        return form;
     }
 }

@@ -1,8 +1,7 @@
-package com.navisa.be.storage.service;
+package com.navisa.be.global.infra.aws;
 
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.global.common.exception.StorageException;
-import com.navisa.be.global.infra.aws.AwsCloudfrontClient;
 import com.navisa.be.global.common.model.enums.ImageSize;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

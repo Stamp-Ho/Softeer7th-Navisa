@@ -1,4 +1,4 @@
-package com.navisa.be.info.controller;
+package com.navisa.be.global.common.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navisa.be.auth.jwt.JwtProvider;

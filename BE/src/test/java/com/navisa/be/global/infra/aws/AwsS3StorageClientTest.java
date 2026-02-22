@@ -1,4 +1,4 @@
-package com.navisa.be.storage.service;
+package com.navisa.be.global.infra.aws;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 
 import java.net.URL;
 
-import com.navisa.be.global.infra.aws.AwsS3StorageClient;
 import com.navisa.be.global.common.model.enums.StorageLocation;
 import com.navisa.be.global.common.dto.request.IssuedPresignedUrlRequest;
 import com.navisa.be.global.common.dto.response.PresignedUrlResponse;

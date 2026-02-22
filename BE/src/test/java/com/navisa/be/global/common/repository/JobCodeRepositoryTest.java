@@ -1,4 +1,4 @@
-package com.navisa.be.common.repository;
+package com.navisa.be.global.common.repository;
 
 import com.navisa.be.global.common.dto.projection.JobCodeSimilarityProjection;
 import com.navisa.be.global.common.model.entity.JobCode;

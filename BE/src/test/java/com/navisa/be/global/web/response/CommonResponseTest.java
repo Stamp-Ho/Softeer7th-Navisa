@@ -1,7 +1,5 @@
-package com.navisa.be.common.dto.response;
+package com.navisa.be.global.web.response;
 
-import com.navisa.be.global.web.response.BaseResponse;
-import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.global.web.error.BaseException;
 import com.navisa.be.global.web.error.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package com.navisa.be.common.model.entity;
+package com.navisa.be.global.common.model.entity;
 
 import com.navisa.be.global.config.JpaAuditConfig;
 import com.navisa.be.global.common.model.entity.BaseEntity;

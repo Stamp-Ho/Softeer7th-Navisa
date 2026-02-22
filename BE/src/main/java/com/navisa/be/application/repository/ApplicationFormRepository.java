@@ -37,6 +37,9 @@ public interface ApplicationFormRepository extends JpaRepository<ApplicationForm
     @EntityGraph(attributePaths = {"agentProfile"})
     Optional<ApplicationForm> findWithAgentProfileById(UUID id);
 
+    @EntityGraph(attributePaths = {"agentProfile", "foreignerProfile"})
+    Optional<ApplicationForm> findWithAgentProfileAndForeignerProfileById(UUID id);
+
     // exportedAt의 날짜 부분이 targetDate와 일치하는 완료된 서류 조회
     @Query(value = """
         SELECT f FROM ApplicationForm f
@@ -50,7 +53,8 @@ public interface ApplicationFormRepository extends JpaRepository<ApplicationForm
     List<ApplicationForm> findAllByExportedDate(@Param("targetDate") LocalDate targetDate);
 
     // 특정 외국인의 비자 신청서 중 가장 최근 생성된 1건 조회
-    Optional<ApplicationForm> findFirstByForeignerProfile_UserIdOrderByCreatedAtDesc(UUID userId);
+    @EntityGraph(attributePaths = {"agentProfile", "foreignerProfile"})
+    Optional<ApplicationForm> findFirstWithAgentProfileAndForeignerProfileByForeignerProfile_UserIdOrderByCreatedAtDesc(UUID userId);
 
     boolean existsByForeignerProfileIdAndAgentProfileIdAndIsFinishedTrue(UUID foreignerProfileId, UUID agentProfileId);
 

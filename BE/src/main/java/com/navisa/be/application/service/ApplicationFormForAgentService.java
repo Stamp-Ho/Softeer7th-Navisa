@@ -7,7 +7,9 @@ import com.navisa.be.application.dto.response.ApplicationFormIdResponse;
 import com.navisa.be.application.exception.ApplicationFormException;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
+import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.model.entity.ChatRoom;
+import com.navisa.be.chat.model.enums.MessageType;
 import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.service.ChatRoomCrudService;
 import com.navisa.be.chat.service.ChatServiceFacade;
@@ -60,13 +62,13 @@ public class ApplicationFormForAgentService {
     public ApplicationFormFinishedStatusResponse finishApplication(String email, UUID formId, Boolean isFinished) {
         User user = userCrudService.findByEmail(email);
 
-        ApplicationForm currentForm = applicationFormRepository.findById(formId)
+        ApplicationForm currentForm = applicationFormRepository.findWithAgentProfileAndForeignerProfileById(formId)
                 .orElseThrow(() -> new ApplicationFormException(ResponseStatus.VISA_APP_FORM_NOT_FOUND));
 
         validateAgentOwnership(user, currentForm);
 
         if (!isFinished) {
-            throw new ApplicationFormException(ResponseStatus.FINISH_CONDITION_NOT_MET);
+            throw new ApplicationFormException(ResponseStatus.FINISH_CONDITION_NOT_MET, "isFinished는 true여야 상태 반영이 가능합니다.");
         }
 
         currentForm.updateFinish(isFinished);
@@ -76,6 +78,20 @@ public class ApplicationFormForAgentService {
         // 신청서 복사본 생성
         ApplicationForm nextForm = ApplicationForm.createRenewalForm(currentForm);
         ApplicationForm savedNextForm = applicationFormRepository.save(nextForm);
+
+        ChatRoom chatRoom = chatRoomCrudService
+                .findByAgentIdAndForeignerId(
+                        currentForm.getAgentProfile().getId(),
+                        currentForm.getForeignerProfile().getId());
+
+        // 피드백 요청 메세지 생성
+        ChatMessageRequest chatRequest = new ChatMessageRequest(
+                chatRoom.getId(),
+                null,
+                "수임이 종료되었습니다. 해당 수임 계약에 대한 피드백 작성 부탁드립니다.",
+                MessageType.FEEDBACK_REQUIRED
+        );
+        chatServiceFacade.saveAndPublishChatMessage(currentForm.getAgentProfile().getUserId(), chatRequest, chatRoom);
 
         return new ApplicationFormFinishedStatusResponse(
                 currentForm.getId(),

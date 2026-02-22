@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -74,14 +75,81 @@ class ApplicationFormRepositoryTest extends IntegrationTestSupport {
         assertThat(result).allMatch(ApplicationForm::isDone);
     }
 
+    @Test
+    @DisplayName("findWithAgentProfileAndForeignerProfileById는 agentProfile과 foreignerProfile을 함께 로드한다.")
+    void findWithAgentProfileAndForeignerProfileById_Success() {
+        // given
+        User agentUser = userRepository
+                .save(new User("agent-joined@test.com", "pw", UserType.VALID_AGENT, LoginType.EMAIL, true));
+        AgentProfile agent = agentProfileRepository.save(new AgentProfile(
+                "행정사", LocalDate.now(), "key", "09:00", "사무소", "주소", "상세", "이력",
+                "010-1234-1234", agentUser.getId(), "LIC-JOINED", LocalDate.now(), "P", "M", "C"));
+
+        User fUser = userRepository
+                .save(new User("foreigner-joined@test.com", "pw", UserType.FILLED_FOREIGNER, LoginType.EMAIL, true));
+        ForeignerProfile foreigner = foreignerProfileRepository
+                .save(new ForeignerProfile(fUser.getId(), ForeignerSearchStatus.REQUESTING));
+        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7-J", "특수", null, null));
+
+        ApplicationForm form = applicationFormRepository
+                .save(new ApplicationForm(agent, foreigner, jobCode, false, 100, 0));
+
+        // when
+        Optional<ApplicationForm> result = applicationFormRepository
+                .findWithAgentProfileAndForeignerProfileById(form.getId());
+
+        // then
+        assertThat(result).isPresent();
+        assertThat(result.get().getAgentProfile()).isNotNull();
+        assertThat(result.get().getAgentProfile().getId()).isEqualTo(agent.getId());
+        assertThat(result.get().getForeignerProfile()).isNotNull();
+        assertThat(result.get().getForeignerProfile().getId()).isEqualTo(foreigner.getId());
+    }
+
+    @Test
+    @DisplayName("findFirstWithAgentProfileAndForeignerProfileByForeignerProfile_UserIdOrderByCreatedAtDesc는 외국인의 최신 신청서를 agentProfile, foreignerProfile과 함께 반환한다.")
+    void findFirstWithAgentProfileAndForeignerProfileByForeignerProfile_UserId_Success() {
+        // given
+        User agentUser = userRepository
+                .save(new User("agent-fst@test.com", "pw", UserType.VALID_AGENT, LoginType.EMAIL, true));
+        AgentProfile agent = agentProfileRepository.save(new AgentProfile(
+                "행정사", LocalDate.now(), "key", "09:00", "사무소", "주소", "상세", "이력",
+                "010-1234-1234", agentUser.getId(), "LIC-FST", LocalDate.now(), "P", "M", "C"));
+
+        User fUser = userRepository
+                .save(new User("foreigner-fst@test.com", "pw", UserType.FILLED_FOREIGNER, LoginType.EMAIL, true));
+        ForeignerProfile foreigner = foreignerProfileRepository
+                .save(new ForeignerProfile(fUser.getId(), ForeignerSearchStatus.REQUESTING));
+        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7-FST", "특수", null, null));
+
+        applicationFormRepository.save(new ApplicationForm(agent, foreigner, jobCode, false, 100, 0));
+        ApplicationForm latestForm = applicationFormRepository
+                .save(new ApplicationForm(agent, foreigner, jobCode, false, 100, 0));
+
+        // when
+        Optional<ApplicationForm> result = applicationFormRepository
+                .findFirstWithAgentProfileAndForeignerProfileByForeignerProfile_UserIdOrderByCreatedAtDesc(
+                        fUser.getId());
+
+        // then
+        assertThat(result).isPresent();
+        assertThat(result.get().getId()).isEqualTo(latestForm.getId());
+        assertThat(result.get().getAgentProfile()).isNotNull();
+        assertThat(result.get().getAgentProfile().getId()).isEqualTo(agent.getId());
+        assertThat(result.get().getForeignerProfile()).isNotNull();
+        assertThat(result.get().getForeignerProfile().getId()).isEqualTo(foreigner.getId());
+    }
+
     private void createFormWithExportedAt(String email, LocalDateTime exportedAt, boolean isDone) {
         User user = userRepository.save(new User(email, "pw", UserType.VALID_AGENT, LoginType.EMAIL, true));
         AgentProfile agent = agentProfileRepository.save(new AgentProfile(
                 "행정사", LocalDate.now(), "key", "09:00", "사무소", "주소", "상세", "이력",
                 "010-1234-1234", user.getId(), "LIC", LocalDate.now(), "P", "M", "C"));
 
-        User fUser = userRepository.save(new User("f_"+email, "pw", UserType.FILLED_FOREIGNER, LoginType.EMAIL, true));
-        ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(fUser.getId(), ForeignerSearchStatus.REQUESTING));
+        User fUser = userRepository
+                .save(new User("f_" + email, "pw", UserType.FILLED_FOREIGNER, LoginType.EMAIL, true));
+        ForeignerProfile foreigner = foreignerProfileRepository
+                .save(new ForeignerProfile(fUser.getId(), ForeignerSearchStatus.REQUESTING));
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수", null, null));
 
         ApplicationForm form = new ApplicationForm(agent, foreigner, jobCode, isDone, 100, 0);
