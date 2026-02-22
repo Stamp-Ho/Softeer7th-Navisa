@@ -214,7 +214,11 @@
     "save": "保存",
     "applicationForm": "申請書",
     "completedSuffix": "（完了）",
-    "requiredFieldsError": "形式が正しくありません。"
+    "requiredFieldsError": "形式が正しくありません。",
+    "noEditPermission": "編集権限がありません。",
+    "readOnlyInformation1": "この申請書は現在編集できない状態です。",
+    "readOnlyInformation2": "この申請書を変更するには、行政書士に問い合わせてください。",
+    "readOnlyInformation3": "変更および保存はできませんが、プレビューおよびダウンロードは可能です。"
   },
   "auth": {
     "login": {

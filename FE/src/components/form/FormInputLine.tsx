@@ -4,11 +4,7 @@ import SubtractButton from "../common/SubtractButton";
 import InputRenderer from "./InputRenderer";
 import CheckBox from "../common/CheckBox";
 import React from "react";
-import type {
-  FormSection,
-  inputFieldType,
-  inputLineType,
-} from "../../types/formType";
+import type { FormSection, inputFieldType, inputLineType } from "../../types/formType";
 
 const FormInputLine = ({
   inputField,
@@ -16,14 +12,18 @@ const FormInputLine = ({
   fieldIdx = 0,
   inputLine,
   inputLineIdx,
+  totalLineCount,
   setFormStruct,
+  readOnly = false,
 }: {
   inputField: inputFieldType;
   sectionIdx: number;
   fieldIdx: number;
   inputLine: inputLineType;
   inputLineIdx: number;
+  totalLineCount: number;
   setFormStruct: React.Dispatch<React.SetStateAction<FormSection[]>>;
+  readOnly?: boolean;
 }) => {
   const { control, getValues, setValue } = useFormContext();
 
@@ -34,6 +34,7 @@ const FormInputLine = ({
 
   // 줄 추가
   const handleAddField = () => {
+    if (readOnly || isFieldDisabled) return;
     setFormStruct((prev) => {
       // 1. 전체 구조 깊은 복사 (중첩 구조이므로 중요!)
       const newStruct = JSON.parse(JSON.stringify(prev));
@@ -50,6 +51,7 @@ const FormInputLine = ({
 
   // 줄 삭제
   const handleSubtractField = () => {
+    if (readOnly || isFieldDisabled) return;
     const path = `${sectionIdx}.sectionData.${fieldIdx}.values`; // 감시 중인 배열 경로
     const currentValues = getValues(path);
 
@@ -73,7 +75,10 @@ const FormInputLine = ({
   };
 
   const AddBtn = (
-    <AddButton onClick={handleAddField} disabled={isFieldDisabled} />
+    <AddButton
+      onClick={handleAddField}
+      disabled={isFieldDisabled || (inputField.maxLine && totalLineCount >= inputField.maxLine)}
+    />
   );
   const SubsBtn = <SubtractButton onClick={handleSubtractField} />;
 
@@ -98,10 +103,7 @@ const FormInputLine = ({
     inputLineIdx === inputField.inputLines.length - 1;
   //Array.from({ length: 9 }).map((_, i) => `col-span-${i + 1}`);
   return (
-    <div
-      className="grid grid-cols-9 items-end gap-x-3 gap-y-6"
-      key={inputLine.rowId || `field_${inputLineIdx}`}
-    >
+    <div className="grid grid-cols-9 items-end gap-x-3 gap-y-6" key={inputLine.rowId || `field_${inputLineIdx}`}>
       {inputLineIdx > 0 && inputLine.inputs.length > 1 && (
         <div className="col-span-9 mr-71.5 bg-gray-200 h-0.5 -mb-1.5" />
       )}
@@ -123,7 +125,8 @@ const FormInputLine = ({
             btnAfterThisInput = SubsBtn;
           }
         }
-        const inputLabel = `${sectionIdx}.sectionData.${fieldIdx}.values.${inputLine.rowId ?? inputLineIdx}.${input.requestBodyName ?? inputIdx}`;
+        const inputLabel = `${sectionIdx}.sectionData.${fieldIdx}.values.${inputLineIdx}.${input.requestBodyName ?? inputIdx}`;
+        // const inputLabel = `${sectionIdx}.sectionData.${fieldIdx}.values.${inputLine.rowId ?? inputLineIdx}.${input.requestBodyName ?? inputIdx}`;
 
         return (
           <React.Fragment key={`field_${inputIdx}`}>
@@ -138,7 +141,7 @@ const FormInputLine = ({
                   {input.englishDescription && `/${input.englishDescription}`}
                 </a>
               )}
-              <InputRenderer input={input} inputLabel={inputLabel} />
+              <InputRenderer input={input} inputLabel={inputLabel} getMany={inputField.getMany} readOnly={readOnly} />
             </div>
             {input.disableToggleDescription && (
               <Controller

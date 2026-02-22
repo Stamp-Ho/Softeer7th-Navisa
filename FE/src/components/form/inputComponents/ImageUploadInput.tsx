@@ -10,12 +10,14 @@ const ImageUploadInput = ({
   imageUrl,
   imageFile,
   setImageFile,
+  readOnly = false,
 }: {
   placeholder: string;
   isAgent?: boolean;
   imageUrl?: string;
   imageFile: File | undefined;
   setImageFile: React.Dispatch<React.SetStateAction<File | undefined>>;
+  readOnly?: boolean;
 }) => {
   const { t } = useTranslation(["components"]);
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
@@ -105,6 +107,7 @@ const ImageUploadInput = ({
           onChange={handleFileChange}
           className="hidden"
           accept="image/png, image/jpeg, image/jpg"
+          disabled={readOnly}
         />
 
         {(!loadingImage && imageFile !== undefined) || imageUrl ? (

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { IcArrows } from "../../../assets/icon/StratisUi";
 import { useFormContext } from "react-hook-form";
-import { englishNationList, nationList, nationMap } from "../../../constants/nations";
 
 const FormSelector = ({
   value = "",
@@ -12,64 +11,58 @@ const FormSelector = ({
   name = "",
   onChange = (_a: number) => {},
   disableTargets = { true: [-1], false: [-1] },
+  getMany = false,
+  readOnly = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-2);
   const [searchText, setSearchText] = useState("");
-  const [isNationSelector, setIsNationSelector] = useState(false);
-  const { setValue } = useFormContext();
+  const { setValue, getValues } = useFormContext();
   const selectorRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const dropdownItemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  useEffect(() => {
-    if (options.some((opt) => nationList.includes(opt))) {
-      setIsNationSelector(true);
-    }
-  }, [options]);
+  const parentName = name.slice(0, name.lastIndexOf("."));
+  const grandparentName = parentName.slice(0, parentName.lastIndexOf("."));
+
+  const rawValues = getValues(grandparentName);
+  const alreadySelectedOption =
+    getMany && rawValues ? Object.values(rawValues.map((v: Array<any>) => Object.values(v)[0])) : [];
+  rawValues && console.log(rawValues.map((v: Array<any>) => Object.values(v)[0]));
+  console.log(alreadySelectedOption);
 
   // 검색 텍스트로 필터링된 옵션
   const filteredOptions = searchText
-    ? isNationSelector
-      ? englishNationList
-          .filter((opt) => opt.toString().toLowerCase().includes(searchText.toLowerCase()))
-          .map((opt) => nationMap[opt])
-      : options.filter((opt) => opt.toString().toLowerCase().includes(searchText.toLowerCase()))
+    ? options.filter((opt) => opt.toString().toLowerCase().includes(searchText.toLowerCase()))
     : options;
 
   // 필터링된 옵션에서 원본 인덱스 매핑
   const filteredIndices = searchText
-    ? isNationSelector
-      ? englishNationList.reduce((acc: number[], opt, idx) => {
-          if (opt.toString().toLowerCase().includes(searchText.toLowerCase())) {
-            acc.push(idx);
-          }
-          return acc;
-        }, [])
-      : options.reduce((acc: number[], opt, idx) => {
-          if (opt.toString().toLowerCase().includes(searchText.toLowerCase())) {
-            acc.push(idx);
-          }
-          return acc;
-        }, [])
+    ? options.reduce((acc: number[], opt, idx) => {
+        if (opt.toString().toLowerCase().includes(searchText.toLowerCase())) {
+          acc.push(idx);
+        }
+        return acc;
+      }, [])
     : options.map((_, idx) => idx);
 
-  const disableTarget = (index: number) => {
-    const parentName = name.split(".")[0];
+  const disableOuterTarget = (index: number) => {
+    const sectionIndex = name.split(".")[0];
 
     if (index > 0) {
       disableTargets.true.forEach((id) => {
-        const fieldPath = `${parentName}.sectionData.${id}.disabled`;
+        const fieldPath = `${sectionIndex}.sectionData.${id}.disabled`;
         setValue(fieldPath, true); // 값을 true로 명시적 설정
       });
       disableTargets.false.forEach((id) => {
-        setValue(`${parentName}.sectionData.${id}.disabled`, false);
+        setValue(`${sectionIndex}.sectionData.${id}.disabled`, false);
       });
     } else {
       disableTargets.true.forEach((id) => {
-        setValue(`${parentName}.sectionData.${id}.disabled`, false);
+        setValue(`${sectionIndex}.sectionData.${id}.disabled`, false);
       });
       disableTargets.false.forEach((id) => {
-        const fieldPath = `${parentName}.sectionData.${id}.disabled`;
+        const fieldPath = `${sectionIndex}.sectionData.${id}.disabled`;
         setValue(fieldPath, true); // 값을 true로 명시적 설정
       });
     }
@@ -99,19 +92,19 @@ const FormSelector = ({
       dropdownItemsRef.current[focusedIndex]?.focus();
     } else {
       // focusedIndex가 -1로 초기화될 때 셀렉터에 포커스
-      if (focusedIndex === -1 && selectorRef.current) {
-        selectorRef.current.focus();
+      if (focusedIndex === -1 && inputRef.current) {
+        inputRef.current.focus();
       }
     }
   }, [focusedIndex]);
 
-  const zOfSelector = isOpen ? "z-21" : "";
-  const zOfDropdown = isOpen ? "z-20" : "";
+  const zOfSelector = isOpen ? "z-[10]" : "";
+  const zOfDropdown = isOpen ? "z-[9]" : "";
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      if (!disabled) {
+      if (!disabled && !readOnly) {
         setIsOpen((prev) => !prev);
         if (!isOpen) setFocusedIndex(0);
       }
@@ -137,17 +130,6 @@ const FormSelector = ({
           setFocusedIndex((prev) => (prev - 1 + filteredOptions.length) % filteredOptions.length);
         }
       }
-    } else if (e.key === "Backspace") {
-      e.preventDefault();
-      setSearchText((prev) => prev.slice(0, -1));
-      setIsOpen(true);
-      //setFocusedIndex(0);
-    } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-      e.preventDefault();
-      const newSearchText = (searchText + e.key).slice(0, 4);
-      setSearchText(newSearchText);
-      setIsOpen(true);
-      setFocusedIndex(-1);
     }
   };
 
@@ -163,34 +145,39 @@ const FormSelector = ({
     ? "bg-gray-150"
     : `cursor-pointer ${isOpen && " outline outline-border-normal"}
         ${zOfSelector}
-        ${searchText ? "text-text-base bg-white" : value !== "" ? "text-primary outline-violet-100 outline bg-violet-25" : "text-text-base bg-white"}
+        ${searchText ? "text-text-base bg-white" : value !== "" && Number(value) >= 0 ? "text-primary placeholder:text-primary outline-violet-100 outline bg-violet-25" : "text-text-base bg-white"}
         ${className}`;
   return (
     <div
-      className="relative h-14 focus-within:outline-violet-100 focus-within:outline-3 rounded-xl "
+      className={`relative h-14 focus-within:outline-violet-100 focus-within:outline-3 rounded-xl ${readOnly ? "pointer-events-none" : ""}`}
       ref={selectorRef}
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
       onBlur={handleBlur}
     >
-      <div
+      <input
         className={`absolute left-0 top-0 px-4 py-5 rounded-xl
         flex items-center w-full h-14
         body-l-medium focus:bg-white
         ${style}`}
-        onClick={() => disabled || setIsOpen((prev) => !prev)}
+        ref={inputRef}
+        tabIndex={0}
+        onChange={(e) => {
+          const newSearchText = e.target.value;
+          setSearchText(newSearchText);
+          if (newSearchText) setIsOpen(true);
+        }}
+        onClick={() => disabled || readOnly || setIsOpen((prev) => !prev)}
+        value={searchText}
+        placeholder={value !== "" && Number(value) >= 0 ? options[Number(value)] : placeholder}
+        onKeyDown={handleKeyDown}
+        disabled={disabled || readOnly}
+      />
+      <div
+        className={`absolute right-4 top-1/2 -translate-y-1/2 ${isOpen ? "z-11" : ""}`}
+        onClick={() => disabled || readOnly || setIsOpen((prev) => !prev)}
+        tabIndex={-1}
       >
-        {value === "" || value === undefined || value === null ? (
-          <a className="text-text-sub">{placeholder}</a>
-        ) : (
-          <a className={disabled ? "text-gray-150" : value ? "text-primary" : "text-text-base"}>
-            {searchText ? searchText : options[Number(value)]}
-          </a>
-        )}
-        <div className="ml-auto">
-          <div className={`transition-transform ${isOpen ? "rotate-180" : ""}`}>
-            <IcArrows stroke={value !== "" ? "var(--primary)" : "#b1b5bc"} />
-          </div>
+        <div className={`transition-transform ${isOpen ? "rotate-180" : ""}`} tabIndex={-1}>
+          <IcArrows stroke={value !== "" ? "var(--primary)" : "#b1b5bc"} />
         </div>
       </div>
 
@@ -200,26 +187,35 @@ const FormSelector = ({
           className={`
             absolute left-0 top-full -mt-2.5 pt-4 pb-1 pr-1
             overflow-y-hidden
-            w-full ${filteredOptions.length > 6 ? "h-75" : "h-fit min-h-15"}
+            w-full ${filteredOptions.length > 6 ? "h-75" : "h-fit"}
             bg-white rounded-lg
             shadow
             rounded-t-none
             ${zOfDropdown}
           `}
         >
-          <div className="flex flex-col gap-0.5 overflow-y-auto scrolltrack-hide h-full">
+          <div className="flex flex-col gap-0.5 overflow-y-auto scrolltrack-hide h-full" tabIndex={-1}>
+            {filteredOptions.length === 0 && <div className="pt-2 pb-3 text-center text-text-sub">No result</div>}
             {filteredOptions.map((opt, filteredIdx) => {
-              const originalIdx = filteredIndices[filteredIdx];
+              const originalIdx = alreadySelectedOption.includes(filteredIndices[filteredIdx])
+                ? ("" as any)
+                : filteredIndices[filteredIdx];
+              const invalid = originalIdx === ("" as any);
               return (
                 <div
                   ref={(el) => {
                     dropdownItemsRef.current[filteredIdx] = el;
                   }}
-                  className={`py-1.75 flex flex-row items-center pl-5 cursor-pointer hover:bg-violet-50
-                  focus:outline-none ${focusedIndex === filteredIdx ? "bg-violet-50 text-primary" : ""}`}
+                  className={`py-1.75 flex flex-row items-center pl-5 ${invalid ? "hover:bg-gray-200 cursor-not-allowed" : "hover:bg-violet-50 cursor-pointer"}
+                  focus:outline-none ${focusedIndex === filteredIdx ? (invalid ? "bg-gray-200" : "bg-violet-50 text-primary") : ""}
+                  `}
                   onClick={() => {
-                    onChange(originalIdx);
-                    disableTarget(originalIdx);
+                    if (!invalid) {
+                      onChange(originalIdx);
+                      disableOuterTarget(originalIdx);
+                    } else {
+                      onChange("" as any);
+                    }
                     setIsOpen(false);
                     setSearchText("");
                     setFocusedIndex(-1);
@@ -227,22 +223,26 @@ const FormSelector = ({
                   key={`selector_opt_${opt}`}
                   tabIndex={focusedIndex === filteredIdx ? 0 : -1}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
+                    if (e.key === "Enter" || e.key === " " || e.key === "Tab") {
                       e.preventDefault();
                       e.stopPropagation();
-                      onChange(originalIdx);
-                      disableTarget(originalIdx);
+                      if (!invalid) {
+                        onChange(originalIdx);
+                        disableOuterTarget(originalIdx);
+                      } else {
+                        onChange("" as any);
+                      }
                       setIsOpen(false);
                       setSearchText("");
                       setFocusedIndex(-1);
-                      setTimeout(() => selectorRef.current?.focus(), 0);
-                    } else if (e.key === "Escape" || e.key === "Tab") {
+                      setTimeout(() => inputRef.current?.focus(), 0);
+                    } else if (e.key === "Escape") {
                       e.preventDefault();
                       e.stopPropagation();
                       setIsOpen(false);
                       setSearchText("");
                       setFocusedIndex(-1);
-                      setTimeout(() => selectorRef.current?.focus(), 0);
+                      setTimeout(() => inputRef.current?.focus(), 0);
                     } else if (e.key === "ArrowDown") {
                       e.preventDefault();
                       e.stopPropagation();
@@ -253,15 +253,6 @@ const FormSelector = ({
                       e.stopPropagation();
                       const prevIndex = (filteredIdx - 1 + filteredOptions.length) % filteredOptions.length;
                       setFocusedIndex(prevIndex);
-                    } else if (e.key === "Backspace") {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setSearchText((prev) => prev.slice(0, -1));
-                    } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setSearchText((prev) => prev + e.key);
-                      setFocusedIndex(-1);
                     }
                   }}
                 >

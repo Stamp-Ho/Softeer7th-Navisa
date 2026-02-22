@@ -10,7 +10,19 @@ const getNestedError = (errors: any, path: string) => {
   return path.split(".").reduce((obj, key) => obj?.[key], errors);
 };
 
-const InputRenderer = ({ input, inputLabel, className }: { input: input; inputLabel: string; className?: string }) => {
+const InputRenderer = ({
+  input,
+  inputLabel,
+  className,
+  getMany = false,
+  readOnly = false,
+}: {
+  input: input;
+  inputLabel: string;
+  className?: string;
+  getMany?: boolean;
+  readOnly?: boolean;
+}) => {
   const {
     control,
     setValue,
@@ -34,7 +46,9 @@ const InputRenderer = ({ input, inputLabel, className }: { input: input; inputLa
 
   useEffect(() => {
     // 현재 값이 없을 때만 초기값 설정 (기존 값을 덮어쓰지 않기 위함)
-    if (!isDisabled) {
+    if (isDisabled) {
+      setValue(inputLabel, undefined, { shouldValidate: false });
+    } else {
       const currentValue = getValues(inputLabel);
       if (currentValue === undefined) {
         // 렌더링 직후 즉시 빈 문자열로 초기화
@@ -60,6 +74,31 @@ const InputRenderer = ({ input, inputLabel, className }: { input: input; inputLa
     },
     [validator, input.inputDescription],
   );
+
+  const validateDate = (value: string) => {
+    if (!value || (!input.onlyPast && !input.onlyFuture)) return true; // 날짜 검증이 필요 없는 경우
+
+    const validatePast = !!input.onlyPast;
+    const validateFuture = !!input.onlyFuture;
+
+    const selectedDate = new Date(value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 시간 제거하여 날짜만 비교
+
+    // 특정 필드에서만 과거 날짜 검증
+    // 예: 생년월일은 과거만, 예상 입사일은 미래만
+    if (validatePast) {
+      // 과거 날짜만 허용
+      return selectedDate <= today || "해당 필드는 오늘 이전이어야 합니다.";
+    }
+
+    if (validateFuture) {
+      // 오늘과 미래 날짜만 허용
+      return selectedDate >= today || "해당 필드는 오늘 이후여야 합니다.";
+    }
+
+    return true; // 다른 필드는 검증 안함
+  };
 
   switch (input.inputType) {
     case "text":
@@ -92,46 +131,15 @@ const InputRenderer = ({ input, inputLabel, className }: { input: input; inputLa
                         : "placeholder:text-gray-400 text-text-base bg-white"
                 }`}
                 placeholder={input.placeholder}
-                disabled={isDisabled}
+                disabled={isDisabled || readOnly}
                 type="text"
                 maxLength={input.maxLength ?? 50}
                 tabIndex={0}
               />
             )}
           />
-          {fieldError && <a className="caption-m-medium text-red-400 h-0 mt-1 -mb-1 pl-5">형식이 올바르지 않습니다</a>}
+          {fieldError && <p className="caption-m-medium text-red-400 h-0 mt-1 -mb-1 pl-5">형식이 올바르지 않습니다</p>}
         </>
-      );
-    case "number":
-      return (
-        <Controller
-          name={inputLabel ?? "noLabel"}
-          control={control}
-          rules={{ required: isInputRequired }}
-          render={({ field }) => (
-            <input
-              {...field}
-              className={`w-full px-5 rounded-xl
-                text-[16px] font-medium focus:outline-violet-100 focus:outline-2 focus:text-text-base focus:bg-white h-14
-                ${className}
-                ${
-                  isDisabled
-                    ? "placeholder:text-gray-300 bg-gray-150 text-gray-150 "
-                    : fieldError
-                      ? "outline-2 outline-red-400 text-red-400 bg-white"
-                      : field.value
-                        ? "text-primary outline-violet-100 outline bg-violet-25"
-                        : "placeholder:text-gray-400 text-text-base bg-white"
-                }`}
-              placeholder={input.placeholder}
-              disabled={isDisabled}
-              type="number"
-              min={0}
-              maxLength={input.maxLength ?? 50}
-              tabIndex={0}
-            />
-          )}
-        />
       );
     case "selector":
       return (
@@ -145,7 +153,9 @@ const InputRenderer = ({ input, inputLabel, className }: { input: input; inputLa
               options={input.options}
               placeholder={input.placeholder}
               disabled={isDisabled}
+              readOnly={readOnly}
               disableTargets={input.disableTargets ?? { true: [], false: [] }}
+              getMany={getMany}
             />
           )}
         />
@@ -162,18 +172,39 @@ const InputRenderer = ({ input, inputLabel, className }: { input: input; inputLa
               options={input.options}
               className={className}
               disableNextField={input.disableNextField}
+              readOnly={readOnly}
             />
           )}
         />
       );
     case "date":
       return (
-        <Controller
-          name={inputLabel ?? "noLabel"}
-          control={control}
-          rules={{ required: isInputRequired }}
-          render={({ field }) => <DateSelector {...field} disabled={isDisabled} />}
-        />
+        <>
+          <Controller
+            name={inputLabel ?? "noLabel"}
+            control={control}
+            rules={{ required: isInputRequired, validate: validateDate }}
+            render={({ field }) => (
+              <DateSelector
+                {...field}
+                disabled={isDisabled}
+                onlyFuture={input.onlyFuture}
+                onlyPast={input.onlyPast}
+                isBirthDate={input.birthDate}
+                readOnly={readOnly}
+              />
+            )}
+          />
+          {fieldError && (
+            <p className="caption-m-medium text-red-400 h-0 mt-1 -mb-1 pl-4">
+              {fieldError.type === "required"
+                ? "필수 항목입니다."
+                : input.onlyFuture
+                  ? "해당 필드는 오늘보다 이후여야 합니다."
+                  : "해당 필드는 오늘보다 이전이어야 합니다."}
+            </p>
+          )}
+        </>
       );
     case "textArea":
       return (
@@ -188,6 +219,8 @@ const InputRenderer = ({ input, inputLabel, className }: { input: input; inputLa
               focus:outline-gray-300 focus:outline-2 
               placeholder:text-text-sub resize-none ${className}`}
               placeholder={input.placeholder}
+              disabled={isDisabled || readOnly}
+              maxLength={input.maxLength ?? 500}
             />
           )}
         />
@@ -198,7 +231,7 @@ const InputRenderer = ({ input, inputLabel, className }: { input: input; inputLa
           name={inputLabel ?? "noLabelTimeRange"}
           control={control}
           rules={{ required: isInputRequired }}
-          render={({ field }) => <TimeRangePicker {...field} />}
+          render={({ field }) => <TimeRangePicker {...field} readOnly={readOnly} />}
         />
       );
     // ... 나머지 케이스

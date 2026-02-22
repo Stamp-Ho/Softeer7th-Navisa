@@ -214,7 +214,11 @@
     "save": "Save",
     "applicationForm": "Application Form",
     "completedSuffix": " (Completed)",
-    "requiredFieldsError": "Invalid format."
+    "requiredFieldsError": "Invalid format.",
+    "noEditPermission": "You do not have permission to edit.",
+    "readOnlyInformation1": "This application form is currently in a non-editable state.",
+    "readOnlyInformation2": "Please contact the attorney to modify this application form.",
+    "readOnlyInformation3": "Modification and saving are not possible, but preview and download are available."
   },
   "auth": {
     "login": {

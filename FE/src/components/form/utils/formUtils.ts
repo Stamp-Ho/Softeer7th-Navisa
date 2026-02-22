@@ -8,7 +8,9 @@ export const calculateOnlyInputs = (data: any) => {
     // 최종 값(배열의 요소)에 도달했을 때
     if (typeof obj !== "object") {
       totalCount++;
-      if (String(obj).trim() !== "") filledCount++;
+      if (obj < 0) return;
+      const strValue = String(obj).trim();
+      if (strValue !== "") filledCount++;
       return;
     }
 

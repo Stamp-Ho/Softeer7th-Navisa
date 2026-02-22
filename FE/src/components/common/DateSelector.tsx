@@ -5,14 +5,24 @@ const DateSelector = ({
   value = "",
   onChange = (_a: string) => {},
   disabled = false,
+  onlyFuture = false,
+  onlyPast = false,
+  isBirthDate = false,
+  readOnly = false,
 }) => {
   const { t } = useTranslation(["common"]);
   // value가 "2024-05-20" 형태라면 분리, 없다면 빈값
-  const [year, month, day] =
-    value && typeof value === "string" ? value.split("-") : ["", "", ""];
+  const [year, month, day] = value && typeof value === "string" ? value.split("-") : ["", "", ""];
   const today = new Date();
   const thisYear = today.getFullYear();
-  const subjectiveYear = thisYear - Number(year);
+
+  const yearRange = onlyFuture
+    ? Array.from({ length: 50 }, (_, i) => String(thisYear + i))
+    : isBirthDate
+      ? Array.from({ length: 100 }, (_, i) => String(thisYear - 15 - i))
+      : onlyPast
+        ? Array.from({ length: 100 }, (_, i) => String(thisYear - i))
+        : Array.from({ length: 100 }, (_, i) => String(thisYear + 5 - i));
 
   const handleDateChange = (type: "Y" | "M" | "D", newValue: number) => {
     // 2. 현재 상태값들을 복사합니다.
@@ -21,7 +31,7 @@ const DateSelector = ({
     let currentD = day;
 
     // 3. 변경된 타입만 업데이트합니다.
-    if (type === "Y") currentY = String(thisYear - newValue).padStart(2, "0");
+    if (type === "Y") currentY = yearRange[newValue] ?? String(thisYear - newValue);
     if (type === "M") currentM = String(newValue + 1).padStart(2, "0");
     if (type === "D") currentD = String(newValue + 1).padStart(2, "0");
     onChange(`${currentY}-${currentM}-${currentD}`);
@@ -31,19 +41,19 @@ const DateSelector = ({
     <div className="grid grid-cols-3 gap-3">
       <FormSelector
         placeholder={t("datePicker.year")}
-        value={year !== "" ? String(subjectiveYear) : ""}
-        options={Array.from({ length: 30 }, (_, i) => String(thisYear - i))}
+        value={year !== "" ? String(yearRange.indexOf(year)) : ""}
+        options={yearRange}
         onChange={(val) => handleDateChange("Y", val)}
         disabled={disabled}
+        readOnly={readOnly}
       />
       <FormSelector
         placeholder={t("datePicker.month")}
         value={month !== "" ? String(Number(month) - 1) : ""}
-        options={Array.from({ length: 12 }, (_, i) =>
-          String(i + 1).padStart(2, "0"),
-        )}
+        options={Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"))}
         onChange={(val) => handleDateChange("M", val)}
         disabled={disabled}
+        readOnly={readOnly}
       />
       <FormSelector
         placeholder={t("datePicker.day")}
@@ -56,6 +66,7 @@ const DateSelector = ({
         )}
         onChange={(val) => handleDateChange("D", val)}
         disabled={disabled}
+        readOnly={readOnly}
       />
     </div>
   );

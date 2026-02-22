@@ -7,10 +7,11 @@ import ProgressStepWidget from "../../../components/form/ProgressStepWidget";
 import type { FormSection } from "../../../types/formType";
 import { useEffect, useState } from "react";
 import FloatingChatModal from "./FloatingChatModal";
-import { useGeneratePdf } from "./hooks/useGeneratePdf";
+import { useGeneratePdf } from "../hooks/useGeneratePdf";
 import ConfirmToExportModal from "./ConfirmToExportModal";
 import { usePatchFormStatusMutation } from "../../../api/mutations/usePatchFormStatusMutation";
 import { useNavigate } from "react-router-dom";
+import GeneratingModal from "./GeneratingModal";
 
 const EditDocumentWidget = ({
   editDocumentData,
@@ -22,30 +23,33 @@ const EditDocumentWidget = ({
   goTop,
   documentId,
   chatRoomId,
+  readOnly = false,
 }: EditDocumentWidgetProps) => {
   const { t } = useTranslation(["pages"]);
   const filledFormData = useWatch();
   const navigate = useNavigate();
-  const { previewPdf, downloadPdf } = useGeneratePdf();
+  const { previewPdf, downloadPdf, generating } = useGeneratePdf();
   const [confirmModalOn, setConfirmModalOn] = useState(false);
   const patchStatus = usePatchFormStatusMutation(() => setConfirmModalOn(false));
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const formValues = Object.values(filledFormData).slice(0, 9);
-    const data = {
-      updatedAt: new Date(),
-      sections: formValues.map((section, i) => ({
-        sectionId: i + 1,
+    if (!readOnly) {
+      const formValues = Object.values(filledFormData).slice(0, 9);
+      const data = {
+        updatedAt: new Date(),
+        sections: formValues.map((section, i) => ({
+          sectionId: i + 1,
 
-        sectionData: section.sectionData.map((field: Record<string, any>) => ({
-          ...field,
-          values: field.values && Object.values(field.values),
+          sectionData: section.sectionData.map((field: Record<string, any>) => ({
+            ...field,
+            values: field.values && Object.values(field.values),
+          })),
         })),
-      })),
-    };
-    window.localStorage.setItem(documentId, JSON.stringify(data));
-  }, [filledFormData, documentId]);
+      };
+      window.localStorage.setItem(documentId, JSON.stringify(data));
+    }
+  }, [readOnly, filledFormData, documentId]);
 
   const handlePreviewPdf = () => previewPdf(filledFormData, imageUrl);
   const handleDownloadPdf = () => {
@@ -78,6 +82,7 @@ const EditDocumentWidget = ({
   return (
     <div className="w-fit ml-4 left-0 mt-17 flex flex-row">
       {confirmModalOn && <ConfirmToExportModal onCancel={onCancel} onConfirm={onConfirm} />}
+      {generating && <GeneratingModal />}
       <div className="flex flex-col w-92 gap-5 ">
         <Button variant="primary" className="drop-shadow-[0_0_7px_#6860A040]" type="submit">
           {t("documents.save")}
@@ -124,4 +129,5 @@ type EditDocumentWidgetProps = {
   goTop: () => void;
   documentId: string;
   chatRoomId: number | null;
+  readOnly: boolean;
 };

@@ -10,6 +10,7 @@ const NavisaForm = ({
   imageFile,
   imageUrl,
   setImageFile,
+  readOnly = false,
 }: {
   formData: FormSection[];
   addIndex?: boolean;
@@ -18,6 +19,7 @@ const NavisaForm = ({
   imageFile?: File | undefined;
   imageUrl?: string;
   setImageFile?: React.Dispatch<React.SetStateAction<File | undefined>>;
+  readOnly?: boolean;
 }) => {
   const [formStruct, setFormStruct] = useState(formData);
 
@@ -39,6 +41,7 @@ const NavisaForm = ({
                 imageUrl={imageUrl}
                 imageFile={imageFile}
                 setImageFile={setImageFile}
+                readOnly={readOnly}
               />
             </>
           )}
@@ -51,6 +54,7 @@ const NavisaForm = ({
               addIndex={addIndex}
               startsWithImage={startsWithImage}
               setFormStruct={setFormStruct}
+              readOnly={readOnly}
             />
           ))}
         </div>

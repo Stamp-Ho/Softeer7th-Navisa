@@ -10,6 +10,7 @@ const FormRadio = ({
   className = "",
   options = [""] as any[],
   disableNextField = false,
+  readOnly = false,
 }) => {
   const { t } = useTranslation(["common"]);
   const { toggleDisableNextField } = useToggleDisableNextField();
@@ -59,13 +60,15 @@ const FormRadio = ({
             body-l-medium outline cursor-pointer
             w-full flex items-center justify-center
             ${index === value || value === opt ? "outline-violet-200 bg-violet-25 text-primary z-0" : "text-text-sub  bg-white border-border-normal"}
-            focus:outline-none focus:ring-2 focus:ring-violet-100 focus:ring-offset-1 focus:z-10
-            focus:text-primary
+            ${readOnly ? "" : "focus:outline-none focus:ring-2 focus:ring-violet-100 focus:ring-offset-1 focus:z-10 focus:text-primary"}
+           
           `}
           onClick={() => {
-            handleOnClick(index, opt);
+            if (!readOnly) handleOnClick(index, opt);
           }}
-          onKeyDown={(e) => handleKeyDown(e, index)}
+          onKeyDown={(e) => {
+            if (!readOnly) handleKeyDown(e, index);
+          }}
           tabIndex={index === 0 ? 0 : -1}
         >
           {isBoolean ? boolToLabel(!opt) : opt}

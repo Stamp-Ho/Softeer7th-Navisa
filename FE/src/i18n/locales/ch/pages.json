@@ -214,7 +214,11 @@
     "save": "保存",
     "applicationForm": "申请书",
     "completedSuffix": "（已完成）",
-    "requiredFieldsError": "格式不正确。"
+    "requiredFieldsError": "格式不正确。",
+    "noEditPermission": "您没有编辑权限。",
+    "readOnlyInformation1": "此申请表目前处于不可编辑状态。",
+    "readOnlyInformation2": "请咨询律师修改此申请表。",
+    "readOnlyInformation3": "不能进行修改和保存，但可以进行预览和下载。"
   },
   "auth": {
     "login": {

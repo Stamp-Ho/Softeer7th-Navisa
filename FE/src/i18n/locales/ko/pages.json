@@ -214,7 +214,11 @@
     "save": "저장",
     "applicationForm": "신청서",
     "completedSuffix": " (작성완료)",
-    "requiredFieldsError": "형식이 올바르지 않습니다."
+    "requiredFieldsError": "형식이 올바르지 않습니다.",
+    "noEditPermission": "수정 권한이 없습니다.",
+    "readOnlyInformation1": "본 신청서는 현재 수정이 불가능한 상태입니다.",
+    "readOnlyInformation2": "행정사에게 문의하여 신청서를 수정하시기 바랍니다.",
+    "readOnlyInformation3": "수정 및 저장은 불가능하지만, 미리보기와 다운로드는 가능합니다."
   },
   "auth": {
     "login": {

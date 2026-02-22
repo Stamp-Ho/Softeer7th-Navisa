@@ -1,19 +1,19 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import NavisaForm from "../../../components/form/NavisaForm";
-import { IcDot } from "../../../assets/icon/StratisUi";
+import NavisaForm from "../../components/form/NavisaForm";
+import { IcDot } from "../../assets/icon/StratisUi";
 import { useDocumentScroll } from "./hooks/useDocumentScroll";
 import { editDocumentData } from "./constants";
 import { FormProvider, useForm } from "react-hook-form";
-import EditDocumentWidget from "./EditDocumentWidget";
+import EditDocumentWidget from "./Component/EditDocumentWidget";
 import { useEffect, useState } from "react";
-import { useApplicationFormQuery } from "../../../api/queries/useApplicationFormQuery";
-import { useApplicationFormMutation } from "../../../api/mutations/useApplicationFormMutation";
-import { calculateOnlyInputs } from "../../../components/form/utils/formUtils";
-import { useUploadFormImage } from "../../../api/fetchHooks/useUploadFormImage";
-import { useForeignerMyFormQuery } from "../../../api/queries/useForeignerMyFormQuery";
-import { isUUID } from "../../../utils/isUuid";
-import { alertT } from "../../../i18n/alerts";
+import { useApplicationFormQuery } from "../../api/queries/useApplicationFormQuery";
+import { useApplicationFormMutation } from "../../api/mutations/useApplicationFormMutation";
+import { calculateOnlyInputs } from "../../components/form/utils/formUtils";
+import { useUploadFormImage } from "../../api/fetchHooks/useUploadFormImage";
+import { useForeignerMyFormQuery } from "../../api/queries/useForeignerMyFormQuery";
+import { isUUID } from "../../utils/isUuid";
+import { alertT } from "../../i18n/alerts";
 
 const EditDocument = () => {
   const { t } = useTranslation(["pages"]);
@@ -22,13 +22,15 @@ const EditDocument = () => {
   const { documentId } = useParams<{ documentId: string }>();
 
   const goBack = () => navigate("/", { replace: false });
-  if (documentId && !isUUID(documentId)) goBack();
+  const isAgent = !!documentId;
 
   const agentQuery = useApplicationFormQuery(documentId ?? "", !!documentId);
   const foreignerQuery = useForeignerMyFormQuery(!documentId);
 
   const data = !!documentId ? agentQuery.data : foreignerQuery.data;
   const isLoading = agentQuery.isLoading || foreignerQuery.isLoading;
+
+  const readOnly = !isAgent && data?.chatRoomId !== null;
 
   const postForm = useApplicationFormMutation(data?.applicationFormId ?? documentId ?? "", () => {
     alertT("components.form.savingSuccess");
@@ -42,6 +44,10 @@ const EditDocument = () => {
   const [formLayout, setFormLayout] = useState(editDocumentData);
   const [initializing, setInitializing] = useState(true);
 
+  if (documentId && !isUUID(documentId)) {
+    goBack();
+    return null;
+  }
   const compareLocalAndServerData = () => {
     //주소가 잘못되었거나 데이터를 받아오지 못한 경우, 뒤로가기
     if (!data) {
@@ -55,7 +61,7 @@ const EditDocument = () => {
       return;
     }
     const localRawData = window.localStorage.getItem(data.applicationFormId);
-    if (localRawData && !data.isDone) {
+    if (localRawData && !readOnly) {
       try {
         const localData = JSON.parse(localRawData);
         const localTime = new Date(localData.updatedAt).getTime();
@@ -105,6 +111,10 @@ const EditDocument = () => {
 
   // 폼 입력 값 저장 함수
   const onSubmit = (formData: Record<number, any>) => {
+    if (readOnly) {
+      alertT("documents.noEditPermission");
+      return;
+    }
     const { totalCount, filledCount } = calculateOnlyInputs(formData);
 
     if (imageFile !== undefined && data?.applicationFormId) {
@@ -118,7 +128,7 @@ const EditDocument = () => {
         sectionId: i + 1,
         sectionData: section.sectionData.map((field: Record<string, any>) => ({
           ...field,
-          values: Object.values(field.values),
+          values: field.values && Object.values(field.values),
         })),
       })),
     };
@@ -142,6 +152,11 @@ const EditDocument = () => {
     t("documents.information4"),
     t("documents.information5"),
   ];
+  const informationWhenReadOnly = [
+    t("documents.readOnlyInformation1"),
+    t("documents.readOnlyInformation2"),
+    t("documents.readOnlyInformation3"),
+  ];
   return (
     <FormProvider {...methods}>
       <form className="flex flex-row overflow-y-auto w-fit" onSubmit={methods.handleSubmit(onSubmit, onError)}>
@@ -158,12 +173,14 @@ const EditDocument = () => {
             </h2>
             <a className="body-l-medium text-text-base mb-5">{t("documents.description")}</a>
             <ul className="flex flex-col bg-green-bright body-l-medium text-green-vivid gap-1.5 rounded-[20px] py-7 px-5.25">
-              {(data.isDone ? informationMessageWhenDone : informationMessage).map((text, idx) => (
-                <li className="flex flex-row items-center gap-0.5" key={`inform_${idx}`}>
-                  <IcDot size={16} color="var(--green-vivid)" />
-                  {text}
-                </li>
-              ))}
+              {(readOnly ? informationWhenReadOnly : data.isDone ? informationMessageWhenDone : informationMessage).map(
+                (text, idx) => (
+                  <li className="flex flex-row items-center gap-0.5" key={`inform_${idx}`}>
+                    <IcDot size={16} color="var(--green-vivid)" />
+                    {text}
+                  </li>
+                ),
+              )}
             </ul>
             <NavisaForm
               formData={formLayout}
@@ -172,6 +189,7 @@ const EditDocument = () => {
               imageUrl={imageUrl}
               imageFile={imageFile}
               setImageFile={setImageFile}
+              readOnly={readOnly}
             />
           </div>
         </div>
@@ -185,6 +203,7 @@ const EditDocument = () => {
           goTop={goTop}
           documentId={data?.applicationFormId ?? documentId ?? ""}
           chatRoomId={data.chatRoomId}
+          readOnly={readOnly}
         />
       </form>
     </FormProvider>
@@ -205,3 +224,9 @@ export default EditDocument;
 //   "화면에 보이지 않는 선택지는 다운로드 후 자필로 입력하시길 바랍니다.",
 //   "이미 [내보내기] 완료된 신청서입니다. 수정 및 미리보기, 다운로드가 가능하지만 의뢰 완료 여부 문의 시점은 [내보내기] 2주 후 입니다.",
 // ];
+
+const informationWhenReadOnly = [
+  "본 신청서는 현재 수정이 불가능한 상태입니다.",
+  "행정사에게 문의하여 신청서를 수정하시기 바랍니다.",
+  "수정 및 저장은 불가능하지만, 미리보기와 다운로드는 가능합니다.",
+];

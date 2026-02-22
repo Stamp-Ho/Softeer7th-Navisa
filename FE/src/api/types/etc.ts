@@ -39,7 +39,7 @@ export interface ApplicationFormResponse {
   totalCount: number;
   filledCount: number;
   sections: Record<string, any>[];
-  chatRoomId: number;
+  chatRoomId: number | null;
 }
 export interface ApplicationFormRequest {
   totalCount: number;

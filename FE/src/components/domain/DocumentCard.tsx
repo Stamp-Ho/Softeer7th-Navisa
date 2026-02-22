@@ -7,9 +7,9 @@ import type { RecentVisaFormsResponse } from "../../api/types/etc";
 import { formatToLocalTime } from "../../utils/formatToLocalTime";
 import { useResizeImage } from "../../hooks/useResizeImage";
 import { useEffect, useState } from "react";
-import ConfirmToReactiveModal from "../../pages/Documents/ConfirmToReactiveModal";
+import ConfirmToReactiveModal from "../../pages/Documents/Component/ConfirmToReactiveModal";
 import { useApplicationFormQuery } from "../../api/queries/useApplicationFormQuery";
-import { useGeneratePdf } from "../../pages/Documents/EditDocument/hooks/useGeneratePdf";
+import { useGeneratePdf } from "../../pages/Documents/hooks/useGeneratePdf";
 
 const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
   const { t } = useTranslation(["components"]);

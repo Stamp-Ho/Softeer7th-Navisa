@@ -11,6 +11,7 @@ export type inputFieldType = {
   canInputBlocked?: boolean;
   inputLines: inputLineType[];
   getMany?: boolean;
+  maxLine?: number;
   addButtonAtFirstLine?: boolean;
   addButtonAtBelowLines?: boolean;
 };
@@ -33,10 +34,12 @@ export type input = {
   disableNextField?: boolean;
   validator?: ValidatorType;
   maxLength?: number;
+  onlyPast?: boolean;
+  onlyFuture?: boolean;
+  birthDate?: boolean;
 };
 export type formInputType =
   | "text"
-  | "number"
   | "radio"
   | "selector"
   | "date"

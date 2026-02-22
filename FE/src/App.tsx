@@ -9,7 +9,7 @@ import ProfileOfForeigner from "./pages/Profile/Foreigner/ProfileOfForeigner";
 import AgentOnboard from "./pages/Onboard/AgentOnboard";
 import ForeignerOnboard from "./pages/Onboard/ForeignerOnboard";
 import Documents from "./pages/Documents/Documents";
-import EditDocument from "./pages/Documents/EditDocument/EditDocument";
+import EditDocument from "./pages/Documents/EditDocument";
 import { AuthContextProvider } from "./contexts/AuthContextProvider";
 import { LocaleContextProvider } from "./contexts/LocaleContextProvider";
 import MyProfile from "./pages/Profile/MyProfile";
@@ -26,14 +26,8 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/search/:targetType" element={<Search />} />
               <Route path="/profile" element={<MyProfile />} />
-              <Route
-                path="/profile/foreigner/:foreignerId"
-                element={<ProfileOfForeigner />}
-              />
-              <Route
-                path="/profile/agent/:agentId"
-                element={<ProfileOfAgent />}
-              />
+              <Route path="/profile/foreigner/:foreignerId" element={<ProfileOfForeigner />} />
+              <Route path="/profile/agent/:agentId" element={<ProfileOfAgent />} />
               <Route path="/onboard/foreigner" element={<ForeignerOnboard />} />
               <Route path="/onboard/agent" element={<AgentOnboard />} />
               <Route path="/chat" element={<ChatPage />} />

@@ -1,10 +1,11 @@
 import { PDFDocument, PDFPage, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit"; // 한글 폰트 임베딩을 위해 필요
-import { nationList } from "../../../../constants/nations";
-import type { formInputType } from "../../../../types/formType";
-import { useEffect } from "react";
+import { nationList } from "../../../constants/nations";
+import type { formInputType } from "../../../types/formType";
+import { useEffect, useState } from "react";
 
 export const useGeneratePdf = () => {
+  const [generating, setGenerating] = useState(false);
   const prepareToGenerate = async () => {};
   useEffect(() => {
     prepareToGenerate();
@@ -44,160 +45,212 @@ export const useGeneratePdf = () => {
   };
 
   const generatePdf = async (filledFormData: Record<string, any>, imageUrl: string): Promise<string> => {
-    // 1. 공식 서식 PDF 가져오기 (원본 파일)
-    const formUrl = "/APPLICATION_FORM.pdf";
-    const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
+    try {
+      // 1. 공식 서식 PDF 가져오기 (원본 파일)
+      const formUrl = "/APPLICATION_FORM.pdf";
+      const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
 
-    // 2. 한글 폰트(Pretendard) 가져오기
-    const fontUrl = "/PretendardVariable.ttf"; // 1. TTF 폰트 로드
-    const fontBytes = await fetch(fontUrl).then((res) => {
-      if (!res.ok) throw new Error("폰트를 불러오지 못했습니다.");
-      return res.arrayBuffer();
-    });
-    const hanjaUrl = "/KPA_CJK_KR-Medium.ttf"; // 1.1. 한자폰트로드
-    const hanjaBytes = await fetch(hanjaUrl).then((res) => {
-      if (!res.ok) throw new Error("폰트를 불러오지 못했습니다.");
-      return res.arrayBuffer();
-    });
-    // 3. PDF 문서 로드 및 폰트 등록
-    const pdfDoc = await PDFDocument.load(formPdfBytes);
-    pdfDoc.registerFontkit(fontkit);
-    const pretendard = await pdfDoc.embedFont(fontBytes);
-    const kpa = await pdfDoc.embedFont(hanjaBytes);
-    // 4. 첫 번째 페이지 가져오기
-    if (!pdfDoc) return "";
-    const pages = pdfDoc.getPages();
+      // 2. 한글 폰트(Pretendard) 가져오기
+      const fontUrl = "/PretendardVariable.ttf"; // 1. TTF 폰트 로드
+      const fontBytes = await fetch(fontUrl).then((res) => {
+        if (!res.ok) throw new Error("폰트를 불러오지 못했습니다.");
+        return res.arrayBuffer();
+      });
+      const hanjaUrl = "/KPA_CJK_KR-Medium.ttf"; // 1.1. 한자폰트로드
+      const hanjaBytes = await fetch(hanjaUrl).then((res) => {
+        if (!res.ok) throw new Error("폰트를 불러오지 못했습니다.");
+        return res.arrayBuffer();
+      });
+      // 3. PDF 문서 로드 및 폰트 등록
+      const pdfDoc = await PDFDocument.load(formPdfBytes);
+      pdfDoc.registerFontkit(fontkit);
+      const pretendard = await pdfDoc.embedFont(fontBytes);
+      const kpa = await pdfDoc.embedFont(hanjaBytes);
+      // 4. 첫 번째 페이지 가져오기
+      if (!pdfDoc) return "";
+      const pages = pdfDoc.getPages();
 
-    // 2. 실제 PDF 적용 부분
-    if (imageUrl) {
-      try {
-        // fetch 대신 위에서 만든 변환 함수 사용
-        const jpgImageBytes = await convertWebpToJpg(imageUrl);
-        const jpgImage = await pdfDoc.embedJpg(jpgImageBytes);
-        const jpgDims = jpgImage.scaleToFit(100, 125);
-        pages[0].drawImage(jpgImage, {
-          ...jpgDims,
-          x: 111 - jpgDims.width / 2,
-          y: 518 - jpgDims.height / 2,
-        });
-      } catch (error) {
-        console.error("WebP 변환 또는 이미지 삽입 실패:", error);
+      // 2. 실제 PDF 적용 부분
+      if (imageUrl) {
+        try {
+          // fetch 대신 위에서 만든 변환 함수 사용
+          const jpgImageBytes = await convertWebpToJpg(imageUrl);
+          const jpgImage = await pdfDoc.embedJpg(jpgImageBytes);
+          const jpgDims = jpgImage.scaleToFit(100, 125);
+          pages[0].drawImage(jpgImage, {
+            ...jpgDims,
+            x: 111 - jpgDims.width / 2,
+            y: 518 - jpgDims.height / 2,
+          });
+        } catch (error) {
+          console.error("WebP 변환 또는 이미지 삽입 실패:", error);
+        }
       }
-    }
+      const draw = (
+        pageTarget: PDFPage,
+        text: string,
+        x: number,
+        y: number,
+        isHanja: boolean = false,
+        size: number = 10,
+        isToRight: boolean = false,
+        isToCenter: boolean = false,
+      ) => {
+        if (!text || text === "undefined" || text === "null") return;
 
-    const fillPdfData = (filledFormData: any, pages: PDFPage[]) => {
-      const formValues = Object.values(filledFormData).slice(0, 9) as any[];
-      const sections = formValues.map((section, i) => ({
-        sectionId: i + 1,
-        sectionData: section.sectionData.map((field: Record<string, any>) => ({
-          ...field,
-          values: Object.values(field.values),
-        })),
-      }));
+        const currentFont = isHanja ? kpa : pretendard;
+        const currentSize = size || 10;
+        const textWidth = currentFont.widthOfTextAtSize(text, currentSize);
 
-      Object.entries(PDF_LAYOUT).forEach(([path, config]) => {
-        const [sIdx, fIdx, iIdx] = path.split("-").map(Number);
-        const section = sections[sIdx];
-        const fieldData = section?.sectionData[fIdx];
+        pageTarget.drawText(text, {
+          x: x - (isToRight ? textWidth : isToCenter ? textWidth / 2 : 0),
+          y: y,
+          size: currentSize,
+          font: currentFont,
+          color: rgb(0, 0, 0),
+        });
+      };
 
-        if (!fieldData || !fieldData.values) return;
+      const fillPdfData = (filledFormData: any, pages: PDFPage[]) => {
+        const formValues = Object.values(filledFormData).slice(0, 9) as any[];
+        const sections = formValues.map((section, i) => ({
+          sectionId: i + 1,
+          sectionData: section.sectionData.map((field: Record<string, any>) => ({
+            ...field,
+            values: field.values && Object.values(field.values),
+          })),
+        }));
 
-        // 해당 필드가 작성될 타겟 페이지 설정
-        const pageTarget = pages[config.pageIdx];
-        if (!pageTarget) return;
+        Object.entries(PDF_LAYOUT).forEach(([path, config]) => {
+          const [sIdx, fIdx, iIdx] = path.split("-").map(Number);
+          const section = sections[sIdx];
+          const fieldData = section?.sectionData[fIdx];
 
-        // 공통 텍스트 그리기 함수 (클로저 내부 정의)
-        const draw = (text: string, x: number, y: number, isToRight: boolean = false, isToCenter: boolean = false) => {
-          if (!text || text === "undefined" || text === "null") return;
+          if (!fieldData) return;
 
-          const currentFont = config.isHanja ? kpa : pretendard;
-          const currentSize = config.size || 10;
-          const textWidth = currentFont.widthOfTextAtSize(text, currentSize);
+          // 해당 필드가 작성될 타겟 페이지 설정
+          const pageTarget = pages[config.pageIdx];
+          if (!pageTarget) return;
 
-          pageTarget.drawText(text, {
-            x: x - (isToRight ? textWidth : isToCenter ? textWidth / 2 : 0),
-            y: y,
-            size: currentSize,
-            font: currentFont,
-            color: rgb(0, 0, 0),
-          });
-        };
+          // 공통 텍스트 그리기 함수
 
-        // 국적과 같이 여러 입력을 한 필드에 넣는 경우
-        if (config.manyInOneField) {
-          const content = fieldData.values
-            .map((v: string[] | number[]) => {
-              const val: string | number = v[0];
-              if (val === undefined || val === null || val === "") return;
-              return config.format ? config.format(val) : String(val);
-            })
-            .join(", ");
-          draw(content, config.x || 0, config.y, config.toRight);
-        } else if (path.includes("disabled")) {
-          // 필드에 disabled 속성이 있어 체크 표시가 필요할 때
-          const selectedIdx = fieldData.disabled ? 0 : 1;
-          const targetPos = config.options?.[selectedIdx];
-          const targetX = targetPos?.x || 0;
-          const targetY = targetPos?.y || 0;
-          // 라디오 버튼은 보통 중앙 정렬이므로 toRight를 무시하고 √를 그림
-          if (targetX !== undefined) draw("√", targetX, targetY, false);
-        } else if (config.isGetMany) {
-          // --- CASE 1: getMany (다중 행 데이터) ---
-          // 예: 여행 국가 리스트처럼 한 필드 내에 여러 줄(row)이 있는 경우
-          fieldData.values.forEach((row: any[], rowIdx: number) => {
-            const val: string | number = row[iIdx]; // path의 iIdx(컬럼)에 해당하는 값을 가져옴
-            if (val === undefined || val === null || val === "") return;
-
-            const text = config.format ? config.format(val) : String(val);
-            const dynamicY = config.y - rowIdx * (config.spacing || 15);
-
-            draw(text, config.x || 0, dynamicY, config.toRight, config.toCenter);
-          });
-          return;
-        } else {
-          // --- CASE 2: Single Field (단일 데이터) ---
-          const rawValue: string | number = fieldData.values[0]?.[iIdx];
-          if (rawValue === undefined || rawValue === null || rawValue === "") return;
-
-          // 라디오 버튼/체크박스 처리
-          if (config.type === "radio") {
-            const selectedIdx = Number(rawValue);
+          if (path.includes("disabled")) {
+            // 필드에 disabled 속성이 있어 체크 표시가 필요할 때
+            const selectedIdx = fieldData.disabled ? 0 : 1;
             const targetPos = config.options?.[selectedIdx];
             const targetX = targetPos?.x || 0;
             const targetY = targetPos?.y || 0;
             // 라디오 버튼은 보통 중앙 정렬이므로 toRight를 무시하고 √를 그림
-            if (targetX !== undefined) draw("√", targetX, targetY, false);
+            if (targetX !== undefined)
+              draw(pageTarget, "√", targetX, targetY, config.isHanja, config.size, false, false);
+          } else if (!fieldData.values) {
+            return;
+          } else if (config.manyInOneField) {
+            // 국적과 같이 여러 입력을 한 필드에 넣는 경우
+            const content = fieldData.values
+              .map((v: string[] | number[]) => {
+                const val: string | number = v[0];
+                if (val === undefined || val === null || val === "") return;
+                return config.format ? config.format(val) : String(val);
+              })
+              .filter((v: string | undefined) => v !== undefined)
+              .join(", ");
+            draw(
+              pageTarget,
+              content,
+              config.x || 0,
+              config.y,
+              config.isHanja,
+              config.size,
+              config.toRight,
+              config.toCenter,
+            );
+          } else if (config.isGetMany) {
+            // --- CASE 1: getMany (다중 행 데이터) ---
+            // 예: 여행 국가 리스트처럼 한 필드 내에 여러 줄(row)이 있는 경우
+            fieldData.values.forEach((row: any[], rowIdx: number) => {
+              const val: string | number = row[iIdx]; // path의 iIdx(컬럼)에 해당하는 값을 가져옴
+              if (val === undefined || val === null || val === "") return;
+
+              const text = config.format ? config.format(val) : String(val);
+              const dynamicY = config.y - rowIdx * (config.spacing || 15);
+
+              draw(
+                pageTarget,
+                text,
+                config.x || 0,
+                dynamicY,
+                config.isHanja,
+                config.size,
+                config.toRight,
+                config.toCenter,
+              );
+            });
+            return;
+          } else {
+            // --- CASE 2: Single Field (단일 데이터) ---
+            const rawValue: string | number = fieldData.values[0]?.[iIdx];
+            if (rawValue === undefined || rawValue === null || rawValue === "") return;
+
+            // 라디오 버튼/체크박스 처리
+            if (config.type === "radio") {
+              const selectedIdx = Number(rawValue);
+              const targetPos = config.options?.[selectedIdx];
+              const targetX = targetPos?.x || 0;
+              const targetY = targetPos?.y || 0;
+              // 라디오 버튼은 보통 중앙 정렬이므로 toRight를 무시하고 √를 그림
+              if (targetX !== undefined)
+                draw(pageTarget, "√", targetX, targetY, config.isHanja, config.size, false, false);
+            }
+            // 일반 텍스트 필드 처리
+            else {
+              const formattedValue =
+                config.continued && iIdx > 0
+                  ? fieldData.values[0]?.[iIdx - 1]
+                  : "" + (config.format ? config.format(rawValue) : String(rawValue));
+              draw(
+                pageTarget,
+                formattedValue,
+                config.x || 100,
+                config.y,
+                config.isHanja,
+                config.size,
+                config.toRight || false,
+                config.toCenter || false,
+              );
+            }
           }
-          // 일반 텍스트 필드 처리
-          else {
-            const formattedValue =
-              config.continued && iIdx > 0
-                ? fieldData.values[0]?.[iIdx - 1]
-                : "" + (config.format ? config.format(rawValue) : String(rawValue));
-            draw(formattedValue, config.x || 100, config.y, config.toRight || false, config.toCenter || false);
-          }
-        }
-      });
-    };
-    fillPdfData(filledFormData, pages);
+        });
+      };
+      fillPdfData(filledFormData, pages);
 
-    const pdfBytes = await pdfDoc.save(); // 결과 파일 저장
+      const pdfBytes = await pdfDoc.save(); // 결과 파일 저장
 
-    //@ts-ignore
-    const blob = new Blob([pdfBytes], { type: "application/pdf" }); // Blob 객체 생성 (MIME 타입 지정)
+      //@ts-ignore
+      const blob = new Blob([pdfBytes], { type: "application/pdf" }); // Blob 객체 생성 (MIME 타입 지정)
 
-    const url = URL.createObjectURL(blob); // 브라우저에서 접근 가능한 임시 URL 생성
+      const url = URL.createObjectURL(blob); // 브라우저에서 접근 가능한 임시 URL 생성
 
-    return url;
+      return url;
+    } catch (error) {
+      console.error("PDF 생성 중 오류 발생:", error);
+      alert("PDF 생성에 실패했습니다. 다시 시도해 주세요.");
+      setGenerating(false);
+      return "";
+    }
   };
 
   const previewPdf = async (filledFormData: Record<string, any>, imageUrl: string) => {
+    setGenerating(true);
     const url = await generatePdf(filledFormData, imageUrl);
     if (url) {
       window.open(url);
+      URL.revokeObjectURL(url);
     }
+    setGenerating(false);
   };
   const downloadPdf = async (filledFormData: Record<string, any>, imageUrl: string) => {
+    setGenerating(true);
     const url = await generatePdf(filledFormData, imageUrl);
     if (url) {
       const link = document.createElement("a"); //가상의 <a> 태그를 만들어 클릭 이벤트 발생
@@ -209,8 +262,9 @@ export const useGeneratePdf = () => {
       document.body.removeChild(link); //사용 후 메모리 해제 및 태그 제거
       URL.revokeObjectURL(url);
     }
+    setGenerating(false);
   };
-  return { previewPdf, downloadPdf };
+  return { previewPdf, downloadPdf, generating };
 };
 
 /**

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IcDash } from "../../../assets/icon/StratisUi";
 import TimePicker from "../../common/TimePicker";
 
-const TimeRangePicker = ({ onChange = (_a: string) => {} }) => {
+const TimeRangePicker = ({ onChange = (_a: string) => {}, readOnly = false }) => {
   const [startTime, setStartTime] = useState({
     hour: "09",
     minute: "00",
@@ -13,15 +13,13 @@ const TimeRangePicker = ({ onChange = (_a: string) => {} }) => {
   });
 
   useEffect(() => {
-    onChange(
-      `${startTime.hour}:${startTime.minute} ~ ${endTime.hour}:${endTime.minute}`,
-    );
+    onChange(`${startTime.hour}:${startTime.minute} ~ ${endTime.hour}:${endTime.minute}`);
   }, [startTime, endTime]);
   return (
     <div className="flex flex-row items-center gap-3">
-      <TimePicker time={startTime} setTime={setStartTime} />
+      <TimePicker time={startTime} setTime={setStartTime} readOnly={readOnly} />
       <IcDash size={36} />
-      <TimePicker time={endTime} setTime={setEndTime} />
+      <TimePicker time={endTime} setTime={setEndTime} readOnly={readOnly} />
     </div>
   );
 };

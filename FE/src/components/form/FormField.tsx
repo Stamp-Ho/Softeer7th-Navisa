@@ -14,6 +14,7 @@ const FormField = ({
   addIndex = false,
   startsWithImage = false,
   setFormStruct,
+  readOnly = false,
 }: {
   inputField: inputFieldType;
   sectionIdx: number;
@@ -21,13 +22,16 @@ const FormField = ({
   addIndex: boolean;
   startsWithImage?: boolean;
   setFormStruct: React.Dispatch<React.SetStateAction<FormSection[]>>;
+  readOnly?: boolean;
 }) => {
   const { t } = useTranslation(["components"]);
   const methods = useFormContext();
 
+  const fieldPath = `${sectionIdx}.sectionData.${fieldIdx}`;
+
   const isFieldDisabled = useWatch({
     control: methods.control,
-    name: `${sectionIdx}.sectionData.${fieldIdx}.disabled`,
+    name: `${fieldPath}.disabled`,
   });
   useEffect(() => {
     if (isFieldDisabled) {
@@ -50,8 +54,14 @@ const FormField = ({
           };
         });
       });
-
-      methods.unregister(`${sectionIdx}.sectionData.${fieldIdx}.values`);
+      methods.resetField(fieldPath, {
+        defaultValue: {
+          disabled: true,
+          values: undefined,
+          // 다른 필드들도 초기값으로
+        },
+      });
+      methods.unregister(`${fieldPath}.values`);
     }
   }, [isFieldDisabled]);
   return (
@@ -110,7 +120,9 @@ const FormField = ({
             fieldIdx={fieldIdx}
             inputLine={inputLine}
             inputLineIdx={inputLineIdx}
+            totalLineCount={inputField.inputLines.length}
             setFormStruct={setFormStruct}
+            readOnly={readOnly}
             key={`inputLine_${sectionIdx}_${inputLineIdx}`}
           />
         ))}

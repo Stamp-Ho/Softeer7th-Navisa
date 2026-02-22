@@ -1,5 +1,5 @@
-import type { FormSection } from "../../../types/formType";
-import { nationList } from "../../../constants/nations";
+import type { FormSection } from "../../types/formType";
+import { nationList } from "../../constants/nations";
 
 export const editDocumentData: FormSection[] = [
   {
@@ -91,6 +91,8 @@ export const editDocumentData: FormSection[] = [
             inputs: [
               {
                 inputType: "date",
+                onlyPast: true,
+                birthDate: true,
               },
             ],
           },
@@ -100,6 +102,7 @@ export const editDocumentData: FormSection[] = [
         label: "국적",
         description: "Nationality",
         getMany: true,
+        maxLine: 3,
         inputLines: [
           {
             inputs: [
@@ -272,6 +275,7 @@ export const editDocumentData: FormSection[] = [
             inputs: [
               {
                 inputType: "date",
+                onlyPast: true,
               },
             ],
           },
@@ -286,6 +290,7 @@ export const editDocumentData: FormSection[] = [
             inputs: [
               {
                 inputType: "date",
+                onlyFuture: true,
               },
             ],
           },
@@ -384,7 +389,8 @@ export const editDocumentData: FormSection[] = [
           {
             inputs: [
               {
-                inputType: "number",
+                inputType: "text",
+                validator: "phoneNumber",
                 maxLength: 15,
               },
             ],
@@ -399,7 +405,8 @@ export const editDocumentData: FormSection[] = [
           {
             inputs: [
               {
-                inputType: "number",
+                inputType: "text",
+                validator: "phoneNumber",
                 maxLength: 15,
               },
             ],
@@ -460,7 +467,8 @@ export const editDocumentData: FormSection[] = [
                 changeRow: true,
               },
               {
-                inputType: "number",
+                inputType: "text",
+                validator: "phoneNumber",
                 inputDescription: "전화번호",
                 englishDescription: "Telephone No.",
                 placeholder: "전화번호를 입력해주세요",
@@ -518,6 +526,8 @@ export const editDocumentData: FormSection[] = [
                 inputDescription: "생년월일",
                 englishDescription: "Date of Birth",
                 changeRow: true,
+                onlyPast: true,
+                birthDate: true,
               },
               {
                 inputType: "selector",
@@ -534,7 +544,8 @@ export const editDocumentData: FormSection[] = [
                 maxLength: 20,
               },
               {
-                inputType: "number",
+                inputType: "text",
+                validator: "phoneNumber",
                 inputDescription: "연락처",
                 englishDescription: "Contact No.",
                 maxLength: 25,
@@ -553,7 +564,7 @@ export const editDocumentData: FormSection[] = [
           {
             inputs: [
               {
-                inputType: "number",
+                inputType: "text",
                 inputDescription: "자녀 수",
                 englishDescription: "Number of Children",
                 colSpan: 3,
@@ -689,7 +700,8 @@ export const editDocumentData: FormSection[] = [
                 maxLength: 30,
               },
               {
-                inputType: "number",
+                inputType: "text",
+                validator: "phoneNumber",
                 inputDescription: "전화번호",
                 englishDescription: "Telephone No.",
                 changeRow: true,
@@ -798,7 +810,8 @@ export const editDocumentData: FormSection[] = [
           {
             inputs: [
               {
-                inputType: "number",
+                inputType: "text",
+                validator: "phoneNumber",
                 placeholder: "전화번호를 입력해 주세요",
                 maxLength: 15,
               },
@@ -838,6 +851,7 @@ export const editDocumentData: FormSection[] = [
         description:
           "Has the applicant travelled outside his/her country of residence, excluding to Korea, in the last 5 years?",
         getMany: true,
+        maxLine: 5,
         addButtonAtBelowLines: true,
         canInputBlocked: true,
         inputLines: [
@@ -861,11 +875,13 @@ export const editDocumentData: FormSection[] = [
                 inputDescription: "방문 시작 기간",
                 englishDescription: "Date of Beggining Staying",
                 changeRow: true,
+                onlyPast: true,
               },
               {
                 inputType: "date",
                 inputDescription: "방문 종료 기간",
                 englishDescription: "Date of End Staying",
+                onlyPast: true,
               },
             ],
           },
@@ -875,6 +891,7 @@ export const editDocumentData: FormSection[] = [
         label: "국내 체류 가족 유무",
         description: "Does the applicant have any family member(s) staying in Korea?",
         getMany: true,
+        maxLine: 4,
         addButtonAtBelowLines: true,
         canInputBlocked: true,
         inputLines: [
@@ -891,6 +908,8 @@ export const editDocumentData: FormSection[] = [
                 inputType: "date",
                 inputDescription: "생년월일",
                 englishDescription: "Date of Birth",
+                onlyPast: true,
+                birthDate: true,
               },
               {
                 inputType: "selector",
@@ -914,6 +933,7 @@ export const editDocumentData: FormSection[] = [
         label: "동반입국 가족 유무",
         description: "Is the applicant traveling to Korea with any family member(s)?",
         getMany: true,
+        maxLine: 5,
         addButtonAtBelowLines: true,
         canInputBlocked: true,
         inputLines: [
@@ -930,6 +950,8 @@ export const editDocumentData: FormSection[] = [
                 inputType: "date",
                 inputDescription: "생년월일",
                 englishDescription: "Date of Birth",
+                onlyPast: true,
+                birthDate: true,
               },
               {
                 inputType: "selector",
@@ -979,7 +1001,8 @@ export const editDocumentData: FormSection[] = [
                 options: ["행정사", "가족", "친구/지인"],
               },
               {
-                inputType: "number",
+                inputType: "text",
+                validator: "phoneNumber",
                 inputDescription: "연락처",
                 englishDescription: "Phone No.",
                 changeRow: true,
@@ -990,6 +1013,8 @@ export const editDocumentData: FormSection[] = [
                 inputDescription: "생년월일",
                 englishDescription: "Date of Birth",
                 changeRow: true,
+                onlyPast: true,
+                birthDate: true,
               },
             ],
           },
@@ -1021,6 +1046,7 @@ export const editDocumentData: FormSection[] = [
                 inputType: "text",
                 colSpan: 4,
                 inputDescription: "생년월일/사업자등록번호",
+                validator: "phoneNumber",
                 englishDescription: "Date of Birth / Business Registration No.",
                 maxLength: 25,
               },
@@ -1041,7 +1067,8 @@ export const editDocumentData: FormSection[] = [
                 maxLength: 30,
               },
               {
-                inputType: "number",
+                inputType: "text",
+                validator: "phoneNumber",
                 inputDescription: "연락처",
                 englishDescription: "Phone No.",
                 changeRow: true,

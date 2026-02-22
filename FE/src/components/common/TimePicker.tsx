@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 const TimePicker = ({
   time,
   setTime,
+  readOnly = false,
 }: {
   time: {
     hour: string;
@@ -15,6 +16,7 @@ const TimePicker = ({
       minute: string;
     }>
   >;
+  readOnly?: boolean;
 }) => {
   const { t } = useTranslation(["common"]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -43,7 +45,7 @@ const TimePicker = ({
     <div className="relative w-full max-w-50" ref={wrapperRef} tabIndex={0}>
       {/* 입력창 영역: 클릭하면 열리고, 직접 타이핑도 가능 */}
       <div
-        onClick={() => setIsOpen(true)}
+        onClick={() => readOnly || setIsOpen(true)}
         className={`flex items-center justify-between w-full h-15 px-4 bg-white rounded-xl
           outline-gray-300 focus-within:outline-2 ${isOpen && "outline-2"}`}
       >
@@ -54,6 +56,7 @@ const TimePicker = ({
             onChange={(e) => handleInputChange(e, "hour")}
             className="w-7 bg-transparent outline-none text-center"
             placeholder={t("timePicker.hour")}
+            disabled={readOnly}
           />
           <span>:</span>
           <input
@@ -62,6 +65,7 @@ const TimePicker = ({
             onChange={(e) => handleInputChange(e, "minute")}
             className="w-7 bg-transparent outline-none text-center"
             placeholder={t("timePicker.minute")}
+            disabled={readOnly}
           />
         </div>
         <svg className="w-5 h-5 text-gray-400 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">

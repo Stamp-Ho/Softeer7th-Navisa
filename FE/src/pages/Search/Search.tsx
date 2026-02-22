@@ -10,30 +10,29 @@ import GoTopFloating from "../../components/common/GoTopFloating";
 
 import type { SearchAgentCardType, SearchForeignerCardType } from "../../types/Cards";
 import { useSearchInfiniteQuery } from "../../api/queries/useSearchInfiniteQuery";
-import { useJobListLabels } from "../../assets/JobIcon";
 import { regionList } from "../../constants/regions";
 import { useAuth } from "../../contexts/AuthContextProvider";
 import { useEffect } from "react";
+import { jobList } from "../../constants/job";
 
 const Search = () => {
   const { t } = useTranslation(["pages"]);
   const navigate = useNavigate();
   const { userType } = useAuth();
-  const jobListLabels = useJobListLabels();
   const { targetType } = useParams();
   const [searchParams] = useSearchParams();
 
   const isAgent = targetType === "agent";
   const params = isAgent
     ? {
-        jobGroupNameList: searchParams.getAll("job").map((id) => jobListLabels[Number(id)]),
+        jobGroupNameList: searchParams.getAll("job").map((id) => jobList[Number(id)]),
         regionList: searchParams.getAll("region").map((id) => regionList[Number(id)]),
-        languageIdList: searchParams.getAll("language").map((id) => Number(id)),
+        languageIdList: searchParams.getAll("language").map((id) => Number(id) + 1),
       }
     : {
-        jobGroupNameList: searchParams.getAll("job").map((id) => jobListLabels[Number(id)]),
+        jobGroupNameList: searchParams.getAll("job").map((id) => jobList[Number(id)]),
         nationIdList: searchParams.getAll("nation"),
-        languageIdList: searchParams.getAll("language").map((id) => Number(id)),
+        languageIdList: searchParams.getAll("language").map((id) => Number(id) + 1),
       };
 
   // 2. 통합 훅 사용 (중복 코드 제거)

@@ -22,15 +22,41 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
         label: t("onboard.nationality"),
         description: "Nationality",
         getMany: true,
+        maxLine: 3,
         addButtonAtFirstLine: true,
-        inputLines: [{ inputs: [{ placeholder: t("onboard.foreigner.selectCountry"), inputType: "selector", options: nationList, isRequired: true, requestBodyName: "nationId" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                placeholder: t("onboard.foreigner.selectCountry"),
+                inputType: "selector",
+                options: nationList,
+                isRequired: true,
+                requestBodyName: "nationId",
+              },
+            ],
+          },
+        ],
       },
       {
         label: t("onboard.language"),
         description: "Available Languages",
         getMany: true,
+        maxLine: 5,
         addButtonAtFirstLine: true,
-        inputLines: [{ inputs: [{ placeholder: t("onboard.foreigner.selectLanguage"), inputType: "selector", options: languageList, isRequired: true, requestBodyName: "languageId" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                placeholder: t("onboard.foreigner.selectLanguage"),
+                inputType: "selector",
+                options: languageList,
+                isRequired: true,
+                requestBodyName: "languageId",
+              },
+            ],
+          },
+        ],
       },
       {
         label: t("onboard.education"),
@@ -42,7 +68,11 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
               {
                 placeholder: "",
                 inputType: "radio",
-                options: [t("onboard.foreigner.degreeBelowBachelor"), t("onboard.foreigner.degreeBachelor"), t("onboard.foreigner.degreeMaster")],
+                options: [
+                  t("onboard.foreigner.degreeBelowBachelor"),
+                  t("onboard.foreigner.degreeBachelor"),
+                  t("onboard.foreigner.degreeMaster"),
+                ],
                 isRequired: true,
                 requestBodyName: "degreeLevel",
               },
@@ -54,6 +84,7 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
                 changeRow: true,
                 isRequired: true,
                 requestBodyName: "schoolName",
+                validator: "koreanOrEnglish",
               },
               {
                 placeholder: t("onboard.foreigner.majorPlaceholder"),
@@ -62,6 +93,7 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
                 inputType: "text",
                 isRequired: true,
                 requestBodyName: "majorName",
+                validator: "koreanOrEnglish",
               },
             ],
           },
@@ -72,6 +104,7 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
         description: "Career",
         disableToggleDescription: t("onboard.foreigner.noCareer"),
         getMany: true,
+        maxLine: 10,
         addButtonAtFirstLine: true,
         inputLines: [
           {
@@ -83,6 +116,7 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
                 inputType: "text",
                 isRequired: true,
                 requestBodyName: "jobTitle",
+                validator: "koreanOrEnglish",
               },
               {
                 inputDescription: t("onboard.foreigner.companyLabel"),
@@ -91,8 +125,17 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
                 inputType: "text",
                 isRequired: true,
                 requestBodyName: "companyName",
+                validator: "koreanOrEnglish",
               },
-              { inputDescription: t("onboard.foreigner.startDateLabel"), englishDescription: "Date of Start", inputType: "date", changeRow: true, isRequired: true, requestBodyName: "startDate" },
+              {
+                inputDescription: t("onboard.foreigner.startDateLabel"),
+                englishDescription: "Date of Start",
+                inputType: "date",
+                changeRow: true,
+                isRequired: true,
+                requestBodyName: "startDate",
+                onlyPast: true,
+              },
               {
                 inputDescription: t("onboard.foreigner.endDateLabel"),
                 englishDescription: "Date of Retirement",
@@ -101,6 +144,7 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
                 disableToggleDescription: t("onboard.foreigner.currentlyEmployed"),
                 isRequired: true,
                 requestBodyName: "endDate",
+                onlyPast: true,
               },
             ],
           },
@@ -115,7 +159,19 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
         label: t("onboard.foreigner.expectedJobLabel"),
         description: "Job to join",
         getMany: false,
-        inputLines: [{ inputs: [{ placeholder: t("onboard.foreigner.expectedJobPlaceholder"), inputType: "text", isRequired: true, requestBodyName: "jobTitle" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                placeholder: t("onboard.foreigner.expectedJobPlaceholder"),
+                inputType: "text",
+                isRequired: true,
+                requestBodyName: "jobTitle",
+                validator: "koreanOrEnglish",
+              },
+            ],
+          },
+        ],
       },
       {
         label: t("onboard.foreigner.expectedCompanyLabel"),
@@ -132,8 +188,16 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
                 options: languageList,
                 isRequired: true,
                 requestBodyName: "companyName",
+                validator: "koreanOrEnglish",
               },
-              { inputType: "date", inputDescription: t("onboard.foreigner.expectedDateLabel"), englishDescription: "Scheduled date of Employment", isRequired: true, requestBodyName: "startDate" },
+              {
+                inputType: "date",
+                inputDescription: t("onboard.foreigner.expectedDateLabel"),
+                englishDescription: "Scheduled date of Employment",
+                isRequired: true,
+                requestBodyName: "startDate",
+                onlyFuture: true,
+              },
             ],
           },
         ],
@@ -164,15 +228,13 @@ const ForeignerOnboard = () => {
       },
       foreignerCareers: data[0].sectionData[3].disabled
         ? []
-        : [
-            {
-              companyName: data[0].sectionData[3].values[0].companyName,
-              jobTitle: data[0].sectionData[3].values[0].jobTitle,
-              startDate: data[0].sectionData[3].values[0].startDate,
-              endDate: data[0].sectionData[3]?.values?.[0]?.endDate ?? null,
-              isWork: !!data[0].sectionData[3]?.values?.[0]?.endDatedisabled,
-            },
-          ],
+        : (data[0].sectionData[3].values as any[]).map((v) => ({
+            companyName: v.companyName,
+            jobTitle: v.jobTitle,
+            startDate: v.startDate,
+            endDate: v.endDate ?? null,
+            isWork: !!v.endDatedisabled,
+          })),
       expectedCompany: {
         jobTitle: data[1].sectionData[0].values[0].jobTitle,
         companyName: data[1].sectionData[1].values[0].companyName,
@@ -189,7 +251,12 @@ const ForeignerOnboard = () => {
   return (
     <FormProvider {...methods}>
       <form className="flex flex-row overflow-y-auto w-fit" onSubmit={methods.handleSubmit(onSubmit, onError)}>
-        <div className={`w-284 overflow-auto scrollbar-hide ${getMaskStyle()}`} style={{ height: "calc(100vh - 100px)" }} ref={scrollRef} onScroll={handleScroll}>
+        <div
+          className={`w-284 overflow-auto scrollbar-hide ${getMaskStyle()}`}
+          style={{ height: "calc(100vh - 100px)" }}
+          ref={scrollRef}
+          onScroll={handleScroll}
+        >
           <div className="flex flex-col pb-10 pt-14">
             <h2 className="headline-m-bold text-text-base mb-3">{t("onboard.foreignerTitle")}</h2>
             <a className="body-l-medium text-text-base">{t("onboard.description")}</a>
