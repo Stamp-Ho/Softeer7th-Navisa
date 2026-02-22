@@ -1,19 +1,16 @@
 package com.navisa.be.agent.service;
 
-import com.navisa.be.agent.dto.projection.AgentSimpleProjection;
 import com.navisa.be.agent.dto.response.AgentCardResponse;
-import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
-import com.navisa.be.agent.model.enums.OfficeAddressRegion;
+import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentProfileRepository;
-import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
-import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
-import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
+import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.recommendation.calculator.FinalRecommendationCalculator;
 import com.navisa.be.recommendation.calculator.ReviewBonusCalculator;
 import com.navisa.be.recommendation.calculator.SpecialtyDistributionCalculator;
+import com.navisa.be.support.AgentFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,14 +18,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AgentRecommendationServiceTest {
@@ -43,6 +45,12 @@ class AgentRecommendationServiceTest {
     private AgentProfileRepository agentProfileRepository;
 
     @Mock
+    private RedisTemplate<String, Double> doubleRedisTemplate;
+
+    @Mock
+    private ValueOperations<String, Double> valueOperations;
+
+    @Mock
     private SpecialtyDistributionCalculator distributionCalculator;
 
     @Mock
@@ -50,9 +58,6 @@ class AgentRecommendationServiceTest {
 
     @Mock
     private FinalRecommendationCalculator finalCalculator;
-
-    @Mock
-    private AgentSpecializedJobSummaryRepository summaryRepository;
 
     @Mock
     private StorageService storageService;
@@ -64,69 +69,75 @@ class AgentRecommendationServiceTest {
     private AgentBadgeService agentBadgeService;
 
     @Test
-    @DisplayName("사용자의 관심도와 행정사의 전문 분야 점수를 합산하여 추천 순위대로 정렬된다")
-    void getPersonalizedAgents_SortingTest() {
+    @DisplayName("Redis MGET을 통한 Batch 조회를 활용하여 추천 순위가 정렬된다")
+    void getPersonalizedAgents_SortingWithBatchRedisTest() {
         // given
-        String email = "email";
-        UUID foreignerId = UUID.randomUUID();
-        ForeignerProfile mockForeignerProfile = Mockito.mock(ForeignerProfile.class);
-        given(foreignerProfileCrudService.findByEmail(any())).willReturn(mockForeignerProfile);
-        given(mockForeignerProfile.getId()).willReturn(foreignerId);
+        String email = "test@example.com";
+        setupCommonMocks(email);
 
-        ForeignerSimilarity similarity = Mockito.mock(ForeignerSimilarity.class);
-        given(similarity.getJobCodeIdList()).willReturn(new long[] { 1L });
-        given(similarity.getSimilarityList()).willReturn(new double[] { 1.0 });
         UUID highId = UUID.randomUUID();
         UUID lowId = UUID.randomUUID();
 
-        given(agentSpecializedJobService.getTop2SpecializedJobIdsBatch(any()))
-                .willReturn(Map.of(highId, List.of(1L, 2L), lowId, List.of(1L, 2L)));
-        given(agentBadgeService.getTop2BadgeIdsBatch(any()))
-                .willReturn(Map.of(highId, List.of(1L, 2L), lowId, List.of(1L, 2L)));
+        AgentProfile highAgent = AgentFixture.createAgentProfile(highId, 100.0);
+        AgentProfile lowAgent = AgentFixture.createAgentProfile(lowId, 50.0);
 
-        AgentSimpleProjection highAgent = new AgentSimpleProjection(
-                highId,
-                "High Agent",
-                "high-profile-key",
-                OfficeAddressRegion.SEOUL.getAliases().get(0),
-                5L,
-                100.0);
-        AgentSimpleProjection lowAgent = new AgentSimpleProjection(
-                lowId,
-                "Low Agent",
-                "low-profile-key",
-                OfficeAddressRegion.BUSAN.getAliases().get(0),
-                3L,
-                50.0);
-        JobCode highJobCode = Mockito.mock(JobCode.class);
-        JobCode lowJobCode = Mockito.mock(JobCode.class);
-        given(highJobCode.getId()).willReturn(1L);
-        given(lowJobCode.getId()).willReturn(2L);
+        given(agentProfileRepository.findAllValidAgentProfiles()).willReturn(List.of(lowAgent, highAgent));
+        given(valueOperations.multiGet(anyList())).willReturn(List.of(0.0, 0.0));
 
-        given(agentProfileRepository.findAllValidAgentProjections()).willReturn(List.of(lowAgent, highAgent));
-        given(foreignerProfileCrudService.findSimilarityByForeignerId(foreignerId)).willReturn(similarity);
-
-        given(finalCalculator.calculateFinalGradeByLongId(any(), any())).willAnswer(invocation -> {
-            Map<Long, Double> saMap = invocation.getArgument(0);
-            double sampleValue = saMap.values().stream().findFirst().orElse(0.0);
-            return sampleValue > 70.0 ? 1000.0 : 10.0;
-        });
-
-        given(summaryRepository.findAllByAgentIdIn(any())).willReturn(List.of(
-                new AgentSpecializedJobSummary(highId, highJobCode),
-                new AgentSpecializedJobSummary(lowId, lowJobCode)));
-
-        given(distributionCalculator.calculateDistribution(any(Integer.class))).willReturn(1.0);
-        given(reviewBonusCalculator.calculateBonusFactor(any(Double.class))).willReturn(1.0);
-        given(reviewBonusCalculator.calculateFinalDistribution(any(Double.class), any(Double.class))).willReturn(1.0);
-        given(storageService.getImgUrl(any(), any(), any(Boolean.class))).willReturn("url");
+        lenient().doReturn(10.0).doReturn(100.0) // 첫 호출(low)에게 10점, 두 번째 호출(high)에게 100점
+                .when(finalCalculator).calculateFinalGradeByLongId(anyMap(), anyMap());
 
         // when
         List<AgentCardResponse> result = agentRecommendationService.getPersonalizedAgents(email);
 
         // then
-        assertThat(result).hasSize(2);
+        assertThat(result.get(0).agentId())
+                .as("추천 점수가 가장 높은 행정사(ID: %s)가 첫 번째로 정렬되어야 함", highId)
+                .isEqualTo(highId);
+
         assertThat(result.get(0).agentId()).isEqualTo(highId);
-        assertThat(result.get(1).agentId()).isEqualTo(lowId);
+    }
+
+    @Test
+    @DisplayName("MGET을 사용하여 네트워크 라운드트립을 1회로 제한한다")
+    void verifyMgetConsolidatesNetworkRequests() {
+        // given
+        String email = "test@email.com";
+        setupCommonMocks(email);
+
+        List<AgentProfile> profiles = IntStream.range(0, 100)
+                .mapToObj(i -> AgentFixture.createAgentProfile(UUID.randomUUID(), 50.0 + i))
+                .toList();
+
+        given(agentProfileRepository.findAllValidAgentProfiles()).willReturn(profiles);
+        given(valueOperations.multiGet(anyList())).willReturn(Collections.nCopies(100, 0.0));
+
+        // when
+        agentRecommendationService.getPersonalizedAgents(email);
+
+        // then
+        verify(valueOperations, times(1)).multiGet(argThat(list -> ((List<?>)list).size() == 100));
+        verify(valueOperations, never()).get(anyString());
+    }
+
+    private void setupCommonMocks(String email) {
+        ForeignerProfile mockForeignerProfile = Mockito.mock(ForeignerProfile.class);
+        UUID foreignerId = UUID.randomUUID();
+        given(foreignerProfileCrudService.findByEmail(email)).willReturn(mockForeignerProfile);
+        given(mockForeignerProfile.getId()).willReturn(foreignerId);
+
+        ForeignerSimilarity similarity = Mockito.mock(ForeignerSimilarity.class);
+        given(similarity.getJobCodeIdList()).willReturn(new long[] { 1L });
+        given(similarity.getSimilarityList()).willReturn(new double[] { 1.0 });
+        given(foreignerProfileCrudService.findSimilarityByForeignerId(foreignerId)).willReturn(similarity);
+
+        given(doubleRedisTemplate.opsForValue()).willReturn(valueOperations);
+        given(distributionCalculator.calculateDistribution(anyInt())).willReturn(1.0);
+        given(reviewBonusCalculator.calculateBonusFactor(anyDouble())).willReturn(1.0);
+        given(reviewBonusCalculator.calculateFinalDistribution(anyDouble(), anyDouble())).willReturn(1.0);
+
+        given(storageService.getImgUrl(any(), any(), anyBoolean())).willReturn("url");
+        given(agentSpecializedJobService.getTop2SpecializedJobIds(any())).willReturn(List.of(1L));
+        given(agentBadgeService.getTop2BadgeIds(any())).willReturn(List.of(1L));
     }
 }

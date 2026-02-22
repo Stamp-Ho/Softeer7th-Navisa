@@ -6,18 +6,42 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 @EnableAsync
 public class AsyncConfig {
 
-    @Bean(name = "mailExecutor")
+    @Bean(name = "taskExecutor") // 기본 스레드 풀
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10); // 동시에 발송할 메일 수
-        executor.setMaxPoolSize(20); // 최대 스레드 수
-        executor.setQueueCapacity(1000); // 1000건을 담을 수 있는 큐 크기
-        executor.setThreadNamePrefix("MailExecutor-");
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(20);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("DefaultAsync-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(name = "mailExecutor") // 이메일 전용 스레드 풀
+    public Executor mailExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(50);
+        executor.setThreadNamePrefix("MailAsync-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(name = "reliabilityAsyncExecutor")
+    public Executor reliabilityAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(50);
+        executor.setThreadNamePrefix("ReliabilityAsync-");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.initialize();
         return executor;
     }

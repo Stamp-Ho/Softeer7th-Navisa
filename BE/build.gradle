@@ -91,6 +91,10 @@ dependencies {
     // ShedLock
     implementation 'net.javacrumbs.shedlock:shedlock-spring:7.6.0'
     implementation 'net.javacrumbs.shedlock:shedlock-provider-redis-spring:7.6.0'
+
+    // Spring Retry
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {

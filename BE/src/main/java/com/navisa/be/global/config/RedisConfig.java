@@ -12,9 +12,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.retry.annotation.EnableRetry;
 
 
 @Configuration
+@EnableRetry
 public class RedisConfig {
 
     @Value("${spring.data.redis.host}")
@@ -47,7 +49,7 @@ public class RedisConfig {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
 
-        // [핵심] ObjectMapper 설정
+        // ObjectMapper 설정
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule()); // Java 8 날짜/시간 모듈 등록
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // ISO-8601 형식으로 출력
@@ -62,5 +64,22 @@ public class RedisConfig {
         redisTemplate.setHashValueSerializer(serializer);
 
         return redisTemplate;
+    }
+
+    /**
+     * 수치 연산 전용 템플릿
+     */
+    @Bean
+    public RedisTemplate<String, Double> doubleRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Double> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+
+        // Key 직렬화
+        template.setKeySerializer(new StringRedisSerializer());
+
+        // Value 직렬화: JSON이 아닌 순수 문자열 형태로 저장하여 Redis가 숫자로 인식하고 연산 가능
+        template.setValueSerializer(new org.springframework.data.redis.serializer.GenericToStringSerializer<>(Double.class));
+
+        return template;
     }
 }

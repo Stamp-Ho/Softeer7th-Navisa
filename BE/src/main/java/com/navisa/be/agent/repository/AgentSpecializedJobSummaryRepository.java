@@ -38,9 +38,17 @@ public interface AgentSpecializedJobSummaryRepository extends JpaRepository<Agen
                            @Param("jobCodeId") Long jobCodeId,
                            @Param("reviewWeight") double reviewWeight);
 
-    @Query("SELECT j FROM JobCode j WHERE j.id = :jobCodeId")
-    JobCode getReferenceJobCode(Long jobCodeId);
-
     @Query("SELECT s FROM AgentSpecializedJobSummary s JOIN FETCH s.jobCode WHERE s.agentId IN :agentIds")
     List<AgentSpecializedJobSummary> findAllByAgentIdIn(@Param("agentIds") List<UUID> agentIds);
+
+    @Modifying
+    @Query(value = """
+    UPDATE agent_specialized_job_summary 
+    SET accumulated_review_reliability = accumulated_review_reliability + :weight,
+        updated_at = NOW()
+    WHERE agent_id = :agentId AND job_code_id = :jobCodeId
+    """, nativeQuery = true)
+    int updateReliabilityInDb(@Param("agentId") UUID agentId,
+                               @Param("jobCodeId") Long jobCodeId,
+                               @Param("weight") Double weight);
 }
