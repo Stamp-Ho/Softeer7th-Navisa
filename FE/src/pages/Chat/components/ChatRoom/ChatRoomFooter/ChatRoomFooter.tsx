@@ -8,6 +8,7 @@ import Chip from "../../../../../components/common/Chip";
 import { useChatSender } from "../../../../../api/websocket/useChatSender";
 import { useChatRoomContext } from "../../context/ChatRoomContext";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../../../../contexts/AuthContextProvider";
 
 type ChatRoomFooterParams = {
   chatRoomId: number;
@@ -23,6 +24,7 @@ const ChatRoomFooter = ({
   const [message, setMessage] = useState<string>("");
   const { sendChat } = useChatSender();
   const { chatRoomStatus, documentId } = useChatRoomContext();
+  const { userType } = useAuth();
 
   const formRoute = documentId
     ? `/document/${documentId}`
@@ -32,7 +34,10 @@ const ChatRoomFooter = ({
   return (
     <div className="absolute bottom-8 w-full flex flex-col px-6">
       {chatRoomStatus === "MATCHED" && pageType === "CHAT" && formRoute && (
-        <Link to={formRoute} className="w-fit mb-3">
+        <Link
+          to={userType === "VALID_AGENT" ? formRoute : "/document"}
+          className="w-fit mb-3"
+        >
           <Chip type="chips_square_form_view" />
         </Link>
       )}

@@ -141,3 +141,18 @@ export interface AgentBadgeReviewResponse {
   agentProfileImgUrl: string;
   badgeTop2: number[];
 }
+
+export interface PostAgentBadgeReviewRequest {
+  badgeIdList: number[];
+  agentId: string;
+}
+
+export interface PostAgentFeedbackReviewRequest {
+  content: string;
+}
+
+export interface PatchAgentStatusFinishedResponse {
+  closedVisaFormId: string;
+  newVisaFormId: string;
+  updatedAt: string;
+}

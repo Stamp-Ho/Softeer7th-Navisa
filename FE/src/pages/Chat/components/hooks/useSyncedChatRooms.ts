@@ -49,7 +49,11 @@ export const useSyncedChatRooms = ({
     >();
 
     // socketMessages를 전부 돌면서 "방별 최신 상태"를 계산
-    const EXCLUDE_FROM_LAST_MESSAGE = new Set(["READ", "SYSTEM"]);
+    const EXCLUDE_FROM_LAST_MESSAGE = new Set([
+      "READ",
+      "SYSTEM",
+      "REVIEW_REQUIRED",
+    ]);
 
     for (const msg of socketMessages) {
       const roomId = Number(msg.roomId);

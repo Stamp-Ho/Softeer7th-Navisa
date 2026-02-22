@@ -4,6 +4,7 @@ import Modal from "../../../../components/common/Modal";
 import Radio from "../../../../components/common/Radio";
 import Tag from "../../../../components/common/Tag";
 import { useTranslation } from "react-i18next";
+import { useFeedbackReviewMutation } from "../../../../api/mutations/useReviewMutation";
 
 type ServiceReviewModalParams = {
   reviewHandler: (num: number) => void;
@@ -11,8 +12,23 @@ type ServiceReviewModalParams = {
 
 const ServiceReviewModal = ({ reviewHandler }: ServiceReviewModalParams) => {
   const { t } = useTranslation(["components"]);
+  const { mutate: submitFeedback } = useFeedbackReviewMutation(); // 리뷰 제출 API 훅
   const [reviewText, setReviewText] = useState<string>("");
   const MAX_LENGTH = 1000;
+
+  const handleSubmit = () => {
+    submitFeedback(
+      { content: reviewText },
+      {
+        onSuccess: () => {
+          reviewHandler(0);
+        },
+        onError: () => {
+          console.error("리뷰 제출 실패");
+        },
+      },
+    );
+  };
 
   return (
     <Modal onClose={() => reviewHandler(0)}>
@@ -21,8 +37,13 @@ const ServiceReviewModal = ({ reviewHandler }: ServiceReviewModalParams) => {
           <Tag variant="small_fill">{t("review.serviceTitle")}</Tag>
           {t("review.visaResult")}
         </div>
-        <Radio options={[t("review.visaApproved"), t("review.visaRejected")]} className="mb-9" />
-        <div className="title-l-semibold text-text-base">{t("review.serviceDescription")}</div>
+        <Radio
+          options={[t("review.visaApproved"), t("review.visaRejected")]}
+          className="mb-9"
+        />
+        <div className="title-l-semibold text-text-base">
+          {t("review.serviceDescription")}
+        </div>
         <div className="mt-5 bg-gray-50 rounded-lg p-4 h-86.5 flex flex-col">
           <textarea
             className="w-full flex-1 resize-none outline-none placeholder:text-text-sub"
@@ -44,9 +65,15 @@ const ServiceReviewModal = ({ reviewHandler }: ServiceReviewModalParams) => {
             {reviewText.length}/{MAX_LENGTH}자
           </div>
         </div>
-        <Button variant="primary" size="large" className="w-full mt-10 mb-9.75" disabled={false} onClick={() => reviewHandler(0)}>
+        <Button
+          variant="primary"
+          size="large"
+          className="w-full mt-10 mb-9.75"
+          disabled={false}
+          onClick={() => handleSubmit()}
+        >
           {t("review.next")}
-        </Button>{" "}
+        </Button>
       </div>
     </Modal>
   );

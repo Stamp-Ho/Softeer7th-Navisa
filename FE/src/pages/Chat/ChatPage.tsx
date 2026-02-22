@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import ChatRoomList from "./components/ChatList/ChatRoomList";
 import Envelope from "../../assets/Envelope";
 import ChatRoom from "./components/ChatRoom/ChatRoom";
 import ChatRoomModal from "./components/Modal/ChatRoomModal";
-import ReviewModal from "./components/Review/ReviewModal";
 import NoChatView from "./components/ChatRoom/NoChatView";
 import type { ChatRoomFilter } from "../../api/types/chat";
 import ChatRoomTabButton from "./components/ChatRoom/ChatRoomTabButton";
@@ -19,12 +18,16 @@ import { useWebSocket } from "../../contexts/WebSocketContext";
 import { useSyncedChatRooms } from "./components/hooks/useSyncedChatRooms";
 
 const ChatPage = () => {
+  const [searchParams] = useSearchParams();
+  const chatRoomNumber = Number(searchParams.get("chatroom"));
+
   const { t } = useTranslation(["pages"]);
   const location = useLocation();
-  const [selectedChatRoomId, setSelectedChatRoomId] = useState<number>(-1);
+  const [selectedChatRoomId, setSelectedChatRoomId] = useState<number>(
+    chatRoomNumber || -1,
+  );
   const [selectedTab, setSelectedTab] = useState<ChatRoomFilter>("all");
   const [viewMessageModal, setViewMessageModal] = useState<number>(0);
-  const [reviewModal, setReviewModal] = useState<number>(0);
   const [opponentImg, setOpponentImg] = useState<string | null>(null);
 
   const { messages: socketMessages } = useWebSocket(); // 전역 웹소켓 메시지 구독
@@ -83,7 +86,6 @@ const ChatPage = () => {
     setSelectedChatRoomId(-1);
     setOpponentImg(null);
   };
-  const reviewHandler = (num: number) => setReviewModal(num);
 
   if (
     !isFileReady ||
@@ -94,11 +96,6 @@ const ChatPage = () => {
   return (
     <>
       <div className="fixed inset-0 bg-background-sub -z-10"></div>
-
-      {reviewModal > 0 && (
-        <ReviewModal reviewHandler={reviewHandler} modalView={reviewModal} />
-      )}
-
       {viewMessageModal > 0 && (
         <ChatRoomModal
           onModalAction={onModalAction}
@@ -207,9 +204,6 @@ const ChatPage = () => {
           </div>
         )}
       </div>
-
-      {/* <button onClick={() => setReviewModal(1)}>리뷰1</button>
-      <button onClick={() => setReviewModal(2)}>리뷰2</button> */}
     </>
   );
 };

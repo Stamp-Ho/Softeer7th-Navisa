@@ -11,6 +11,7 @@ export type ForeignerInfo = {
   expectedJob: string;
   expectedStartDate: string;
   nationalityIds: number[];
+  isReviewRequired: boolean;
 };
 
 export type AgentHeaderData = {

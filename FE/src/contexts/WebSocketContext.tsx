@@ -15,6 +15,7 @@ import {
 import type { Message, Send } from "../api/websocket/types";
 import { useAuth } from "./AuthContextProvider";
 import { refreshPromise } from "../hooks/useApiClient";
+import { useQueryClient } from "@tanstack/react-query";
 
 type WebSocketContextType = {
   messages: Message[];
@@ -31,6 +32,7 @@ export const WebSocketProvider = ({
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { accessToken, userId, userType } = useAuth();
+  const queryClient = useQueryClient();
 
   const [isConnected, setIsConnected] = useState(false);
   const isConnectedRef = useRef(false);
@@ -65,7 +67,7 @@ export const WebSocketProvider = ({
         );
         try {
           const newToken = await refreshPromise;
-          // 🚩 언마운트 후라면 연결하지 않음
+          // 언마운트 후라면 연결하지 않음
           if (cancelled) return;
           tokenToUse = newToken || accessToken;
         } catch (error) {
@@ -75,13 +77,24 @@ export const WebSocketProvider = ({
         }
       }
 
-      // 🚩 언마운트 후라면 연결하지 않음
+      // 언마운트 후라면 연결하지 않음
       if (cancelled) return;
 
       // 연결 시작
       connectWebSocket(
         tokenToUse,
         (msg: Message) => {
+          // 먼저 사이드 이펙트 처리 (상태 업데이터 외부)
+          if (
+            msg.type !== "READ" &&
+            msg.type !== "REVIEW_REQUIRED" &&
+            msg.senderId !== userIdRef.current
+          ) {
+            queryClient.refetchQueries({ queryKey: ["chatUnreadCount"] });
+            queryClient.refetchQueries({
+              queryKey: ["chatMatchedUnreadCount"],
+            });
+          }
           setMessages((prev) => {
             if (msg.type === "READ") {
               return prev.map((m) => {
@@ -94,6 +107,8 @@ export const WebSocketProvider = ({
                 }
                 return m;
               });
+            } else if (msg.type === "REVIEW_REQUIRED") {
+              return prev;
             }
             return [...prev, { ...msg, isRead: false }];
           });
@@ -116,7 +131,7 @@ export const WebSocketProvider = ({
       setIsConnected(false);
       isConnectedRef.current = false;
     };
-  }, [accessToken, userType]); // accessToken, userType이 변경될 때만 재실행
+  }, [accessToken, userType, queryClient]); // accessToken, userType, queryClient이 변경될 때만 재실행
 
   const handleSendMessage = useCallback((payload: Send) => {
     // 1. Context 상태 확인

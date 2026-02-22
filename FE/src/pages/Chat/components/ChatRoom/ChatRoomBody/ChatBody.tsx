@@ -7,18 +7,24 @@ import { useChatRoomContext } from "../../context/ChatRoomContext";
 
 type ChatBodyParams = {
   pageType: "CHAT" | "DOCUMENT";
+  reviewHandler: (num: number) => void;
   onModalAction: (num: number) => void;
+  showReviewModal?: (show: boolean, isFeedback?: boolean) => void;
   opponentName?: string;
   myName?: string;
   profileImg: string | null;
+  matchingEndRequired?: boolean;
 };
 
 const ChatBody = ({
   pageType,
+  reviewHandler,
   onModalAction,
+  showReviewModal,
   opponentName = "loading",
   myName = "loading",
   profileImg,
+  matchingEndRequired,
 }: ChatBodyParams) => {
   const { t } = useTranslation(["components"]);
   const { userType } = useAuth();
@@ -82,8 +88,11 @@ const ChatBody = ({
               myName={myName}
               profileImg={profileImg}
               isAgent={isAgent}
+              reviewHandler={reviewHandler}
               onModalAction={onModalAction}
               pendingProposalId={pendingProposalId}
+              matchingEndRequired={matchingEndRequired}
+              showReviewModal={showReviewModal}
             />
           );
         })}

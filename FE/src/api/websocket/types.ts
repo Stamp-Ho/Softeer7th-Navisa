@@ -17,8 +17,8 @@ export type Send = {
 export type Message = {
   messageId: number; // 보조 정렬 기준
   roomId: number;
-  clientMessageId: string; // echo 방식으로 FE 측에서 전송완료된 메세지를 렌더링하기 위함.
-  senderId?: string;
+  clientMessageId: string | null; // echo 방식으로 FE 측에서 전송완료된 메세지를 렌더링하기 위함.
+  senderId: string | null; // 시스템 메시지일 때는 null
   receiverId: string; // 수신받는 사용자의 users.id(uuid) for Redis Subscribe 용도
   content: string;
   type:
@@ -29,7 +29,9 @@ export type Message = {
     | "CANCELED"
     | "SYSTEM"
     | "READ"
-    | "CHATROOM_BLOCKED";
+    | "CHATROOM_BLOCKED"
+    | "REVIEW_REQUIRED"
+    | "FEEDBACK_REQUIRED";
   createdAt: string; // 정렬 기준
   isRead: boolean;
 };

@@ -43,4 +43,17 @@ export const foreignerService = {
       `/api/foreigner/${foreignerId}`,
     );
   },
+
+  // 외국인 수임종료
+  patchForeignerStatusFinished: async (apiClient: apiClientType) => {
+    return await apiClient.patch<
+      BaseResponse<T.PatchForeignerStatusFinishedResponse>
+    >(`/api/application-forms/status/finished`);
+  },
+
+  getForeignerProgress: async (apiClient: apiClientType) => {
+    return await apiClient.get<BaseResponse<T.ForeignerProgressResponse>>(
+      "/api/foreigner/progress",
+    );
+  },
 };

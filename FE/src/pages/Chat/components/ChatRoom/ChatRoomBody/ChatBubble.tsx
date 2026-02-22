@@ -9,10 +9,13 @@ type ChatBubbleProps = {
   opponentName: string;
   myName: string;
   isAgent: boolean;
+  reviewHandler: (num: number) => void;
   onModalAction: (num: number) => void;
+  showReviewModal?: (show: boolean, isFeedback?: boolean) => void;
   showReplyButton: boolean;
   isRead: boolean;
   isLast: boolean;
+  matchingEndRequired?: boolean;
 };
 
 const ChatBubble = ({
@@ -21,10 +24,13 @@ const ChatBubble = ({
   opponentName,
   myName,
   isAgent,
+  reviewHandler,
   onModalAction,
+  showReviewModal,
   showReplyButton,
   isRead,
   isLast,
+  matchingEndRequired,
 }: ChatBubbleProps) => {
   const { t } = useTranslation(["components"]);
   const { type, content, isSentByMe } = message;
@@ -52,15 +58,24 @@ const ChatBubble = ({
         </div>
       )}
 
-      {["PROPOSAL", "ACCEPTED", "REJECTED", "CANCELED"].includes(type) && (
+      {[
+        "PROPOSAL",
+        "ACCEPTED",
+        "REJECTED",
+        "CANCELED",
+        "FEEDBACK_REQUIRED",
+      ].includes(type) && (
         <ChatSystemMessage
           type={type as any}
+          reviewHandler={reviewHandler}
           onModalAction={onModalAction}
+          showReviewModal={showReviewModal}
           senderName={isSentByMe ? myName : opponentName}
           agentName={isAgent ? myName : opponentName}
           isSentByMe={isSentByMe}
           showReplyButton={showReplyButton}
           pageType={pageType}
+          matchingEndRequired={matchingEndRequired}
         />
       )}
 

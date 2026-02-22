@@ -5,6 +5,7 @@ import LanguageSelector from "../common/LanguageSelector";
 import { IcFile, IcMessage, IcUserProfile } from "../../assets/icon/StratisUi";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
+import { useChatUnreadCount } from "../../api/queries/useChatUnreadCountQuery";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContextProvider";
 import { alertT } from "../../i18n/alerts";
@@ -16,24 +17,36 @@ const NavigationHeader = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const isSpecialBackground =
-    currentPath === "/" || PathNamesWithBackground.some((path) => currentPath.startsWith(path));
+    currentPath === "/" ||
+    PathNamesWithBackground.some((path) => currentPath.startsWith(path));
 
   const hasScroll = currentPath === "/" || currentPath.startsWith("/profile");
 
   const [authMode, setAuthMode] = useState<number>(0); // 0:none, 1:log in, 2:sign in
+  const { data: unreadCountData } = useChatUnreadCount();
+  const unreadCount = unreadCountData?.count ?? 0;
 
   const { userType } = useAuth();
 
-  const homeTabStyle = isSpecialBackground ? "text-gray-0" : currentPath === "/" ? "text-text-base" : "text-text-sub";
+  const homeTabStyle = isSpecialBackground
+    ? "text-gray-0"
+    : currentPath === "/"
+      ? "text-text-base"
+      : "text-text-sub";
   const searchTabStyle = isSpecialBackground
     ? "text-gray-0"
     : currentPath.startsWith("/search")
       ? "text-text-base"
       : "text-text-sub";
 
-  const searchLabel = userType === "VALID_AGENT" ? t("navigation.searchForeigner") : t("navigation.searchAgent");
+  const searchLabel =
+    userType === "VALID_AGENT"
+      ? t("navigation.searchForeigner")
+      : t("navigation.searchAgent");
 
-  const isUserCanAccessDoc = ["VALID_AGENT", "FILLED_FOREIGNER"].includes(userType);
+  const isUserCanAccessDoc = ["VALID_AGENT", "FILLED_FOREIGNER"].includes(
+    userType,
+  );
 
   const handleToSearch = () => {
     if (userType === "NOT_AUTHED") {
@@ -43,7 +56,9 @@ const NavigationHeader = () => {
     }
   };
   return (
-    <header className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${hasScroll && "ml-1 mr-3"}`}>
+    <header
+      className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${hasScroll && "ml-1 mr-3"}`}
+    >
       {authMode === 1 ? (
         <LoginModal onClose={() => setAuthMode(0)} setAuthMode={setAuthMode} />
       ) : authMode === 2 ? (
@@ -62,7 +77,11 @@ const NavigationHeader = () => {
           >
             {t("navigation.home")}
           </Link>
-          <a className={`cursor-pointer ${searchTabStyle}`} onClick={handleToSearch} tabIndex={0}>
+          <a
+            className={`cursor-pointer ${searchTabStyle}`}
+            onClick={handleToSearch}
+            tabIndex={0}
+          >
             {searchLabel}
           </a>
         </div>
@@ -70,7 +89,7 @@ const NavigationHeader = () => {
 
       <div className="flex flex-row gap-6 h-12">
         {userType && userType !== "NOT_AUTHED" ? (
-          <div className="flex flex-row items-center">
+          <div className="relative flex flex-row items-center">
             <Link
               to="/chat"
               tabIndex={0}
@@ -94,13 +113,28 @@ const NavigationHeader = () => {
             <Link to={`/profile`} className="cursor-pointer" tabIndex={0}>
               <IcUserProfile />
             </Link>
+            {unreadCount > 0 && (
+              <div
+                className="absolute w-3 h-3 bg-red-600 rounded-full left-6 top-4 pointer-events-none"
+                aria-label={`읽지 않은 메시지 ${unreadCount}개`}
+                role="status"
+              />
+            )}
           </div>
         ) : (
           <div className="flex flex-row items-center body-l-semibold text-gray-800 gap-5 ">
-            <a className="cursor-pointer" onClick={() => setAuthMode(1)} tabIndex={0}>
+            <a
+              className="cursor-pointer"
+              onClick={() => setAuthMode(1)}
+              tabIndex={0}
+            >
               {t("button.login")}
             </a>
-            <a className="cursor-pointer" onClick={() => setAuthMode(2)} tabIndex={0}>
+            <a
+              className="cursor-pointer"
+              onClick={() => setAuthMode(2)}
+              tabIndex={0}
+            >
               {t("button.signup")}
             </a>
           </div>

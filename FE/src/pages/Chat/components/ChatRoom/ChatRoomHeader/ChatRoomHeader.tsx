@@ -6,24 +6,30 @@ import Chip from "../../../../../components/common/Chip";
 import AgentHeaderInfo from "./AgentHeaderInfo";
 import ForeignerHeaderInfo from "./ForeignerHeaderInfo";
 import { useChatRoomContext } from "../../context/ChatRoomContext";
+import { useAuth } from "../../../../../contexts/AuthContextProvider";
 
 type HeaderParams = {
+  reviewHandler: (num: number) => void;
   pageType: "CHAT" | "DOCUMENT";
   headerData: ChatRoomHeaderData;
   onClose: () => void;
   onModalAction: (num: number) => void;
   onGoToChat?: () => void;
+  isReviewRequired: boolean;
 };
 
 const ChatRoomHeader = ({
+  reviewHandler,
   pageType,
   headerData,
   onClose,
   onModalAction,
   onGoToChat,
+  isReviewRequired,
 }: HeaderParams) => {
   const { t } = useTranslation(["components"]);
   const { chatRoomStatus } = useChatRoomContext();
+  const { userType } = useAuth();
   return (
     <>
       <div className="absolute w-full top-0">
@@ -74,13 +80,17 @@ const ChatRoomHeader = ({
                 <Chip type="chips_square_chatroom" />
               </button>
             )
-          : chatRoomStatus !== "CHATROOM_BLOCKED" && (
+          : chatRoomStatus !== "CHATROOM_BLOCKED" &&
+            userType === "FILLED_FOREIGNER" &&
+            isReviewRequired && (
               <div className="flex flex-row justify-between w-full px-6 py-[2px] bg-gradient-to-r from-violet-50 to-green-50">
                 <div className="flex flex-row items-center gap-2 body-s-semibold text-text-base">
                   <span>{t("chatRoom.systemNotice")}</span>
                   <span>{t("chatRoom.reviewPrompt")}</span>
                 </div>
-                <Chip type="chips_square_review" />
+                <button type="button" onClick={() => reviewHandler(1)}>
+                  <Chip type="chips_square_review" />
+                </button>
               </div>
             )}
       </div>

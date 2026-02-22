@@ -9,8 +9,11 @@ type Props = {
   myName: string;
   profileImg: string | null;
   isAgent: boolean;
+  reviewHandler: (num: number) => void;
   onModalAction: (num: number) => void;
+  showReviewModal?: (show: boolean, isFeedback?: boolean) => void;
   pendingProposalId: number | null;
+  matchingEndRequired?: boolean;
 };
 
 const ChatMessageGroup = ({
@@ -20,8 +23,11 @@ const ChatMessageGroup = ({
   myName,
   profileImg,
   isAgent,
+  reviewHandler,
   onModalAction,
+  showReviewModal,
   pendingProposalId,
+  matchingEndRequired,
 }: Props) => {
   const { t } = useTranslation(["components"]);
   const firstMsg = group[0];
@@ -77,11 +83,14 @@ const ChatMessageGroup = ({
                   opponentName={opponentName}
                   myName={myName}
                   isAgent={isAgent}
+                  reviewHandler={reviewHandler}
                   onModalAction={onModalAction}
+                  showReviewModal={showReviewModal}
                   showReplyButton={pendingProposalId === msg.chatMessageId}
                   isRead={msg.isRead}
                   isLast={isLast}
                   pageType={pageType}
+                  matchingEndRequired={matchingEndRequired}
                 />
               </div>
             );

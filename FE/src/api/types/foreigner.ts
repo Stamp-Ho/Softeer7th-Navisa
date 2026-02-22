@@ -76,3 +76,17 @@ export interface ForeignerProfileDetailResponse {
     startDate: string;
   };
 }
+
+export interface PatchForeignerStatusFinishedResponse {
+  closedVisaFormId: string;
+  newVisaFormId: string;
+  updatedAt: string;
+}
+
+export interface ForeignerProgressResponse {
+  isReview: boolean;
+  isFeedback: boolean;
+  isFinished: boolean;
+  isMatched: boolean;
+  chatRoomId: number;
+}

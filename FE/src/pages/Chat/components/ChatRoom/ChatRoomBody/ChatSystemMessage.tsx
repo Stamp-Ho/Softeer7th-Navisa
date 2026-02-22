@@ -6,16 +6,21 @@ import {
 import ChatSystemMessageBackground from "../../../../../assets/ChatSystemMessageBackground";
 import { useChatRoomContext } from "../../context/ChatRoomContext";
 import { Link } from "react-router-dom";
+import { useForeignerProgressQuery } from "../../../../../api/queries/useForeignerProgressQuery";
+import { useAuth } from "../../../../../contexts/AuthContextProvider";
 
 type ChatSystemMessageParams = {
   pageType: "CHAT" | "DOCUMENT";
-  type: "PROPOSAL" | "ACCEPTED" | "REJECTED" | "CANCELED";
+  type: "PROPOSAL" | "ACCEPTED" | "REJECTED" | "CANCELED" | "FEEDBACK_REQUIRED";
   senderName?: string;
   date?: string;
   isSentByMe?: boolean;
+  reviewHandler: (num: number) => void;
   onModalAction: (num: number) => void;
+  showReviewModal?: (show: boolean, isFeedback?: boolean) => void;
   showReplyButton?: boolean;
   agentName: string;
+  matchingEndRequired?: boolean;
 };
 
 const ChatSystemMessage = ({
@@ -23,13 +28,21 @@ const ChatSystemMessage = ({
   type,
   senderName,
   isSentByMe,
+  reviewHandler,
   onModalAction,
+  showReviewModal,
   showReplyButton,
   agentName,
+  matchingEndRequired,
 }: ChatSystemMessageParams) => {
   const size = pageType === "DOCUMENT" ? "w-[300px]" : "w-[368px]";
   const { t } = useTranslation(["components"]);
+  const { userType } = useAuth();
   const { chatRoomStatus, documentId } = useChatRoomContext(); // 채팅방 상태 가져오기
+  const { data: reviewProgress } = useForeignerProgressQuery({
+    enabled: userType === "FILLED_FOREIGNER",
+    type,
+  });
 
   switch (type) {
     case "PROPOSAL":
@@ -127,6 +140,50 @@ const ChatSystemMessage = ({
                 {t("chatRoom.agentNoLongerCanWrite", { agentName })}
               </div>
             </div>
+          </div>
+        </div>
+      );
+
+    case "FEEDBACK_REQUIRED":
+      return (
+        <div
+          className={`flex flex-col rounded-[12px] border-[1.5px] border-violet-50 overflow-hidden ${size}`}
+        >
+          <div className="flex flex-col items-center gap-5 p-6 bg-gray-0 text-text-base">
+            <div className="flex flex-col gap-2 body-l-bold">
+              수임 종료 여부를 결정해주세요.
+            </div>
+            {!isSentByMe &&
+              chatRoomStatus !== "CHATROOM_BLOCKED" &&
+              userType === "FILLED_FOREIGNER" && (
+                <button
+                  className="body-s-semibold rounded-[6px] h-[48px] bg-gray-100 text-text-base cursor-pointer w-full"
+                  onClick={() => {
+                    // 5-1: 뱃지리뷰 작성 + 행정사 종료 → ServiceReviewModal(2)
+                    // 5-2: 뱃지리뷰 작성 + 행정사 미종료 → VisaResponseModal(3)
+                    // 5-3: 뱃지리뷰 미작성 + 행정사 종료 → BadgeReviewModal(1)
+                    // 5-4: 뱃지리뷰 미작성 + 행정사 미종료 → VisaResponseModal(3)
+                    const isBadgeReviewDone = reviewProgress?.isReview; // isReview = 뱃지 리뷰 여부
+
+                    if (matchingEndRequired) {
+                      // 행정사가 수임을 종료하지 않은 경우: VisaResponseModal(3)
+                      reviewHandler(3);
+                    } else {
+                      // 행정사가 수임을 종료한 경우
+                      if (isBadgeReviewDone) {
+                        // 뱃지리뷰 작성됨 → ServiceReviewModal(2)
+                        reviewHandler(2);
+                      } else {
+                        // 뱃지리뷰 미작성 → BadgeReviewModal(1)
+                        reviewHandler(1);
+                      }
+                    }
+                    showReviewModal?.(true, true); // true: FEEDBACK_REQUIRED에서 호출됨
+                  }}
+                >
+                  피드백 작성하기
+                </button>
+              )}
           </div>
         </div>
       );

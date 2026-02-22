@@ -31,7 +31,9 @@ export interface ChatHistoryResponse {
     | "CANCELED"
     | "CHATROOM_BLOCKED"
     | "SYSTEM"
-    | "READ";
+    | "READ"
+    | "REVIEW_REQUIRED"
+    | "FEEDBACK_REQUIRED";
   content: string;
   createdAt: string;
   isRead: boolean;
@@ -50,6 +52,7 @@ export interface ChatParticipantsInfo {
     top2BadgeIds: number[];
     name: string;
     applicationFormId?: string | null;
+    matchingEndRequired?: boolean;
   };
   foreignerInfo: {
     foreignerId: string;
@@ -57,6 +60,6 @@ export interface ChatParticipantsInfo {
     expectedJob: string;
     expectedStartDate: string;
     nationalityIds: number[];
-    isReviewRequired?: boolean;
+    isReviewRequired: boolean;
   };
 }
