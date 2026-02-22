@@ -16,7 +16,7 @@ const AgentSpecialties = ({ jobCodeIds = [0, 1, 2, 3] }: { jobCodeIds?: number[]
       <ul className="flex flex-row gap-2 flex-wrap">
         {jobCodeIds.map((code, idx) => (
           <li key={idx}>
-            <Tag variant="large_violet_off">{jobCodeList[code]}</Tag>
+            <Tag variant="large_violet_off">{jobCodeList[code - 1]}</Tag>
           </li>
         ))}
       </ul>

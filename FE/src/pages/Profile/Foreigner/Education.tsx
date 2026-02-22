@@ -2,10 +2,11 @@ import { useTranslation } from "react-i18next";
 import { IcGraduation } from "../../../assets/icon/StratisUi";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
 import Tag from "../../../components/common/Tag";
+import { DegreeToKorean } from "../../../api/types/common";
 
 const Education = ({
   school = "으악대학교",
-  degreeLevel = "석사",
+  degreeLevel = "BACHELOR",
   major = "대박전공",
 }: {
   school?: string;
@@ -21,7 +22,7 @@ const Education = ({
       </div>
       <div className="flex gap-3 items-center">
         <Tag variant="large_violet_off" className="w-23">
-          {degreeLevel}
+          {DegreeToKorean[degreeLevel as keyof typeof DegreeToKorean] || degreeLevel}
         </Tag>
         <span className="title-l-medium text-text-base">
           {school} {major} 전공

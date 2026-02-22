@@ -41,6 +41,11 @@ const Career = ({
     <div className="flex flex-col mx-3">
       <span className="headline-m-semibold text-gray-1000 mb-10">{t("profile.career")}</span>
       <ul className="flex flex-col gap-4 p-1">
+        {foreignerCareerList.length === 0 && (
+          <li className="body-l-medium text-gray-600 p-5 pb-20 bg-gray-0 border border-border-light rounded-[12px] shadow">
+            경력이 없습니다
+          </li>
+        )}
         {foreignerCareerList.map((career, idx) => (
           <li
             key={idx}

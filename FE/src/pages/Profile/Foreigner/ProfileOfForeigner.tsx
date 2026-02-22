@@ -14,7 +14,7 @@ function ProfileOfForeigner() {
   if (isLoading) return <div>로딩 중...</div>;
   const dataToRender = isError ? (
     <>
-      <section className="flex flex-col overflow-auto scrollbar-hide">
+      <section className="flex flex-col overflow-auto scrollbar-hide h-full">
         <Header />
         <div className="flex flex-col gap-5 mt-15 overflow-visible">
           <div className="flex flex-row gap-4 mb-20 px-3.5">
@@ -28,7 +28,7 @@ function ProfileOfForeigner() {
     </>
   ) : (
     <>
-      <section className="flex flex-col overflow-auto scrollbar-hide">
+      <section className="flex flex-col overflow-auto scrollbar-hide h-full">
         <Header nationIdList={data?.basicInfo.nationIdList} nickname={data?.basicInfo.nickname} />
         <div className="flex flex-col gap-5 mt-15 overflow-visible">
           <div className="flex flex-row gap-4 mb-20 px-3.5">
@@ -57,7 +57,7 @@ function ProfileOfForeigner() {
   return (
     <>
       <BannerBackground />
-      <div className="flex flex-row justify-between mt-20 mb-20">{dataToRender}</div>
+      <div className="flex flex-row justify-between mt-20 mb-20 min-h-200">{dataToRender}</div>
     </>
   );
 }

@@ -7,6 +7,7 @@ import type { AgentCardResponse } from "../../api/types/agent";
 import { useResizeImage } from "../../hooks/useResizeImage";
 import { useJobListLabels } from "../../assets/JobIcon";
 import { useTranslation } from "react-i18next";
+import BadgeIcon, { badgeDescription } from "../../assets/icon/BadgeIcon";
 
 const AgentCard = ({
   hasAnimation = true,
@@ -47,8 +48,25 @@ const AgentCard = ({
             <img src={agent.profileImgUrl} width={imageSize.width} height={imageSize.height} />
           </div>
         </div>
-        <div className="flex flex-col gap-3 pb-5 px-4 h-44.75">
-          <h4 className="title-m-bold pt-5">
+        <div className="flex flex-col gap-3 pb-3 pt-2 px-4 h-44.75">
+          <div className="flex flex-row gap-3">
+            {agent.badgeTop2.length === 0 ? (
+              <div className="flex flex-row gap-1 items-center caption-m-medium text-text-sub ">
+                등록된 리뷰가 없습니다
+              </div>
+            ) : (
+              agent.badgeTop2.map((badgeId) => (
+                <div
+                  key={`badgeId_${badgeId - 1}`}
+                  className="flex flex-row gap-1 items-center caption-m-medium text-primary "
+                >
+                  <BadgeIcon badgeIndex={badgeId - 1} size={12} color="var(--primary)" />
+                  {badgeDescription[badgeId - 1]}
+                </div>
+              ))
+            )}
+          </div>
+          <h4 className="title-m-bold -mt-3">
             {agent.agentName} {t("agentCard.title")}
           </h4>
           <div className="flex-col flex gap-1">
@@ -57,7 +75,7 @@ const AgentCard = ({
             </h5>
             {userType !== "NOT_AUTHED" ? (
               <ol className="flex flex-row gap-1">
-                {agent.agentSpecialityTop2?.length === 0 && !agent.agentSpecialityTop2 && (
+                {(agent.agentSpecialityTop2?.length === 0 || !agent.agentSpecialityTop2) && (
                   <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>
                 )}
                 {agent.agentSpecialityTop2?.slice(0, 2).map((jobId) => (

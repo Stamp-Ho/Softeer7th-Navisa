@@ -21,7 +21,7 @@ const SearchForeignerCard = ({
       <Link to={`/profile/foreigner/${foreigner.foreignerId}`}>
         <ul className="flex flex-row gap-2 items-center">
           {foreigner.nationIdList.slice(0, 5).map((nation) => (
-            <FlagIcon key={`flag_${nation}`} nationIndex={nation} className="w-6 h-6" />
+            <FlagIcon key={`flag_${nation - 1}`} nationIndex={nation - 1} className="w-6 h-6" />
           ))}
         </ul>
         <h4 className="mt-2 title-m-bold text-text-base">{foreigner.nickname}</h4>

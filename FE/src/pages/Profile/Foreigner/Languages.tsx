@@ -19,8 +19,8 @@ const Languages = ({ languageIds = [13, 2] }: { languageIds?: number[] }) => {
             key={id}
             className="flex flex-row items-center gap-spacing-300 py-spacing-300 pl-2.25 pr-spacing-500 bg-green-50 text-green-800 rounded-full body-l-semibold"
           >
-            <FlagIcon nationIndex={id} className="w-8 h-8" />
-            <span>{languageList[id]}</span>
+            <FlagIcon nationIndex={id - 1} className="w-8 h-8" />
+            <span>{languageList[id - 1]}</span>
           </li>
         ))}
       </ul>

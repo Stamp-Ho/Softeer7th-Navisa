@@ -35,7 +35,7 @@ interface TagProps {
 }
 
 // 1. 공통 스타일과 타입별 스타일을 상수로 분리
-const BASE_STYLE = "flex flex-row justify-center items-center";
+const BASE_STYLE = "flex flex-row justify-center items-center whitespace-nowrap";
 
 const TAG_STYLES: Record<TagType, string> = {
   default: "",

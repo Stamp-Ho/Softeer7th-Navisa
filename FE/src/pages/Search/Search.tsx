@@ -25,13 +25,22 @@ const Search = () => {
   const isAgent = targetType === "agent";
   const params = isAgent
     ? {
-        jobGroupNameList: searchParams.getAll("job").map((id) => jobList[Number(id)]),
-        regionList: searchParams.getAll("region").map((id) => regionList[Number(id)]),
+        jobGroupNameList: searchParams
+          .getAll("job")
+          .map((id) => jobList[Number(id)])
+          .filter((v): v is string => v !== undefined),
+        regionList: searchParams
+          .getAll("region")
+          .map((id) => regionList[Number(id)])
+          .filter((v): v is string => v !== undefined),
         languageIdList: searchParams.getAll("language").map((id) => Number(id) + 1),
       }
     : {
-        jobGroupNameList: searchParams.getAll("job").map((id) => jobList[Number(id)]),
-        nationIdList: searchParams.getAll("nation"),
+        jobGroupNameList: searchParams
+          .getAll("job")
+          .map((id) => jobList[Number(id)])
+          .filter((v): v is string => v !== undefined),
+        nationIdList: searchParams.getAll("nation").map((id) => Number(id) + 1),
         languageIdList: searchParams.getAll("language").map((id) => Number(id) + 1),
       };
 

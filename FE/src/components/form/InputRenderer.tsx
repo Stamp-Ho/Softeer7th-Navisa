@@ -81,9 +81,11 @@ const InputRenderer = ({
     const validatePast = !!input.onlyPast;
     const validateFuture = !!input.onlyFuture;
 
-    const selectedDate = new Date(value);
+    // 타임존 영향을 배제하기 위해 문자열 기반 비교
+    const [y, m, d] = value.split("-").map(Number);
+    const selectedDate = new Date(y, m - 1, d); // 로컬 타임존 자정
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // 시간 제거하여 날짜만 비교
+    today.setHours(0, 0, 0, 0);
 
     // 특정 필드에서만 과거 날짜 검증
     // 예: 생년월일은 과거만, 예상 입사일은 미래만
@@ -137,8 +139,12 @@ const InputRenderer = ({
                 tabIndex={0}
               />
             )}
-          />
-          {fieldError && <p className="caption-m-medium text-red-400 h-0 mt-1 -mb-1 pl-5">형식이 올바르지 않습니다</p>}
+          />{" "}
+          {fieldError && (
+            <p className="caption-m-medium text-red-400 h-0 mt-1 -mb-1 pl-5">
+              {fieldError.type === "required" ? "필수 항목입니다." : "형식이 올바르지 않습니다."}
+            </p>
+          )}
         </>
       );
     case "selector":
