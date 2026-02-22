@@ -14,6 +14,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -65,7 +66,7 @@ class GeminiTextEmbeddingClientTest {
                 .addHeader("Content-Type", "application/json"));
 
         // when
-        float[] result = geminiClient.embedText("test text", GeminiEmbeddingRequestType.DOCUMENT);
+        float[] result = geminiClient.embedText("test text", GeminiEmbeddingRequestType.DOCUMENT, UUID.randomUUID()).orElseThrow();
 
         // then
         assertThat(result).isNotNull();
@@ -94,7 +95,7 @@ class GeminiTextEmbeddingClientTest {
                 .addHeader("Content-Type", "application/json"));
 
         // when
-        float[] result = geminiClient.embedText("search query", GeminiEmbeddingRequestType.QUERY);
+        float[] result = geminiClient.embedText("search query", GeminiEmbeddingRequestType.QUERY, UUID.randomUUID()).orElseThrow();
 
         // then
         assertThat(result).isNotNull();
@@ -109,7 +110,7 @@ class GeminiTextEmbeddingClientTest {
         mockWebServer.enqueue(new MockResponse().setResponseCode(500));
 
         // when & then
-        assertThatThrownBy(() -> geminiClient.embedText("error text", GeminiEmbeddingRequestType.DOCUMENT))
+        assertThatThrownBy(() -> geminiClient.embedText("error text", GeminiEmbeddingRequestType.DOCUMENT, UUID.randomUUID()))
                 .isInstanceOf(BaseException.class)
                 .extracting("status")
                 .isEqualTo(ResponseStatus.CANNOT_GENERATE_TEXT_EMBEDDING_RESULT);
@@ -126,7 +127,7 @@ class GeminiTextEmbeddingClientTest {
                 .addHeader("Content-Type", "application/json"));
 
         // when & then
-        assertThatThrownBy(() -> geminiClient.embedText("test text", GeminiEmbeddingRequestType.DOCUMENT))
+        assertThatThrownBy(() -> geminiClient.embedText("test text", GeminiEmbeddingRequestType.DOCUMENT, UUID.randomUUID()))
                 .isInstanceOf(BaseException.class)
                 .extracting("status")
                 .isEqualTo(ResponseStatus.NOT_FOUND_TEXT_EMBEDDING_RESULT);

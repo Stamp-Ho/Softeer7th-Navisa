@@ -16,11 +16,14 @@ import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
 import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -59,18 +62,23 @@ public class ForeignerRegistrationService {
     }
 
     private void processSimilarity(ForeignerProfile profile, String jobTitle) {
-        float[] embeddingResult = geminiTextEmbeddingClient.embedText(
+        Optional<float[]> optEmbeddingResult = geminiTextEmbeddingClient.embedText(
                 jobTitle,
-                GeminiEmbeddingRequestType.QUERY
+                GeminiEmbeddingRequestType.QUERY,
+                profile.getId()
         );
 
-        List<JobCodeSimilarityProjection> projectionList = jobCodeService.findTop3SimilarJobCodes(embeddingResult);
+        optEmbeddingResult.ifPresent(embeddingResult -> {
+            log.info("제미나이 임베딩 API 호출 성공");
 
-        if (projectionList.size() != 3) {
-            throw new BaseException(ResponseStatus.SIMILARITY_CALCULATE_FAIL);
-        }
+            List<JobCodeSimilarityProjection> projectionList = jobCodeService.findTop3SimilarJobCodes(embeddingResult);
 
-        foreignerProfileCrudService.registerCalculatedSimilarity(profile, projectionList);
+            if (projectionList.size() != 3) {
+                throw new BaseException(ResponseStatus.SIMILARITY_CALCULATE_FAIL);
+            }
+
+            foreignerProfileCrudService.registerCalculatedSimilarity(profile, projectionList);
+        });
     }
 
     private void validateLanguagesAndNationalities(

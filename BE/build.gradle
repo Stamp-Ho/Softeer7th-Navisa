@@ -65,6 +65,10 @@ dependencies {
     implementation 'me.paulschwarz:spring-dotenv:5.1.0'
     runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64'
 
+    // Resilience4j & AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.3.0'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

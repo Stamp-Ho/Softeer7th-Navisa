@@ -3,7 +3,9 @@ package com.navisa.be.foreigner.service;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.foreigner.dto.request.ForeignerRegisterRequest;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
+import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
+import com.navisa.be.foreigner.repository.ForeignerSimilarityRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.common.model.entity.Language;
 import com.navisa.be.global.common.model.entity.Nationality;
@@ -26,6 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +66,12 @@ public class ForeignerRegistrationServiceTest extends IntegrationTestSupport {
     @Autowired
     private JobCodeRepository jobCodeRepository;
 
+    @Autowired
+    private UserTestFixture userTestFixture;
+
+    @Autowired
+    private ForeignerSimilarityRepository foreignerSimilarityRepository;
+
     @Test
     @DisplayName("외국인 정보 등록과 유사도 계산 프로세스가 정상 수행된다")
     void registerAllForeignerInfo() {
@@ -89,8 +98,8 @@ public class ForeignerRegistrationServiceTest extends IntegrationTestSupport {
 
         float[] mockEmbedding = new float[512]; // 512차원 더미 벡터
 
-        given(geminiTextEmbeddingClient.embedText(any(), any()))
-                .willReturn(mockEmbedding);
+        given(geminiTextEmbeddingClient.embedText(any(), any(), any()))
+                .willReturn(Optional.of(mockEmbedding));
 
         given(userCrudService.findByEmail(email)).willReturn(mockUser);
         given(userCrudService.findById(userId)).willReturn(mockUser);
@@ -134,8 +143,8 @@ public class ForeignerRegistrationServiceTest extends IntegrationTestSupport {
 
         float[] mockEmbedding = new float[512];
 
-        given(geminiTextEmbeddingClient.embedText(any(), any()))
-                .willReturn(mockEmbedding);
+        given(geminiTextEmbeddingClient.embedText(any(), any(), any()))
+                .willReturn(Optional.of(mockEmbedding));
 
         given(userCrudService.findByEmail(email))
                 .willReturn(mockUser);
@@ -147,5 +156,41 @@ public class ForeignerRegistrationServiceTest extends IntegrationTestSupport {
                 .isInstanceOf(BaseException.class)
                 .hasFieldOrPropertyWithValue("status",
                         ResponseStatus.SIMILARITY_CALCULATE_FAIL);
+    }
+
+    @Test
+    @DisplayName("제미나이 API에 대한 서킷브레이커가 open 되어 있어도 프로필 저장에 성공한다")
+    void registerAllForeignerInfo_saveProfile_whenGeminiTextEmbeddingClientIsCircuitBreakerOpen() {
+        // given
+        String email = "test@example.com";
+        User user = userTestFixture.createUser(email, UserType.UNFILLED_FOREIGNER);
+
+        Language language = languageRepository.save(new Language(null, "English"));
+        Nationality nationality = nationalityRepository.save(new Nationality(null, "USA"));
+
+        ForeignerRegisterRequest request = ForeignerFixture.createForeignerRegisterRequest(
+                List.of(nationality.getId()),
+                List.of(language.getId()),
+                true);
+
+        given(userCrudService.findByEmail(email)).willReturn(user);
+
+        // 서킷 브레이커가 동작하면 빈 optional을 반환
+        given(geminiTextEmbeddingClient.embedText(any(), any(), any()))
+                .willReturn(Optional.empty());
+
+        // when
+        foreignerRegistrationService.registerAllForeignerInfo(request, email);
+
+        // then
+        ForeignerProfile foundProfile = foreignerProfileRepository.findAll().stream()
+                .filter(p -> p.getUserId().equals(user.getId()))
+                .findFirst()
+                .orElse(null);
+
+        Optional<ForeignerSimilarity> optForeignerSimilarity = foreignerSimilarityRepository.findByForeignerId(foundProfile.getId());
+
+        assertThat(foundProfile).isNotNull();
+        assertThat(optForeignerSimilarity).isEmpty();
     }
 }
