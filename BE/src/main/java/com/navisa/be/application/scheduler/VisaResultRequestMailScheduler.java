@@ -4,6 +4,7 @@ import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.application.service.ApplicationFormForAgentService;
 import com.navisa.be.application.service.ApplicationFormEmailService;
+import com.navisa.be.chat.service.ChatRoomQueryService;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.service.UserCrudService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class VisaResultRequestMailScheduler {
     private final ApplicationFormEmailService applicationFormEmailService;
     private final ApplicationFormForAgentService applicationFormForAgentService;
     private final UserCrudService userCrudService;
+    private final ChatRoomQueryService chatRoomQueryService;
 
     @Scheduled(cron = "0 0 10 * * *") // 매일 오전 10시
     @SchedulerLock(name = "VisaEmailScheduler_sendFollowUpEmails", lockAtMostFor = "10m", lockAtLeastFor = "2m")
@@ -39,15 +41,24 @@ public class VisaResultRequestMailScheduler {
             }
 
             try {
-                UUID userId = form.getAgentProfile().getUserId();
+                var agentProfile = form.getAgentProfile();
+                var foreignerProfile = form.getForeignerProfile();
 
+                Long chatRoomId = chatRoomQueryService.getChatRoomIdByProfiles(agentProfile, foreignerProfile);
+
+                if (chatRoomId == null) {
+                    log.warn("Form ID: {} 에 해당하는 채팅방을 찾을 수 없어 링크를 생성할 수 없습니다.", form.getId());
+                    continue;
+                }
+
+                UUID userId = form.getAgentProfile().getUserId();
                 User user = userCrudService.findById(userId);
 
                 String recipientEmail = user.getEmail();
                 String agentName = form.getAgentProfile().getName();
                 UUID formId = form.getId();
 
-                applicationFormEmailService.sendCareEmail(recipientEmail, agentName)
+                applicationFormEmailService.sendCareEmail(recipientEmail, agentName, chatRoomId)
                         .thenAccept(isSuccess -> {
                             if (Boolean.TRUE.equals(isSuccess)) {
                                 applicationFormForAgentService.updateMailSentTime(formId);

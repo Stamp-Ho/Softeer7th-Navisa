@@ -23,7 +23,7 @@ public class ApplicationFormEmailService {
     private String careMailTemplate;
 
     @Async("mailExecutor")
-    public CompletableFuture<Boolean> sendCareEmail(String recipientEmail, String agentName) {
+    public CompletableFuture<Boolean> sendCareEmail(String recipientEmail, String agentName, Long chatRoomId) {
         try {
             String safeAgentName = HtmlUtils.htmlEscape(agentName);
 
@@ -33,7 +33,7 @@ public class ApplicationFormEmailService {
             helper.setTo(recipientEmail);
             helper.setSubject("[Navisa] 담당 사례 비자 발급 현황 점검 안내");
 
-            String content = String.format(careMailTemplate, safeAgentName);
+            String content = String.format(careMailTemplate, safeAgentName, chatRoomId);
 
             helper.setText(content, true);
             mailSender.send(message);

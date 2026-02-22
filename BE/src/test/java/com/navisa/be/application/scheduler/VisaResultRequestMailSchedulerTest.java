@@ -5,6 +5,9 @@ import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.application.service.ApplicationFormEmailService;
+import com.navisa.be.chat.model.entity.ChatRoom;
+import com.navisa.be.chat.model.enums.ChatRoomStatus;
+import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.common.repository.JobCodeRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
@@ -24,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -54,6 +58,9 @@ class VisaResultRequestMailSchedulerTest extends IntegrationTestSupport {
     @MockitoSpyBean
     private ApplicationFormEmailService applicationFormEmailService;
 
+    @Autowired
+    private ChatRoomRepository chatRoomRepository;
+
     @Test
     @DisplayName("스케줄러 실행 시 14일 전 내보내기 된 서류 담당자에게 메일을 발송한다.")
     void sendFollowUpEmails_Success() {
@@ -63,10 +70,8 @@ class VisaResultRequestMailSchedulerTest extends IntegrationTestSupport {
         String agentEmail = "target-agent@navisa.site";
         String agentName = "김행정";
 
-        // 1. 발송 대상 (T-14)
-        createFormWithExportedAt(agentEmail, agentName, targetDateTime, true);
+        Long expectedChatRoomId = createFormWithExportedAt(agentEmail, agentName, targetDateTime, true);
 
-        // 2. 제외 대상 (T-13)
         createFormWithExportedAt("other@navisa.site", "이행정", today.minusDays(13).atStartOfDay(), true);
 
         // when
@@ -74,13 +79,13 @@ class VisaResultRequestMailSchedulerTest extends IntegrationTestSupport {
 
         // then
         verify(applicationFormEmailService, times(1))
-                .sendCareEmail(eq(agentEmail), eq(agentName));
+                .sendCareEmail(eq(agentEmail), eq(agentName), eq(expectedChatRoomId));
 
         verify(applicationFormEmailService, never())
-                .sendCareEmail(eq("other@navisa.site"), anyString());
+                .sendCareEmail(eq("other@navisa.site"), anyString(), anyLong());
     }
 
-    private void createFormWithExportedAt(String email, String name, LocalDateTime exportedAt, boolean isDone) {
+    private Long createFormWithExportedAt(String email, String name, LocalDateTime exportedAt, boolean isDone) {
         User user = userRepository.save(new User(email, "pw", UserType.VALID_AGENT, LoginType.EMAIL, true));
         AgentProfile agent = agentProfileRepository.save(new AgentProfile(
                 name, LocalDate.now(), "key", "09:00", "사무소", "주소", "상세", "이력",
@@ -90,8 +95,12 @@ class VisaResultRequestMailSchedulerTest extends IntegrationTestSupport {
         ForeignerProfile foreigner = foreignerProfileRepository.save(new ForeignerProfile(fUser.getId(), ForeignerSearchStatus.REQUESTING));
         JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수", null, null));
 
+        ChatRoom chatRoom = chatRoomRepository.save(new ChatRoom(foreigner, agent, ChatRoomStatus.DEFAULT));
+
         ApplicationForm form = new ApplicationForm(agent, foreigner, jobCode, isDone, 100, 0);
         ReflectionTestUtils.setField(form, "exportedAt", exportedAt);
         applicationFormRepository.save(form);
+
+        return chatRoom.getId(); // 생성된 채팅방 ID 반환
     }
 }

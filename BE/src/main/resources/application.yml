@@ -64,7 +64,7 @@ navisa:
         <p>해당 의뢰인의 실제 비자 발급 여부를 확인하시어,</p>
         <p><b>현재 진행 상황에 맞게 시스템 상태를 업데이트</b>해 주시길 안내드립니다.</p>
         <div style="text-align: center; margin-top: 20px;">
-          <a href="https://www.navisa.site/chat" style="text-decoration: underline; color: #8D7EED; font-size: 18px; font-weight: bold;">업데이트하러 가기</a>
+          <a href="https://www.navisa.site/chat?chatroom=%s" style="text-decoration: underline; color: #8D7EED; font-size: 18px; font-weight: bold;">업데이트하러 가기</a>
         </div>
         <div style="background-color: #F9F9F9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <p style="margin-top: 0;"><strong>[업무 참고 사항]</strong></p>

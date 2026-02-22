@@ -136,8 +136,12 @@ public class ApplicationFormEmailServiceTest extends IntegrationTestSupport {
         MimeMessage mimeMessage = new MimeMessage((Session) null);
         given(mailSender.createMimeMessage()).willReturn(mimeMessage);
 
+        String recipientEmail = "agent@test.com";
+        String agentName = "김행정";
+        Long chatRoomId = 342L;
+
         // when
-        CompletableFuture<Boolean> result = applicationFormEmailService.sendCareEmail("agent@test.com", "김행정");
+        CompletableFuture<Boolean> result = applicationFormEmailService.sendCareEmail(recipientEmail, agentName, chatRoomId);
         result.join();
 
         // then
