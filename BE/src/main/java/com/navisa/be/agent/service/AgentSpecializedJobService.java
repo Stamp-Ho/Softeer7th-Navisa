@@ -1,5 +1,6 @@
 package com.navisa.be.agent.service;
 
+import com.navisa.be.agent.dto.projection.AgentSpecializedJobWithScoreProjection;
 import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJob;
@@ -41,33 +42,37 @@ public class AgentSpecializedJobService {
                 .toList();
     }
 
+    /**
+     * DB 쿼리 1번: agent_specialized_job LEFT JOIN agent_specialized_job_summary
+     * → 리뷰가 있는 직무는 reviewScore, 없으면 null
+     * → Redis 가중치 합산 후 agentId별 Top2 선별
+     */
     @Transactional(readOnly = true)
     public Map<UUID, List<Long>> getTop2SpecializedJobIdsBatch(List<UUID> agentIds) {
         if (agentIds.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        List<AgentSpecializedJobSummary> summaries = agentSpecializedJobSummaryRepository.findAllByAgentIdIn(agentIds);
+        List<AgentSpecializedJobWithScoreProjection> rows = agentSpecializedJobRepository
+                .findAllWithReviewScoreByAgentIds(agentIds);
 
-        Map<String, Double> redisWeightMap = fetchRedisWeightsBatch(summaries);
+        // Redis 가중치 배치 조회 (Redis pipeline 1번)
+        Map<String, Double> redisWeightMap = fetchRedisWeightsBatch(rows);
 
-        // RDB + Redis 합산 점수로 정렬 및 결과 도출
-        return summaries.stream()
-                .collect(Collectors.groupingBy(AgentSpecializedJobSummary::getAgentId))
+        // agentId별로 grouping → (reviewScore + redisWeight) 기준 정렬 → Top2 선별
+        return rows.stream()
+                .collect(Collectors.groupingBy(AgentSpecializedJobWithScoreProjection::getAgentId))
                 .entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> entry.getValue().stream()
-                                .sorted((s1, s2) -> {
-                                    String key1 = makeRedisKey(s1);
-                                    String key2 = makeRedisKey(s2);
-
-                                    double total1 = s1.getAccumulatedReviewReliability() + redisWeightMap.getOrDefault(key1, 0.0);
-                                    double total2 = s2.getAccumulatedReviewReliability() + redisWeightMap.getOrDefault(key2, 0.0);
+                                .sorted((r1, r2) -> {
+                                    double total1 = toScore(r1, redisWeightMap);
+                                    double total2 = toScore(r2, redisWeightMap);
                                     return Double.compare(total2, total1);
                                 })
                                 .limit(2)
-                                .map(summary -> summary.getJobCode().getId())
+                                .map(AgentSpecializedJobWithScoreProjection::getJobCodeId)
                                 .toList()));
     }
 
@@ -93,19 +98,28 @@ public class AgentSpecializedJobService {
         }
     }
 
-    private Map<String, Double> fetchRedisWeightsBatch(List<AgentSpecializedJobSummary> summaries) {
-        List<String> keys = summaries.stream()
-                .map(this::makeRedisKey)
+    /** Projection row의 합산 점수 (RDB reviewScore + Redis weight) */
+    private double toScore(AgentSpecializedJobWithScoreProjection row, Map<String, Double> redisWeightMap) {
+        double reviewScore = row.getReviewScore() != null ? row.getReviewScore() : 0.0;
+        double redisWeight = redisWeightMap.getOrDefault(makeRedisKey(row.getAgentId(), row.getJobCodeId()), 0.0);
+        return reviewScore + redisWeight;
+    }
+
+    private Map<String, Double> fetchRedisWeightsBatch(List<AgentSpecializedJobWithScoreProjection> rows) {
+        List<String> keys = rows.stream()
+                .map(row -> makeRedisKey(row.getAgentId(), row.getJobCodeId()))
                 .toList();
 
         try {
             List<Double> values = doubleRedisTemplate.opsForValue().multiGet(keys);
-            if (values == null) return Collections.emptyMap();
+            if (values == null)
+                return Collections.emptyMap();
 
             Map<String, Double> resultMap = new HashMap<>();
             for (int i = 0; i < keys.size(); i++) {
                 Double val = values.get(i);
-                if (val != null) resultMap.put(keys.get(i), val);
+                if (val != null)
+                    resultMap.put(keys.get(i), val);
             }
             return resultMap;
         } catch (Exception e) {
@@ -114,7 +128,7 @@ public class AgentSpecializedJobService {
         }
     }
 
-    private String makeRedisKey(AgentSpecializedJobSummary summary) {
-        return String.format("matching:sandbox:%s:%d", summary.getAgentId(), summary.getJobCode().getId());
+    private String makeRedisKey(UUID agentId, Long jobCodeId) {
+        return String.format("matching:sandbox:%s:%d", agentId, jobCodeId);
     }
 }
