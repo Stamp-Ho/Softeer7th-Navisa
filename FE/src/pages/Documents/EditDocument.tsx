@@ -54,24 +54,40 @@ const EditDocument = () => {
       goBack();
       return;
     }
+
+    const serverHasData = !!data.sections?.[0]?.sectionData;
     // 서버 데이터와 로컬 데이터 중 최근 저장된 데이터로 폼 초기화
     let fresherData = data;
-    if (!data.sections[0].sectionData) {
-      setInitializing(false);
-      return;
-    }
     const localRawData = window.localStorage.getItem(data.applicationFormId);
-    if (localRawData && !readOnly) {
-      try {
-        const localData = JSON.parse(localRawData);
-        const localTime = new Date(localData.updatedAt).getTime();
-        const serverTime = new Date(data.updatedAt).getTime();
+    if (!serverHasData) {
+      //서버에 데이터가 없음
+      if (localRawData) {
+        try {
+          fresherData = JSON.parse(localRawData);
+        } catch {
+          window.localStorage.removeItem(data.applicationFormId);
+          setInitializing(false);
+          return;
+        }
+      } else {
+        //서버에도, 로컬에도 데이터가 없음 -> 최초 접속이거나 입력한 적이 없음
+        setInitializing(false);
+        return;
+      }
+    } else {
+      // 서버에서 데이터를 불러왔음. 현재 fresherData 는 서버 데이터
+      if (localRawData && !readOnly) {
+        try {
+          const localData = JSON.parse(localRawData);
+          const localTime = new Date(localData.updatedAt).getTime();
+          const serverTime = new Date(data.updatedAt).getTime();
 
-        //fresherData = localData.updatedAt > data?.updatedAt ? localData : data;
-        fresherData = localTime > serverTime ? localData : data;
-      } catch {
-        // localStorage 데이터 손상 시 서버 데이터 사용
-        window.localStorage.removeItem(data.applicationFormId);
+          //fresherData = localData.updatedAt > data?.updatedAt ? localData : data;
+          fresherData = localTime > serverTime ? localData : data;
+        } catch {
+          // localStorage 데이터 손상 시 서버 데이터 사용
+          window.localStorage.removeItem(data.applicationFormId);
+        }
       }
     }
 

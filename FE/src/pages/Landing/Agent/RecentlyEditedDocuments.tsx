@@ -6,21 +6,16 @@ import { useRecentVisaFormsQuery } from "../../../api/queries/useRecentVisaForms
 
 const RecentlyEditedDocuments = () => {
   const { t } = useTranslation(["pages"]);
-  const { data, isLoading, isError } = useRecentVisaFormsQuery();
-  if (isLoading) return <div>{t("landing.loading")}</div>;
-  const dataToRender = isError ? (
-    Array.from({ length: 6 }).map((_, index) => <DocumentCard key={`doc_${index}`} />)
+  const { data, isLoading } = useRecentVisaFormsQuery();
+  const dataToRender = isLoading ? (
+    Array.from({ length: 1 }).map((_, index) => <DocumentCard key={`doc_${index}`} />)
+  ) : data && data.length > 0 ? (
+    data.map((doc, index) => <DocumentCard key={`doc_${index}`} document={doc} />)
   ) : (
-    <>
-      {data?.map((doc, index) => (
-        <DocumentCard key={`doc_${index}`} document={doc} />
-      ))}
-      {Array.from({ length: 1 - (data?.length || 0) }).map((_, index) => (
-        <DocumentCard key={`doc_${index}`} />
-      ))}
-    </>
+    <div className="flex flex-row w-124.75 h-34.5 p-4 gap-3 bg-white rounded-[10px] shadow">
+      최근 수정한 비자서류가 없습니다.
+    </div>
   );
-
   return (
     <section className="w-full flex flex-col relative gap-5 mt-12">
       <Link className="headline-s-bold flex flex-row items-center gap-1 w-fit" to="/documents">

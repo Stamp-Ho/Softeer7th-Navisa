@@ -5,31 +5,22 @@ import * as T from "../types/agent";
 export const agentService = {
   // 추천 행정사 호출
   getRecommendedAgents: async (apiClient: apiClientType, skipAuth: boolean) => {
-    return await apiClient.get<BaseResponse<T.AgentCardResponse[]>>(
-      "/api/home/guest/agents",
-      undefined,
-      { skipAuth: skipAuth },
-    );
+    return await apiClient.get<BaseResponse<T.AgentCardResponse[]>>("/api/home/guest/agents", undefined, {
+      skipAuth: skipAuth,
+    });
   },
   getCard: (api: apiClientType, data: T.AgentCardRequest) => {
     const cleanParams = Object.fromEntries(
-      Object.entries(data).filter(
-        ([_, v]) => v !== undefined && v !== null && v !== "[]",
-      ),
+      Object.entries(data).filter(([_, v]) => v !== undefined && v !== null && !(Array.isArray(v) && v.length === 0)),
     );
-    return api.get<BaseResponse<PageResponse<T.AgentCardResponse>>>(
-      `/api/agent/cards`,
-      cleanParams,
-    );
+    return api.get<BaseResponse<PageResponse<T.AgentCardResponse>>>(`/api/agent/cards`, cleanParams);
   },
 
   // 최신순으로 등록된 행정사 블로그 사례 3개 호출
   agentRecentFeedback: async (apiClient: apiClientType, skipAuth: boolean) => {
-    return await apiClient.get<BaseResponse<T.AgentRecentFeedbackResponse[]>>(
-      "/api/home/feedback",
-      undefined,
-      { skipAuth: skipAuth },
-    );
+    return await apiClient.get<BaseResponse<T.AgentRecentFeedbackResponse[]>>("/api/home/feedback", undefined, {
+      skipAuth: skipAuth,
+    });
   },
 
   updateProfile: (api: apiClientType, data: T.RegisterAgentProfileRequest) =>
@@ -39,14 +30,13 @@ export const agentService = {
   getAgentProfileDetail: async (api: apiClientType, agentId: string) => {
     return await api.get<BaseResponse<T.AgentProfileDetailResponse>>(
       `/api/agent/${agentId}`,
+      {},
+      { credentials: "include" },
     );
   },
 
   getBadgeReview: async (apiClient: apiClientType, badgeId: number) => {
-    return await apiClient.get<BaseResponse<T.AgentBadgeReviewResponse[]>>(
-      "/api/home/badge",
-      { badgeId },
-    );
+    return await apiClient.get<BaseResponse<T.AgentBadgeReviewResponse[]>>("/api/home/badge", { badgeId });
   },
 
   // 행정사 배지 리뷰 작성

@@ -322,8 +322,8 @@ const PDF_LAYOUT: Record<string, tempType & { pageIdx: number }> = {
     y: 0,
     type: "radio",
     options: [
+      { x: 128, y: 414 },
       { x: 196, y: 414 },
-      { x: 125, y: 414 },
     ],
   }, // 이전 한국 출입시 다른 이름 사용 여부
   "0-8-0": { pageIdx: 0, x: 277, y: 398.5, toRight: true }, // 다른 성명 성

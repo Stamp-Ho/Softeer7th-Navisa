@@ -57,7 +57,7 @@ const SearchForeignerCard = ({
             <div className="flex flex-row gap-1">
               {foreigner.languageIdList.slice(0, 2).map((lang, idx) => (
                 <Tag key={idx} variant="small_fill_green_max" className="w-fit">
-                  {languageList[lang]}
+                  {languageList[lang - 1]}
                 </Tag>
               ))}
               {foreigner.languageIdList.length > 2 && (

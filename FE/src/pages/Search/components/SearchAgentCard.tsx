@@ -79,9 +79,7 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
                     {jobCodeList[(jobId - 1) % jobCodeList.length]}
                   </Tag>
                 ))}
-                {agent.agentSpecialityTop2.length > 2 && (
-                  <Tag variant="small_fill_gray">+{agent.agentSpecialityTop2.length - 2}</Tag>
-                )}
+                {agent.specialityJobCount > 2 && <Tag variant="small_fill_gray">+{agent.specialityJobCount - 2}</Tag>}
               </ol>
             ) : (
               <Tag variant={"small_fill_gray"}>{t("agentCard.loginRequired")}</Tag>

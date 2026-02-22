@@ -28,7 +28,6 @@ const FormSelector = ({
   const rawValues = getValues(grandparentName);
   const alreadySelectedOption =
     getMany && rawValues ? Object.values(rawValues.map((v: Array<any>) => Object.values(v)[0])) : [];
-  rawValues && console.log(rawValues.map((v: Array<any>) => Object.values(v)[0]));
 
   // 검색 텍스트로 필터링된 옵션
   const filteredOptions = searchText

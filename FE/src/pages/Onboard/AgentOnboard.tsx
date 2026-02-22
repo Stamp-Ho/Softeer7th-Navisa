@@ -21,15 +21,52 @@ const getAgentSections = (t: TFunction): FormSection[] => [
       {
         label: t("onboard.agent.photoLabel"),
         getMany: false,
-        inputLines: [{ inputs: [{ inputType: "image", colSpan: 9, placeholder: t("onboard.agent.profilePlaceholder"), isRequired: true, requestBodyName: "profileImageUrl" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                inputType: "image",
+                colSpan: 9,
+                placeholder: t("onboard.agent.profilePlaceholder"),
+                isRequired: true,
+                requestBodyName: "profileImageUrl",
+              },
+            ],
+          },
+        ],
       },
       {
         label: t("onboard.agent.nameLabel"),
         getMany: false,
-        inputLines: [{ inputs: [{ placeholder: t("onboard.agent.namePlaceholder"), inputType: "text", isRequired: true, requestBodyName: "agentName" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                placeholder: t("onboard.agent.namePlaceholder"),
+                inputType: "text",
+                isRequired: true,
+                requestBodyName: "agentName",
+              },
+            ],
+          },
+        ],
       },
-      { label: t("onboard.agent.birthLabel"), getMany: false, inputLines: [{ inputs: [{ inputType: "date", isRequired: true, requestBodyName: "birthDate" }] }] },
-      { label: t("onboard.agent.phoneLabel"), getMany: false, inputLines: [{ inputs: [{ inputType: "text", placeholder: "010-1234-5678", isRequired: true, requestBodyName: "phoneNumber" }] }] },
+      {
+        label: t("onboard.agent.birthLabel"),
+        getMany: false,
+        inputLines: [{ inputs: [{ inputType: "date", isRequired: true, requestBodyName: "birthDate" }] }],
+      },
+      {
+        label: t("onboard.agent.phoneLabel"),
+        getMany: false,
+        inputLines: [
+          {
+            inputs: [
+              { inputType: "text", placeholder: "010-1234-5678", isRequired: true, requestBodyName: "phoneNumber" },
+            ],
+          },
+        ],
+      },
       {
         label: t("onboard.agent.officeLabel"),
         description: t("onboard.agent.officeSearchHint"),
@@ -37,8 +74,20 @@ const getAgentSections = (t: TFunction): FormSection[] => [
         inputLines: [
           {
             inputs: [
-              { inputType: "text", inputDescription: t("onboard.agent.officeNameLabel"), placeholder: t("onboard.agent.officeNamePlaceholder"), isRequired: true, requestBodyName: "officeName" },
-              { inputType: "timeRange", inputDescription: t("onboard.agent.businessHoursLabel"), placeholder: "", isRequired: true, requestBodyName: "businessTime" },
+              {
+                inputType: "text",
+                inputDescription: t("onboard.agent.officeNameLabel"),
+                placeholder: t("onboard.agent.officeNamePlaceholder"),
+                isRequired: true,
+                requestBodyName: "officeName",
+              },
+              {
+                inputType: "timeRange",
+                inputDescription: t("onboard.agent.businessHoursLabel"),
+                placeholder: "",
+                isRequired: true,
+                requestBodyName: "businessTime",
+              },
               {
                 inputType: "text",
                 inputDescription: t("onboard.agent.addressLabel"),
@@ -72,7 +121,11 @@ const getAgentSections = (t: TFunction): FormSection[] => [
               {
                 placeholder: t("onboard.agent.certTypePlaceholder"),
                 inputType: "selector",
-                options: [t("onboard.agent.certTypeBook"), t("onboard.agent.certTypePlate"), t("onboard.agent.certTypeMobile")],
+                options: [
+                  t("onboard.agent.certTypeBook"),
+                  t("onboard.agent.certTypePlate"),
+                  t("onboard.agent.certTypeMobile"),
+                ],
                 isRequired: true,
                 requestBodyName: "licenseType",
                 disableTargets: { true: [1, 2, 3], false: [4] },
@@ -85,7 +138,18 @@ const getAgentSections = (t: TFunction): FormSection[] => [
         label: t("onboard.agent.certNumberLabel"),
         description: t("onboard.agent.certNumberDesc"),
         getMany: false,
-        inputLines: [{ inputs: [{ placeholder: t("onboard.agent.certNumberPlaceholder"), inputType: "text", isRequired: true, requestBodyName: "licenseNo" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                placeholder: t("onboard.agent.certNumberPlaceholder"),
+                inputType: "text",
+                isRequired: true,
+                requestBodyName: "licenseNo",
+              },
+            ],
+          },
+        ],
       },
       {
         label: t("onboard.agent.certDateLabel"),
@@ -96,13 +160,35 @@ const getAgentSections = (t: TFunction): FormSection[] => [
       {
         label: t("onboard.agent.certPageLabel"),
         getMany: false,
-        inputLines: [{ inputs: [{ inputType: "text", placeholder: t("onboard.agent.certPagePlaceholder"), isRequired: true, requestBodyName: "licenseInnerPageNo" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                inputType: "text",
+                placeholder: t("onboard.agent.certPagePlaceholder"),
+                isRequired: true,
+                requestBodyName: "licenseInnerPageNo",
+              },
+            ],
+          },
+        ],
       },
       {
         label: t("onboard.agent.certManageLabel"),
         description: t("onboard.agent.certManageDesc"),
         getMany: false,
-        inputLines: [{ inputs: [{ inputType: "text", placeholder: t("onboard.agent.certManagePlaceholder"), isRequired: true, requestBodyName: "licenseManagementNo" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                inputType: "text",
+                placeholder: t("onboard.agent.certManagePlaceholder"),
+                isRequired: true,
+                requestBodyName: "licenseManagementNo",
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -131,13 +217,37 @@ const getAgentSections = (t: TFunction): FormSection[] => [
         label: t("onboard.agent.languageLabel"),
         description: t("onboard.agent.languageDesc"),
         getMany: true,
-        inputLines: [{ inputs: [{ placeholder: t("onboard.agent.languagePlaceholder"), inputType: "selector", options: languageList, isRequired: true, requestBodyName: "availableLanguageIdList" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                placeholder: t("onboard.agent.languagePlaceholder"),
+                inputType: "selector",
+                options: languageList,
+                isRequired: true,
+                requestBodyName: "availableLanguageIdList",
+              },
+            ],
+          },
+        ],
       },
       {
         label: t("onboard.agent.oneLinerLabel"),
         description: t("onboard.agent.oneLinerDesc"),
         getMany: false,
-        inputLines: [{ inputs: [{ inputType: "text", colSpan: 9, placeholder: t("onboard.agent.oneLinerPlaceholder"), isRequired: true, requestBodyName: "agentComment" }] }],
+        inputLines: [
+          {
+            inputs: [
+              {
+                inputType: "text",
+                colSpan: 9,
+                placeholder: t("onboard.agent.oneLinerPlaceholder"),
+                isRequired: true,
+                requestBodyName: "agentComment",
+              },
+            ],
+          },
+        ],
       },
       {
         label: t("onboard.agent.additionalHistoryLabel"),
@@ -171,7 +281,11 @@ const AgentOnboard = () => {
     }
     const fileMimeType = imageFile.type;
 
-    const imgObjectKey = await uploadImage(fileMimeType as "image/jpg" | "image/jpeg" | "image/png", "agent-profile", imageFile);
+    const imgObjectKey = await uploadImage(
+      fileMimeType as "image/jpg" | "image/jpeg" | "image/png",
+      "agent-profile",
+      imageFile,
+    );
 
     if (!imgObjectKey) {
       alertT("onboard.savingFailed");
@@ -192,8 +306,12 @@ const AgentOnboard = () => {
       licenseInfo: {
         licenseNo: data[1].sectionData[1].disabled ? null : data[1].sectionData[1].values[0].licenseNo,
         licenseIssuedAt: data[1].sectionData[2].disabled ? null : data[1].sectionData[2].values[0].licenseIssuedAt,
-        licenseInnerPageNo: data[1].sectionData[3].disabled ? null : data[1].sectionData[3].values[0].licenseInnerPageNo,
-        licenseManagementNo: data[1].sectionData[4].disabled ? null : data[1].sectionData[4].values[0].licenseManagementNo,
+        licenseInnerPageNo: data[1].sectionData[3].disabled
+          ? null
+          : data[1].sectionData[3].values[0].licenseInnerPageNo,
+        licenseManagementNo: data[1].sectionData[4].disabled
+          ? null
+          : data[1].sectionData[4].values[0].licenseManagementNo,
       },
       detailedInfo: {
         specializedJobCodeIdList: getLeafValues(data[2].sectionData[0]), //number[]
@@ -213,14 +331,24 @@ const AgentOnboard = () => {
   return (
     <FormProvider {...methods}>
       <form className="flex flex-row overflow-y-auto w-fit" onSubmit={methods.handleSubmit(onSubmit, onError)}>
-        <div className={`w-284 overflow-auto scrollbar-hide ${getMaskStyle()}`} style={{ height: "calc(100vh - 100px)" }} ref={scrollRef} onScroll={handleScroll}>
+        <div
+          className={`w-284 overflow-auto scrollbar-hide ${getMaskStyle()}`}
+          style={{ height: "calc(100vh - 100px)" }}
+          ref={scrollRef}
+          onScroll={handleScroll}
+        >
           <div className="flex flex-col pb-10 pt-14">
             <h2 className="headline-m-bold text-text-base mb-3">{t("onboard.agentTitle")}</h2>
             <a className="body-l-medium text-text-base">{t("onboard.description")}</a>
             <NavisaForm formData={sections} startsWithImage={true} imageFile={imageFile} setImageFile={setImageFile} />
           </div>
         </div>
-        <AgentOnboardWidget sections={sections} currentSectionIndex={currentSectionIndex} goToSection={goToSection} goTop={goTop} />
+        <AgentOnboardWidget
+          sections={sections}
+          currentSectionIndex={currentSectionIndex}
+          goToSection={goToSection}
+          goTop={goTop}
+        />
       </form>
     </FormProvider>
   );
