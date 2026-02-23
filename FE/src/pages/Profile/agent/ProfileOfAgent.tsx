@@ -2,41 +2,12 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BannerBackground from "../../../components/layout/BannerBackground";
 import Languages from "../Foreigner/Languages";
-import AgentBlog from "./AgentBlog";
 import AgentHeader from "./AgentHeader";
 import AgentOffice from "./AgentOffice";
 import AgentProfilePanel from "./AgentProfilePanel";
 import AgentReviewSection from "./AgentReviewSection";
 import AgentSpecialties from "./AgentSpecialties";
 import { useAgentProfileDetailQuery } from "../../../api/queries/useAgentProfileDetailQuery";
-
-const blog = [
-  {
-    blogId: 12,
-    specialityId: 10, //직무코드
-    nationId: 13, //외국인 국적
-    languageId: 14, //외국인의 언어
-    title: "제목",
-    content:
-      "내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용",
-  },
-  {
-    blogId: 4,
-    specialityId: 10, //직무코드
-    nationId: 13, //외국인 국적
-    languageId: 14, //외국인의 언어
-    title: "제목",
-    content: "내용",
-  },
-  {
-    blogId: 123,
-    specialityId: 10, //직무코드
-    nationId: 13, //외국인 국적
-    languageId: 14, //외국인의 언어
-    title: "제목",
-    content: "내용",
-  },
-];
 
 const ProfileOfAgent = () => {
   const { t } = useTranslation(["pages"]);
