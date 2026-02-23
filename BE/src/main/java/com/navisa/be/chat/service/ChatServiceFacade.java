@@ -108,14 +108,13 @@ public class ChatServiceFacade {
         return agentProfile.getUserId();
     }
 
-    public void publishReviewRequiredEventMessage(Long roomId, UUID receiverId) {
+    public void publishEventMessage(UUID receiverId, ChatMessageResponse message) {
         // Redis 발행은 트랜잭션 커밋 후 실행
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                log.debug("REVIEW REQUIRED receiverId : {}", receiverId);
-                ChatMessageResponse response = ChatMessageResponse.createReviewRequiredEventMessage(receiverId, roomId);
-                redisTemplate.convertAndSend("user:ch:" + receiverId, response);
+                log.debug("{} receiverId : {}", message.type(), receiverId);
+                redisTemplate.convertAndSend("user:ch:" + receiverId, message);
             }
         });
     }

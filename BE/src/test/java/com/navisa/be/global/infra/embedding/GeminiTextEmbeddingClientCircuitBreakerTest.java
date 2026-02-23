@@ -1,7 +1,5 @@
-package com.navisa.be.common.infrastructure.client;
+package com.navisa.be.global.infra.embedding;
 
-import com.navisa.be.global.infra.embedding.GeminiEmbeddingRequestType;
-import com.navisa.be.global.infra.embedding.GeminiTextEmbeddingClient;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import okhttp3.mockwebserver.MockResponse;
@@ -61,6 +59,9 @@ class GeminiTextEmbeddingClientCircuitBreakerTest extends IntegrationTestSupport
 
         CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker(GEMINI_EMBEDDING);
         cb.reset();
+
+        // 테스트 시작 전 해당 스트림의 데이터를 삭제하여 격리성 확보
+        redisTemplate.delete(GEMINI_EMBEDDING_RETRY_STREAM);
     }
 
     @AfterEach

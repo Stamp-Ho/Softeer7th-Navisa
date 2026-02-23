@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -143,7 +144,8 @@ class ChatRoomQueryControllerTest {
         UUID agentId = UUID.randomUUID();
         GetChatRoomParticipantsInfoResponse response = new GetChatRoomParticipantsInfoResponse(
                 new GetChatRoomParticipantsInfoResponse.AgentInfo(agentId, List.of(1L, 2L), "행정사", null),
-                null
+                new GetChatRoomParticipantsInfoResponse.ForeignerInfo(UUID.randomUUID(), "외국인", "특정직무", LocalDate.now(), List.of(1L, 2L), false),
+                false
         );
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);

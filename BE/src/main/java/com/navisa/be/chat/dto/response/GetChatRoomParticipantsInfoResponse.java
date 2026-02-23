@@ -13,7 +13,8 @@ import java.util.UUID;
 @Schema(description = "특정 채팅방 참여자 정보 조회 응답 DTO")
 public record GetChatRoomParticipantsInfoResponse(
         AgentInfo agentInfo,
-        ForeignerInfo foreignerInfo
+        ForeignerInfo foreignerInfo,
+        Boolean proposalEndRequired
 ) {
 
     public static GetChatRoomParticipantsInfoResponse entityToDto(
@@ -23,7 +24,8 @@ public record GetChatRoomParticipantsInfoResponse(
             ForeignerExpectedCompany expectedCompany,
             List<Long> foreignerNationalityIds,
             Boolean isReviewRequired,
-            UUID applicationFormId
+            UUID applicationFormId,
+            Boolean proposalEndRequired
     ) {
         return new GetChatRoomParticipantsInfoResponse(
                 new AgentInfo(
@@ -39,7 +41,8 @@ public record GetChatRoomParticipantsInfoResponse(
                         expectedCompany.getStartDate(),
                         foreignerNationalityIds,
                         isReviewRequired
-                )
+                ),
+                proposalEndRequired
         );
     }
 

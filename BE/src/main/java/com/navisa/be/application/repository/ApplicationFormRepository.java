@@ -62,4 +62,14 @@ public interface ApplicationFormRepository extends JpaRepository<ApplicationForm
             UUID agentProfileId, UUID foreignerProfileId);
 
     Optional<ApplicationForm> findFirstByForeignerProfile_IdOrderByCreatedAtDesc(UUID foreignerProfileId);
+
+    @Query(value = """
+        SELECT f FROM ApplicationForm f
+        JOIN FETCH f.foreignerProfile fp
+        JOIN FETCH f.agentProfile ap
+        WHERE f.isFinished = false
+            AND f.isDone = true
+            AND CAST(f.exportedAt AS date) = :targetDate
+    """)
+    List<ApplicationForm> findAllRequiringEnd(@Param("targetDate") LocalDate targetDate);
 }

@@ -45,7 +45,14 @@ public class ProposalService {
     @Transactional
     public void createProposal(String email, Long roomId, ChatMessageRequest request) {
         validateRoomId(roomId, request);
-        executeProposalAction(email, roomId, request, this::createWithValidation);
+
+        User user = userCrudService.findByEmail(email);
+        UUID profileId = getProfileId(user);
+        ChatRoom room = chatRoomQueryService.findByIdWithProfiles(roomId);
+
+        validateChatRoomOwnership(profileId, user.getUserType(), room);
+        createWithValidation(profileId, room);
+        chatServiceFacade.saveAndPublishChatMessage(user.getId(), request, room);
     }
 
     @Transactional
@@ -90,7 +97,7 @@ public class ProposalService {
     }
 
     @Transactional
-    public ChatMessageRequest createWithValidation(ChatRoom room, ChatMessageRequest request) {
+    public void createWithValidation(UUID senderId, ChatRoom room) {
         Proposal proposal = proposalRepository.findFirstByChatRoom_IdOrderByIdDesc(room.getId())
                 .orElse(null);
 
@@ -102,8 +109,7 @@ public class ProposalService {
             throw new ProposalException(ResponseStatus.PROPOSAL_ALREADY_EXISTS, "해당 채팅방에 MATCHED 상태인 제안이 이미 존재합니다.");
         }
 
-        proposalRepository.save(new Proposal(room, room.getAgentProfile().getId()));
-        return request;
+        proposalRepository.save(new Proposal(room, senderId));
     }
 
     @Transactional

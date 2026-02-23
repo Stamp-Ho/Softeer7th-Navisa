@@ -77,6 +77,7 @@ class ApplicationFormForForeignerServiceTest extends IntegrationTestSupport {
         JobCode jobCode = agentProfileTestFixture.createJobCode("E7", "특수직");
         ApplicationForm form = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile,
                 foreignerProfile, jobCode, true);
+
         // 메일 발송 후 3일 경과 조건 충족
         ReflectionTestUtils.setField(form, "mailSentAt", LocalDateTime.now().minusDays(4));
         applicationFormRepository.saveAndFlush(form);
@@ -91,14 +92,6 @@ class ApplicationFormForForeignerServiceTest extends IntegrationTestSupport {
         assertThat(response).isNotNull();
         assertThat(response.closedVisaFormId()).isEqualTo(form.getId());
         assertThat(response.newVisaFormId()).isNotNull();
-
-        // then - FEEDBACK_REQUIRED 메세지 DB 저장 검증
-        List<ChatMessage> messages = chatMessageRepository.findAll();
-        assertThat(messages).hasSize(1);
-        assertThat(messages.get(0).getMessageType()).isEqualTo(MessageType.FEEDBACK_REQUIRED);
-        assertThat(messages.get(0).getContent()).contains("수임이 종료되었습니다");
-        // 송신자가 agentProfile.id 임을 검증 (agent의 userId로 메세지 발송)
-        assertThat(messages.get(0).getSenderId()).isEqualTo(agentProfile.getId());
     }
 
     @Test

@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -101,14 +102,17 @@ public class ChatRoomQueryService {
         Optional<Proposal> proposal = proposalCrudService.findOptionalLatestProposalByChatRoom(chatRoom);
 
         boolean isReviewRequired = false;
+        boolean proposalEndRequired = false;
+        UUID applicationFormId = null;
+
         if (proposal.isPresent() && form.isPresent()) {
             boolean reviewExists = agentReviewCrudService.existsByProposalId(proposal.get().getId());
             isReviewRequired = form.get().isDone() && !reviewExists;
-        }
+            proposalEndRequired = form.get().requiresEnd();
 
-        UUID applicationFormId = null;
-        if (proposal.isPresent() && proposal.get().getStatus() == ProposalStatus.MATCHED && form.isPresent()) {
-            applicationFormId = form.get().getId();
+            if(proposal.get().getStatus() == ProposalStatus.MATCHED) {
+                applicationFormId = form.get().getId();
+            }
         }
 
         return GetChatRoomParticipantsInfoResponse.entityToDto(
@@ -118,7 +122,8 @@ public class ChatRoomQueryService {
                 expectedCompany,
                 nationalityIds,
                 isReviewRequired,
-                applicationFormId
+                applicationFormId,
+                proposalEndRequired
         );
     }
 
@@ -126,7 +131,7 @@ public class ChatRoomQueryService {
         return chatRoomRepository.findByAgentIdAndForeignerId(agentId, foreignerId);
     }
 
-    public Optional<ChatRoom> findByAgentProfileAndForeignerProfile(AgentProfile agent, ForeignerProfile foreigner) {
+    public Optional<ChatRoom> findOptionalByAgentProfileAndForeignerProfile(AgentProfile agent, ForeignerProfile foreigner) {
         if (agent == null || foreigner == null) {
             return Optional.empty();
         }
@@ -134,8 +139,13 @@ public class ChatRoomQueryService {
     }
 
     public Long getChatRoomIdByProfiles(AgentProfile agent, ForeignerProfile foreigner) {
-        return findByAgentProfileAndForeignerProfile(agent, foreigner)
+        return findOptionalByAgentProfileAndForeignerProfile(agent, foreigner)
                 .map(ChatRoom::getId)
                 .orElse(null);
+    }
+
+    public ChatRoom findByAgentProfileAndForeignerProfile(AgentProfile agent, ForeignerProfile foreigner) {
+        return chatRoomRepository.findByAgentProfileAndForeignerProfile(agent, foreigner)
+                .orElseThrow(() -> new ChatRoomException(ResponseStatus.NOT_FOUND_CHATROOM));
     }
 }

@@ -62,7 +62,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("제안 생성 시 Redis 발행 이벤트에 User ID가 올바르게 전달되는지 검증")
-    void createProposal_Success() {
+    void createProposal_Success_whenAgent() {
         // given
         User foreignerUser = userTestFixture.createUser("foreigner_prop@test.com", UserType.FILLED_FOREIGNER);
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
@@ -89,6 +89,39 @@ class ProposalServiceTest extends IntegrationTestSupport {
 
         verify(chatServiceFacade).saveAndPublishChatMessage(
                 eq(agentUser.getId()),
+                any(ChatMessageRequest.class),
+                any(ChatRoom.class));
+    }
+
+    @Test
+    @DisplayName("제안 생성을 요청한 사람이 외국인인 사실이 저장되는지 검증")
+    void createProposal_Success_whenForeigner() {
+        // given
+        User foreignerUser = userTestFixture.createUser("foreigner_prop@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        User agentUser = userTestFixture.createUser("agent_prop@test.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("AgentProp", "Address",
+                agentUser.getId());
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
+
+        ChatMessageRequest request = new ChatMessageRequest(
+                chatRoom.getId(),
+                UUID.randomUUID(),
+                "제안합니다.",
+                MessageType.PROPOSAL);
+
+        // when
+        proposalService.createProposal(foreignerUser.getEmail(), chatRoom.getId(), request);
+
+        // then
+        Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom).orElseThrow();
+        assertThat(proposal.getStatus()).isEqualTo(ProposalStatus.PROPOSED);
+        assertThat(proposal.getSenderId()).isEqualTo(foreignerProfile.getId());
+
+        verify(chatServiceFacade).saveAndPublishChatMessage(
+                eq(foreignerUser.getId()),
                 any(ChatMessageRequest.class),
                 any(ChatRoom.class));
     }

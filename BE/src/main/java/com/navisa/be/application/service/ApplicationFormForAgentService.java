@@ -8,6 +8,7 @@ import com.navisa.be.application.exception.ApplicationFormException;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
+import com.navisa.be.chat.dto.message.ChatMessageResponse;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.MessageType;
 import com.navisa.be.chat.model.enums.ProposalStatus;
@@ -49,7 +50,8 @@ public class ApplicationFormForAgentService {
             form.updateStatus(isDone);
             applicationFormRepository.saveAndFlush(form);
             ChatRoom chatRoom = chatRoomCrudService.findByAgentIdAndForeignerId(form.getAgentProfile().getId(), form.getForeignerProfile().getId());
-            chatServiceFacade.publishReviewRequiredEventMessage(chatRoom.getId(), form.getForeignerProfile().getUserId());
+            ChatMessageResponse response = ChatMessageResponse.createReviewRequiredEventMessage(form.getForeignerProfile().getUserId(), chatRoom.getId());
+            chatServiceFacade.publishEventMessage(form.getForeignerProfile().getUserId(), response);
         }
         else{
             form.updateStatus(isDone);

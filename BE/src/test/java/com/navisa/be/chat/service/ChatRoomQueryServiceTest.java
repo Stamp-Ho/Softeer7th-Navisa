@@ -5,6 +5,7 @@ import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.Badge;
 import com.navisa.be.agent.repository.AgentBadgeSummaryRepository;
 import com.navisa.be.application.model.entity.ApplicationForm;
+import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.application.service.ApplicationFormForAgentService;
 import com.navisa.be.chat.dto.response.GetChatRoomParticipantsInfoResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
@@ -26,7 +27,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,6 +69,8 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private ApplicationFormForAgentService applicationFormForAgentService;
+    @Autowired
+    private ApplicationFormRepository applicationFormRepository;
 
     @Test
     @DisplayName("채팅방에 속해 있으면 채팅방 참여자 정보를 조회할 수 있다")
@@ -100,6 +105,8 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         assertThat(response.foreignerInfo().expectedJob()).isEqualTo(expectedCompany.getJobTitle());
         assertThat(response.foreignerInfo().nationalityIds()).containsAnyElementsOf(nationalityIds);
         assertThat(response.foreignerInfo().isReviewRequired()).isFalse();
+
+        assertThat(response.proposalEndRequired()).isFalse(); // 수임 제안이 없음
     }
 
     @Test
@@ -141,6 +148,8 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         assertThat(response.foreignerInfo().expectedJob()).isEqualTo(expectedCompany.getJobTitle());
         assertThat(response.foreignerInfo().nationalityIds()).containsAnyElementsOf(nationalityIds);
         assertThat(response.foreignerInfo().isReviewRequired()).isFalse();
+
+        assertThat(response.proposalEndRequired()).isFalse(); // 내보내지 않음
     }
 
     @Test
@@ -164,14 +173,17 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         applicationFormForAgentService.updateApplicationStatus(agentUser.getEmail(), applicationForm.getId(), true);
 
         // when
-        GetChatRoomParticipantsInfoResponse response = chatRoomQueryService.findParticipantsInfoById(chatRoom.getId(),
-                foreignerUser.getEmail());
+        GetChatRoomParticipantsInfoResponse response = chatRoomQueryService.findParticipantsInfoById(chatRoom.getId(), foreignerUser.getEmail());
+
 
         // then
         assertThat(response.agentInfo().agentId()).isEqualTo(agentProfile.getId());
+        assertThat(response.agentInfo().applicationFormId()).isEqualTo(applicationForm.getId());
+
         assertThat(response.foreignerInfo().foreignerId()).isEqualTo(foreignerProfile.getId());
         assertThat(response.foreignerInfo().isReviewRequired()).isTrue();
-        assertThat(response.agentInfo().applicationFormId()).isEqualTo(applicationForm.getId());
+
+        assertThat(response.proposalEndRequired()).isFalse(); // 내보낸지 2주가 안 지남
     }
 
     @Test
@@ -206,5 +218,42 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> chatRoomQueryService.findParticipantsInfoById(chatRoom.getId(), nonParticipant.getEmail()))
                 .isInstanceOf(ChatRoomException.class)
                 .hasMessage(ResponseStatus.NOT_ALLOWED_TO_ACCESS_CHATROOM.getMessage());
+    }
+
+    @Test
+    @DisplayName("행정사가 수임 완료를 3일동안 입력하지 않으면 proposalEndRequired가 true로 반환된다")
+    void findParticipantsInfoById_shouldReturnProposalEndRequiredTrue_whenAgentReplyNotExistAfter3DaysAfterMailSent() {
+        // given
+        User agentUser = userTestFixture.createUser("agent@test.com", UserType.VALID_AGENT);
+        User foreignerUser = userTestFixture.createUser("foreigner@test.com", UserType.FILLED_FOREIGNER);
+
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Addr", agentUser.getId());
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
+
+        // 수임 중이고 신청서를 내보낸 후
+        JobCode jobCode = agentProfileTestFixture.createJobCode("E-7", "특정활동");
+        ApplicationForm applicationForm = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile, foreignerProfile, jobCode, true);
+        ReflectionTestUtils.setField(applicationForm, "exportedAt", LocalDateTime.now().minusDays(14));
+        applicationFormRepository.saveAndFlush(applicationForm);
+
+        proposalTestFixture.createProposal(chatRoom, agentProfile.getId(), ProposalStatus.MATCHED);
+
+        // 비자신청서를 내보낸지 2주가 흐름
+        applicationFormForAgentService.updateApplicationStatus(agentUser.getEmail(), applicationForm.getId(), true);
+
+        // when
+        GetChatRoomParticipantsInfoResponse response = chatRoomQueryService.findParticipantsInfoById(chatRoom.getId(),
+                foreignerUser.getEmail());
+
+        // then
+        assertThat(response.agentInfo().agentId()).isEqualTo(agentProfile.getId());
+        assertThat(response.agentInfo().applicationFormId()).isEqualTo(applicationForm.getId());
+
+        assertThat(response.foreignerInfo().foreignerId()).isEqualTo(foreignerProfile.getId());
+        assertThat(response.foreignerInfo().isReviewRequired()).isTrue();
+
+        assertThat(response.proposalEndRequired()).isTrue();
     }
 }

@@ -140,7 +140,37 @@ class ApplicationFormRepositoryTest extends IntegrationTestSupport {
         assertThat(result.get().getForeignerProfile().getId()).isEqualTo(foreigner.getId());
     }
 
+    @Test
+    @DisplayName("findAllRequiringEnd는 isFinished가 false이고 exportedAt의 날짜가 targetDate와 일치하는 서류를 조회한다.")
+    void findAllRequiringEnd_Success() {
+        // given
+        LocalDate today = LocalDate.now();
+        LocalDate targetDate = today.minusDays(17); // 17일 전
+
+        // 조회 대상
+        // 1차 내보내기 완료 후 정해진 기간이 흐름
+        createFormWithExportedAtAndFinished("target_req@test.com", targetDate.atTime(10, 0), true, false);
+        createFormWithExportedAtAndFinished("target_req2@test.com", targetDate.atTime(23, 59), true, false);
+
+        // 제외 대상
+        createFormWithExportedAtAndFinished("minus6@test.com", today.minusDays(6).atStartOfDay(), true, false);
+        createFormWithExportedAtAndFinished("minus8@test.com", today.minusDays(8).atStartOfDay(), false, false);
+        createFormWithExportedAtAndFinished("finished@test.com", targetDate.atTime(12, 0), true, true);
+
+        // when
+        List<ApplicationForm> result = applicationFormRepository.findAllRequiringEnd(targetDate);
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result).allMatch(f -> f.getExportedAt().toLocalDate().equals(targetDate));
+        assertThat(result).allMatch(f -> !f.isFinished());
+    }
+
     private void createFormWithExportedAt(String email, LocalDateTime exportedAt, boolean isDone) {
+        createFormWithExportedAtAndFinished(email, exportedAt, isDone, false);
+    }
+
+    private void createFormWithExportedAtAndFinished(String email, LocalDateTime exportedAt, boolean isDone, boolean isFinished) {
         User user = userRepository.save(new User(email, "pw", UserType.VALID_AGENT, LoginType.EMAIL, true));
         AgentProfile agent = agentProfileRepository.save(new AgentProfile(
                 "행정사", LocalDate.now(), "key", "09:00", "사무소", "주소", "상세", "이력",
@@ -150,10 +180,13 @@ class ApplicationFormRepositoryTest extends IntegrationTestSupport {
                 .save(new User("f_" + email, "pw", UserType.FILLED_FOREIGNER, LoginType.EMAIL, true));
         ForeignerProfile foreigner = foreignerProfileRepository
                 .save(new ForeignerProfile(fUser.getId(), ForeignerSearchStatus.REQUESTING));
-        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7", "특수", null, null));
+        JobCode jobCode = jobCodeRepository.save(new JobCode(null, "E7" + email, "특수", null, null));
 
         ApplicationForm form = new ApplicationForm(agent, foreigner, jobCode, isDone, 100, 0);
         ReflectionTestUtils.setField(form, "exportedAt", exportedAt);
+        if (isFinished) {
+            form.updateFinish(true);
+        }
         applicationFormRepository.save(form);
     }
 }

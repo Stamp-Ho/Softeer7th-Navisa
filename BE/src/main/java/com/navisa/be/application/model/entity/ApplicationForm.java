@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -212,5 +213,9 @@ public class ApplicationForm extends BaseEntity {
         nextForm.inviteInformation = copySection(oldForm.getInviteInformation());
 
         return nextForm;
+    }
+
+    public boolean requiresEnd() {
+        return this.exportedAt != null && !this.exportedAt.toLocalDate().isAfter(LocalDate.now().minusDays(14)) && !this.isFinished;
     }
 }

@@ -60,21 +60,6 @@ public class ApplicationFormForForeignerService {
         ApplicationForm nextForm = ApplicationForm.createRenewalForm(latestForm);
         ApplicationForm savedNextForm = applicationFormRepository.save(nextForm);
 
-
-        ChatRoom chatRoom = chatRoomCrudService
-                .findByAgentIdAndForeignerId(
-                        latestForm.getAgentProfile().getId(),
-                        latestForm.getForeignerProfile().getId());
-
-        // 피드백 요청 메세지 생성
-        ChatMessageRequest chatRequest = new ChatMessageRequest(
-                chatRoom.getId(),
-                null,
-                "수임이 종료되었습니다. 해당 수임 계약에 대한 피드백 작성 부탁드립니다.",
-                MessageType.FEEDBACK_REQUIRED
-        );
-        chatServiceFacade.saveAndPublishChatMessage(latestForm.getAgentProfile().getUserId(), chatRequest, chatRoom);
-
         return new ApplicationFormFinishedStatusResponse(
                 latestForm.getId(),
                 savedNextForm.getId(),
