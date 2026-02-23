@@ -44,7 +44,7 @@ const ChatRoomCard = ({
         <div className="flex flex-row justify-between">
           <div>
             <span className="flex flex-row items-center gap-3 title-s-semibold text-text-base">
-              {opponentName}
+              {opponentName} {!isAgent && t("agentCard.title")}
               {proposalMatched ? (
                 <Tag variant="small_fill_icon" className="min-w-[83px]">
                   <IcPin size="14" />
