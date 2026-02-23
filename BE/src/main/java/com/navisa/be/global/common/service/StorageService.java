@@ -21,7 +21,9 @@ public class StorageService {
     }
 
     public String getImgUrl(ImageSize size, String objectKey, boolean isForeigner) {
-        if (objectKey == null || objectKey.isBlank()) {
+        if (objectKey == null || objectKey.isBlank()
+                || "null".equalsIgnoreCase(objectKey)
+                || "undefined".equalsIgnoreCase(objectKey)) {
             return null;
         }
 
