@@ -104,4 +104,16 @@ public class AgentProfileController {
         AgentDetailResponse response = agentProfileSearchService.getAgentDetail(loginUserEmail, agentId);
         return new BaseResponse<>(response);
     }
+
+    @Operation(
+            summary = "행정사의 내 프로필 상세 조회 API",
+            description = "행정사가 자신의 프로필 상세를 조회하는 API입니다"
+    )
+    @HasUserType({UserType.VALID_AGENT})
+    @GetMapping("/profile")
+    public BaseResponse<AgentDetailResponse> getMyAgentDetail(@Parameter(hidden = true) @LoginUser String loginUserEmail){
+
+        AgentDetailResponse response = agentProfileSearchService.getMyAgentDetail(loginUserEmail);
+        return new BaseResponse<>(response);
+    }
 }

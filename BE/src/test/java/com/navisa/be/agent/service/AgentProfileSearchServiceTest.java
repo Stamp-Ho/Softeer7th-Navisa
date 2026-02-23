@@ -414,7 +414,7 @@ class AgentProfileSearchServiceTest extends IntegrationTestSupport {
         assertThat(response.agentInfo().agentId()).isEqualTo(agentProfile.getId());
         assertThat(response.agentInfo().name()).isEqualTo(agentProfile.getName());
         assertThat(response.agentInfo().hasChatRoom()).isFalse();
-        assertThat(response.agentInfo().profileImageUrl()).contains(ImageSize.MEDIUM.getPath());
+        assertThat(response.agentInfo().profileImageUrl()).contains(ImageSize.ORIGIN.getPath());
 
         // reviewSummary 검증
         assertThat(response.reviewSummary()).isNotNull();
@@ -476,5 +476,51 @@ class AgentProfileSearchServiceTest extends IntegrationTestSupport {
         assertThat(response.agentInfo().hasChatRoom()).isTrue();
         assertThat(response.agentInfo().hasBlocked()).isFalse();
         assertThat(response.agentInfo().chatRoomId()).isEqualTo(chatRoom.getId());
+    }
+
+    @Test
+    @DisplayName("행정사 본인 상세 조회에 성공한다")
+    void getMyAgentDetail_succeed() {
+        // given
+        JobCode jobCode = agentProfileTestFixture.createJobCode("직무코드", "직무명");
+        Language lang = agentProfileTestFixture.createLanguage("언어");
+
+        User agentUser = userTestFixture.createUser("agent@test.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("본인 행정사", "본인 주소",
+                agentUser.getId());
+
+        agentProfileTestFixture.createAgentSpecializedJob(agentProfile, jobCode);
+        agentProfileTestFixture.createAgentLanguage(agentProfile, lang);
+
+        Badge badge = agentProfileTestFixture.createBadge(BadgeName.FAST_INFORMATION);
+        agentProfileTestFixture.createAgentReview(agentProfile, 1L, badge);
+
+        em.flush();
+        em.clear();
+
+        // when
+        AgentDetailResponse response = agentProfileSearchService.getMyAgentDetail(agentUser.getEmail());
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.agentInfo().agentId()).isEqualTo(agentProfile.getId());
+        assertThat(response.agentInfo().name()).isEqualTo("본인 행정사");
+        assertThat(response.agentInfo().hasChatRoom()).isFalse(); // 본인 조회이므로 채팅방 정보는 없음
+        assertThat(response.reviewSummary().totalCount()).isEqualTo(1L);
+        assertThat(response.expertise().jobCodeIds()).contains(jobCode.getId());
+    }
+
+    @Test
+    @DisplayName("행정사 본인 상세 조회는 행정사 프로필이 없으면 예외가 발생한다")
+    void getMyAgentDetail_shouldThrowException_whenNoAgent() {
+        // given
+        User loginUser = userTestFixture.createUser("noagent@test.com", UserType.INVALID_AGENT);
+
+        em.flush();
+        em.clear();
+
+        // when & then
+        assertThatThrownBy(() -> agentProfileSearchService.getMyAgentDetail(loginUser.getEmail()))
+                .isInstanceOf(AgentException.class);
     }
 }

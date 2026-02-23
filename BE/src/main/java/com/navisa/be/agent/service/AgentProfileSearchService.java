@@ -91,16 +91,13 @@ public class AgentProfileSearchService {
         return new SliceResponse<>(content, existsNext, lastElementId);
     }
 
-    /*
-     * 외국인 입장 행정사 조회
-     */
     public AgentDetailResponse getAgentDetail(String loginUserEmail, UUID agentId) {
         // 행정사가 없으면 예외 발생
         AgentProfile agentProfile = agentProfileRepository.findById(agentId)
                 .orElseThrow(() -> new AgentException(ResponseStatus.AGENT_NOT_FOUND));
         List<AgentBadgeSummary> top6BadgeSummary = agentBadgeService.getTopKBadgeByAgentId(agentId, 6);
 
-        String agentProfileImageUrl = storageService.getImgUrl(ImageSize.MEDIUM,
+        String agentProfileImageUrl = storageService.getImgUrl(ImageSize.ORIGIN,
                 agentProfile.getProfileObjectKey(), false);
 
         // 보는 사람이 외국인이면 채팅방 정보 제공
@@ -115,5 +112,26 @@ public class AgentProfileSearchService {
 
         return AgentDetailResponse.entityToDto(agentProfile, top6BadgeSummary, agentProfileImageUrl,
                 optChatRoom, reviewCount);
+    }
+
+    public AgentDetailResponse getMyAgentDetail(String loginUserEmail) {
+        User user = userCrudService.findByEmail(loginUserEmail);
+
+        if (user.getUserType() != UserType.VALID_AGENT) {
+            throw new AgentException(ResponseStatus.NOT_ALLOWED_TO_REGISTER_AGENT_PROFILE, "VALID_AGENT가 아닌 행정사는 자신의 상세 프로필을 조회할 수 없습니다.");
+        }
+
+        AgentProfile agentProfile = agentProfileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new AgentException(ResponseStatus.AGENT_NOT_FOUND));
+
+        List<AgentBadgeSummary> top6BadgeSummary = agentBadgeService.getTopKBadgeByAgentId(agentProfile.getId(), 6);
+
+        String agentProfileImageUrl = storageService.getImgUrl(ImageSize.ORIGIN,
+                agentProfile.getProfileObjectKey(), false);
+
+        long reviewCount = agentReviewRepository.countByAgentProfileId(agentProfile.getId());
+
+        return AgentDetailResponse.entityToDto(agentProfile, top6BadgeSummary, agentProfileImageUrl,
+                Optional.empty(), reviewCount);
     }
 }
