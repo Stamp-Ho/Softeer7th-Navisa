@@ -96,7 +96,8 @@ const SuggestedAgents = () => {
     };
 
     const finishLoading = async () => {
-      const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+      const delay = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms));
       // 1. 로딩 바 숨기기
       setShowLoadingBar(false);
 
