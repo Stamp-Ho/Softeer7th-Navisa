@@ -72,7 +72,7 @@ com.navisa.be
 ## 📑 ERD 설계도
 [🔗 Navisa ERD 바로가기](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
 
-![navisa_erd.png](../navisa_erd2.png)
+![navisa_erd2.png](../navisa_erd2.png)
 
 
 <br>
@@ -82,7 +82,7 @@ com.navisa.be
 
 [🔗 Navisa 아키텍처 다이어그램 바로가기](https://www.figma.com/board/QnPDChUIeMNIRU7r3rQUQq/Softeer_7th_Team6_Infra-Architecture?node-id=1-1938&t=enYOk9NQJc1qkh9t-1)
 
-![navisa.infra](../navisa_infra_architecture.png)
+![navisa_infra_architecture2.png](../navisa_infra_architecture2.png)
 
 <br>
 

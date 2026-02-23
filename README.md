@@ -5,6 +5,8 @@
 **"복잡한 비자 신청의 모든 과정을 스마트하게"
 외국인과 전문 행정사를 잇는 맞춤형 매칭 플랫폼**
 
+<br>
+
 # ✨ 핵심 기능
 ## 1️⃣ 지능형 맞춤 행정사 추천
 LLM을 활용한 데이터 기반 정교한 매칭
@@ -78,6 +80,8 @@ LLM을 활용한 데이터 기반 정교한 매칭
 
 - 사후 관리: 서류 다운로드 2주 후 자동 이메일 발송을 통해 수임 종료 여부를 확인하고 프로세스 상태를 업데이트합니다.
 
+<br>
+
 
 # 🎨 기획 및 디자인
 > **사용자 경험을 최우선으로 생각하는 Navisa의 설계 기반입니다.**
@@ -136,7 +140,7 @@ Gemini API 장애나 Quota 초과 시에도 서비스가 멈추지 않도록 3�
 # 📑 ERD 설계도
 [🔗 Navisa ERD 바로가기](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
 
-![navisa_erd.png](navisa_erd2.png)
+![navisa_erd2.png](navisa_erd2.png)
 
 
 <br>
@@ -146,7 +150,7 @@ Gemini API 장애나 Quota 초과 시에도 서비스가 멈추지 않도록 3�
 
 [🔗 Navisa 아키텍처 다이어그램 바로가기](https://www.figma.com/board/QnPDChUIeMNIRU7r3rQUQq/Softeer_7th_Team6_Infra-Architecture?node-id=1-1938&t=enYOk9NQJc1qkh9t-1)
 
-![navisa.infra](navisa_infra_architecture.png)
+![navisa_infra_architecture2.png](navisa_infra_architecture2.png)
 
 
 
@@ -202,9 +206,9 @@ IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
         <tr>
             <td><img width="150" src="https://github.com/Stamp-Ho.png"></td>
             <td><img width="150" src="https://github.com/roony1225.png"></td>
-            <td><img width="150" src="https://github.com/Hexeong.png"></td>
-            <td><img width="150" src="https://github.com/shinminkyoung1.png"></td>
-            <td><img width="150" src="https://github.com/JangIkhwan.png"></td>
+            <td><img width="150" src="./images/1766628399088(1).jpg"></td>
+            <td><img width="150" src="./images/IMG_1245.JPG"></td>
+            <td><img width="150" src="./images/1000008209.jpg"></td>
         </tr>
         <tr>
             <td align="center">FE</td>
@@ -217,7 +221,6 @@ IT 기술로 그 길을 밝히는 내비게이터 역할을 하고자 합니다.
 </p>
 
 <br>
-
 
 <p align="center">
   <b>"낯선 땅에서의 시작이 두려움이 아닌 설렘이 되도록, Navisa가 든든한 내비게이터가 되겠습니다."</b>
