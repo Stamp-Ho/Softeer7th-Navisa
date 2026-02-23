@@ -152,4 +152,64 @@ class ApplicationFormForForeignerServiceTest extends IntegrationTestSupport {
                 .isInstanceOf(ApplicationFormException.class)
                 .hasMessageContaining(ResponseStatus.VISA_APP_FORM_NOT_FOUND.getMessage());
     }
+
+    @Test
+    @DisplayName("이미지 키가 공백(Blank)인 경우에도 복제 및 조회가 정상적으로 수행된다.")
+    void finishByForeigner_WithBlankImageKey_Success() {
+        // given
+        User foreignerUser = userTestFixture.createUser("foreigner_blank@test.com", UserType.FILLED_FOREIGNER);
+        User agentUser = userTestFixture.createUser("agent_blank@test.com", UserType.VALID_AGENT);
+
+        AgentProfile agent = agentProfileTestFixture.createAgentProfile("행정사", "인천", agentUser.getId());
+        ForeignerProfile foreigner = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        // 이미지 키를 빈 문자열("")로 설정
+        ApplicationForm form = visaApplicationFormTestFixture.createVisaApplicationForm(
+                agent, foreigner, agentProfileTestFixture.createJobCode("E7", "특수"), true);
+        ReflectionTestUtils.setField(form, "profileObjectKey", "");
+        ReflectionTestUtils.setField(form, "mailSentAt", LocalDateTime.now().minusDays(4));
+        applicationFormRepository.saveAndFlush(form);
+
+        chatRoomTestFixture.createChatRoom(foreigner, agent, ChatRoomStatus.DEFAULT);
+
+        // when
+        ApplicationFormFinishedStatusResponse response = applicationFormForForeignerService.finishByForeigner(foreignerUser.getEmail());
+
+        // then
+        ApplicationForm newForm = applicationFormRepository.findById(response.newVisaFormId()).get();
+        assertThat(newForm.getProfileObjectKey()).isEqualTo("");
+    }
+
+    @Test
+    @DisplayName("이미지(profileObjectKey)가 없는 신청서를 종료하고 복제할 때, 새로운 신청서의 이미지 키도 null로 유지된다.")
+    void finishByForeigner_WithNoImage_Success() {
+        // given
+        User agentUser = userTestFixture.createUser("agent_noimg@test.com", UserType.VALID_AGENT);
+        User foreignerUser = userTestFixture.createUser("foreigner_noimg@test.com", UserType.FILLED_FOREIGNER);
+
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("행정사", "제주", agentUser.getId());
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+        JobCode jobCode = agentProfileTestFixture.createJobCode("E7", "특수직");
+
+        ApplicationForm form = visaApplicationFormTestFixture.createVisaApplicationForm(
+                agentProfile, foreignerProfile, jobCode, true);
+
+        ReflectionTestUtils.setField(form, "profileObjectKey", null);
+        ReflectionTestUtils.setField(form, "mailSentAt", LocalDateTime.now().minusDays(5));
+        applicationFormRepository.saveAndFlush(form);
+
+        chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
+
+        // when
+        ApplicationFormFinishedStatusResponse response = applicationFormForForeignerService
+                .finishByForeigner(foreignerUser.getEmail());
+
+        // then
+        ApplicationForm oldForm = applicationFormRepository.findById(response.closedVisaFormId()).get();
+        ApplicationForm newForm = applicationFormRepository.findById(response.newVisaFormId()).get();
+
+        assertThat(oldForm.getProfileObjectKey()).isNull();
+        assertThat(newForm.getProfileObjectKey()).isNull();
+        assertThat(newForm.isFinished()).isFalse();
+    }
 }

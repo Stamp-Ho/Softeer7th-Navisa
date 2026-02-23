@@ -51,13 +51,20 @@ public class ApplicationFormSearchService {
                 .findTop6ByAgentProfileOrderByUpdatedAtDesc(agent);
 
         return forms.stream()
-                .map(form -> new RecentApplicationFormsResponse(
-                        form.getId(),
-                        form.getForeignerProfile().getNickname(),
-                        form.isDone(),
-                        form.getCurrentStep(),
-                        storageService.getImgUrl(ImageSize.MEDIUM, form.getProfileObjectKey(), true),
-                        form.getUpdatedAt()))
+                .map(form -> {
+                    String profileKey = form.getProfileObjectKey();
+                    String profileImgUrl = (profileKey != null && !profileKey.isBlank())
+                            ? storageService.getImgUrl(ImageSize.MEDIUM, profileKey, true)
+                            : null;
+
+                    return new RecentApplicationFormsResponse(
+                            form.getId(),
+                            form.getForeignerProfile().getNickname(),
+                            form.isDone(),
+                            form.getCurrentStep(),
+                            profileImgUrl,
+                            form.getUpdatedAt());
+                })
                 .toList();
     }
 
