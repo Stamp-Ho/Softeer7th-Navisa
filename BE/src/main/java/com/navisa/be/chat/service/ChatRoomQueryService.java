@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,6 +55,11 @@ public class ChatRoomQueryService {
 
     public ChatRoom findByIdWithProfiles(Long roomId) {
         return chatRoomRepository.findByIdWithProfiles(roomId)
+                .orElseThrow(() -> new ChatRoomException(ResponseStatus.INVALID_CHATROOM));
+    }
+
+    public ChatRoom findByIdWithLock(Long roomId) {
+        return chatRoomRepository.findByIdWithLock(roomId)
                 .orElseThrow(() -> new ChatRoomException(ResponseStatus.INVALID_CHATROOM));
     }
 
@@ -89,7 +93,8 @@ public class ChatRoomQueryService {
         }
 
         ForeignerProfile foreignerProfile = chatRoom.getForeignerProfile();
-        ForeignerExpectedCompany expectedCompany = foreignerProfileCrudService.findExpectedCompanyByForeignerProfileId(foreignerProfile.getId());
+        ForeignerExpectedCompany expectedCompany = foreignerProfileCrudService
+                .findExpectedCompanyByForeignerProfileId(foreignerProfile.getId());
         List<Long> nationalityIds = foreignerProfile.getForeignerNationalities().stream()
                 .map(ForeignerNationality::getNationality)
                 .map(Nationality::getId)
@@ -98,7 +103,8 @@ public class ChatRoomQueryService {
         AgentProfile agentProfile = chatRoom.getAgentProfile();
         List<Long> top2BadgeIds = agentBadgeService.getTop2BadgeIds(agentProfile.getId());
 
-        Optional<ApplicationForm> form = applicationFormCrudService.findOptionalCurrentApplicationForm(foreignerProfile.getId(), agentProfile.getId());
+        Optional<ApplicationForm> form = applicationFormCrudService
+                .findOptionalCurrentApplicationForm(foreignerProfile.getId(), agentProfile.getId());
         Optional<Proposal> proposal = proposalCrudService.findOptionalLatestProposalByChatRoom(chatRoom);
 
         boolean isReviewRequired = false;
@@ -110,7 +116,7 @@ public class ChatRoomQueryService {
             isReviewRequired = form.get().isDone() && !reviewExists;
             proposalEndRequired = form.get().requiresEnd();
 
-            if(proposal.get().getStatus() == ProposalStatus.MATCHED) {
+            if (proposal.get().getStatus() == ProposalStatus.MATCHED) {
                 applicationFormId = form.get().getId();
             }
         }
@@ -123,15 +129,15 @@ public class ChatRoomQueryService {
                 nationalityIds,
                 isReviewRequired,
                 applicationFormId,
-                proposalEndRequired
-        );
+                proposalEndRequired);
     }
 
     public Optional<ChatRoom> findByAgentIdAndForeignerId(UUID agentId, UUID foreignerId) {
         return chatRoomRepository.findByAgentIdAndForeignerId(agentId, foreignerId);
     }
 
-    public Optional<ChatRoom> findOptionalByAgentProfileAndForeignerProfile(AgentProfile agent, ForeignerProfile foreigner) {
+    public Optional<ChatRoom> findOptionalByAgentProfileAndForeignerProfile(AgentProfile agent,
+            ForeignerProfile foreigner) {
         if (agent == null || foreigner == null) {
             return Optional.empty();
         }

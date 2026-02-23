@@ -98,6 +98,7 @@ public class ProposalService {
 
     @Transactional
     public void createWithValidation(UUID senderId, ChatRoom room) {
+        chatRoomQueryService.findByIdWithLock(room.getId());
         Proposal proposal = proposalRepository.findFirstByChatRoom_IdOrderByIdDesc(room.getId())
                 .orElse(null);
 
@@ -113,7 +114,9 @@ public class ProposalService {
     }
 
     @Transactional
-    public ChatMessageRequest updateStatusByChatRoom(ChatRoom chatRoom, ProposalStatus updatedStatus, ChatMessageRequest request) {
+    public ChatMessageRequest updateStatusByChatRoom(ChatRoom chatRoom, ProposalStatus updatedStatus,
+                                                     ChatMessageRequest request) {
+        chatRoomQueryService.findByIdWithLock(chatRoom.getId());
         Proposal proposal = proposalRepository.findFirstByChatRoom_IdOrderByIdDesc(chatRoom.getId())
                 .orElseThrow(() -> new ProposalException(ResponseStatus.BAD_REQUEST, "현재 진행 중인 제안이 없습니다."));
 

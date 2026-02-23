@@ -23,7 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -270,5 +276,50 @@ class ProposalServiceTest extends IntegrationTestSupport {
                 () -> proposalService.createProposal(otherUser.getEmail(), chatRoom.getId(), request))
                 .isInstanceOf(ChatRoomException.class)
                 .hasMessageContaining(ResponseStatus.NOT_ALLOWED_TO_ACCESS_CHATROOM.getMessage());
+    }
+
+    @Test
+    @DisplayName("동시에 2개의 thread에서 제안을 생성해도 1개의 수임 제안만이 생성된다.")
+    void createWithValidation_Concurrency_Issue() throws InterruptedException {
+        // given
+        User foreignerUser = userTestFixture.createUser("foreigner@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        User agentUser = userTestFixture.createUser("agent@test.com", UserType.VALID_AGENT);
+        AgentProfile agentProfile = agentProfileTestFixture.createAgentProfile("Agent", "Address", agentUser.getId());
+
+        ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
+
+        int threadCount = 2;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+
+        // when
+        AtomicReference<Exception> caughtException = new AtomicReference<>();
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    startLatch.await();
+                    proposalService.createWithValidation(agentProfile.getId(), chatRoom);
+                } catch (Exception e) {
+                    caughtException.set(e);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        startLatch.countDown(); // 두 스레드 동시에 시작
+
+        try {
+            latch.await(10, TimeUnit.SECONDS);
+        } finally {
+            executorService.shutdown();
+        }
+
+        // then
+        assertThat(caughtException.get()).isInstanceOf(com.navisa.be.chat.exception.ProposalException.class);
+        List<Proposal> proposals = proposalRepository.findAll();
+        assertThat(proposals).hasSize(1);
     }
 }
