@@ -29,7 +29,45 @@
 
 <br>
 
+## 📚디렉토리 구조
+```
+com.navisa.be
+├── domain
+│   ├── agent (행정사 관련)
+│   │   ├── controller     <- 유저 역할별 진입점 (AgentProfileController 등)
+│   │   ├── service        <- 유저 스토리 기반 서비스 (AgentProfileService 등)
+│   │   ├── dto            <- request, response, projection
+│   │   ├── model          <- entity, enums
+│   │   ├── repository     <- JpaRepository, QueryDsl 인터페이스/구현체
+│   │   └── exception      <- 도메인 특화 예외 (AgentException 등)
+│   ├── foreigner (외국인 관련)
+│   │   ├── controller     
+│   │   ├── service        
+│   │   └── ... (이하 동일 구조)
+│   ├── chat (채팅 핵심)
+│   │   ├── controller     
+│   │   ├── service        
+│   │   └── ... (이하 동일 구조)
+│   └── ... (이하 동일 구조)
+│
+└── global
+    ├── common (메타데이터 및 공통 비즈니스 유틸)
+    │   ├── controller     <- 언어/국가 정보 조회 API
+    │   ├── model          <- Country, Language 엔티티 및 공통 VO
+    │   └── service        <- S3 Presigned URL 생성 등 공통 로직
+    ├── infra (외부 플랫폼 의존성)
+    │   ├── ai             <- Gemini API 클라이언트, Embedding 로직
+    │   ├── aws            <- S3, CloudFront 설정 및 컴포넌트
+    │   └── redis          <- Redis Streams, Pub/Sub 관련 설정 및 Producer/Consumer
+    ├── web (Spring MVC 및 공통 응답 처리)
+    │   ├── error          <- GlobalExceptionHandler, ErrorResponse
+    │   ├── response       <- BaseResponse, SliceResponse, ResponseStatus(Enum)
+    │   ├── resolver       <- 커스텀 아규먼트 리졸버
+    │   └── annotation     <- 커스텀 어노테이션 정의
+    └── config (프레임워크 및 라이브러리 설정) <- QueryDslConfig, AuditingConfig, OpenAPI/Swagger 설정, WebConfig, WebSocketConfig
+```
 
+<br>
 
 ## 📑 ERD 설계도
 [🔗 Navisa ERD 바로가기](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
