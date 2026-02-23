@@ -145,6 +145,8 @@ public record AgentDetailResponse(
             String officeName,
             @Schema(description = "사무실 주소")
             String address,
+            @Schema(description = "상세 주소")
+            String officeAddressDetail,
             @Schema(description = "영업시간")
             String businessHours,
             @Schema(description = "전화번호")
@@ -153,6 +155,7 @@ public record AgentDetailResponse(
         public static AgentDetailOfficeInfo entityToDto(AgentProfile agentProfile) {
             return new AgentDetailOfficeInfo(agentProfile.getOfficeName(),
                     agentProfile.getOfficeAddress(),
+                    agentProfile.getOfficeAddressDetail(),
                     agentProfile.getBusinessTime(),
                     agentProfile.getPhoneNumber());
         }

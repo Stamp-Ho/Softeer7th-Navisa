@@ -26,4 +26,6 @@ public interface AgentSpecializedJobRepository extends JpaRepository<AgentSpecia
             """)
     List<AgentSpecializedJobWithCountProjection> findAllWithCountByAgentIds(
             @Param("agentIds") List<UUID> agentIds);
+
+    void deleteAllByAgentProfile(AgentProfile agentProfile);
 }

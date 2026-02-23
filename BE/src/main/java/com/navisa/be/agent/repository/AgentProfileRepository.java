@@ -2,6 +2,7 @@ package com.navisa.be.agent.repository;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.querydsl.AgentProfileQueryDsl;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,6 @@ public interface AgentProfileRepository extends JpaRepository<AgentProfile, UUID
     @Query("SELECT p FROM AgentProfile p JOIN User u ON p.userId = u.id WHERE u.userType = 'VALID_AGENT'")
     List<AgentProfile> findAllValidAgentProfiles();
 
+    @Query("SELECT p FROM AgentProfile p JOIN User u ON p.userId = u.id WHERE u.email = :email")
+    Optional<AgentProfile> findByUserEmail(@Param("email") String email);
 }

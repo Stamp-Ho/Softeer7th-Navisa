@@ -116,4 +116,18 @@ public class AgentProfileController {
         AgentDetailResponse response = agentProfileSearchService.getMyAgentDetail(loginUserEmail);
         return new BaseResponse<>(response);
     }
+
+    @Operation(
+            summary = "행정사 내 프로필 수정 API",
+            description = "행정사가 자신의 프로필 정보를 수정하고, 수정된 최신 프로필 정보를 반환받습니다."
+    )
+    @HasUserType({UserType.VALID_AGENT})
+    @PatchMapping("/profile")
+    public BaseResponse<AgentDetailResponse> updateAgentProfile(
+            @Valid @RequestBody AgentProfileUpdateRequest request,
+            @Parameter(hidden = true) @LoginUser String loginUserEmail) {
+
+        AgentDetailResponse updatedResponse = agentProfileRegistrationService.updateAgentProfile(request, loginUserEmail);
+        return new BaseResponse<>(ResponseStatus.SUCCESS, updatedResponse);
+    }
 }

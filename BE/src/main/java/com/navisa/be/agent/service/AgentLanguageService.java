@@ -42,4 +42,9 @@ public class AgentLanguageService {
             throw new AgentException(ResponseStatus.INVALID_LANGUAGE);
         }
     }
+
+    public void deleteAllByAgentProfile(AgentProfile agentProfile) {
+        agentLanguageRepository.deleteAllByAgentProfile(agentProfile);
+        agentProfile.getLanguages().clear();
+    }
 }

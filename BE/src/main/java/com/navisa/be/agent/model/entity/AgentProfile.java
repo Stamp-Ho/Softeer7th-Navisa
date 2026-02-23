@@ -136,6 +136,19 @@ public class AgentProfile extends BaseEntity {
         this.activeScore = 100.0;
     }
 
+    public void updateProfile(String profileObjectKey, String phoneNumber, String officeName, String businessTime,
+                              String officeAddress, String officeAddressDetail, String comment,
+                              String additionalHistory) {
+        if (profileObjectKey != null) this.profileObjectKey = profileObjectKey;
+        if (phoneNumber != null) this.phoneNumber = phoneNumber;
+        if (officeName != null) this.officeName = officeName;
+        if (businessTime != null) this.businessTime = businessTime;
+        if (officeAddress != null) this.officeAddress = officeAddress;
+        if (officeAddressDetail != null) this.officeAddressDetail = officeAddressDetail;
+        if (comment != null) this.comment = comment;
+        if (additionalHistory != null) this.additionalHistory = additionalHistory;
+    }
+
     public void addSpecializedJobCodes(List<AgentSpecializedJob> codes) {
         this.specializedJobs.addAll(codes);
     }

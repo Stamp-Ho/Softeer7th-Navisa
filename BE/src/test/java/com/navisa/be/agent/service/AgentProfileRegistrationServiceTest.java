@@ -1,9 +1,12 @@
 package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.request.AgentProfileRegistrationRequest;
+import com.navisa.be.agent.dto.request.AgentProfileUpdateRequest;
+import com.navisa.be.agent.dto.response.AgentDetailResponse;
 import com.navisa.be.agent.exception.AgentException;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.repository.AgentLanguageRepository;
+import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.agent.repository.AgentSpecializedJobRepository;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.common.model.entity.Language;
@@ -21,10 +24,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
@@ -47,6 +53,9 @@ class AgentProfileRegistrationServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private AgentLanguageRepository agentLanguageRepository;
+
+    @Autowired
+    private AgentProfileRepository agentProfileRepository;
 
     private User scrivenerUser;
 
@@ -160,5 +169,96 @@ class AgentProfileRegistrationServiceTest extends IntegrationTestSupport {
 
         // when & then
         assertThrows(AgentException.class, () -> agentProfileRegistrationService.registerAgentProfile(request, scrivenerUser.getEmail()));
+    }
+
+    @Test
+    @DisplayName("행정사 프로필 정보를 수정하면 DB에 반영되고 상세 응답을 반환한다")
+    void updateAgentProfile_shouldUpdateEntityAndReturnResponse() {
+        // Given
+        AgentProfile savedProfile = registerDefaultProfile();
+        AgentProfileUpdateRequest updateRequest = new AgentProfileUpdateRequest(
+                null, "010-9999-9999", "수정된 사무소", null, null,
+                "수정된 상세주소 101호",
+                List.of(jobCodes.get(1).getId(), jobCodes.get(2).getId()),
+                List.of(languages.get(1).getId()),
+                null, null
+        );
+
+        // When
+        AgentDetailResponse response = agentProfileRegistrationService.updateAgentProfile(updateRequest, scrivenerUser.getEmail());
+
+        // Then
+        assertAll(
+                () -> assertEquals("수정된 사무소", response.officeInfo().officeName()),
+                () -> assertEquals("수정된 상세주소 101호", response.officeInfo().officeAddressDetail()),
+                () -> assertEquals("박행정", response.agentInfo().name()),
+                // 전문 직무 교체 확인 (1개 -> 2개)
+                () -> assertEquals(2L, specializedJobCodeRepository.countByAgentProfile(savedProfile)),
+                // 언어 교체 확인 (1개 -> 1개)
+                () -> assertEquals(1L, agentLanguageRepository.countByAgentProfile(savedProfile))
+        );
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 이메일로 프로필 수정을 요청하면 예외가 발생한다")
+    void updateAgentProfile_shouldFail_whenUserNotFound() {
+        // given
+        AgentProfileUpdateRequest request = new AgentProfileUpdateRequest(null, null, null, null, null, null, null, null, null, null);
+        String nonExistentEmail = "unknown@example.com";
+
+        // when & then
+        assertThrows(AgentException.class, () ->
+                agentProfileRegistrationService.updateAgentProfile(request, nonExistentEmail));
+    }
+
+    @Test
+    @DisplayName("이미지 키를 포함하여 프로필을 수정하면 새로운 이미지 경로가 반영된다")
+    void updateAgentProfile_includingImage_shouldUpdateSuccessfully() {
+        // Given
+        String oldImageKey = "old-image-key";
+        registerProfileWithImage(oldImageKey);
+
+        String newImageKey = "new-profile-image-uuid-key";
+        AgentProfileUpdateRequest updateRequest = new AgentProfileUpdateRequest(
+                newImageKey, null, "내비자 수정 사무소", null, null,
+                "수정 상세주소",
+                List.of(jobCodes.get(0).getId()),
+                List.of(languages.get(0).getId()),
+                null, null
+        );
+
+        // When
+        AgentDetailResponse response = agentProfileRegistrationService.updateAgentProfile(updateRequest, scrivenerUser.getEmail());
+
+        // Then
+        assertAll(
+                () -> assertEquals("박행정", response.agentInfo().name()),
+                () -> assertThat(response.agentInfo().profileImageUrl()).contains(newImageKey),
+                () -> {
+                    AgentProfile updatedEntity = agentProfileRepository.findByUserEmail(scrivenerUser.getEmail()).orElseThrow();
+                    assertEquals(newImageKey, updatedEntity.getProfileObjectKey());
+                }
+        );
+    }
+
+    private AgentProfile registerDefaultProfile() {
+        AgentProfileRegistrationRequest request = AgentFixture.createAgentProfileRegistrationRequest(
+                List.of(jobCodes.get(0).getId()),
+                List.of(languages.get(0).getId()),
+                "2024-행정-1234",
+                null);
+        return agentProfileRegistrationService.registerAgentProfile(request, scrivenerUser.getEmail());
+    }
+
+    private void registerProfileWithImage(String imageKey) {
+        AgentProfileRegistrationRequest.AgentBasicInfoDto basicInfo = new AgentProfileRegistrationRequest.AgentBasicInfoDto(
+                imageKey, "박행정", LocalDate.of(1990, 1, 1), "박행정 사무소", "서울", "101호", "9-18", "010-1234"
+        );
+        AgentProfileRegistrationRequest request = new AgentProfileRegistrationRequest(
+                basicInfo,
+                new AgentProfileRegistrationRequest.LicenseInfoDto("2024-행정-1234", LocalDate.now(), "P-10", null),
+                new AgentProfileRegistrationRequest.DetailedInfoDto(List.of(jobCodes.get(0).getId()), List.of(languages.get(0).getId()), "comment", "history")
+        );
+        agentProfileRegistrationService.registerAgentProfile(request, scrivenerUser.getEmail());
     }
 }

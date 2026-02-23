@@ -85,4 +85,9 @@ public class AgentSpecializedJobService {
             throw new AgentException(ResponseStatus.INVALID_JOB_CODE);
         }
     }
+
+    public void deleteAllByAgentProfile(AgentProfile agentProfile) {
+        agentSpecializedJobRepository.deleteAllByAgentProfile(agentProfile);
+        agentProfile.getSpecializedJobs().clear();
+    }
 }
