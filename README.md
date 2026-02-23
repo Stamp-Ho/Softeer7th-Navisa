@@ -24,9 +24,9 @@ LLM을 활용한 데이터 기반 정교한 매칭
   - 활동성 기반 기초 점수: 행정사의 접속 빈도 및 재접속 확인 시점을 활용하여 매일 04시에 활동성 점수를 동적으로 산정합니다.
   - 전문 분야 가중치 분배: 행정사가 등록한 전문 분야 개수에 따라 Sigmoid 함수를 적용하여 공정한 점수 분배를 수행합니다.
   - 리뷰 가산점 알고리즘: 특정 분야의 리뷰 수뿐만 아니라, 리뷰를 남긴 의뢰인의 직종 유사도를 반영한 '실수형 가중 리뷰 수($z_a$)'를 산출하여 매칭의 신뢰도를 높입니다.
-  - 최종 매칭 점수($G$) 산출: 유사도($w_i$)와 분배 점수($s_i$)를 결합한 최종 스코어링을 통해 개인화된 추천 목록을 제공합니다.$$
+  - 최종 매칭 점수($G$) 산출: 유사도($w_i$)와 분배 점수($s_i$)를 결합한 최종 스코어링을 통해 개인화된 추천 목록을 제공합니다.
   
-  - G = \sum (w_i \times s_i)$$
+  $$G = \sum (w_i \times s_i)$$
 
 ## 2️⃣ 필터 기반 양방향 탐색
 상세 조건을 통한 빠르고 정확한 타겟팅
@@ -136,8 +136,7 @@ Gemini API 장애나 Quota 초과 시에도 서비스가 멈추지 않도록 3�
 # 📑 ERD 설계도
 [🔗 Navisa ERD 바로가기](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn)
 
-![navisa_erd.png](navisa_erd.png)
-
+![navisa_erd.png](navisa_erd2.png)
 
 
 <br>
@@ -178,10 +177,10 @@ Gemini API 장애나 Quota 초과 시에도 서비스가 멈추지 않도록 3�
 
 | Category           | Resources |
 |:-------------------| :--- |
-| **데일리 노트**         | [![Notion](https://img.shields.io/badge/Notion-Daily_Note-000000?style=flat-square&logo=notion)](https://www.notion.so/bside/2ee22020273580e58bdacc148741eaec) |
+| **데일리 노트**         | [![Notion](https://img.shields.io/badge/Notion-Daily_Note-000000?style=flat-square&logo=notion)](https://lively-handball-1d8.notion.site/30ef4ec9f36380d7973afca3eed60741?source=copy_link) |
 | **기획 및 디자인 산출물**   | [![Figma](https://img.shields.io/badge/Figma-Planning-F24E1E?style=flat-square&logo=figma)](https://www.figma.com/design/AEMfiNWZUpZlpnAsM4ojmz/%EA%B8%B0%ED%9A%8D%EC%9D%98-%EB%B0%A9) [![Figma](https://img.shields.io/badge/Figma-Design-F24E1E?style=flat-square&logo=figma)](https://www.figma.com/design/YHUKhgeoJpBeixaJUsV59V/%EB%94%94%EC%9E%90%EC%9D%B8%EC%9D%98-%EB%B0%A9) |
 | **ERD 및 인프라 아키텍처** | [![ERDCloud](https://img.shields.io/badge/ERDCloud-Database-FF6C37?style=flat-square)](https://www.erdcloud.com/d/NiGGRPFFeqLzc8sLn) [![Figma](https://img.shields.io/badge/Figma-Infra_Architecture-F24E1E?style=flat-square&logo=figma)](https://www.figma.com/board/QnPDChUIeMNIRU7r3rQUQq/Softeer_7th_Team6_Infra-Architecture) |
-| **백로그**            | [![Notion](https://img.shields.io/badge/Notion-Backlog-000000?style=for-the-badge&logo=notion)](https://www.notion.so/bside/2ed220202735807591f8cd19a8350dd7) | 
+| **백로그**            | [![Notion](https://img.shields.io/badge/Notion-Backlog-000000?style=for-the-badge&logo=notion)](https://lively-handball-1d8.notion.site/Navisa-30ef4ec9f36381ffbc86c8fe4f6ece3a?source=copy_link) | 
 
 <br>
 
