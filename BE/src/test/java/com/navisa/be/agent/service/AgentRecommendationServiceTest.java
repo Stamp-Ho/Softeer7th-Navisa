@@ -73,7 +73,6 @@ class AgentRecommendationServiceTest {
     void getPersonalizedAgents_SortingWithBatchRedisTest() {
         // given
         String email = "test@example.com";
-        setupCommonMocks(email);
 
         UUID highId = UUID.randomUUID();
         UUID lowId = UUID.randomUUID();
@@ -81,11 +80,11 @@ class AgentRecommendationServiceTest {
         AgentProfile highAgent = AgentFixture.createAgentProfile(highId, 100.0);
         AgentProfile lowAgent = AgentFixture.createAgentProfile(lowId, 50.0);
 
-        given(agentProfileRepository.findAllValidAgentProfiles()).willReturn(List.of(lowAgent, highAgent));
+        setupCommonMocks(email, List.of(lowAgent, highAgent));
         given(valueOperations.multiGet(anyList())).willReturn(List.of(0.0, 0.0));
 
-        lenient().doReturn(10.0).doReturn(100.0) // 첫 호출(low)에게 10점, 두 번째 호출(high)에게 100점
-                .when(finalCalculator).calculateFinalGradeByLongId(anyMap(), anyMap());
+        given(finalCalculator.calculateFinalGradeByLongId(anyMap(), anyMap()))
+                .willReturn(10.0, 100.0);
 
         // when
         List<AgentCardResponse> result = agentRecommendationService.getPersonalizedAgents(email);
@@ -103,41 +102,82 @@ class AgentRecommendationServiceTest {
     void verifyMgetConsolidatesNetworkRequests() {
         // given
         String email = "test@email.com";
-        setupCommonMocks(email);
 
         List<AgentProfile> profiles = IntStream.range(0, 100)
                 .mapToObj(i -> AgentFixture.createAgentProfile(UUID.randomUUID(), 50.0 + i))
                 .toList();
 
-        given(agentProfileRepository.findAllValidAgentProfiles()).willReturn(profiles);
+        setupCommonMocks(email, profiles);
         given(valueOperations.multiGet(anyList())).willReturn(Collections.nCopies(100, 0.0));
+        given(finalCalculator.calculateFinalGradeByLongId(anyMap(), anyMap())).willReturn(1.0);
 
         // when
         agentRecommendationService.getPersonalizedAgents(email);
 
         // then
-        verify(valueOperations, times(1)).multiGet(argThat(list -> ((List<?>)list).size() == 100));
+        verify(valueOperations, times(1)).multiGet(argThat(list -> ((List<?>) list).size() == 100));
         verify(valueOperations, never()).get(anyString());
     }
 
-    private void setupCommonMocks(String email) {
+    @Test
+    @DisplayName("상위 12개 행정사에 대해 specializedJob과 badge를 배치로 1회씩만 조회한다")
+    void getPersonalizedAgents_BatchQueriesCalledOnce() {
+        // given
+        String email = "batch@test.com";
+
+        List<AgentProfile> profiles = IntStream.range(0, 20)
+                .mapToObj(i -> AgentFixture.createAgentProfile(UUID.randomUUID(), 50.0 + i))
+                .toList();
+
+        setupCommonMocks(email, profiles);
+        given(valueOperations.multiGet(anyList())).willReturn(Collections.nCopies(20, 0.0));
+        given(finalCalculator.calculateFinalGradeByLongId(anyMap(), anyMap())).willReturn(1.0);
+
+        // when
+        agentRecommendationService.getPersonalizedAgents(email);
+
+        // then
+        verify(agentSpecializedJobService, times(1))
+                .getTop2SpecializedJobIdsBatch(argThat(ids -> ids.size() == 12));
+        verify(agentBadgeService, times(1))
+                .getTop2BadgeIdsBatch(argThat(ids -> ids.size() == 12));
+
+        verify(agentSpecializedJobService, never()).getTop2SpecializedJobIds(any());
+        verify(agentBadgeService, never()).getTop2BadgeIds(any());
+    }
+
+    private void setupCommonMocks(String email, List<AgentProfile> profiles) {
         ForeignerProfile mockForeignerProfile = Mockito.mock(ForeignerProfile.class);
         UUID foreignerId = UUID.randomUUID();
         given(foreignerProfileCrudService.findByEmail(email)).willReturn(mockForeignerProfile);
         given(mockForeignerProfile.getId()).willReturn(foreignerId);
 
         ForeignerSimilarity similarity = Mockito.mock(ForeignerSimilarity.class);
-        given(similarity.getJobCodeIdList()).willReturn(new long[] { 1L });
-        given(similarity.getSimilarityList()).willReturn(new double[] { 1.0 });
+        given(similarity.getJobCodeIdList()).willReturn(new long[]{1L});
+        given(similarity.getSimilarityList()).willReturn(new double[]{1.0});
         given(foreignerProfileCrudService.findSimilarityByForeignerId(foreignerId)).willReturn(similarity);
 
+        given(agentProfileRepository.findAllValidAgentProfiles()).willReturn(profiles);
         given(doubleRedisTemplate.opsForValue()).willReturn(valueOperations);
         given(distributionCalculator.calculateDistribution(anyInt())).willReturn(1.0);
         given(reviewBonusCalculator.calculateBonusFactor(anyDouble())).willReturn(1.0);
         given(reviewBonusCalculator.calculateFinalDistribution(anyDouble(), anyDouble())).willReturn(1.0);
-
         given(storageService.getImgUrl(any(), any(), anyBoolean())).willReturn("url");
-        given(agentSpecializedJobService.getTop2SpecializedJobIds(any())).willReturn(List.of(1L));
-        given(agentBadgeService.getTop2BadgeIds(any())).willReturn(List.of(1L));
+
+        // 배치 조회 mock: 각 agentId에 대해 빈 리스트 반환
+        given(agentSpecializedJobService.getTop2SpecializedJobIdsBatch(anyList()))
+                .willAnswer(inv -> {
+                    List<UUID> ids = inv.getArgument(0);
+                    Map<UUID, List<Long>> result = new java.util.HashMap<>();
+                    ids.forEach(id -> result.put(id, List.of()));
+                    return result;
+                });
+        given(agentBadgeService.getTop2BadgeIdsBatch(anyList()))
+                .willAnswer(inv -> {
+                    List<UUID> ids = inv.getArgument(0);
+                    Map<UUID, List<Long>> result = new java.util.HashMap<>();
+                    ids.forEach(id -> result.put(id, List.of()));
+                    return result;
+                });
     }
 }

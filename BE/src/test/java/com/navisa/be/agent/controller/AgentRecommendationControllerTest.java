@@ -17,7 +17,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -62,7 +61,6 @@ class AgentRecommendationControllerTest {
         // given
         String mockToken = "Bearer test-access-token";
         String mockEmail = "test@navisa.com";
-        UUID foreignerId = UUID.randomUUID();
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(userTypeCheckInterceptor.preHandle(any(), any(), any())).willReturn(true);
@@ -70,7 +68,7 @@ class AgentRecommendationControllerTest {
         given(agentRecommendationService.getPersonalizedAgents(mockEmail)).willReturn(List.of());
 
         // when & then
-        mockMvc.perform(get("/api/home/user/agent")
+        mockMvc.perform(get("/api/home/user/agents")
                         .header("Authorization", mockToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

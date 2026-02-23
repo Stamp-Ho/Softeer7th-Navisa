@@ -17,10 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -47,11 +44,30 @@ public class AgentRecommendationService {
 
         Map<String, Double> zaMap = prefetchRedisZaValues(profiles);
 
-        return profiles.stream()
+        List<AgentProfile> contentProfiles = profiles.stream()
                 .map(p -> Map.entry(p, calculateScoreWithPrefetchedData(p, similarity, zaMap)))
                 .sorted(Map.Entry.<AgentProfile, Double>comparingByValue().reversed())
                 .limit(12)
-                .map(e -> toAgentCardResponse(e.getKey()))
+                .map(Map.Entry::getKey)
+                .toList();
+
+        List<UUID> contentProfileIds = contentProfiles.stream().map(AgentProfile::getId).toList();
+        Map<UUID, List<Long>> agentSpecialityTop2 = agentSpecializedJobService.getTop2SpecializedJobIdsBatch(contentProfileIds);
+        Map<UUID, List<Long>> badgeTop2Map = agentBadgeService.getTop2BadgeIdsBatch(contentProfileIds);
+
+        return contentProfiles.stream()
+                .map(agent -> {
+                    String profileUrl = storageService.getImgUrl(
+                            ImageSize.SMALL,
+                            agent.getProfileObjectKey(),
+                            false);
+
+                    return AgentCardResponse.of(
+                            agent,
+                            profileUrl,
+                            agentSpecialityTop2.getOrDefault(agent.getId(), List.of()),
+                            badgeTop2Map.getOrDefault(agent.getId(), List.of()));
+                })
                 .toList();
     }
 
@@ -108,38 +124,6 @@ public class AgentRecommendationService {
         return finalCalculator.calculateFinalGradeByLongId(saMap, waMap);
     }
 
-    private double calculatePersonalizedScore(AgentProfile profile, ForeignerSimilarity similarity) {
-        // [Step 3] 기본 분배 점수 y(n)
-        double yn = distributionCalculator.calculateDistribution(profile.getSpecializedJobs() != null ? profile.getSpecializedJobs().size() : 0);
-
-        // [Step 4] 유저 관심도 waMap 구성 (임베딩 유사도 리스트)
-        Map<Long, Double> waMap = buildWaMap(similarity);
-
-        // [Step 5] 분야별 saMap 구성 (Redis 데이터 활용)
-        Map<Long, Double> saMap = new HashMap<>();
-
-        // 행정사가 등록한 각 JobCode에 대해 Redis에 쌓인 누적 신뢰도(za)를 가져옴
-        profile.getSpecializedJobs().forEach(job -> {
-            Long jobId = job.getJobCode().getId();
-
-            // Redis에서 해당 행정사-직무의 누적 신뢰도 조회
-            String key = String.format("matching:sandbox:%s:%d", profile.getId(), jobId);
-            Double za = doubleRedisTemplate.opsForValue().get(key);
-            if (za == null) za = 0.0; // 데이터가 없으면 0.0으로 처리
-
-            // 점수 보정 및 최종 분배 점수 산출
-            double gza = reviewBonusCalculator.calculateBonusFactor(za);
-            double finalYn = reviewBonusCalculator.calculateFinalDistribution(yn, gza);
-
-            // sa = T(ActiveScore) * y(n, za)
-            double sa = profile.getActiveScore() * finalYn;
-            saMap.put(jobId, sa);
-        });
-
-        // [Step 6] G = Σ(wa * sa)
-        return finalCalculator.calculateFinalGradeByLongId(saMap, waMap);
-    }
-
     private Map<Long, Double> buildWaMap(ForeignerSimilarity similarity) {
         Map<Long, Double> waMap = new HashMap<>();
         long[] jobIds = similarity.getJobCodeIdList();
@@ -151,15 +135,5 @@ public class AgentRecommendationService {
             }
         }
         return waMap;
-    }
-
-    private AgentCardResponse toAgentCardResponse(AgentProfile agent) {
-        String profileUrl = storageService.getImgUrl(ImageSize.SMALL, agent.getProfileObjectKey(), false);
-        return AgentCardResponse.of(
-                agent,
-                profileUrl,
-                agentSpecializedJobService.getTop2SpecializedJobIds(agent.getId()),
-                agentBadgeService.getTop2BadgeIds(agent.getId())
-        );
     }
 }

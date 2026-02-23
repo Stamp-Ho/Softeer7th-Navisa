@@ -1,6 +1,6 @@
 package com.navisa.be.agent.repository;
 
-import com.navisa.be.agent.dto.projection.AgentSpecializedJobWithScoreProjection;
+import com.navisa.be.agent.dto.projection.AgentSpecializedJobWithCountProjection;
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.model.entity.AgentSpecializedJob;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,16 +14,16 @@ public interface AgentSpecializedJobRepository extends JpaRepository<AgentSpecia
 
     long countByAgentProfile(AgentProfile agentProfile);
 
-    @Query("""
+    @Query(value = """
             SELECT asj.agentProfile.id AS agentId,
                    asj.jobCode.id      AS jobCodeId,
-                   ajs.accumulatedReviewReliability AS reviewScore
+                   ajs.count AS count
             FROM AgentSpecializedJob asj
             LEFT JOIN AgentSpecializedJobSummary ajs
                 ON asj.agentProfile.id = ajs.agentId
                AND asj.jobCode.id      = ajs.jobCode.id
             WHERE asj.agentProfile.id IN :agentIds
             """)
-    List<AgentSpecializedJobWithScoreProjection> findAllWithReviewScoreByAgentIds(
+    List<AgentSpecializedJobWithCountProjection> findAllWithCountByAgentIds(
             @Param("agentIds") List<UUID> agentIds);
 }

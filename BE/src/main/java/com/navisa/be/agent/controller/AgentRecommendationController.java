@@ -33,7 +33,7 @@ public class AgentRecommendationController {
             description = "로그인한 외국인의 관심도와 행정사의 전문성을 계산하여 최적의 행정사 12명을 추천합니다"
     )
     @HasUserType(UserType.FILLED_FOREIGNER)
-    @GetMapping("/user/agent")
+    @GetMapping("/user/agents")
     public BaseResponse<List<AgentCardResponse>> getPersonalizedAgents(
             @Parameter(hidden = true) @LoginUser String email) {
         List<AgentCardResponse> responses = agentRecommendationService.getPersonalizedAgents(email);
