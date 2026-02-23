@@ -14,6 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -23,7 +26,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import com.navisa.be.global.common.model.enums.ImageSize;
-import com.navisa.be.global.web.error.BaseException;
 import com.navisa.be.global.web.response.ResponseStatus;
 
 @ExtendWith(MockitoExtension.class)
@@ -153,32 +155,27 @@ class AwsS3StorageClientTest {
     }
 
     @Test
-    @DisplayName("Object Key가 유효하지 않으면 BaseException(INVALID_S3_OBJECT_KEY)이 발생한다")
-    void getPresignedUrl_fromS3_shouldThrowException_whenObjectKeyIsNotValid() {
-        // given
-        ImageSize size = ImageSize.ORIGIN;
-        String invalidObjectKey = ""; // 빈 문자열
+    @DisplayName("유효하지 않은 키나 행정사 경로는 에러 대신 null을 반환한다")
+    void getPresignedUrl_ShouldReturnNull_ForInvalidOrAgentKey() {
+        String blankResult = awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, "");
+        String agentResult = awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, "agent-profile/test.jpg");
 
-        // when & then
-        assertThatThrownBy(() -> awsS3StorageService.getPresignedUrlFromS3(size, invalidObjectKey))
-                .isInstanceOf(BaseException.class)
-                .extracting("status")
-                .isEqualTo(ResponseStatus.INVALID_S3_OBJECT_KEY);
+        assertThat(blankResult).isNull();
+        assertThat(agentResult).isNull();
     }
 
     @Test
-    @DisplayName("행정사 프로필 사진 요청이면 BaseException(AGENT_PROFILE_PRESIGNED_REQUEST)이 발생한다")
-    void getPresignedUrl_fromS3_shouldThrowException_whenObjectKeyIsAgentProfile() {
+    @DisplayName("행정사 프로필 사진 요청이면 S3 보안 URL 대신 null을 반환한다")
+    void getPresignedUrl_fromS3_shouldReturnNull_whenObjectKeyIsAgentProfile() {
         // given
         ImageSize size = ImageSize.ORIGIN;
-        // StorageLocation.AGENT_PROFILE_IMAGE.getDirectory()는 "agent-profile"
         String agentProfileKey = "agent-profile/origin/test-uuid.jpg";
 
-        // when & then
-        assertThatThrownBy(() -> awsS3StorageService.getPresignedUrlFromS3(size, agentProfileKey))
-                .isInstanceOf(BaseException.class)
-                .extracting("status")
-                .isEqualTo(ResponseStatus.AGENT_PROFILE_PRESIGNED_REQUEST);
+        // when
+        String result = awsS3StorageService.getPresignedUrlFromS3(size, agentProfileKey);
+
+        // then
+        assertThat(result).isNull();
     }
 
     @Test
@@ -200,5 +197,42 @@ class AwsS3StorageClientTest {
                 .isInstanceOf(StorageException.class)
                 .extracting("status")
                 .isEqualTo(ResponseStatus.S3_RUNTIME_ERROR);
+    }
+
+    @ParameterizedTest
+    @DisplayName("이미지 키가 null, 빈 문자열, 혹은 공백이면 예외 없이 null을 반환한다.")
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "  "})
+    void getPresignedUrl_ShouldReturnNull_WhenKeyIsInvalid(String invalidKey) {
+        // when
+        String result = awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, invalidKey);
+
+        // then
+        assertThat(result).isNull();
+    }
+
+    @Test
+    @DisplayName("행정사 프로필 경로(agent-profile/)로 시작하는 키는 예외 없이 null을 반환한다.")
+    void getPresignedUrl_ShouldReturnNull_WhenKeyIsAgentPath() {
+        // given
+        String agentKey = StorageLocation.AGENT_PROFILE_IMAGE.getDirectory() + "/test-image.webp";
+
+        // when
+        String result = awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, agentKey);
+
+        // then
+        assertThat(result).isNull();
+    }
+
+    @Test
+    @DisplayName("문자열 'null'이나 'undefined'가 들어와도 안전하게 null을 반환한다.")
+    void getPresignedUrl_ShouldReturnNull_WhenKeyIsStringNull() {
+        // when
+        String resultNull = awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, "null");
+        String resultUndefined = awsS3StorageService.getPresignedUrlFromS3(ImageSize.MEDIUM, "undefined");
+
+        // then
+        assertThat(resultNull).isNull();
+        assertThat(resultUndefined).isNull();
     }
 }

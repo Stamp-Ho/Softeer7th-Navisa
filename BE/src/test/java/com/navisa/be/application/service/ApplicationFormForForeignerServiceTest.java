@@ -1,14 +1,12 @@
 package com.navisa.be.application.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.application.dto.response.ApplicationFormDetailResponse;
 import com.navisa.be.application.dto.response.ApplicationFormFinishedStatusResponse;
 import com.navisa.be.application.exception.ApplicationFormException;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
-import com.navisa.be.chat.model.enums.MessageType;
-import com.navisa.be.chat.repository.ChatMessageRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.web.response.ResponseStatus;
@@ -29,10 +27,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
 class ApplicationFormForForeignerServiceTest extends IntegrationTestSupport {
@@ -42,9 +40,6 @@ class ApplicationFormForForeignerServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private ApplicationFormRepository applicationFormRepository;
-
-    @Autowired
-    private ChatMessageRepository chatMessageRepository;
 
     @Autowired
     private UserTestFixture userTestFixture;
@@ -63,6 +58,9 @@ class ApplicationFormForForeignerServiceTest extends IntegrationTestSupport {
 
     @MockitoSpyBean
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private ApplicationFormSearchService applicationFormSearchService;
 
     @Test
     @DisplayName("외국인이 수임 종료 시 신청서 상태가 변경되고, agent의 userId로 FEEDBACK_REQUIRED 메세지가 저장된다.")
@@ -211,5 +209,33 @@ class ApplicationFormForForeignerServiceTest extends IntegrationTestSupport {
         assertThat(oldForm.getProfileObjectKey()).isNull();
         assertThat(newForm.getProfileObjectKey()).isNull();
         assertThat(newForm.isFinished()).isFalse();
+    }
+
+
+    @Test
+    @DisplayName("행정사 경로를 가진 외국인 신청서 조회 시, 에러 없이 CloudFront URL을 반환해야 한다")
+    void getLatestForm_WithAgentPathKey_ShouldReturnCloudFrontUrl() {
+        // given
+        User foreignerUser = userTestFixture.createUser("test@test.com", UserType.FILLED_FOREIGNER);
+        ForeignerProfile profile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
+
+        String agentPathKey = "agent-profile/test-image.webp";
+        ApplicationForm form = visaApplicationFormTestFixture.createVisaApplicationForm(null, profile, null, true);
+        ReflectionTestUtils.setField(form, "profileObjectKey", agentPathKey);
+        applicationFormRepository.saveAndFlush(form);
+
+        // when
+        ApplicationFormDetailResponse response = applicationFormSearchService.getLatestApplicationFormForForeigner(foreignerUser.getEmail());
+
+        // then
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.applicationFormId()).isEqualTo(form.getId()),
+                () -> assertThat(response.foreignerProfileImgUrl())
+                        .isNotNull()
+                        .contains("test-cloudfront-domain")
+                        .contains(agentPathKey),
+                () -> assertThat(response.chatRoomId()).isNull()
+        );
     }
 }

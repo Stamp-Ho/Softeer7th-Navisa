@@ -108,8 +108,10 @@ public class ApplicationFormSearchService {
 
         List<Map<String, Object>> sections = mergeSections(form);
 
-        String profileImgUrl = (form.getProfileObjectKey() != null)
-                ? storageService.getImgUrl(ImageSize.MEDIUM, form.getProfileObjectKey(), true)
+        String profileKey = form.getProfileObjectKey();
+
+        String profileImgUrl = (profileKey != null && !profileKey.isBlank())
+                ? storageService.getImgUrl(ImageSize.MEDIUM, profileKey, true)
                 : null;
 
         Long chatRoomId = chatRoomQueryService.getChatRoomIdByProfiles(form.getAgentProfile(), foreigner);

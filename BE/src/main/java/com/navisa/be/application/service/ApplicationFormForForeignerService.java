@@ -31,8 +31,6 @@ public class ApplicationFormForForeignerService {
     private final ApplicationFormRepository applicationFormRepository;
     private final ChatRoomQueryService chatRoomQueryService;
     private final ProposalCrudService proposalCrudService;
-    private final ChatRoomCrudService chatRoomCrudService;
-    private final ChatServiceFacade chatServiceFacade;
 
     @Transactional
     public ApplicationFormFinishedStatusResponse finishByForeigner(String email) {

@@ -82,19 +82,24 @@ public class AwsS3StorageClient implements StorageClient {
     }
 
     public String getPresignedUrlFromS3(ImageSize size, String objectKey) {
+        // 1. objectKey가 비어있으면 예외 대신 null 반환
         if (objectKey == null || objectKey.isBlank()) {
-            throw new StorageException(ResponseStatus.INVALID_S3_OBJECT_KEY);
+            return null;
         }
 
-        // 1. 요청된 사이즈에 따른 최종 S3 Object Key 생성
+        if ("null".equalsIgnoreCase(objectKey) || "undefined".equalsIgnoreCase(objectKey)) {
+            return null;
+        }
+
+        // 2. 행정사 프로필 사진 경로인 경우
+        if (objectKey.startsWith(StorageLocation.AGENT_PROFILE_IMAGE.getDirectory())) {
+            log.warn("행정사 프로필은 Presigned URL 발행 대상이 아닙니다. Key: {}", objectKey);
+            return null;
+        }
+
+        // 3. 최종 S3 Object Key 생성 및 Presigned URL 발행
         String finalKey = ImageSize.convertToFinalKey(size, objectKey);
 
-        // 2. 행정사 프로필 사진인 경우 (예외 발생)
-        if (objectKey.startsWith(StorageLocation.AGENT_PROFILE_IMAGE.getDirectory())) {
-            throw new StorageException(ResponseStatus.AGENT_PROFILE_PRESIGNED_REQUEST);
-        }
-
-        // 3. 외국인 증명사진인 경우 (보안을 위해 S3 Presigned URL 발행)
         try {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
