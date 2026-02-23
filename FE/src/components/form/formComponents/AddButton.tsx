@@ -1,4 +1,4 @@
-import { IcPlus } from "../../assets/icon/StratisUi";
+import { IcPlus } from "../../../assets/icon/StratisUi";
 
 const AddButton = ({ className = "", onClick = () => {}, disabled = false }) => {
   return (

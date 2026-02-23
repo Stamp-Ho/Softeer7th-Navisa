@@ -1,12 +1,6 @@
-import { IcCheckBroken } from "../../assets/icon/StratisUi";
+import { IcCheckBroken } from "../../../assets/icon/StratisUi";
 
-const CheckBox = ({
-  value = false,
-  setValue = (_a: boolean) => {},
-  label = "",
-  className = "",
-  disabled = false,
-}) => {
+const CheckBox = ({ value = false, setValue = (_a: boolean) => {}, label = "", className = "", disabled = false }) => {
   return (
     <a
       onClick={() => !disabled && setValue(!value)}

@@ -9,6 +9,9 @@ export const agentService = {
       skipAuth: skipAuth,
     });
   },
+  getRecommandedAgentsAfterLogin: async (apiClient: apiClientType) => {
+    return await apiClient.get<BaseResponse<T.AgentCardResponse[]>>("/api/home/user/agents");
+  },
   getCard: (api: apiClientType, data: T.AgentCardRequest) => {
     const cleanParams = Object.fromEntries(
       Object.entries(data).filter(([_, v]) => v !== undefined && v !== null && !(Array.isArray(v) && v.length === 0)),
@@ -40,35 +43,20 @@ export const agentService = {
   },
 
   // 행정사 배지 리뷰 작성
-  postBadgeReview: async (
-    apiClient: apiClientType,
-    data: T.PostAgentBadgeReviewRequest,
-  ) => {
-    return await apiClient.post<BaseResponse<string>>(
-      "/api/agent/reviews",
-      data,
-    );
+  postBadgeReview: async (apiClient: apiClientType, data: T.PostAgentBadgeReviewRequest) => {
+    return await apiClient.post<BaseResponse<string>>("/api/agent/reviews", data);
   },
 
   // 행정사 피드백 리뷰 작성
-  postFeedbackReview: async (
-    apiClient: apiClientType,
-    data: T.PostAgentFeedbackReviewRequest,
-  ) => {
-    return await apiClient.post<BaseResponse<string>>(
-      "/api/agent/feedback",
-      data,
-    );
+  postFeedbackReview: async (apiClient: apiClientType, data: T.PostAgentFeedbackReviewRequest) => {
+    return await apiClient.post<BaseResponse<string>>("/api/agent/feedback", data);
   },
 
   // 행정사 수임종료 및 비자 신청서 복사본 생성
-  patchAgentStatusFinished: async (
-    apiClient: apiClientType,
-    formId: string,
-    data: { isFinished: boolean },
-  ) => {
-    return await apiClient.patch<
-      BaseResponse<T.PatchAgentStatusFinishedResponse>
-    >(`/api/application-forms/${formId}/status/finished`, data);
+  patchAgentStatusFinished: async (apiClient: apiClientType, formId: string, data: { isFinished: boolean }) => {
+    return await apiClient.patch<BaseResponse<T.PatchAgentStatusFinishedResponse>>(
+      `/api/application-forms/${formId}/status/finished`,
+      data,
+    );
   },
 };

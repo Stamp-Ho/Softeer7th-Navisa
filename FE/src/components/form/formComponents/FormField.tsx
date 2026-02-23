@@ -1,9 +1,9 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import FormRadio from "./inputComponents/FormRadio";
-import Tag from "../common/Tag";
-import CheckBox from "../common/CheckBox";
-import type { FormSection, inputFieldType } from "../../types/formType";
+import FormRadio from "../inputComponents/FormRadio";
+import Tag from "../../common/Tag";
+import CheckBox from "./CheckBox";
+import type { FormSection, inputFieldType } from "../../../types/formType";
 import React, { useEffect } from "react";
 import FormInputLine from "./FormInputLine";
 

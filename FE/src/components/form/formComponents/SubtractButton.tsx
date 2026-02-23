@@ -1,4 +1,4 @@
-import { IcDash } from "../../assets/icon/StratisUi";
+import { IcDash } from "../../../assets/icon/StratisUi";
 
 const SubtractButton = ({ className = "", onClick = () => {} }) => {
   return (

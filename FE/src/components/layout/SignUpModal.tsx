@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { AgentButton, ForeignerButton } from "../../assets/RegistrationButtons";
 import Modal from "../common/Modal";
 import Button from "../common/Button";
-import SignUpForm from "./SignUpForm";
+import SignUpForm from "../form/SignUpForm";
 const SignUpModal = ({ onClose = () => {} }) => {
   const { t } = useTranslation(["pages"]);
   const [userType, setUserType] = useState<number>(0); //0: none, 1: foreigner, 2:agent

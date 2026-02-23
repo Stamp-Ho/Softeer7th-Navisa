@@ -2,8 +2,8 @@ import TextInput from "../common/TextInput";
 import Button from "../common/Button";
 import { useTranslation } from "react-i18next";
 import { useSignUpMutation } from "../../api/mutations/useSignUpMutation";
-import CheckBox from "../common/CheckBox";
-import CheckLine from "../common/CheckLine";
+import CheckBox from "./formComponents/CheckBox";
+import CheckLine from "./formComponents/CheckLine";
 import { useForm } from "react-hook-form";
 
 const VALIDATOR = {

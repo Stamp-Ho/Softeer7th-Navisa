@@ -1,7 +1,7 @@
 import { useFormContext, useWatch } from "react-hook-form";
-import ProgressDot from "../../assets/icon/ProgressDot";
-import ProgressLine from "../../assets/icon/ProgressLine";
-import { calculateOnlyInputs } from "./utils/formUtils";
+import ProgressDot from "../../../assets/icon/ProgressDot";
+import ProgressLine from "../../../assets/icon/ProgressLine";
+import { calculateOnlyInputs } from "../utils/formUtils";
 
 const ProgressStep = ({
   label,
@@ -17,22 +17,14 @@ const ProgressStep = ({
   parentLength: number;
 }) => {
   const { control } = useFormContext();
-  const targetLabel =
-    fieldIndex >= 0
-      ? `${sectionIndex}.sectionData.${fieldIndex}`
-      : `${sectionIndex}.sectionData`;
+  const targetLabel = fieldIndex >= 0 ? `${sectionIndex}.sectionData.${fieldIndex}` : `${sectionIndex}.sectionData`;
   const targetData = useWatch({
     name: [targetLabel],
     control,
   });
   const { totalCount, filledCount } = calculateOnlyInputs(targetData);
 
-  const status =
-    filledCount === totalCount
-      ? "done"
-      : filledCount === 0
-        ? "empty"
-        : "inProgress";
+  const status = filledCount === totalCount ? "done" : filledCount === 0 ? "empty" : "inProgress";
 
   const leafIndex = fieldIndex >= 0 ? fieldIndex : sectionIndex;
   return (
@@ -44,9 +36,7 @@ const ProgressStep = ({
           isLast={leafIndex === parentLength - 1}
           isEditing={leafIndex === currentIndex}
         />
-        <a className={status === "done" ? "text-primary" : "text-text-sub"}>
-          {label}
-        </a>
+        <a className={status === "done" ? "text-primary" : "text-text-sub"}>{label}</a>
       </div>
       {leafIndex < parentLength - 1 && (
         <div className="-my-0.5">

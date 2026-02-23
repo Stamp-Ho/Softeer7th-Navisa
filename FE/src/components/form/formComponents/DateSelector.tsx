@@ -1,4 +1,4 @@
-import FormSelector from "../form/inputComponents/FormSelector";
+import FormSelector from "../inputComponents/FormSelector";
 import { useTranslation } from "react-i18next";
 
 const DateSelector = ({

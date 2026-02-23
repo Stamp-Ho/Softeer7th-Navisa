@@ -1,5 +1,5 @@
 import type { FormSection } from "../../types/formType";
-import FormField from "./FormField";
+import FormField from "./formComponents/FormField";
 import { useEffect, useState } from "react";
 import ImageUploadInput from "./inputComponents/ImageUploadInput";
 

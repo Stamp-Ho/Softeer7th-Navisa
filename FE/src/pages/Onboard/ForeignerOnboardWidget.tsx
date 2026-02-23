@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { IcMessageBox } from "../../assets/icon/StratisUi";
 import Button from "../../components/common/Button";
-import TogglePill from "../../components/common/TogglePill";
-import ProgressStepWidget from "../../components/form/ProgressStepWidget";
+import TogglePill from "../../components/form/formComponents/TogglePill";
+import ProgressStepWidget from "../../components/form/widgetComponents/ProgressStepWidget";
 import type { FormSection } from "../../types/formType";
 import GoTopFloating from "../../components/common/GoTopFloating";
 
@@ -33,7 +33,12 @@ const ForeignerOnboardWidget = ({
           <div className="flex flex-row text-green-vivid title-s-semibold items-center gap-2">
             <IcMessageBox />
             {t("onboard.wantOffers")}
-            <TogglePill className="ml-auto" isActive={isGettingOffer} setIsActive={setIsGettingOffer} activeColor={"bg-green-vivid"} />
+            <TogglePill
+              className="ml-auto"
+              isActive={isGettingOffer}
+              setIsActive={setIsGettingOffer}
+              activeColor={"bg-green-vivid"}
+            />
           </div>
           <div className="text-text-700 break-keep text-gray-700">
             {t("onboard.publicNoticeBefore")}
@@ -41,7 +46,13 @@ const ForeignerOnboardWidget = ({
             {t("onboard.publicNoticeAfter")}
           </div>
         </div>
-        <ProgressStepWidget title={t("onboard.registerRequirement")} formData={sections} currentSectionId={currentSectionIndex} onSectionClick={goToSection} stepBySection={false} />
+        <ProgressStepWidget
+          title={t("onboard.registerRequirement")}
+          formData={sections}
+          currentSectionId={currentSectionIndex}
+          onSectionClick={goToSection}
+          stepBySection={false}
+        />
       </div>
       <GoTopFloating onClick={goTop} className="m-4 mt-auto" />
     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { IcDash } from "../../../assets/icon/StratisUi";
-import TimePicker from "../../common/TimePicker";
+import TimePicker from "../formComponents/TimePicker";
 
 const TimeRangePicker = ({ onChange = (_a: string) => {}, readOnly = false }) => {
   const [startTime, setStartTime] = useState({

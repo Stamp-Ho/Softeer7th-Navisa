@@ -1,11 +1,6 @@
-import { IcCheck } from "../../assets/icon/StratisUi";
+import { IcCheck } from "../../../assets/icon/StratisUi";
 
-const CheckLine = ({
-  value = false,
-  setValue = () => {},
-  label = "",
-  className = "",
-}) => {
+const CheckLine = ({ value = false, setValue = () => {}, label = "", className = "" }) => {
   return (
     <a
       onClick={setValue}

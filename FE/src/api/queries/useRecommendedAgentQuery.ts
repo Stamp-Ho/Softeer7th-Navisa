@@ -7,16 +7,18 @@ import { useAuth } from "../../contexts/AuthContextProvider";
 export const useRecommendedAgentQuery = () => {
   const { apiClient } = useApiClient();
   const { userType } = useAuth();
+  const isLoggedIn = userType !== "NOT_AUTHED";
 
   return useQuery<AgentCardResponse[]>({
-    queryKey: ["recommendedAgents", userType],
+    queryKey: ["recommendedAgents", isLoggedIn],
     queryFn: async () => {
-      const res = await agentService.getRecommendedAgents(
-        apiClient,
-        userType === "NOT_AUTHED",
-      );
+      console.log(userType);
+      const res = isLoggedIn
+        ? await agentService.getRecommandedAgentsAfterLogin(apiClient)
+        : await agentService.getRecommendedAgents(apiClient, true);
       return res.result;
     },
-    retry: false, // 에러 시 재시도 금지
+    enabled: !!apiClient,
+    retry: false,
   });
 };

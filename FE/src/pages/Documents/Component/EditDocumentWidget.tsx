@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { IcDownload, IcFile2, IcMessage } from "../../../assets/icon/StratisUi";
 import Button from "../../../components/common/Button";
 import GoTopFloating from "../../../components/common/GoTopFloating";
-import ProgressStepWidget from "../../../components/form/ProgressStepWidget";
+import ProgressStepWidget from "../../../components/form/widgetComponents/ProgressStepWidget";
 import type { FormSection } from "../../../types/formType";
 import { useEffect, useState } from "react";
 import FloatingChatModal from "./FloatingChatModal";

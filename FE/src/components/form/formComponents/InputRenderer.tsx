@@ -1,10 +1,10 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { VALIDATOR, type input } from "../../types/formType";
-import DateSelector from "../common/DateSelector";
+import { VALIDATOR, type input } from "../../../types/formType";
+import DateSelector from "./DateSelector";
 import { useEffect, useCallback } from "react";
-import TimeRangePicker from "./inputComponents/TimeRangePicker";
-import FormRadio from "./inputComponents/FormRadio";
-import FormSelector from "./inputComponents/FormSelector";
+import TimeRangePicker from "../inputComponents/TimeRangePicker";
+import FormRadio from "../inputComponents/FormRadio";
+import FormSelector from "../inputComponents/FormSelector";
 
 const getNestedError = (errors: any, path: string) => {
   return path.split(".").reduce((obj, key) => obj?.[key], errors);

@@ -1,10 +1,10 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import AddButton from "../common/AddButton";
-import SubtractButton from "../common/SubtractButton";
+import AddButton from "./AddButton";
+import SubtractButton from "./SubtractButton";
 import InputRenderer from "./InputRenderer";
-import CheckBox from "../common/CheckBox";
+import CheckBox from "./CheckBox";
 import React from "react";
-import type { FormSection, inputFieldType, inputLineType } from "../../types/formType";
+import type { FormSection, inputFieldType, inputLineType } from "../../../types/formType";
 
 const FormInputLine = ({
   inputField,
