@@ -31,7 +31,7 @@ const AgentCard = ({
   useEffect(() => {
     if (agent?.profileImgUrl) resizeImage(agent.profileImgUrl, 240, 192);
   }, [agent]);
-  if (!context || !agent || loadingImage) return SkeletonUi();
+  if (!context || !agent || loadingImage) return <SkeletonUi />;
   const { userType } = context;
   return (
     <li
@@ -107,10 +107,10 @@ const AgentCard = ({
 
 export default AgentCard;
 
-const SkeletonUi = (className = "") => {
+const SkeletonUi = () => {
   return (
     <li
-      className={`transition-all duration-75 ease-out hover:scale-107 hover:m-2 ${className}
+      className={`transition-all duration-75 ease-out hover:scale-107 hover:m-2ㄹ
         flex flex-col bg-white w-60 rounded-[10px] overflow-hidden shadow-[0px_0px_7px_0px_rgba(104,96,160,0.25)]`}
     >
       <div className="w-60 h-48 bg-gray-100" />

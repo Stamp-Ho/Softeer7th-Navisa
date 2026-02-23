@@ -62,15 +62,11 @@ const ProfileOfAgent = () => {
           </div>
         </div>
 
-        <div className="mt-40">
+        <div className="mt-30">
           <AgentReviewSection />
         </div>
 
-        <div className="mt-40">
-          <AgentBlog blogList={blog} />
-        </div>
-
-        <div className="mt-40">
+        <div className="mt-30">
           <AgentOffice />
         </div>
       </section>
@@ -89,19 +85,25 @@ const ProfileOfAgent = () => {
         </div>
 
         <div className="mt-15">
-          <div className="headline-m-semibold text-gray-1000">{t("profile.additionalHistory")}</div>
-          <div className="mt-13 whitespace-pre-line title-s-medium text-text-base">{data?.additionalHistory}</div>
+          <div className="headline-m-semibold text-gray-1000 mb-10">{t("profile.additionalHistory")}</div>
+          {data?.additionalHistory &&
+            data?.additionalHistory.split("\n").length > 1 &&
+            data.additionalHistory.split("\n").map((line, index) => (
+              <div key={index} className="mt-4 ml-4 whitespace-pre-line title-s-medium text-text-base">
+                {line}
+              </div>
+            ))}
         </div>
 
-        <div className="mt-40">
+        <div className="mt-30">
           <AgentReviewSection reviewSummary={data?.reviewSummary} />
         </div>
-
-        <div className="mt-40">
+        {/* 
+        <div className="mt-30">
           <AgentBlog blogList={blog} agentInfo={data?.agentInfo} />
-        </div>
+        </div> */}
 
-        <div className="mt-40">
+        <div className="mt-30">
           <AgentOffice officeInfo={data?.officeInfo} />
         </div>
       </section>

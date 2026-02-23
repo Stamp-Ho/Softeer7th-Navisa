@@ -57,11 +57,9 @@ const SuggestedForeigners = () => {
   if (isLoading) return <div>{t("landing.loading")}</div>;
   const dataToRender =
     isError || !data || data.length === 0 ? (
-      <>
-        {Array.from({ length: 3 }).map((_, idx) => (
-          <SearchForeignerCard withDetails={false} key={`foreignerCard_${idx}`} />
-        ))}
-      </>
+      <div className="flex flex-col py-7 px-6 w-92 h-45 rounded-2xl shadow bg-white">
+        새로운 의뢰인을 불러올 수 없습니다.
+      </div>
     ) : (
       <>
         {data?.map((foreigner, idx) => (

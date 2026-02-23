@@ -77,6 +77,18 @@ export interface SliceRequest {
   lastElementId?: string; // UUID, 첫 페이지 조회 시 생략 가능
   size: number;
 }
+export interface UpdateAgentProfileRequest {
+  profileObjectKey: string | null;
+  phoneNumber: string;
+  officeName: string;
+  businessHours: string;
+  roadAddress: string;
+  officeAddressDetail: string;
+  specializedJobCodeIdList: number[];
+  availableLanguageIdList: number[];
+  introduction: string;
+  additionalCareer: string;
+}
 
 // 행정사 카드 리스트 요청 (쿼리 파라미터)
 export interface AgentCardRequest {
@@ -126,6 +138,7 @@ export interface AgentProfileDetailResponse {
   officeInfo: {
     officeName: string;
     address: string;
+    officeAddressDetail: string;
     businessHours: string;
     phoneNumber: string;
   };

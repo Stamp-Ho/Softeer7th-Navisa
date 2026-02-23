@@ -14,6 +14,7 @@ import { AuthContextProvider } from "./contexts/AuthContextProvider";
 import { LocaleContextProvider } from "./contexts/LocaleContextProvider";
 import MyProfile from "./pages/Profile/MyProfile";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
+import EditAgentProfile from "./pages/Profile/EditAgentProfile";
 function App() {
   return (
     <AuthContextProvider>
@@ -28,6 +29,7 @@ function App() {
               <Route path="/profile" element={<MyProfile />} />
               <Route path="/profile/foreigner/:foreignerId" element={<ProfileOfForeigner />} />
               <Route path="/profile/agent/:agentId" element={<ProfileOfAgent />} />
+              <Route path="/update/profile" element={<EditAgentProfile />} />
               <Route path="/onboard/foreigner" element={<ForeignerOnboard />} />
               <Route path="/onboard/agent" element={<AgentOnboard />} />
               <Route path="/chat" element={<ChatPage />} />

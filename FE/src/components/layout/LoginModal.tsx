@@ -10,9 +10,9 @@ import { useLoginMutation } from "../../api/mutations/useLoginMutation";
 const LoginModal = ({ onClose = () => {}, setAuthMode = (_a: number) => {} }) => {
   const { t } = useTranslation(["pages", "common"]);
   const loginMutation = useLoginMutation(onClose);
-  const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("feTest0001@example.com");
-  const [pw, setPw] = useState<string>("test1234");
+  const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(true);
+  const [email, setEmail] = useState<string>("");
+  const [pw, setPw] = useState<string>("");
 
   const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -33,14 +33,20 @@ const LoginModal = ({ onClose = () => {}, setAuthMode = (_a: number) => {} }) =>
         <IcCheckBroken activated={stayLoggedIn} />
         {t("auth.login.rememberMe")}
       </a>
-      <Button className="w-full mb-6" variant={"primary"} onClick={handleLogin} disabled={loginMutation.isPending}>
+      <Button
+        className="w-full mb-6"
+        variant={"primary"}
+        size="large"
+        onClick={handleLogin}
+        disabled={loginMutation.isPending}
+      >
         {loginMutation.isPending ? t("auth.login.loggingIn") : t("auth.login.loginButton")}
       </Button>
       <div className="flex flex-row body-s-medium text-text-sub gap-3 pb-20">
-        <a className="cursor-pointer">{t("auth.login.forgotPassword")}</a>
+        {/* <a className="cursor-pointer">{t("auth.login.forgotPassword")}</a>
         <div className="border-r border-gray-200 h-2 w-px mt-auto mb-auto"></div>
         <a className="cursor-pointer">{t("auth.login.forgotEmail")}</a>
-        <div className="border-r border-gray-200 h-2 w-px mt-auto mb-auto"></div>
+        <div className="border-r border-gray-200 h-2 w-px mt-auto mb-auto"></div> */}
         <a className="cursor-pointer" onClick={() => setAuthMode(2)}>
           {t("auth.signup.title")}
         </a>

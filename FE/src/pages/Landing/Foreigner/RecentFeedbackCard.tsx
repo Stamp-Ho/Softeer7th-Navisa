@@ -19,7 +19,7 @@ const RecentFeedbackCard = ({ feedback }: { feedback?: AgentRecentFeedbackRespon
   useEffect(() => {
     if (feedback?.agentProfileImgUrl) resizeImage(feedback.agentProfileImgUrl, 26, 26);
   }, [feedback]);
-  if (!feedback || loadingImage) return SkeletonUI();
+  if (!feedback || loadingImage) return <SkeletonUI />;
   return (
     <div className="flex flex-col w-124 h-69.5 px-6 pt-6 pb-8 rounded-2xl bg-gray-50">
       <div className=" flex flex-row justify-end items-center gap-2 body-s-medium text-text-sub">

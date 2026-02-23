@@ -77,6 +77,30 @@ export interface ForeignerProfileDetailResponse {
   };
 }
 
+export interface ForeignerMyProfileResponse {
+  name: string;
+  nationIdList: number[];
+  languageIdList: number[];
+  education: {
+    degreeLevel: DegreeLevel;
+    schoolName: string;
+    majorName: string;
+  };
+  foreignerCareers: {
+    companyName: string;
+    jobTitle: string;
+    startDate: string;
+    endDate: string;
+    isWork: boolean;
+  }[];
+  expectedCompany: {
+    companyName: string;
+    jobTitle: string;
+    startDate: string;
+  };
+  isRequesting: boolean;
+}
+
 export interface PatchForeignerStatusFinishedResponse {
   closedVisaFormId: string;
   newVisaFormId: string;

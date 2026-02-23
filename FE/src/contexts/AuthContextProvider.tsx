@@ -18,23 +18,26 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     return savedUserId ? JSON.parse(savedUserId) : null;
   });
   const [accessToken, setAccessToken] = useState<string>("");
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
 
   const getAccessToken = () => {
     return accessToken;
   };
   const logOut = () => {
+    setIsLoggedOut(true);
+    navigate("/");
     setAccessToken("");
     setUserId("");
     setUserType("NOT_AUTHED");
-    navigate("/");
     localStorage.clear();
   };
 
   useEffect(() => {
-    if (location.pathname !== "/" && (userType === "NOT_AUTHED" || !userType)) {
+    if (location.pathname !== "/" && (userType === "NOT_AUTHED" || !userType) && !isLoggedOut) {
       alertT("pages.landing.loginRequired");
       navigate("/", { replace: true });
     }
+    setIsLoggedOut(false);
   }, [location.pathname, userType]);
 
   // 2. 유저 상태가 바뀔 때마다 로컬 스토리지 업데이트

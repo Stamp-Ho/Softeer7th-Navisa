@@ -7,8 +7,7 @@ export const useAgentProfileMutation = (onSuccess?: () => void) => {
   const { apiClient } = useApiClient();
 
   return useMutation({
-    mutationFn: (data: RegisterAgentProfileRequest) =>
-      agentService.updateProfile(apiClient, data),
+    mutationFn: (data: RegisterAgentProfileRequest) => agentService.postProfile(apiClient, data),
     onSuccess: () => {
       if (onSuccess) onSuccess();
     },

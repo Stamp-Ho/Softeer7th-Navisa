@@ -4,8 +4,9 @@ import { IcLanguage } from "../../../assets/icon/StratisUi";
 import { languageIconIdxList, languageList } from "../../../constants/language";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
 
-const Languages = ({ languageIds = [13, 2] }: { languageIds?: number[] }) => {
+const Languages = ({ languageIds }: { languageIds?: number[] }) => {
   const { t } = useTranslation(["pages"]);
+  if (!languageIds || languageIds.length === 0) return <SkeletonLanguages />;
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 items-center title-m-semibold text-text-base">
@@ -29,3 +30,26 @@ const Languages = ({ languageIds = [13, 2] }: { languageIds?: number[] }) => {
 };
 
 export default Languages;
+
+const SkeletonLanguages = () => {
+  return (
+    <ProfileItemsFrame>
+      <div className="flex flex-row gap-2 items-center title-m-semibold text-text-base">
+        <IcLanguage />
+        <span>사용 가능 언어</span>
+        <span className="title-m-semibold text-green-800 animate-pulse">0</span>
+      </div>
+      <ul className="flex flex-row flex-wrap gap-spacing-300">
+        {[1, 2].map((idx) => (
+          <li
+            key={idx}
+            className="flex flex-row items-center gap-spacing-300 py-spacing-300 pl-2.25 pr-spacing-500 bg-green-50 text-green-800 rounded-full body-l-semibold animate-pulse"
+          >
+            <div className="w-8 h-8 bg-gray-150 rounded-full" />
+            <div className="w-16 h-4 bg-gray-150 rounded-full" />
+          </li>
+        ))}
+      </ul>
+    </ProfileItemsFrame>
+  );
+};

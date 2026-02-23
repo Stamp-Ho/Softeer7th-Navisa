@@ -23,7 +23,7 @@ const BadgeReviewCard = ({ review }: { review?: AgentBadgeReviewResponse }) => {
   useEffect(() => {
     if (review?.agentProfileImgUrl) resizeImage(review.agentProfileImgUrl, 240, 192);
   }, [review]);
-  if (!review || loadingImage) return SkeletonUi();
+  if (!review || loadingImage) return <SkeletonUi />;
   return (
     <Link
       className={`w-92 h-43 border border-violet-50 rounded-[10px] overflow-hidden cursor-pointer

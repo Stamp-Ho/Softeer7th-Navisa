@@ -4,8 +4,9 @@ import Tag from "../../../components/common/Tag";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
 import { jobCodeList } from "../../../constants/job";
 
-const AgentSpecialties = ({ jobCodeIds = [0, 1, 2, 3] }: { jobCodeIds?: number[] }) => {
+const AgentSpecialties = ({ jobCodeIds }: { jobCodeIds?: number[] }) => {
   const { t } = useTranslation(["pages"]);
+  if (!jobCodeIds) return <SkeletonUi />;
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 title-m-semibold text-text-base">
@@ -25,3 +26,20 @@ const AgentSpecialties = ({ jobCodeIds = [0, 1, 2, 3] }: { jobCodeIds?: number[]
 };
 
 export default AgentSpecialties;
+
+const SkeletonUi = () => {
+  return (
+    <ProfileItemsFrame>
+      <div className="flex flex-row gap-2 title-m-semibold text-text-base">
+        <IcGraduation size={24} />
+        <span>{`전문 분야`}</span>
+        <span className="text-violet-500">0</span>
+      </div>
+      <ul className="flex flex-row gap-2 flex-wrap">
+        <li>
+          <Tag variant="large_violet_off" className="animate-pulse">{`전문 분야를 등록해주세요.`}</Tag>
+        </li>
+      </ul>
+    </ProfileItemsFrame>
+  );
+};

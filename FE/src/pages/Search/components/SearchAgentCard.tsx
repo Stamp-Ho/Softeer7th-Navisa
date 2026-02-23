@@ -32,7 +32,7 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
   useEffect(() => {
     if (agent?.profileImgUrl) resizeImage(agent.profileImgUrl, 140, 140);
   }, [agent]);
-  if (!agent || loadingImage) return skeletonUI();
+  if (!agent || loadingImage) return <SkeletonUI />;
   return (
     <div>
       <Link
@@ -99,7 +99,7 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
 
 export default SearchAgentCard;
 
-const skeletonUI = () => {
+const SkeletonUI = () => {
   return (
     <div className="flex flex-row items-center  gap-8 py-6 px-7 bg-gray-30 w-124 h-fit rounded-2xl ">
       <div className="w-35 h-35 rounded-full bg-gray-100" />

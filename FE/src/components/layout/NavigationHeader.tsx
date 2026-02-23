@@ -17,8 +17,7 @@ const NavigationHeader = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const isSpecialBackground =
-    currentPath === "/" ||
-    PathNamesWithBackground.some((path) => currentPath.startsWith(path));
+    currentPath === "/" || PathNamesWithBackground.some((path) => currentPath.startsWith(path));
 
   const hasScroll = currentPath === "/" || currentPath.startsWith("/profile");
 
@@ -28,25 +27,16 @@ const NavigationHeader = () => {
 
   const { userType } = useAuth();
 
-  const homeTabStyle = isSpecialBackground
-    ? "text-gray-0"
-    : currentPath === "/"
-      ? "text-text-base"
-      : "text-text-sub";
+  const homeTabStyle = isSpecialBackground ? "text-gray-0" : currentPath === "/" ? "text-text-base" : "text-text-sub";
   const searchTabStyle = isSpecialBackground
     ? "text-gray-0"
     : currentPath.startsWith("/search")
       ? "text-text-base"
       : "text-text-sub";
 
-  const searchLabel =
-    userType === "VALID_AGENT"
-      ? t("navigation.searchForeigner")
-      : t("navigation.searchAgent");
+  const searchLabel = userType === "VALID_AGENT" ? t("navigation.searchForeigner") : t("navigation.searchAgent");
 
-  const isUserCanAccessDoc = ["VALID_AGENT", "FILLED_FOREIGNER"].includes(
-    userType,
-  );
+  const isUserCanAccessDoc = ["VALID_AGENT", "FILLED_FOREIGNER"].includes(userType);
 
   const handleToSearch = () => {
     if (userType === "NOT_AUTHED") {
@@ -56,9 +46,7 @@ const NavigationHeader = () => {
     }
   };
   return (
-    <header
-      className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${hasScroll && "ml-1 mr-3"}`}
-    >
+    <header className={`flex flex-row h-12 justify-between items-center m-4 ml-0 ${hasScroll && "ml-1 mr-3"}`}>
       {authMode === 1 ? (
         <LoginModal onClose={() => setAuthMode(0)} setAuthMode={setAuthMode} />
       ) : authMode === 2 ? (
@@ -77,11 +65,7 @@ const NavigationHeader = () => {
           >
             {t("navigation.home")}
           </Link>
-          <a
-            className={`cursor-pointer ${searchTabStyle}`}
-            onClick={handleToSearch}
-            tabIndex={0}
-          >
+          <a className={`cursor-pointer ${searchTabStyle}`} onClick={handleToSearch} tabIndex={0}>
             {searchLabel}
           </a>
         </div>
@@ -110,7 +94,7 @@ const NavigationHeader = () => {
               <IcFile />
               {t("navigation.documentWrite")}
             </Link>
-            <Link to={`/profile`} className="cursor-pointer" tabIndex={0}>
+            <Link to={`/profile`} className="cursor-pointer" tabIndex={0} inert={currentPath === "/profile"}>
               <IcUserProfile />
             </Link>
             {unreadCount > 0 && (
@@ -123,18 +107,10 @@ const NavigationHeader = () => {
           </div>
         ) : (
           <div className="flex flex-row items-center body-l-semibold text-gray-800 gap-5 ">
-            <a
-              className="cursor-pointer"
-              onClick={() => setAuthMode(1)}
-              tabIndex={0}
-            >
+            <a className="cursor-pointer" onClick={() => setAuthMode(1)} tabIndex={0}>
               {t("button.login")}
             </a>
-            <a
-              className="cursor-pointer"
-              onClick={() => setAuthMode(2)}
-              tabIndex={0}
-            >
+            <a className="cursor-pointer" onClick={() => setAuthMode(2)} tabIndex={0}>
               {t("button.signup")}
             </a>
           </div>

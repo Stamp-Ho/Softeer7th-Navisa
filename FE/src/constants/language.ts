@@ -4,6 +4,7 @@ export const languageList = [
   "중국어",
   "일본어",
   "베트남어",
+  "태국어",
   "러시아어",
   "프랑스어",
   "독일어",
@@ -23,6 +24,7 @@ export const languageIconIdxList: number[] = [
   7, // 중국어 -> China
   22, // 일본어 -> Japan
   50, // 베트남어 -> SouthVietnam
+  49, // 태국어 -> Thailand
   39, // 러시아어 -> Russia
   13, // 프랑스어 -> France
   14, // 독일어 -> Germany

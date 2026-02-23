@@ -44,9 +44,13 @@ export const agentService = {
     );
   },
 
-  updateProfile: (api: apiClientType, data: T.RegisterAgentProfileRequest) =>
+  postProfile: (api: apiClientType, data: T.RegisterAgentProfileRequest) =>
     api.post<BaseResponse<void>>("/api/agent/profile", data),
 
+  updateProfile: (api: apiClientType, data: T.UpdateAgentProfileRequest) =>
+    api.patch<BaseResponse<void>>("/api/agent/profile", data),
+
+  getMyProfile: (api: apiClientType) => api.get<BaseResponse<T.AgentProfileDetailResponse>>("/api/agent/profile"),
   // 행정사 프로필 상세보기
   getAgentProfileDetail: async (api: apiClientType, agentId: string) => {
     return await api.get<BaseResponse<T.AgentProfileDetailResponse>>(

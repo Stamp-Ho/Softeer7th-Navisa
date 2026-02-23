@@ -21,7 +21,7 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
 
   const [confirmModalOn, setConfirmModalOn] = useState(false);
 
-  if (!document) return skeletonUI();
+  if (!document) return <SkeletonUI />;
   const lastModifiedAtLocalTime = formatToLocalTime(document.lastModifiedAt);
 
   const formattedTime = lastModifiedAtLocalTime.slice(0, 12) + " · " + lastModifiedAtLocalTime.slice(14, 19);
@@ -39,7 +39,7 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
   useEffect(() => {
     resizeImage(document.foreignerProfileImgUrl, 75, 105);
   }, [document]);
-  if (loadingImage) return skeletonUI();
+  if (loadingImage) return <SkeletonUI />;
   return (
     <>
       {confirmModalOn && <ConfirmToReactiveModal onConfirm={onResume} onCancel={() => setConfirmModalOn(false)} />}
@@ -101,7 +101,7 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
 
 export default DocumentCard;
 
-const skeletonUI = () => {
+const SkeletonUI = () => {
   return (
     <div className="flex flex-row w-full h-fit p-4 gap-3 bg-white rounded-[10px] shadow">
       <div className="w-18.75 h-26.25 rounded-xl bg-gray-100" />

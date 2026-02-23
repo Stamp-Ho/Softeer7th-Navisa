@@ -9,21 +9,23 @@ const AgentOnboardWidget = ({
   currentSectionIndex,
   goToSection,
   goTop,
+  isEditing = false,
 }: {
   sections: FormSection[];
   currentSectionIndex: number;
   goToSection: (i: number) => void;
   goTop: () => void;
+  isEditing?: boolean;
 }) => {
   const { t } = useTranslation(["pages"]);
   return (
     <div className="w-fit ml-4 left-0 mt-19.75 flex flex-row">
       <div className="flex flex-col w-92 gap-5 ">
         <Button variant="primary" size="medium" className="shadow" type="submit">
-          {t("onboard.save")}
+          {isEditing ? "정보 수정하기" : t("onboard.save")}
         </Button>
         <ProgressStepWidget
-          title={t("onboard.registerInfo")}
+          title={isEditing ? "정보 수정하기" : t("onboard.registerInfo")}
           formData={sections}
           currentSectionId={currentSectionIndex}
           onSectionClick={goToSection}

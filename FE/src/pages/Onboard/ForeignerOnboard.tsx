@@ -1,5 +1,5 @@
 import { FormProvider, useForm } from "react-hook-form";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import NavisaForm from "../../components/form/NavisaForm";
 import { languageList } from "../../constants/language";
@@ -13,6 +13,8 @@ import { getLeafValues } from "../../components/form/utils/formUtils";
 import { DegreeLevelList } from "../../api/types/common";
 import { alertT } from "../../i18n/alerts";
 import type { TFunction } from "i18next";
+import { useMyProfileQuery } from "../../api/queries/useMyProfileQuery";
+import { useAuth } from "../../contexts/AuthContextProvider";
 
 const getForeignerSections = (t: TFunction): FormSection[] => [
   {
@@ -125,7 +127,6 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
                 inputType: "text",
                 isRequired: true,
                 requestBodyName: "companyName",
-                validator: "koreanOrEnglish",
               },
               {
                 inputDescription: t("onboard.foreigner.startDateLabel"),
@@ -188,7 +189,6 @@ const getForeignerSections = (t: TFunction): FormSection[] => [
                 options: languageList,
                 isRequired: true,
                 requestBodyName: "companyName",
-                validator: "koreanOrEnglish",
               },
               {
                 inputType: "date",
@@ -212,10 +212,107 @@ const ForeignerOnboard = () => {
   const { scrollRef, handleScroll, goToSection, goTop, currentSectionIndex, getMaskStyle } = useOnboardScroll();
   const methods = useForm();
   const navigate = useNavigate();
+  const { userType } = useAuth();
+  const { data, isLoading, isError } = useMyProfileQuery(userType);
   const updateProfileMutation = useForiengerProfileMutation(() => {
-    navigate("/", { replace: true });
+    navigate(!!data ? "/profile" : "/", { replace: true });
   });
+  const [formLayout, setFormLayout] = useState(sections);
+
+  const loadPrevData = () => {
+    if (data && !isError) {
+      const prevData = {
+        0: {
+          sectionData: {
+            0: {
+              values: data.nationIdList.map((id) => {
+                //@ts-ignore
+                const arr = [];
+                //@ts-ignore
+                arr["nationId"] = id - 1;
+                //@ts-ignore
+                return arr;
+              }),
+            },
+            1: {
+              values: data.languageIdList.map((id) => {
+                //@ts-ignore
+                const arr = [];
+                //@ts-ignore
+                arr["languageId"] = id - 1;
+                //@ts-ignore
+                return arr;
+              }),
+            },
+            2: {
+              values: [
+                {
+                  degreeLevel: DegreeLevelList.indexOf(data.education.degreeLevel),
+                  schoolName: data.education.schoolName,
+                  majorName: data.education.majorName,
+                },
+              ],
+            },
+            3: {
+              disabled: data.foreignerCareers.length === 0,
+              values: data.foreignerCareers.map((career) => ({
+                jobTitle: career.jobTitle,
+                companyName: career.companyName,
+                startDate: career.startDate,
+                endDate: career.endDate,
+                endDatedisabled: career.isWork,
+              })),
+            },
+          },
+        },
+        1: {
+          sectionData: {
+            0: {
+              values: [
+                {
+                  jobTitle: data.expectedCompany.jobTitle,
+                },
+              ],
+            },
+            1: {
+              values: [
+                {
+                  companyName: data.expectedCompany.companyName,
+                  startDate: data.expectedCompany.startDate,
+                },
+              ],
+            },
+          },
+        },
+      };
+      methods.reset(prevData);
+
+      // inputLine(추가 입력)을 적용하여 초기 폼 구조에 line 추가
+      const newStruct = structuredClone(sections);
+      Object.values(prevData).forEach((section: any, sectionIndex) => {
+        //@ts-ignore
+        Object.values(section.sectionData).forEach((field: Record<string, any>, fieldIndex: number) => {
+          const targetField = newStruct[sectionIndex].fields[fieldIndex];
+          const tempField = field?.values ?? [];
+          for (let i = 1; i < tempField.length; i++) {
+            const newLine = {
+              ...JSON.parse(JSON.stringify(targetField.inputLines[0])),
+              rowId: i,
+            };
+            targetField.inputLines.push(newLine);
+          }
+        });
+      });
+      setFormLayout(newStruct);
+    }
+  };
+
   const [isGettingOffer, setIsGettingOffer] = useState(true);
+  useEffect(() => {
+    if (isLoading) return;
+    loadPrevData();
+  }, [data, isLoading, isError]);
+
   //@ts-ignore
   const onSubmit = (data) => {
     const param = {
@@ -248,6 +345,7 @@ const ForeignerOnboard = () => {
     console.log("유효성 검사 실패:", errors);
     alertT("onboard.requiredFieldsError");
   };
+
   return (
     <FormProvider {...methods}>
       <form className="flex flex-row overflow-y-auto w-fit" onSubmit={methods.handleSubmit(onSubmit, onError)}>
@@ -258,9 +356,11 @@ const ForeignerOnboard = () => {
           onScroll={handleScroll}
         >
           <div className="flex flex-col pb-10 pt-14">
-            <h2 className="headline-m-bold text-text-base mb-3">{t("onboard.foreignerTitle")}</h2>
+            <h2 className="headline-m-bold text-text-base mb-3">
+              {!!data ? "내 요건 수정하기" : t("onboard.foreignerTitle")}
+            </h2>
             <a className="body-l-medium text-text-base">{t("onboard.description")}</a>
-            <NavisaForm formData={sections} />
+            <NavisaForm formData={formLayout} />
           </div>
         </div>
 
