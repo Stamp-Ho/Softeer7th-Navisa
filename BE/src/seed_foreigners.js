@@ -17,7 +17,7 @@ const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + mi
 
 export default function () {
     const iteration = __ITER + 1;
-    const baseUrl = 'https://navisa.site';
+    const baseUrl = 'https://api.navisa.site';
     const email = `foreigner_test_${iteration}@navisa.com`;
     const password = 'test1234';
 
