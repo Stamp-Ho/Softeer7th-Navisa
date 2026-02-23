@@ -5,9 +5,9 @@ import { useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import type { AgentCardResponse } from "../../api/types/agent";
 import { useResizeImage } from "../../hooks/useResizeImage";
-import { useJobListLabels } from "../../assets/JobIcon";
 import { useTranslation } from "react-i18next";
 import BadgeIcon, { badgeDescription } from "../../assets/icon/BadgeIcon";
+import { jobCodeList } from "../../constants/job";
 
 const AgentCard = ({
   hasAnimation = true,
@@ -24,7 +24,6 @@ const AgentCard = ({
 }) => {
   const context = useContext(AuthContext);
   const { t } = useTranslation(["components"]);
-  const jobListLabels = useJobListLabels();
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
 
   const animationStyle = hasAnimation ? "transition-all duration-75 ease-out hover:scale-107 hover:m-2" : "";
@@ -48,17 +47,17 @@ const AgentCard = ({
             <img src={agent.profileImgUrl} width={imageSize.width} height={imageSize.height} />
           </div>
         </div>
-        <div className="flex flex-col gap-3 pb-3 pt-2 px-4 h-44.75">
-          <div className="flex flex-row gap-3">
+        <div className="flex flex-col pb-4 pt-2 px-4 h-46.75">
+          <div className="flex flex-row gap-3 mt-1">
             {agent.badgeTop2.length === 0 ? (
-              <div className="flex flex-row gap-1 items-center caption-m-medium text-text-sub ">
+              <div className="flex flex-row gap-1 items-center caption-s-medium text-text-sub ">
                 등록된 리뷰가 없습니다
               </div>
             ) : (
               agent.badgeTop2.map((badgeId) => (
                 <div
                   key={`badgeId_${badgeId - 1}`}
-                  className="flex flex-row gap-1 items-center caption-m-medium text-primary "
+                  className="flex flex-row gap-1 items-center caption-s-medium text-primary "
                 >
                   <BadgeIcon badgeIndex={badgeId - 1} size={12} color="var(--primary)" />
                   {badgeDescription[badgeId - 1]}
@@ -66,21 +65,21 @@ const AgentCard = ({
               ))
             )}
           </div>
-          <h4 className="title-m-bold -mt-3">
+          <h4 className="title-m-bold ">
             {agent.agentName} {t("agentCard.title")}
           </h4>
-          <div className="flex-col flex gap-1">
-            <h5 className="flex flex-row items-center gap-1.5 caption-m-medium">
+          <div className="flex-col flex gap-1 max-h-21 min-h-17">
+            <h5 className="flex flex-row items-center gap-1.5 caption-m-medium mt-auto">
               <IcGraduation size={14} /> {t("agentCard.expertise")}
             </h5>
             {userType !== "NOT_AUTHED" ? (
-              <ol className="flex flex-row gap-1">
+              <ol className="flex flex-row gap-1 flex-wrap">
                 {(agent.agentSpecialityTop2?.length === 0 || !agent.agentSpecialityTop2) && (
                   <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>
                 )}
                 {agent.agentSpecialityTop2?.slice(0, 2).map((jobId) => (
                   <Tag key={`agent_special_job_${jobId}`} variant={"small_fill_violet_max"}>
-                    {jobListLabels[jobId]}
+                    {jobCodeList[jobId - 1]}
                   </Tag>
                 ))}
                 {(agent.agentSpecialityTop2?.length ?? 0) > 2 && (
@@ -92,8 +91,9 @@ const AgentCard = ({
                 {t("agentCard.loginRequired")}
               </Tag>
             )}
+            <div className="mb-auto" />
           </div>
-          <div className="flex-col flex gap-1">
+          <div className="flex-col flex">
             <h5 className="flex flex-row items-center gap-1.5 caption-m-medium">
               <IcLocation size={14} /> {t("agentCard.office")}
             </h5>
