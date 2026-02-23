@@ -13,6 +13,7 @@ import com.navisa.be.chat.service.ChatRoomQueryService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.model.enums.ImageSize;
+import com.navisa.be.global.common.model.enums.StorageLocation;
 import com.navisa.be.global.common.service.StorageService;
 import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.global.web.response.ResponseStatus;
@@ -108,10 +109,11 @@ public class ApplicationFormSearchService {
 
         List<Map<String, Object>> sections = mergeSections(form);
 
-        String profileKey = form.getProfileObjectKey();
+        String key = form.getProfileObjectKey();
+        String foreignerDir = StorageLocation.FOREIGNER_IDENTITY_IMAGE.getDirectory();
 
-        String profileImgUrl = (profileKey != null && !profileKey.isBlank())
-                ? storageService.getImgUrl(ImageSize.MEDIUM, profileKey, true)
+        String profileImgUrl = (key != null && key.startsWith(foreignerDir))
+                ? storageService.getImgUrl(ImageSize.MEDIUM, key, true)
                 : null;
 
         Long chatRoomId = chatRoomQueryService.getChatRoomIdByProfiles(form.getAgentProfile(), foreigner);

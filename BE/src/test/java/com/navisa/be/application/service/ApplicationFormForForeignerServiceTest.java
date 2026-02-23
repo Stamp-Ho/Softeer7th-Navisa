@@ -231,10 +231,7 @@ class ApplicationFormForForeignerServiceTest extends IntegrationTestSupport {
         assertAll(
                 () -> assertThat(response).isNotNull(),
                 () -> assertThat(response.applicationFormId()).isEqualTo(form.getId()),
-                () -> assertThat(response.foreignerProfileImgUrl())
-                        .isNotNull()
-                        .contains("test-cloudfront-domain")
-                        .contains(agentPathKey),
+                () -> assertThat(response.foreignerProfileImgUrl()).isNull(),
                 () -> assertThat(response.chatRoomId()).isNull()
         );
     }
