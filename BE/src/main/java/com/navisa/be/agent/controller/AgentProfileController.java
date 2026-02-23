@@ -68,7 +68,7 @@ public class AgentProfileController {
                     @Parameter(name = "size", description = "페이지 크기 (기본값: 16, 최대: 16)", schema = @Schema(type = "integer"))
             }
     )
-    @HasUserType({UserType.FILLED_FOREIGNER, UserType.UNFILLED_FOREIGNER})
+    @HasUserType({UserType.INVALID_AGENT, UserType.FILLED_FOREIGNER, UserType.UNFILLED_FOREIGNER})
     @GetMapping("/cards")
     public BaseResponse<SliceResponse<AgentCardResponse, UUID>> findAgentProfileCardsBasedOnFilter(
             @Parameter(description = "조회 필터 (콤마로 구분, 대괄호 쓰지 않고 요청하기)", example = """
