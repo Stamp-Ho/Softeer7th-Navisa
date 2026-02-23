@@ -13,6 +13,9 @@ import java.util.List;
 
 @Schema(description = "외국인 프로필 수정 폼용 전체 데이터 응답")
 public record ForeignerQueryResponse(
+        @Schema(description = "외국인 이름")
+        String name,
+
         @Schema(description = "국적 ID 리스트", example = "[1, 2]")
         List<Long> nationIdList,
 
@@ -38,6 +41,7 @@ public record ForeignerQueryResponse(
             ForeignerExpectedCompany expected
     ) {
         return new ForeignerQueryResponse(
+                profile.getNickname(),
                 profile.getForeignerNationalities().stream()
                         .map(n -> n.getNationality().getId()).toList(),
                 profile.getForeignLanguages().stream()
@@ -67,10 +71,10 @@ public record ForeignerQueryResponse(
             @Schema(description = "현재 재직 여부") boolean isWork
     ) {}
 
-    @Schema(description = "상세 희망 근무지 정보")
+    @Schema(description = "상세 입사 예정 근무지 정보")
     public record ExpectedCompanyInfo(
-            @Schema(description = "희망 회사명") String companyName,
-            @Schema(description = "희망 직무") String jobTitle,
+            @Schema(description = "입사 예정 회사명") String companyName,
+            @Schema(description = "입사 예정 직무") String jobTitle,
             @Schema(description = "입사 가능일") LocalDate startDate
     ) {}
 }
