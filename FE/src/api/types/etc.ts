@@ -28,7 +28,7 @@ export interface RecentVisaFormsResponse {
   title: string;
   isDone: boolean;
   currentStep: number;
-  foreignerProfileImgUrl: string;
+  foreignerProfileImgUrl: string | null;
   lastModifiedAt: string;
 }
 export interface ApplicationFormResponse {

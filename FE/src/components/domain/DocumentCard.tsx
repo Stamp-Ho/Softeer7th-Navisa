@@ -15,16 +15,28 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
   const { t } = useTranslation(["components"]);
   const navigate = useNavigate();
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
-  const { data, refetch } = useApplicationFormQuery(document?.applicationFormId ?? "", false);
+  const { data, refetch } = useApplicationFormQuery(
+    document?.applicationFormId ?? "",
+    false,
+  );
 
   const { previewPdf } = useGeneratePdf();
 
   const [confirmModalOn, setConfirmModalOn] = useState(false);
 
-  if (!document) return <SkeletonUI />;
+  useEffect(() => {
+    if (document?.foreignerProfileImgUrl)
+      resizeImage(document.foreignerProfileImgUrl, 75, 105);
+  }, [document]);
+
+  if (!document || loadingImage) return <SkeletonUI />;
+
   const lastModifiedAtLocalTime = formatToLocalTime(document.lastModifiedAt);
 
-  const formattedTime = lastModifiedAtLocalTime.slice(0, 12) + " · " + lastModifiedAtLocalTime.slice(14, 19);
+  const formattedTime =
+    lastModifiedAtLocalTime.slice(0, 12) +
+    " · " +
+    lastModifiedAtLocalTime.slice(14, 19);
 
   const onPreview = async () => {
     await refetch();
@@ -36,13 +48,14 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
     setConfirmModalOn(false);
     navigate(`/document/${document.applicationFormId}`);
   };
-  useEffect(() => {
-    resizeImage(document.foreignerProfileImgUrl, 75, 105);
-  }, [document]);
-  if (loadingImage) return <SkeletonUI />;
   return (
     <>
-      {confirmModalOn && <ConfirmToReactiveModal onConfirm={onResume} onCancel={() => setConfirmModalOn(false)} />}
+      {confirmModalOn && (
+        <ConfirmToReactiveModal
+          onConfirm={onResume}
+          onCancel={() => setConfirmModalOn(false)}
+        />
+      )}
 
       <div className="flex flex-row w-full h-fit p-4 gap-3 bg-white rounded-[10px] shadow">
         {document.foreignerProfileImgUrl ? (
@@ -62,7 +75,9 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
         <div className="flex flex-col flex-1">
           <div className="flex flex-row gap-1.5">
             <Tag variant="small_fill_violet_max">
-              {document.isDone ? t("documentCard.completedStatus") : t("documentCard.writingStatus")}
+              {document.isDone
+                ? t("documentCard.completedStatus")
+                : t("documentCard.writingStatus")}
             </Tag>
             <Tag variant="small_fill_green_max">
               {document.currentStep}/138{t("documentCard.cells")}
@@ -90,7 +105,9 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
               className="w-30"
               onClick={document.isDone ? onResumeClicked : onOpen}
             >
-              {document.isDone ? t("documentCard.editButton") : t("documentCard.writeButton")}
+              {document.isDone
+                ? t("documentCard.editButton")
+                : t("documentCard.writeButton")}
             </Button>
           </div>
         </div>
