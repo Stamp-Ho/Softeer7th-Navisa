@@ -38,7 +38,7 @@ public class AgentBadgeService {
 
     // 특정 행정사의 상위 2개 배지 Id 조회
     public List<Long> getTop2BadgeIds(UUID agentId) {
-        List<AgentBadgeSummary> summaries = agentBadgeSummaryRepository.findTopKBadgeSummarysByAgentId(
+        List<AgentBadgeSummary> summaries = agentBadgeSummaryRepository.findTopKBadgeSummariesByAgentId(
                 agentId, PageRequest.of(0, 2));
 
         return summaries.stream()
@@ -47,7 +47,7 @@ public class AgentBadgeService {
     }
 
     public List<AgentBadgeSummary> getTopKBadgeByAgentId(UUID agentId, int limit) {
-        return agentBadgeSummaryRepository.findTopKBadgeSummarysByAgentId(agentId, PageRequest.of(0, limit));
+        return agentBadgeSummaryRepository.findTopKBadgeSummariesByAgentId(agentId, PageRequest.of(0, limit));
     }
 
     public Map<UUID, List<Long>> getTop2BadgeIdsBatch(List<UUID> agentIds) {

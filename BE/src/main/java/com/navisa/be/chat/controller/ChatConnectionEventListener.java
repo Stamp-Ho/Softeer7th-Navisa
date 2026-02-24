@@ -67,13 +67,23 @@ public class ChatConnectionEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
 
-        validateSessionAttributesAndUserId(sessionAttributes);
+        // 1. 검증 대신 '확인' 후 부족하면 조용히 종료
+        if (sessionAttributes == null || !sessionAttributes.containsKey("userId")) {
+            log.info("[WS Disconnect] 인증되지 않았거나 세션 정보가 없는 연결 종료 (Session ID: {})", event.getSessionId());
+            return;
+        }
 
-        String userIdStr = (String) sessionAttributes.get("userId");
-        UUID userId = UUID.fromString(userIdStr);
-        String sessionId = headerAccessor.getSessionId();
-        chatSubscribeService.removeChatSubscription(userId, sessionId);
-        log.info("[WS Disconnect] User: {}, Session Id: {}, Session Count Decremented", userId, sessionId);
+        // 2. 정보가 확실히 있을 때만 로직 수행
+        try {
+            String userIdStr = (String) sessionAttributes.get("userId");
+            UUID userId = UUID.fromString(userIdStr);
+            String sessionId = headerAccessor.getSessionId();
+
+            chatSubscribeService.removeChatSubscription(userId, sessionId);
+            log.info("[WS Disconnect] User: {}, Session Id: {}, Session Count Decremented", userId, sessionId);
+        } catch (Exception e) {
+            log.error("[WS Disconnect] 데이터 처리 중 오류 발생: {}", e.getMessage());
+        }
     }
 
     private void validateSessionAttributesAndUserId(Map<String, Object> sessionAttributes) {

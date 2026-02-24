@@ -18,10 +18,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
-import java.util.Collections;
+import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,12 +42,6 @@ class AgentRecommendationServiceTest {
 
     @Mock
     private AgentProfileRepository agentProfileRepository;
-
-    @Mock
-    private RedisTemplate<String, Double> doubleRedisTemplate;
-
-    @Mock
-    private ValueOperations<String, Double> valueOperations;
 
     @Mock
     private SpecialtyDistributionCalculator distributionCalculator;
@@ -81,7 +74,6 @@ class AgentRecommendationServiceTest {
         AgentProfile lowAgent = AgentFixture.createAgentProfile(lowId, 50.0);
 
         setupCommonMocks(email, List.of(lowAgent, highAgent));
-        given(valueOperations.multiGet(anyList())).willReturn(List.of(0.0, 0.0));
 
         given(finalCalculator.calculateFinalGradeByLongId(anyMap(), anyMap()))
                 .willReturn(10.0, 100.0);
@@ -108,15 +100,13 @@ class AgentRecommendationServiceTest {
                 .toList();
 
         setupCommonMocks(email, profiles);
-        given(valueOperations.multiGet(anyList())).willReturn(Collections.nCopies(100, 0.0));
         given(finalCalculator.calculateFinalGradeByLongId(anyMap(), anyMap())).willReturn(1.0);
 
         // when
         agentRecommendationService.getPersonalizedAgents(email);
 
         // then
-        verify(valueOperations, times(1)).multiGet(argThat(list -> ((List<?>) list).size() == 100));
-        verify(valueOperations, never()).get(anyString());
+        verify(agentSpecializedJobService, times(1)).getFinalZaMap(argThat(list -> ((List<?>) list).size() == 100));
     }
 
     @Test
@@ -130,7 +120,6 @@ class AgentRecommendationServiceTest {
                 .toList();
 
         setupCommonMocks(email, profiles);
-        given(valueOperations.multiGet(anyList())).willReturn(Collections.nCopies(20, 0.0));
         given(finalCalculator.calculateFinalGradeByLongId(anyMap(), anyMap())).willReturn(1.0);
 
         // when
@@ -158,13 +147,13 @@ class AgentRecommendationServiceTest {
         given(foreignerProfileCrudService.findSimilarityByForeignerId(foreignerId)).willReturn(similarity);
 
         given(agentProfileRepository.findAllValidAgentProfiles()).willReturn(profiles);
-        given(doubleRedisTemplate.opsForValue()).willReturn(valueOperations);
         given(distributionCalculator.calculateDistribution(anyInt())).willReturn(1.0);
         given(reviewBonusCalculator.calculateBonusFactor(anyDouble())).willReturn(1.0);
         given(reviewBonusCalculator.calculateFinalDistribution(anyDouble(), anyDouble())).willReturn(1.0);
         given(storageService.getImgUrl(any(), any(), anyBoolean())).willReturn("url");
 
         // 배치 조회 mock: 각 agentId에 대해 빈 리스트 반환
+        given(agentSpecializedJobService.getFinalZaMap(anyList())).willReturn(new HashMap<>());
         given(agentSpecializedJobService.getTop2SpecializedJobIdsBatch(anyList()))
                 .willAnswer(inv -> {
                     List<UUID> ids = inv.getArgument(0);

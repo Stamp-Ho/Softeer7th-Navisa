@@ -54,8 +54,4 @@ public class AgentSpecializedJobSummary extends BaseEntity {
     public void incrementCount() {
         this.count++;
     }
-
-    public void addAccumulatedReviewReliability(double reviewWeight) {
-        this.accumulatedReviewReliability += reviewWeight;
-    }
 }

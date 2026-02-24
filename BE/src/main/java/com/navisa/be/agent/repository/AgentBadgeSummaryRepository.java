@@ -20,7 +20,7 @@ public interface AgentBadgeSummaryRepository extends JpaRepository<AgentBadgeSum
             "JOIN FETCH s.badge " +
             "WHERE s.agentId = :agentId " +
             "ORDER BY s.count DESC, s.badge.id ASC ")
-    List<AgentBadgeSummary> findTopKBadgeSummarysByAgentId(UUID agentId, Pageable pageable);
+    List<AgentBadgeSummary> findTopKBadgeSummariesByAgentId(UUID agentId, Pageable pageable);
 
     @EntityGraph(attributePaths = "badge")
     List<AgentBadgeSummary> findAllByAgentIdIn(List<UUID> agentIds);

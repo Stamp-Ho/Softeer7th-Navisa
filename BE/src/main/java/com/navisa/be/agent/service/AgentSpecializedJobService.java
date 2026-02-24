@@ -13,6 +13,7 @@ import com.navisa.be.global.web.response.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class AgentSpecializedJobService {
     private final AgentSpecializedJobSummaryRepository agentSpecializedJobSummaryRepository;
     private final AgentSpecializedJobRepository agentSpecializedJobRepository;
     private final JobCodeService jobCodeService;
+    private final RedisTemplate<String, Double> doubleRedisTemplate;
 
     // 특정 행정사의 상위 2개 직종코드 Id 조회
     @Transactional(readOnly = true)
@@ -89,5 +91,57 @@ public class AgentSpecializedJobService {
     public void deleteAllByAgentProfile(AgentProfile agentProfile) {
         agentSpecializedJobRepository.deleteAllByAgentProfile(agentProfile);
         agentProfile.getSpecializedJobs().clear();
+    }
+
+    /**
+     * 모든 대상 행정사의 직무별 가중치(za)를 MGET으로 가져온 Redis 값에 DB에 누적된 값을 추가하여 반환
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Double> getFinalZaMap(List<UUID> agentIds) {
+        if (agentIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<AgentSpecializedJobSummary> summaries = agentSpecializedJobSummaryRepository.findAllByAgentIdIn(agentIds);
+
+        Map<String, Double> redisZaWeightMap = fetchRedisZaWeightsBatch(summaries);
+
+        return summaries.stream()
+                .collect(Collectors.toMap(
+                        this::makeRedisKey,
+                        summary -> {
+                            String key = makeRedisKey(summary);
+
+                            return summary.getAccumulatedReviewReliability() + redisZaWeightMap.getOrDefault(key, 0.0);
+                        }
+                ));
+    }
+
+    /**
+     * 모든 대상 행정사의 직무별 가중치(za)를 Redis MGET 명령어로 일괄 조회
+     */
+    private Map<String, Double> fetchRedisZaWeightsBatch(List<AgentSpecializedJobSummary> summaries) {
+        List<String> keys = summaries.stream()
+                .map(this::makeRedisKey)
+                .toList();
+
+        try {
+            List<Double> values = doubleRedisTemplate.opsForValue().multiGet(keys);
+            if (values == null) return Collections.emptyMap();
+
+            Map<String, Double> resultMap = new HashMap<>();
+            for (int i = 0; i < keys.size(); i++) {
+                Double val = values.get(i);
+                if (val != null) resultMap.put(keys.get(i), val);
+            }
+            return resultMap;
+        } catch (Exception e) {
+            log.error("[Redis MultiGet Error] Redis 장애 발생, 기본값 사용", e);
+            return Collections.emptyMap();
+        }
+    }
+
+    private String makeRedisKey(AgentSpecializedJobSummary summary) {
+        return String.format("matching:sandbox:%s:%d", summary.getAgentId(), summary.getJobCode().getId());
     }
 }

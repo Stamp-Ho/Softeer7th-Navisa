@@ -13,7 +13,6 @@ import com.navisa.be.recommendation.calculator.SpecialtyDistributionCalculator;
 import com.navisa.be.global.common.model.enums.ImageSize;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,6 @@ public class AgentRecommendationService {
     private final SpecialtyDistributionCalculator distributionCalculator;
     private final ReviewBonusCalculator reviewBonusCalculator;
     private final FinalRecommendationCalculator finalCalculator;
-    private final RedisTemplate<String, Double> doubleRedisTemplate;
     private final AgentSpecializedJobService agentSpecializedJobService;
     private final AgentBadgeService agentBadgeService;
     private final StorageService storageService;
@@ -41,8 +39,9 @@ public class AgentRecommendationService {
         ForeignerSimilarity similarity = foreignerProfileCrudService.findSimilarityByForeignerId(profile.getId());
 
         List<AgentProfile> profiles = agentProfileRepository.findAllValidAgentProfiles();
+        List<UUID> profileIds = profiles.stream().map(AgentProfile::getId).toList();
 
-        Map<String, Double> zaMap = prefetchRedisZaValues(profiles);
+        Map<String, Double> zaMap = agentSpecializedJobService.getFinalZaMap(profileIds);
 
         List<AgentProfile> contentProfiles = profiles.stream()
                 .map(p -> Map.entry(p, calculateScoreWithPrefetchedData(p, similarity, zaMap)))
@@ -69,33 +68,6 @@ public class AgentRecommendationService {
                             badgeTop2Map.getOrDefault(agent.getId(), List.of()));
                 })
                 .toList();
-    }
-
-    /**
-     * 모든 대상 행정사의 직무별 가중치(za)를 Redis MGET 명령어로 일괄 조회
-     */
-    private Map<String, Double> prefetchRedisZaValues(List<AgentProfile> profiles) {
-        List<String> keys = profiles.stream()
-                .flatMap(p -> p.getSpecializedJobs().stream()
-                        .map(job -> String.format("matching:sandbox:%s:%d", p.getId(), job.getJobCode().getId())))
-                .distinct()
-                .toList();
-
-        if (keys.isEmpty()) return Collections.emptyMap();
-
-        try {
-            List<Double> values = doubleRedisTemplate.opsForValue().multiGet(keys);
-            Map<String, Double> result = new HashMap<>();
-            for (int i = 0; i < keys.size(); i++) {
-                if (values != null && values.get(i) != null) {
-                    result.put(keys.get(i), values.get(i));
-                }
-            }
-            return result;
-        } catch (Exception e) {
-            log.error("[Redis Read Error] 추천 엔진 일괄 조회 실패: {}", e.getMessage());
-            return Collections.emptyMap(); // 장애 시 0점 폴백
-        }
     }
 
     /**

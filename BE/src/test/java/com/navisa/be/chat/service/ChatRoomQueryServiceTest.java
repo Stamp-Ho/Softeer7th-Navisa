@@ -89,7 +89,7 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
                 agentUser.getEmail());
 
         // then
-        List<AgentBadgeSummary> summarys = agentBadgeSummaryRepository.findTopKBadgeSummarysByAgentId(agentProfile.getId(), PageRequest.of(0, 2));
+        List<AgentBadgeSummary> summaries = agentBadgeSummaryRepository.findTopKBadgeSummariesByAgentId(agentProfile.getId(), PageRequest.of(0, 2));
         ForeignerExpectedCompany expectedCompany = foreignerExpectedCompanyRepository.findByForeignerId(foreignerProfile.getId()).get();
         List<Long> nationalityIds = foreignerNationalityRepository.findByForeignerProfileId(foreignerProfile.getId())
                 .stream()
@@ -97,7 +97,7 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
                 .map(Nationality::getId).toList();
 
         assertThat(response.agentInfo().agentId()).isEqualTo(agentProfile.getId());
-        assertThat(response.agentInfo().top2BadgeIds()).containsAnyElementsOf(summarys.stream().map(AgentBadgeSummary::getBadge).map(Badge::getId).toList());
+        assertThat(response.agentInfo().top2BadgeIds()).containsAnyElementsOf(summaries.stream().map(AgentBadgeSummary::getBadge).map(Badge::getId).toList());
         assertThat(response.agentInfo().name()).isEqualTo(agentProfile.getName());
         assertThat(response.agentInfo().applicationFormId()).isNull();
 
@@ -132,7 +132,7 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
                 agentUser.getEmail());
 
         // then
-        List<AgentBadgeSummary> summarys = agentBadgeSummaryRepository.findTopKBadgeSummarysByAgentId(agentProfile.getId(), PageRequest.of(0, 2));
+        List<AgentBadgeSummary> summarys = agentBadgeSummaryRepository.findTopKBadgeSummariesByAgentId(agentProfile.getId(), PageRequest.of(0, 2));
         ForeignerExpectedCompany expectedCompany = foreignerExpectedCompanyRepository.findByForeignerId(foreignerProfile.getId()).get();
         List<Long> nationalityIds = foreignerNationalityRepository.findByForeignerProfileId(foreignerProfile.getId())
                 .stream()
