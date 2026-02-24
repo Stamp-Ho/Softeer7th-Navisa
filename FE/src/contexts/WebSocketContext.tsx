@@ -43,6 +43,7 @@ export const WebSocketProvider = ({
   const isConnectedRef = useRef(false);
   const userIdRef = useRef(userId);
   const participantsInfoCallbacksRef = useRef(new Map<number, () => void>());
+  const disconnectPromiseRef = useRef<Promise<void> | null>(null);
 
   // userId 최신값 유지
   useEffect(() => {
@@ -76,13 +77,9 @@ export const WebSocketProvider = ({
           // 언마운트 후라면 연결하지 않음
           if (cancelled) return;
           tokenToUse = newToken || accessToken;
-          // 토큰 변경 시 connectWebSocket 내부에서 자동으로 기존 연결 정리됨
         } catch (error) {
           // 토큰 재발급 실패 (세션 만료 등) — 연결 중단
           console.warn("토큰 재발급 실패로 웹소켓 연결을 취소합니다.", error);
-          disconnectWebSocket();
-          setIsConnected(false);
-          isConnectedRef.current = false;
           return;
         }
       }
@@ -145,13 +142,28 @@ export const WebSocketProvider = ({
       );
     };
 
-    // 연결 시작 (재발급 대기 포함)
-    connectWebSocketWithSync();
+    // 이전 연결을 완전히 종료한 후 새로 연결 시작 (좀비 커넥션 방지)
+    const setupConnection = async () => {
+      // 이전 disconnect가 완료된 후에 새 disconnect를 체이닝
+      const prevPromise = disconnectPromiseRef.current ?? Promise.resolve();
+      const current = prevPromise.then(() => disconnectWebSocket());
+      disconnectPromiseRef.current = current;
+      await current;
+
+      if (!cancelled) {
+        await connectWebSocketWithSync();
+      }
+    };
+
+    setupConnection();
 
     // Cleanup: 컴포넌트 언마운트 시 연결 해제
     return () => {
       cancelled = true;
-      disconnectWebSocket();
+      const prevPromise = disconnectPromiseRef.current ?? Promise.resolve();
+      disconnectPromiseRef.current = prevPromise.then(() =>
+        disconnectWebSocket(),
+      );
       setIsConnected(false);
       isConnectedRef.current = false;
     };
