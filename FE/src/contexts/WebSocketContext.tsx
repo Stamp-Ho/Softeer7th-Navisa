@@ -76,9 +76,13 @@ export const WebSocketProvider = ({
           // 언마운트 후라면 연결하지 않음
           if (cancelled) return;
           tokenToUse = newToken || accessToken;
+          // 토큰 변경 시 connectWebSocket 내부에서 자동으로 기존 연결 정리됨
         } catch (error) {
           // 토큰 재발급 실패 (세션 만료 등) — 연결 중단
           console.warn("토큰 재발급 실패로 웹소켓 연결을 취소합니다.", error);
+          disconnectWebSocket();
+          setIsConnected(false);
+          isConnectedRef.current = false;
           return;
         }
       }
