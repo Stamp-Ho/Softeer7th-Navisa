@@ -15,7 +15,8 @@ type ChatBubbleProps = {
   showReplyButton: boolean;
   isRead: boolean;
   isLast: boolean;
-  matchingEndRequired?: boolean;
+  proposalEndRequired?: boolean;
+  feedbackSubmitted: boolean;
 };
 
 const ChatBubble = ({
@@ -30,7 +31,8 @@ const ChatBubble = ({
   showReplyButton,
   isRead,
   isLast,
-  matchingEndRequired,
+  proposalEndRequired,
+  feedbackSubmitted,
 }: ChatBubbleProps) => {
   const { t } = useTranslation(["components"]);
   const { type, content, isSentByMe } = message;
@@ -75,7 +77,8 @@ const ChatBubble = ({
           isSentByMe={isSentByMe}
           showReplyButton={showReplyButton}
           pageType={pageType}
-          matchingEndRequired={matchingEndRequired}
+          proposalEndRequired={proposalEndRequired}
+          feedbackSubmitted={feedbackSubmitted}
         />
       )}
 

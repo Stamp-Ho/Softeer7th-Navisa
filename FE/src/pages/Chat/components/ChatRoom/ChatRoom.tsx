@@ -8,6 +8,7 @@ import { ChatRoomProvider } from "../context/ChatRoomContext";
 import ReviewModal from "../Review/ReviewModal";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useWebSocket } from "../../../../contexts/WebSocketContext";
 
 type ChatRoomParams = {
   pageType?: "CHAT" | "DOCUMENT";
@@ -30,12 +31,17 @@ const ChatRoom = ({
 }: ChatRoomParams) => {
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
-  const { data: participants } = useChatParticipantsInfoQuery(chatRoomId); // 추가로 행정사가 수임종료 응답을 해야하는지 여부 받음 > 수임종료 모달을 띄울 예정
+  const { data: participants, refetch: refetchParticipants } =
+    useChatParticipantsInfoQuery(chatRoomId);
+  const {
+    registerParticipantsInfoCallback,
+    unregisterParticipantsInfoCallback,
+  } = useWebSocket();
   const [reviewModal, setReviewModal] = useState<number>(0);
-
   const [isReviewRequired, setIsReviewRequired] = useState<boolean>(false);
   const [isVisaModalShown, setIsVisaModalShown] = useState(false);
   const [isFeedbackRequired, setIsFeedbackRequired] = useState(false); // FEEDBACK_REQUIRED 메시지에서 호출되었는지 여부
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false); // 피드백 제출 완료 여부
   const [searchParams] = useSearchParams();
   const chatRoomNumber = Number(searchParams.get("chatroom"));
   const reviewHandler = (num: number) => {
@@ -49,15 +55,32 @@ const ChatRoom = ({
     }
   }, [participants]);
 
-  const matchingEndRequired =
-    participants?.agentInfo?.matchingEndRequired || false; // 수임종료 모달 띄울지 여부 (행정사 응답 필요 여부)
-  // matchingEndRequired가 true이고 행정사인 경우 자동으로 VisaResponseModal 표시
+  // ParticipantsInfo 동기화: REVIEW_REQUIRED 또는 FEEDBACK_REQUIRED 메시지 수신 시 refetch
+  // FEEDBACK_REQUIRED 메시지 도착 시 feedbackSubmitted 상태 리셋
+  useEffect(() => {
+    registerParticipantsInfoCallback(chatRoomId, () => {
+      refetchParticipants();
+      setFeedbackSubmitted(false); // FEEDBACK_REQUIRED 메시지 도착 시 피드백 버튼 다시 표시
+    });
+
+    return () => {
+      unregisterParticipantsInfoCallback(chatRoomId);
+    };
+  }, [
+    chatRoomId,
+    registerParticipantsInfoCallback,
+    unregisterParticipantsInfoCallback,
+    refetchParticipants,
+  ]);
+
+  const proposalEndRequired = participants?.proposalEndRequired || false; // 수임종료 모달 띄울지 여부 (행정사 응답 필요 여부)
+  // proposalEndRequired가 true이고 행정사인 경우 자동으로 VisaResponseModal 표시
   useEffect(() => {
     if (
       participants &&
       isAgent &&
       !isVisaModalShown &&
-      matchingEndRequired &&
+      proposalEndRequired &&
       chatRoomNumber === chatRoomId
     ) {
       setReviewModal(3);
@@ -100,14 +123,13 @@ const ChatRoom = ({
             ? participants?.agentInfo?.name
             : participants?.foreignerInfo?.nickname
         }
-        matchingEndRequired={matchingEndRequired}
+        proposalEndRequired={proposalEndRequired}
+        feedbackSubmitted={feedbackSubmitted}
         showReviewModal={(show: boolean, isFeedback: boolean = false) => {
           setIsVisaModalShown(show);
           setIsFeedbackRequired(isFeedback);
-          // reviewModal 상태가 0이 아닌 경우에만 유지, 0인 경우 BadgeReviewModal으로 설정
-          if (show && reviewModal === 0) {
-            reviewHandler(1);
-          }
+          // FEEDBACK_REQUIRED에서 호출되었거나 이미 모달이 열려있으면 무시
+          // (reviewHandler에서 이미 모달을 관리함)
         }}
       />
       <div className="w-full pt-28" />
@@ -126,8 +148,9 @@ const ChatRoom = ({
             setIsReviewRequired={setIsReviewRequired}
             formId={participants?.agentInfo?.applicationFormId || ""}
             isAgent={isAgent}
-            matchingEndRequired={matchingEndRequired}
+            proposalEndRequired={proposalEndRequired}
             isFeedbackRequired={isFeedbackRequired}
+            setFeedbackSubmitted={setFeedbackSubmitted}
           />
         </div>
       )}

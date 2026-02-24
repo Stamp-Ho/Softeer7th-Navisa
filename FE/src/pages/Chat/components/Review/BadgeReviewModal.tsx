@@ -11,7 +11,7 @@ type BadgeReviewModalParams = {
   agentId: string;
   setIsReviewRequired: (b: boolean) => void;
   reviewProgress?: ForeignerProgressResponse;
-  matchingEndRequired?: boolean;
+  proposalEndRequired?: boolean;
   shouldGoToServiceReview?: boolean; // FEEDBACK_REQUIRED에서 호출된 경우만 true
 };
 
@@ -19,7 +19,6 @@ const BadgeReviewModal = ({
   reviewHandler,
   agentId,
   setIsReviewRequired,
-
   shouldGoToServiceReview = false,
 }: BadgeReviewModalParams) => {
   const { t } = useTranslation(["components"]);

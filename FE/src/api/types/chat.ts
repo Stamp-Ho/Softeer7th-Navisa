@@ -52,7 +52,6 @@ export interface ChatParticipantsInfo {
     top2BadgeIds: number[];
     name: string;
     applicationFormId?: string | null;
-    matchingEndRequired?: boolean;
   };
   foreignerInfo: {
     foreignerId: string;
@@ -62,4 +61,5 @@ export interface ChatParticipantsInfo {
     nationalityIds: number[];
     isReviewRequired: boolean;
   };
+  proposalEndRequired: boolean; // 루트 레벨에 위치
 }

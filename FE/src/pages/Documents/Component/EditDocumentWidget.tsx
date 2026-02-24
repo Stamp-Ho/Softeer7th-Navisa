@@ -12,6 +12,7 @@ import ConfirmToExportModal from "./ConfirmToExportModal";
 import { usePatchFormStatusMutation } from "../../../api/mutations/usePatchFormStatusMutation";
 import { useNavigate } from "react-router-dom";
 import GeneratingModal from "./GeneratingModal";
+import { useAuth } from "../../../contexts/AuthContextProvider";
 
 const EditDocumentWidget = ({
   editDocumentData,
@@ -28,9 +29,12 @@ const EditDocumentWidget = ({
   const { t } = useTranslation(["pages"]);
   const filledFormData = useWatch();
   const navigate = useNavigate();
+  const { userType } = useAuth();
   const { previewPdf, downloadPdf, generating } = useGeneratePdf();
   const [confirmModalOn, setConfirmModalOn] = useState(false);
-  const patchStatus = usePatchFormStatusMutation(() => setConfirmModalOn(false));
+  const patchStatus = usePatchFormStatusMutation(() =>
+    setConfirmModalOn(false),
+  );
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -41,10 +45,12 @@ const EditDocumentWidget = ({
         sections: formValues.map((section, i) => ({
           sectionId: i + 1,
 
-          sectionData: section.sectionData.map((field: Record<string, any>) => ({
-            ...field,
-            values: field.values && Object.values(field.values),
-          })),
+          sectionData: section.sectionData.map(
+            (field: Record<string, any>) => ({
+              ...field,
+              values: field.values && Object.values(field.values),
+            }),
+          ),
         })),
       };
       window.localStorage.setItem(documentId, JSON.stringify(data));
@@ -70,21 +76,38 @@ const EditDocumentWidget = ({
     <>
       <div className="w-full pt-px -mb-1 bg-border-normal" />
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="grayLine" className="flex items-center justify-center gap-2" onClick={handlePreviewPdf}>
+        <Button
+          variant="grayLine"
+          className="flex items-center justify-center gap-2"
+          onClick={handlePreviewPdf}
+        >
           <IcFile2 /> {t("documents.previewPdf")}
         </Button>
-        <Button variant="grayLine" className="flex items-center justify-center gap-2" onClick={handleDownloadPdf}>
-          <IcDownload /> {isDone ? t("documents.downloadPdf") : t("documents.exportPdf")}
+        <Button
+          variant="grayLine"
+          className="flex items-center justify-center gap-2"
+          onClick={handleDownloadPdf}
+        >
+          <IcDownload />{" "}
+          {isDone || userType.includes("FOREIGNER")
+            ? t("documents.downloadPdf")
+            : t("documents.exportPdf")}
         </Button>
       </div>
     </>
   );
   return (
     <div className="w-fit ml-4 left-0 mt-17 flex flex-row">
-      {confirmModalOn && <ConfirmToExportModal onCancel={onCancel} onConfirm={onConfirm} />}
+      {confirmModalOn && (
+        <ConfirmToExportModal onCancel={onCancel} onConfirm={onConfirm} />
+      )}
       {generating && <GeneratingModal />}
       <div className="flex flex-col w-92 gap-5 ">
-        <Button variant="primary" className="drop-shadow-[0_0_7px_#6860A040]" type="submit">
+        <Button
+          variant="primary"
+          className="drop-shadow-[0_0_7px_#6860A040]"
+          type="submit"
+        >
           {t("documents.save")}
         </Button>
         <ProgressStepWidget
@@ -98,7 +121,10 @@ const EditDocumentWidget = ({
       </div>
       <div className="relative flex flex-row self-end">
         {isChatOpen && chatRoomId !== null && (
-          <FloatingChatModal onClose={() => setIsChatOpen(!isChatOpen)} chatRoomId={chatRoomId} />
+          <FloatingChatModal
+            onClose={() => setIsChatOpen(!isChatOpen)}
+            chatRoomId={chatRoomId}
+          />
         )}
         <div className="flex flex-col">
           <GoTopFloating onClick={goTop} className="m-4 mt-auto" />

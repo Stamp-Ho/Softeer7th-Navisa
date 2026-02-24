@@ -13,7 +13,8 @@ type Props = {
   onModalAction: (num: number) => void;
   showReviewModal?: (show: boolean, isFeedback?: boolean) => void;
   pendingProposalId: number | null;
-  matchingEndRequired?: boolean;
+  proposalEndRequired?: boolean;
+  feedbackSubmitted: boolean;
 };
 
 const ChatMessageGroup = ({
@@ -27,7 +28,8 @@ const ChatMessageGroup = ({
   onModalAction,
   showReviewModal,
   pendingProposalId,
-  matchingEndRequired,
+  proposalEndRequired,
+  feedbackSubmitted,
 }: Props) => {
   const { t } = useTranslation(["components"]);
   const firstMsg = group[0];
@@ -90,7 +92,8 @@ const ChatMessageGroup = ({
                   isRead={msg.isRead}
                   isLast={isLast}
                   pageType={pageType}
-                  matchingEndRequired={matchingEndRequired}
+                  proposalEndRequired={proposalEndRequired}
+                  feedbackSubmitted={feedbackSubmitted}
                 />
               </div>
             );

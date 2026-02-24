@@ -13,7 +13,8 @@ type ChatBodyParams = {
   opponentName?: string;
   myName?: string;
   profileImg: string | null;
-  matchingEndRequired?: boolean;
+  proposalEndRequired?: boolean;
+  feedbackSubmitted: boolean;
 };
 
 const ChatBody = ({
@@ -24,7 +25,8 @@ const ChatBody = ({
   opponentName = "loading",
   myName = "loading",
   profileImg,
-  matchingEndRequired,
+  proposalEndRequired,
+  feedbackSubmitted,
 }: ChatBodyParams) => {
   const { t } = useTranslation(["components"]);
   const { userType } = useAuth();
@@ -91,8 +93,9 @@ const ChatBody = ({
               reviewHandler={reviewHandler}
               onModalAction={onModalAction}
               pendingProposalId={pendingProposalId}
-              matchingEndRequired={matchingEndRequired}
+              proposalEndRequired={proposalEndRequired}
               showReviewModal={showReviewModal}
+              feedbackSubmitted={feedbackSubmitted}
             />
           );
         })}

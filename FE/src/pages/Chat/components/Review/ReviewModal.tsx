@@ -10,8 +10,9 @@ type ReviewModalProps = {
   setIsReviewRequired: (b: boolean) => void;
   formId: string;
   isAgent: boolean;
-  matchingEndRequired?: boolean;
+  proposalEndRequired?: boolean;
   isFeedbackRequired?: boolean; // FEEDBACK_REQUIRED 메시지에서 띄워졌는지
+  setFeedbackSubmitted: (value: boolean) => void;
 };
 
 const ReviewModal = ({
@@ -21,8 +22,9 @@ const ReviewModal = ({
   setIsReviewRequired,
   formId,
   isAgent,
-  matchingEndRequired,
+  proposalEndRequired,
   isFeedbackRequired = false,
+  setFeedbackSubmitted,
 }: ReviewModalProps) => {
   const { data: reviewProgress } = useForeignerProgressQuery({
     type: isFeedbackRequired ? "FEEDBACK_REQUIRED" : undefined,
@@ -35,11 +37,16 @@ const ReviewModal = ({
           agentId={agentId}
           setIsReviewRequired={setIsReviewRequired}
           reviewProgress={reviewProgress}
-          matchingEndRequired={matchingEndRequired}
+          proposalEndRequired={proposalEndRequired}
           shouldGoToServiceReview={isFeedbackRequired}
         />
       )}
-      {modalView === 2 && <ServiceReviewModal reviewHandler={reviewHandler} />}
+      {modalView === 2 && (
+        <ServiceReviewModal
+          reviewHandler={reviewHandler}
+          setFeedbackSubmitted={setFeedbackSubmitted}
+        />
+      )}
       {modalView === 3 && (
         <VisaResponseModal
           reviewHandler={reviewHandler}

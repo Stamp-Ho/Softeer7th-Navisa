@@ -20,7 +20,8 @@ type ChatSystemMessageParams = {
   showReviewModal?: (show: boolean, isFeedback?: boolean) => void;
   showReplyButton?: boolean;
   agentName: string;
-  matchingEndRequired?: boolean;
+  proposalEndRequired?: boolean;
+  feedbackSubmitted: boolean;
 };
 
 const ChatSystemMessage = ({
@@ -33,7 +34,8 @@ const ChatSystemMessage = ({
   showReviewModal,
   showReplyButton,
   agentName,
-  matchingEndRequired,
+  proposalEndRequired,
+  feedbackSubmitted,
 }: ChatSystemMessageParams) => {
   const size = pageType === "DOCUMENT" ? "w-[300px]" : "w-[368px]";
   const { t } = useTranslation(["components"]);
@@ -151,9 +153,10 @@ const ChatSystemMessage = ({
         >
           <div className="flex flex-col items-center gap-5 p-6 bg-gray-0 text-text-base">
             <div className="flex flex-col gap-2 body-l-bold">
-              수임 종료 여부를 결정해주세요.
+              피드백을 작성해주세요.
             </div>
             {!isSentByMe &&
+              !feedbackSubmitted &&
               chatRoomStatus !== "CHATROOM_BLOCKED" &&
               userType === "FILLED_FOREIGNER" && (
                 <button
@@ -165,7 +168,7 @@ const ChatSystemMessage = ({
                     // 5-4: 뱃지리뷰 미작성 + 행정사 미종료 → VisaResponseModal(3)
                     const isBadgeReviewDone = reviewProgress?.isReview; // isReview = 뱃지 리뷰 여부
 
-                    if (matchingEndRequired) {
+                    if (proposalEndRequired) {
                       // 행정사가 수임을 종료하지 않은 경우: VisaResponseModal(3)
                       reviewHandler(3);
                     } else {
@@ -178,7 +181,8 @@ const ChatSystemMessage = ({
                         reviewHandler(1);
                       }
                     }
-                    showReviewModal?.(true, true); // true: FEEDBACK_REQUIRED에서 호출됨
+                    // isFeedbackRequired 상태 업데이트 (FEEDBACK_REQUIRED에서 호출됨)
+                    showReviewModal?.(true, true);
                   }}
                 >
                   피드백 작성하기

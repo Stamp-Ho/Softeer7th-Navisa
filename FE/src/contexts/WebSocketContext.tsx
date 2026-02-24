@@ -21,6 +21,11 @@ type WebSocketContextType = {
   messages: Message[];
   sendMessage: (payload: Send) => void;
   isConnected: boolean;
+  registerParticipantsInfoCallback: (
+    roomId: number,
+    callback: () => void,
+  ) => void;
+  unregisterParticipantsInfoCallback: (roomId: number) => void;
 };
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
@@ -37,6 +42,7 @@ export const WebSocketProvider = ({
   const [isConnected, setIsConnected] = useState(false);
   const isConnectedRef = useRef(false);
   const userIdRef = useRef(userId);
+  const participantsInfoCallbacksRef = useRef(new Map<number, () => void>());
 
   // userId 최신값 유지
   useEffect(() => {
@@ -95,6 +101,18 @@ export const WebSocketProvider = ({
               queryKey: ["chatMatchedUnreadCount"],
             });
           }
+
+          // ParticipantsInfo 동기화: 상태 업데이터 외부에서 콜백 실행
+          if (
+            msg.type === "REVIEW_REQUIRED" ||
+            msg.type === "FEEDBACK_REQUIRED"
+          ) {
+            const callback = participantsInfoCallbacksRef.current.get(
+              msg.roomId,
+            );
+            callback?.();
+          }
+
           setMessages((prev) => {
             if (msg.type === "READ") {
               return prev.map((m) => {
@@ -109,6 +127,8 @@ export const WebSocketProvider = ({
               });
             } else if (msg.type === "REVIEW_REQUIRED") {
               return prev;
+            } else if (msg.type === "FEEDBACK_REQUIRED") {
+              return [...prev, { ...msg, isRead: false }];
             }
             return [...prev, { ...msg, isRead: false }];
           });
@@ -151,9 +171,26 @@ export const WebSocketProvider = ({
     sendMessageToServer(payload);
   }, []);
 
+  const registerParticipantsInfoCallback = useCallback(
+    (roomId: number, callback: () => void) => {
+      participantsInfoCallbacksRef.current.set(roomId, callback);
+    },
+    [],
+  );
+
+  const unregisterParticipantsInfoCallback = useCallback((roomId: number) => {
+    participantsInfoCallbacksRef.current.delete(roomId);
+  }, []);
+
   return (
     <WebSocketContext.Provider
-      value={{ messages, sendMessage: handleSendMessage, isConnected }}
+      value={{
+        messages,
+        sendMessage: handleSendMessage,
+        isConnected,
+        registerParticipantsInfoCallback,
+        unregisterParticipantsInfoCallback,
+      }}
     >
       {children}
     </WebSocketContext.Provider>
