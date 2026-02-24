@@ -67,7 +67,11 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
           </span>
           <div className="flex-col flex gap-1.5">
             <span className="flex flex-row items-center gap-1.5 caption-m-medium">
-              <IcGraduation size={14} /> {t("agentCard.expertise")}
+              <IcGraduation size={14} /> {t("agentCard.expertise")} {authed && (
+                <span className="text-primary body-s-bold">
+                  {agent.specialityJobCount}
+                </span>
+              )}
             </span>
             {authed ? (
               <ol className="flex flex-row flex-wrap gap-1">
@@ -79,7 +83,6 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
                     {jobCodeList[(jobId - 1) % jobCodeList.length]}
                   </Tag>
                 ))}
-                {agent.specialityJobCount > 2 && <Tag variant="small_fill_gray">+{agent.specialityJobCount - 2}</Tag>}
               </ol>
             ) : (
               <Tag variant={"small_fill_gray"}>{t("agentCard.loginRequired")}</Tag>
