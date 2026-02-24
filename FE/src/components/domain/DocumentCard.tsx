@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { IcFile2 } from "../../assets/icon/StratisUi";
+import { IcFile2, IcUserProfile } from "../../assets/icon/StratisUi";
 import Button from "../common/Button";
 import Tag from "../common/Tag";
 import type { RecentVisaFormsResponse } from "../../api/types/etc";
@@ -27,9 +27,10 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
   useEffect(() => {
     if (document?.foreignerProfileImgUrl)
       resizeImage(document.foreignerProfileImgUrl, 75, 105);
-  }, [document]);
+  }, [document?.foreignerProfileImgUrl]);
 
-  if (!document || loadingImage) return <SkeletonUI />;
+  if (!document) return <SkeletonUI />;
+  if (loadingImage && document.foreignerProfileImgUrl) return <SkeletonUI />;
 
   const lastModifiedAtLocalTime = formatToLocalTime(document.lastModifiedAt);
 
@@ -70,7 +71,9 @@ const DocumentCard = ({ document }: { document?: RecentVisaFormsResponse }) => {
             </div>
           </div>
         ) : (
-          <div className="w-18.75 h-26.25 rounded-xl bg-gray-100" />
+          <div className="flex justify-center items-center w-18.75 h-26.25 rounded-xl bg-gray-100">
+            <IcUserProfile color="var(--gray-200)" />
+          </div>
         )}
         <div className="flex flex-col flex-1">
           <div className="flex flex-row gap-1.5">
