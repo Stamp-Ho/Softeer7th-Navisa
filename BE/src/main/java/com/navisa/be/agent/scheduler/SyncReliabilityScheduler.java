@@ -28,7 +28,7 @@ public class SyncReliabilityScheduler {
                     "if val then redis.call('DEL', KEYS[1]); end; " +
                     "return val";
 
-    @Scheduled(cron = "0 10 4 * * *")
+    @Scheduled(cron = "0 45 9 * * *")
     @SchedulerLock(
             name = "syncRedisToDbLock",
             lockAtMostFor = "PT5M",
