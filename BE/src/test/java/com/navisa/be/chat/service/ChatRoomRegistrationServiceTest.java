@@ -1,8 +1,8 @@
 package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
-import com.navisa.be.chat.dto.request.CreateChatRoomRequest;
-import com.navisa.be.chat.dto.response.CreateChatRoomResponse;
+import com.navisa.be.chat.dto.request.ChatRoomCreateRequest;
+import com.navisa.be.chat.dto.response.ChatRoomCreateResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
 import com.navisa.be.chat.repository.ChatRoomRepository;
@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
-class ChatRoomCommandServiceTest extends IntegrationTestSupport {
+class ChatRoomRegistrationServiceTest extends IntegrationTestSupport {
 
     @Autowired
-    private ChatRoomCommandService chatRoomCommandService;
+    private ChatRoomRegistrationService chatRoomRegistrationService;
 
     @Autowired
     private AgentProfileTestFixture agentProfileTestFixture;
@@ -51,10 +51,10 @@ class ChatRoomCommandServiceTest extends IntegrationTestSupport {
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
         String content = "안녕";
-        CreateChatRoomRequest request = new CreateChatRoomRequest(foreignerProfile.getId(), content);
+        ChatRoomCreateRequest request = new ChatRoomCreateRequest(foreignerProfile.getId(), content);
 
         // when
-        CreateChatRoomResponse response = chatRoomCommandService.create(request, agentuser.getEmail());
+        ChatRoomCreateResponse response = chatRoomRegistrationService.create(request, agentuser.getEmail());
 
         // then
         boolean exists = chatRoomRepository.existsByAgentProfileIdAndForeignerProfileId(agentProfile.getId(), foreignerProfile.getId());
@@ -72,10 +72,10 @@ class ChatRoomCommandServiceTest extends IntegrationTestSupport {
         ForeignerProfile foreignerProfile = foreignerProfileTestFixture.createForeignerProfile(foreignerUser);
 
         String content = "안녕";
-        CreateChatRoomRequest request = new CreateChatRoomRequest(foreignerProfile.getId(), content);
+        ChatRoomCreateRequest request = new ChatRoomCreateRequest(foreignerProfile.getId(), content);
 
         // when & then
-        assertThatThrownBy(() -> chatRoomCommandService.create(request, agentuser.getEmail()))
+        assertThatThrownBy(() -> chatRoomRegistrationService.create(request, agentuser.getEmail()))
                 .isInstanceOf(ChatRoomException.class)
                 .hasMessage(ResponseStatus.FORBIDDEN.getMessage());
 
@@ -94,10 +94,10 @@ class ChatRoomCommandServiceTest extends IntegrationTestSupport {
         chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         String content = "안녕";
-        CreateChatRoomRequest request = new CreateChatRoomRequest(foreignerProfile.getId(), content);
+        ChatRoomCreateRequest request = new ChatRoomCreateRequest(foreignerProfile.getId(), content);
 
         // when & then
-        assertThatThrownBy(() -> chatRoomCommandService.create(request, agentuser.getEmail()))
+        assertThatThrownBy(() -> chatRoomRegistrationService.create(request, agentuser.getEmail()))
                 .isInstanceOf(ChatRoomException.class)
                 .hasMessage(ResponseStatus.CHATROOM_ALREADY_EXISTS.getMessage());
     }

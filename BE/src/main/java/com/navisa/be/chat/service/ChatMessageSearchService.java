@@ -15,7 +15,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ChatMessageQueryService {
+public class ChatMessageSearchService {
     private final ChatMessageRepository chatMessageRepository;
 
     public List<LastMessageProjection> findAllLastChatMessageByChatRoomIn(List<Long> contentChatRoomIds) {

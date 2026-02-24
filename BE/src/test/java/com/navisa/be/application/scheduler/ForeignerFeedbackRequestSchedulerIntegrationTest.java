@@ -6,7 +6,7 @@ import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
-import com.navisa.be.chat.service.ChatServiceFacade;
+import com.navisa.be.chat.service.ChatIntegrationService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.global.common.model.entity.JobCode;
 import com.navisa.be.global.common.model.entity.Language;
@@ -55,7 +55,7 @@ class ForeignerFeedbackRequestSchedulerIntegrationTest extends IntegrationTestSu
     private VisaApplicationFormTestFixture visaApplicationFormTestFixture;
 
     @MockitoBean
-    private ChatServiceFacade chatServiceFacade;
+    private ChatIntegrationService chatIntegrationService;
 
     @Test
     @DisplayName("17일 지난 미완료 신청서가 있을 경우 알림 메시지를 전송한다")
@@ -83,6 +83,6 @@ class ForeignerFeedbackRequestSchedulerIntegrationTest extends IntegrationTestSu
         proposalEndRequestScheduler.publishRequestMessages();
 
         // then
-        verify(chatServiceFacade, times(1)).saveAndPublishChatMessage(eq(agentUser.getId()), any(ChatMessageRequest.class), any(ChatRoom.class));
+        verify(chatIntegrationService, times(1)).saveAndPublishChatMessage(eq(agentUser.getId()), any(ChatMessageRequest.class), any(ChatRoom.class));
     }
 }

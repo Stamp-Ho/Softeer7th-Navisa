@@ -2,10 +2,10 @@ package com.navisa.be.chat.controller;
 
 import com.navisa.be.chat.dto.response.ChatMessageCountResponse;
 import com.navisa.be.chat.dto.response.ChatRoomCardResponse;
-import com.navisa.be.chat.dto.response.GetChatRoomParticipantsInfoResponse;
-import com.navisa.be.chat.service.ChatMessageServiceFacade;
-import com.navisa.be.chat.service.ChatRoomQueryService;
-import com.navisa.be.chat.service.ChatRoomServiceFacade;
+import com.navisa.be.chat.dto.response.ChatRoomParticipantsInfoResponse;
+import com.navisa.be.chat.service.ChatMessageFlowService;
+import com.navisa.be.chat.service.ChatRoomSearchService;
+import com.navisa.be.chat.service.ChatRoomInteractService;
 import com.navisa.be.global.web.annotation.HasUserType;
 import com.navisa.be.global.web.annotation.LoginUser;
 import com.navisa.be.global.web.annotation.SliceInfo;
@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "ChatRoom", description = "채팅방 조회 API")
-public class ChatRoomQueryController {
+public class ChatRoomSearchController {
 
-    private final ChatRoomServiceFacade chatRoomServiceFacade;
-    private final ChatMessageServiceFacade chatMessageServiceFacade;
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatRoomInteractService chatRoomInteractService;
+    private final ChatMessageFlowService chatMessageFlowService;
+    private final ChatRoomSearchService chatRoomSearchService;
 
     @GetMapping
     @HasUserType({UserType.FILLED_FOREIGNER, UserType.VALID_AGENT})
@@ -46,7 +46,7 @@ public class ChatRoomQueryController {
             @Parameter(description = "필터", example = "unread | matched") @RequestParam(required = false) String filter,
             @Parameter(hidden = true) @LoginUser String email) {
 
-        return new BaseResponse<>(chatRoomServiceFacade.findAllChatRoomsByNoOffset(email, filter, slice));
+        return new BaseResponse<>(chatRoomInteractService.findAllChatRoomsByNoOffset(email, filter, slice));
     }
 
     @GetMapping("/nonread/count")
@@ -55,7 +55,7 @@ public class ChatRoomQueryController {
     public BaseResponse<ChatMessageCountResponse> getChatMessageNonReadCount(
             @Parameter(hidden = true) @LoginUser String email) {
 
-        ChatMessageCountResponse content = chatMessageServiceFacade.findNonReadCountByUserEmail(email);
+        ChatMessageCountResponse content = chatMessageFlowService.findNonReadCountByUserEmail(email);
         return new BaseResponse<>(content);
     }
 
@@ -65,7 +65,7 @@ public class ChatRoomQueryController {
     public BaseResponse<ChatMessageCountResponse> getChatMessageMatchedNonReadCount(
             @Parameter(hidden = true) @LoginUser String email) {
 
-        ChatMessageCountResponse content = chatMessageServiceFacade.findMatchedNonReadCountByUserEmail(email);
+        ChatMessageCountResponse content = chatMessageFlowService.findMatchedNonReadCountByUserEmail(email);
         return new BaseResponse<>(content);
     }
 
@@ -75,9 +75,9 @@ public class ChatRoomQueryController {
             summary = "특정 채팅방 참여자 정보 조회",
             description = "특정 채팅방에 참여하는 유저들의 정보를 조회할 수 있는 API입니다. 관련 노션 링크 : https://www.notion.so/bside/305220202735808aa3f7eb052902d4fc?source=copy_link "
     )
-    public BaseResponse<GetChatRoomParticipantsInfoResponse> getChatRoomParticipantsInfo(
+    public BaseResponse<ChatRoomParticipantsInfoResponse> getChatRoomParticipantsInfo(
             @PathVariable Long roomId,
             @Parameter(hidden = true) @LoginUser String loginUserEmail) {
-        return new BaseResponse<>(chatRoomQueryService.findParticipantsInfoById(roomId, loginUserEmail));
+        return new BaseResponse<>(chatRoomSearchService.findParticipantsInfoById(roomId, loginUserEmail));
     }
 }

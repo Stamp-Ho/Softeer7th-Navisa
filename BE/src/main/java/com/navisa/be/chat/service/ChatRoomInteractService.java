@@ -33,18 +33,18 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ChatRoomServiceFacade {
+public class ChatRoomInteractService {
 
     private final UserCrudService userCrudService;
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatRoomSearchService chatRoomSearchService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
-    private final ChatMessageQueryService chatMessageQueryService;
+    private final ChatMessageSearchService chatMessageSearchService;
     private final ProposalService proposalService;
-    private final ChatRoomCommandService chatRoomCommandService;
+    private final ChatRoomRegistrationService chatRoomRegistrationService;
     private final StorageService storageService;
     private final ApplicationFormForAgentService applicationFormForAgentService;
-    private final ChatServiceFacade chatServiceFacade;
+    private final ChatIntegrationService chatIntegrationService;
 
     public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter, SliceRequest<Long> slice) {
         ChatRoomFilterType filterType = ChatRoomFilterType.from(filter);
@@ -58,7 +58,7 @@ public class ChatRoomServiceFacade {
                 : agentProfileCrudService.findByUserId(user.getId()).getId();
 
         // 2. 채팅방 목록 조회 (ExistsNext 확인을 위해 Repository에서 slice.size() + 1개를 가져와야 함)
-        List<ChatRoomInfoProjection> chatRoomList = chatRoomQueryService.findChatRoomByProfileId(profileId, slice, isForeigner,
+        List<ChatRoomInfoProjection> chatRoomList = chatRoomSearchService.findChatRoomByProfileId(profileId, slice, isForeigner,
                 filterType);
 
         if (chatRoomList.isEmpty())
@@ -69,7 +69,7 @@ public class ChatRoomServiceFacade {
 
         List<Long> contentChatRoomIds = contentChatRooms.stream().map(ChatRoomInfoProjection::chatRoomId).toList();
 
-        Map<Long, String> lastMessageMap = chatMessageQueryService
+        Map<Long, String> lastMessageMap = chatMessageSearchService
                 .findAllLastChatMessageByChatRoomIn(contentChatRoomIds)
                 .stream()
                 .collect(Collectors.toMap(
@@ -85,7 +85,7 @@ public class ChatRoomServiceFacade {
             throw new ChatRoomException(ResponseStatus.INVALID_CHATMESSAGE);
         }
 
-        Map<Long, Long> nonReadCountMap = chatMessageQueryService.findCountByChatRoomIdsIn(contentChatRoomIds, profileId)
+        Map<Long, Long> nonReadCountMap = chatMessageSearchService.findCountByChatRoomIdsIn(contentChatRoomIds, profileId)
                 .stream()
                 .collect(Collectors.toMap(
                         ChatMessageNonReadCountProjection::id,
@@ -146,14 +146,14 @@ public class ChatRoomServiceFacade {
     public void updateBlockStatusToEntity(String email, Long chatRoomId, ChatMessageRequest request) {
         User user = userCrudService.findByEmail(email);
 
-        ChatRoom chatRoom = chatRoomQueryService.findByIdWithProfiles(chatRoomId);
+        ChatRoom chatRoom = chatRoomSearchService.findByIdWithProfiles(chatRoomId);
 
         validateChatRoomOwnership(user, chatRoom);
 
-        chatRoomCommandService.updateStatus(chatRoom);
+        chatRoomRegistrationService.updateStatus(chatRoom);
         proposalService.updateProposalOnBlock(chatRoom);
         applicationFormForAgentService.updateAgentProfileConnection(chatRoom);
-        chatServiceFacade.saveAndPublishChatMessage(user.getId(), request, chatRoom);
+        chatIntegrationService.saveAndPublishChatMessage(user.getId(), request, chatRoom);
     }
 
     private void validateChatRoomOwnership(User user, ChatRoom chatRoom) {

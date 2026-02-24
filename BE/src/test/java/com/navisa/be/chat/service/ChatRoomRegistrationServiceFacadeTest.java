@@ -35,10 +35,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
-class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
+class ChatRoomRegistrationServiceFacadeTest extends IntegrationTestSupport {
 
     @Autowired
-    private ChatRoomServiceFacade chatRoomServiceFacade;
+    private ChatRoomInteractService chatRoomInteractService;
 
     @Autowired
     private UserTestFixture userTestFixture;
@@ -94,7 +94,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
                 UUID.randomUUID(),
                 "BLOCK_MESSAGE",
                 MessageType.CHATROOM_BLOCKED);
-        chatRoomServiceFacade.updateBlockStatusToEntity("foreigner@test.com", chatRoom.getId(), request);
+        chatRoomInteractService.updateBlockStatusToEntity("foreigner@test.com", chatRoom.getId(), request);
 
         // then
         assertThat(chatRoom.getStatus()).isEqualTo(ChatRoomStatus.BLOCKED);
@@ -126,7 +126,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
                 UUID.randomUUID(),
                 "BLOCK_MESSAGE",
                 MessageType.CHATROOM_BLOCKED);
-        chatRoomServiceFacade.updateBlockStatusToEntity("foreigner2@test.com", chatRoom.getId(), request);
+        chatRoomInteractService.updateBlockStatusToEntity("foreigner2@test.com", chatRoom.getId(), request);
 
         // then
         assertThat(chatRoom.getStatus()).isEqualTo(ChatRoomStatus.BLOCKED);
@@ -156,7 +156,7 @@ class ChatRoomCommandServiceFacadeTest extends IntegrationTestSupport {
                 "BLOCK_MESSAGE",
                 MessageType.CHATROOM_BLOCKED);
         assertThatThrownBy(
-                () -> chatRoomServiceFacade.updateBlockStatusToEntity("other_foreigner@test.com", chatRoom.getId(), request))
+                () -> chatRoomInteractService.updateBlockStatusToEntity("other_foreigner@test.com", chatRoom.getId(), request))
                 .isInstanceOf(ChatRoomException.class)
                 .hasMessageContaining(
                         ResponseStatus.NOT_ALLOWED_TO_ACCESS_CHATROOM.getMessage());

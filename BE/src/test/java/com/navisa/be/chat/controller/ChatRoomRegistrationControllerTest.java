@@ -5,10 +5,10 @@ import com.navisa.be.auth.interceptor.AuthInterceptor;
 import com.navisa.be.auth.interceptor.UserTypeCheckInterceptor;
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
-import com.navisa.be.chat.dto.request.CreateChatRoomRequest;
-import com.navisa.be.chat.dto.response.CreateChatRoomResponse;
-import com.navisa.be.chat.service.ChatRoomCommandService;
-import com.navisa.be.chat.service.ChatRoomServiceFacade;
+import com.navisa.be.chat.dto.request.ChatRoomCreateRequest;
+import com.navisa.be.chat.dto.response.ChatRoomCreateResponse;
+import com.navisa.be.chat.service.ChatRoomRegistrationService;
+import com.navisa.be.chat.service.ChatRoomInteractService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.global.web.resolver.LoginUserResolver;
 
@@ -32,9 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ChatRoomCommandController.class)
+@WebMvcTest(ChatRoomRegistrationController.class)
 @Import(UserTypeCheckInterceptor.class)
-class ChatRoomCommandControllerTest {
+class ChatRoomRegistrationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,10 +43,10 @@ class ChatRoomCommandControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private ChatRoomCommandService chatRoomCommandService;
+    private ChatRoomRegistrationService chatRoomRegistrationService;
 
     @MockitoBean
-    private ChatRoomServiceFacade chatRoomServiceFacade;
+    private ChatRoomInteractService chatRoomInteractService;
 
     @MockitoBean
     private AuthService authService;
@@ -69,7 +69,7 @@ class ChatRoomCommandControllerTest {
         // given
         UUID opponentProfileId = UUID.randomUUID();
         String content = "안녕하세요";
-        CreateChatRoomRequest request = new CreateChatRoomRequest(opponentProfileId, content);
+        ChatRoomCreateRequest request = new ChatRoomCreateRequest(opponentProfileId, content);
         String mockEmail = "agent@navisa.com";
         Long createdChatRoomId = 1L;
 
@@ -78,8 +78,8 @@ class ChatRoomCommandControllerTest {
         given(loginUserResolver.supportsParameter(any())).willReturn(true);
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(mockEmail);
         given(authService.checkUserType(anyString(), any())).willReturn(true);
-        given(chatRoomCommandService.create(any(CreateChatRoomRequest.class), anyString()))
-                .willReturn(new CreateChatRoomResponse(createdChatRoomId));
+        given(chatRoomRegistrationService.create(any(ChatRoomCreateRequest.class), anyString()))
+                .willReturn(new ChatRoomCreateResponse(createdChatRoomId));
 
         // when & then
         mockMvc.perform(post("/api/chatroom")
@@ -99,7 +99,7 @@ class ChatRoomCommandControllerTest {
     void createChatRoom_InvalidAgent() throws Exception {
         // given
         UUID opponentProfileId = UUID.randomUUID();
-        CreateChatRoomRequest request = new CreateChatRoomRequest(opponentProfileId, "안녕하세요");
+        ChatRoomCreateRequest request = new ChatRoomCreateRequest(opponentProfileId, "안녕하세요");
         String mockEmail = "invalid@navisa.com";
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
@@ -124,7 +124,7 @@ class ChatRoomCommandControllerTest {
     void createChatroom_shouldThrowException_whenEmptyMessage() throws Exception {
         // given
         UUID opponentProfileId = UUID.randomUUID();
-        CreateChatRoomRequest request = new CreateChatRoomRequest(opponentProfileId, ""); //
+        ChatRoomCreateRequest request = new ChatRoomCreateRequest(opponentProfileId, ""); //
         String mockEmail = "invalid@navisa.com";
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);

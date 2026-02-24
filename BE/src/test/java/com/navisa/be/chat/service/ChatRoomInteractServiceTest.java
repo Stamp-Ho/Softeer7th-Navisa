@@ -22,10 +22,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
-class ChatRoomServiceFacadeTest extends IntegrationTestSupport {
+class ChatRoomInteractServiceTest extends IntegrationTestSupport {
 
     @Autowired
-    private ChatRoomServiceFacade chatRoomServiceFacade;
+    private ChatRoomInteractService chatRoomInteractService;
 
     @Autowired
     private ChatRoomTestFixture chatRoomTestFixture;
@@ -68,7 +68,7 @@ class ChatRoomServiceFacadeTest extends IntegrationTestSupport {
 
         // when
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
-        SliceResponse<ChatRoomCardResponse, Long> response = chatRoomServiceFacade
+        SliceResponse<ChatRoomCardResponse, Long> response = chatRoomInteractService
                 .findAllChatRoomsByNoOffset(foreignerUser.getEmail(), null, sliceRequest);
 
         // then
@@ -132,7 +132,7 @@ class ChatRoomServiceFacadeTest extends IntegrationTestSupport {
 
         // when
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
-        SliceResponse<ChatRoomCardResponse, Long> response = chatRoomServiceFacade
+        SliceResponse<ChatRoomCardResponse, Long> response = chatRoomInteractService
                 .findAllChatRoomsByNoOffset(foreignerUser.getEmail(), "unread", sliceRequest);
 
         // then
@@ -193,7 +193,7 @@ class ChatRoomServiceFacadeTest extends IntegrationTestSupport {
 
         // when
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
-        SliceResponse<ChatRoomCardResponse, Long> response = chatRoomServiceFacade
+        SliceResponse<ChatRoomCardResponse, Long> response = chatRoomInteractService
                 .findAllChatRoomsByNoOffset(agentUser.getEmail(), "matched", sliceRequest);
 
         // then

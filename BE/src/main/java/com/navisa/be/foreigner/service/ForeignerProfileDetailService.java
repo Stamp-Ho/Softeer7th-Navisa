@@ -7,7 +7,7 @@ import com.navisa.be.agent.service.AgentReviewCrudService;
 import com.navisa.be.application.service.ApplicationFormCrudService;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.entity.Proposal;
-import com.navisa.be.chat.service.ChatRoomQueryService;
+import com.navisa.be.chat.service.ChatRoomSearchService;
 import com.navisa.be.chat.service.ProposalCrudService;
 import com.navisa.be.foreigner.dto.request.ForeignerDetailRequest;
 import com.navisa.be.foreigner.dto.response.ForeignerDetailResponse;
@@ -39,7 +39,7 @@ public class ForeignerProfileDetailService {
     private final UserCrudService userCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final AgentReviewCrudService agentReviewCrudService;
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatRoomSearchService chatRoomSearchService;
     private final ForeignerProfileRepository foreignerProfileRepository;
     private final ForeignerEducationRepository foreignerEducationRepository;
     private final ForeignerCareersRepository foreignerCareersRepository;
@@ -75,7 +75,7 @@ public class ForeignerProfileDetailService {
 
         AgentProfile agentProfile = agentProfileCrudService.findByUserId(agentUser.getId());
 
-        Optional<ChatRoom> optChatRoom = chatRoomQueryService.findByAgentIdAndForeignerId(agentProfile.getId(), foreignerProfile.getId());
+        Optional<ChatRoom> optChatRoom = chatRoomSearchService.findByAgentIdAndForeignerId(agentProfile.getId(), foreignerProfile.getId());
 
         ForeignerEducation foreignerEducation = foreignerEducationRepository.findByForeignerId(foreignerProfile.getId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));

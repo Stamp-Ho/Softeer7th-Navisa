@@ -31,10 +31,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class ChatServiceFacadeTest extends IntegrationTestSupport {
+class ChatIntegrationServiceTest extends IntegrationTestSupport {
 
     @Autowired
-    private ChatServiceFacade chatServiceFacade;
+    private ChatIntegrationService chatIntegrationService;
 
     @Autowired
     private ChatMessageRepository chatMessageRepository;
@@ -76,7 +76,7 @@ class ChatServiceFacadeTest extends IntegrationTestSupport {
 
         // when
         // Controller에서는 chatRoom을 null로 넘기고 내부에서 조회하도록 함
-        chatServiceFacade.saveAndPublishChatMessage(foreignerUser.getId(), request, null);
+        chatIntegrationService.saveAndPublishChatMessage(foreignerUser.getId(), request, null);
 
         // then
         // 1. DB 저장 검증
@@ -121,7 +121,7 @@ class ChatServiceFacadeTest extends IntegrationTestSupport {
                 MessageType.READ);
 
         // when
-        chatServiceFacade.saveAndPublishReadEventMessage(foreignerUser.getId(), request);
+        chatIntegrationService.saveAndPublishReadEventMessage(foreignerUser.getId(), request);
 
         // then
         // 1. DB 읽음 상태 검증

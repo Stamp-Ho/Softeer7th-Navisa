@@ -34,10 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
-class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
+class ChatMessageFlowServiceTest extends IntegrationTestSupport {
 
     @Autowired
-    private ChatMessageServiceFacade chatMessageServiceFacade;
+    private ChatMessageFlowService chatMessageFlowService;
 
     @Autowired
     private ChatRoomTestFixture chatRoomTestFixture;
@@ -76,7 +76,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         chatRoomTestFixture.createChatMessage(chatRoom, foreignerProfile.getId(), "My Msg", false);
 
         // when
-        ChatMessageCountResponse response = chatMessageServiceFacade
+        ChatMessageCountResponse response = chatMessageFlowService
                 .findNonReadCountByUserEmail(foreignerUser.getEmail());
 
         // then
@@ -102,7 +102,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         chatRoomTestFixture.createChatMessage(chatRoom, foreignerProfile.getId(), "Msg3", false);
 
         // when
-        ChatMessageCountResponse response = chatMessageServiceFacade
+        ChatMessageCountResponse response = chatMessageFlowService
                 .findNonReadCountByUserEmail(agentUser.getEmail());
 
         // then
@@ -135,7 +135,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         chatRoomTestFixture.createChatRoom(foreignerProfile2, agentProfile, ChatRoomStatus.DEFAULT);
 
         // when
-        ChatMessageCountResponse response = chatMessageServiceFacade
+        ChatMessageCountResponse response = chatMessageFlowService
                 .findMatchedNonReadCountByUserEmail(agentUser.getEmail());
 
         // then
@@ -168,7 +168,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
         // when - 첫 페이지 조회 (10개 요청)
         // foreignerUser.getEmail()로 조회하므로 자신이 보낸 메시지 여부 판단 기준이 됨
         SliceRequest<Long> sliceRequest = new SliceRequest<>(null, 10);
-        SliceResponse<ChatMessageSimpleResponse, Long> response = chatMessageServiceFacade
+        SliceResponse<ChatMessageSimpleResponse, Long> response = chatMessageFlowService
                 .findChatMessagesByChatRoomIdAndNoOffset(foreignerUser.getEmail(), chatRoom.getId(), sliceRequest);
 
         // then - SliceResponse 및 데이터 검증
@@ -205,7 +205,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
 
         // when & then
         // foreignerUserA가 foreignerUserB의 채팅방을 조회하려고 시도
-        assertThatThrownBy(() -> chatMessageServiceFacade
+        assertThatThrownBy(() -> chatMessageFlowService
                 .findChatMessagesByChatRoomIdAndNoOffset(foreignerUserA.getEmail(), chatRoom.getId(),
                         sliceRequest))
                 .isInstanceOf(ChatMessageException.class)
@@ -233,7 +233,7 @@ class ChatMessageServiceFacadeTest extends IntegrationTestSupport {
 
         // when & then
         // agentUserA가 agentUserB의 채팅방을 조회하려고 시도
-        assertThatThrownBy(() -> chatMessageServiceFacade
+        assertThatThrownBy(() -> chatMessageFlowService
                 .findChatMessagesByChatRoomIdAndNoOffset(agentUserA.getEmail(), chatRoom.getId(),
                         sliceRequest))
                 .isInstanceOf(ChatMessageException.class)

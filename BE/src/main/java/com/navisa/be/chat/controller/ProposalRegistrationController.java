@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/chatroom")
-public class ProposalCommandController {
+public class ProposalRegistrationController {
 
     private final ProposalService proposalService;
 

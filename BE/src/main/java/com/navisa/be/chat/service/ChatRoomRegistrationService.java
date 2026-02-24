@@ -2,8 +2,8 @@ package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.service.AgentProfileCrudService;
-import com.navisa.be.chat.dto.request.CreateChatRoomRequest;
-import com.navisa.be.chat.dto.response.CreateChatRoomResponse;
+import com.navisa.be.chat.dto.request.ChatRoomCreateRequest;
+import com.navisa.be.chat.dto.response.ChatRoomCreateResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
@@ -27,21 +27,21 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ChatRoomCommandService {
+public class ChatRoomRegistrationService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final AgentProfileCrudService agentProfileQueryService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final UserCrudService userCrudService;
-    private final ChatMessageCommandService chatMessageCommandService;
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatMessageRegistrationService chatMessageRegistrationService;
+    private final ChatRoomSearchService chatRoomSearchService;
 
     public void updateStatus(ChatRoom chatRoom) {
         chatRoom.updateStatus(ChatRoomStatus.BLOCKED);
     }
 
     @Transactional
-    public CreateChatRoomResponse create(CreateChatRoomRequest request, String loginUserEmail) {
+    public ChatRoomCreateResponse create(ChatRoomCreateRequest request, String loginUserEmail) {
         User loginUser = userCrudService.findByEmail(loginUserEmail);
 
         if(loginUser.getUserType() != UserType.VALID_AGENT && loginUser.getUserType() != UserType.FILLED_FOREIGNER){
@@ -53,7 +53,7 @@ public class ChatRoomCommandService {
         ForeignerProfile foreignerProfile = getForeignerProfile(loginUser, request.opponentProfileId());
 
         // 방이 있으면 예외
-        if (chatRoomQueryService.existsByAgentIdAndForeignerId(agentProfile.getId(), foreignerProfile.getId())) {
+        if (chatRoomSearchService.existsByAgentIdAndForeignerId(agentProfile.getId(), foreignerProfile.getId())) {
             throw new ChatRoomException(ResponseStatus.CHATROOM_ALREADY_EXISTS);
         }
 
@@ -70,10 +70,10 @@ public class ChatRoomCommandService {
 
         // 메시지를 저장
         UUID senderId = (loginUser.getUserType() == UserType.VALID_AGENT) ? agentProfile.getId() : foreignerProfile.getId();
-        ChatMessage message = chatMessageCommandService.createFirstTextMessage(chatRoom, senderId, request.content());
+        ChatMessage message = chatMessageRegistrationService.createFirstTextMessage(chatRoom, senderId, request.content());
         chatRoom.updateLastChattedAt(message.getCreatedAt());
 
-        return new CreateChatRoomResponse(chatRoom.getId());
+        return new ChatRoomCreateResponse(chatRoom.getId());
     }
 
     private ForeignerProfile getForeignerProfile(User loginUser, UUID opponentProfileId) {

@@ -2,7 +2,6 @@ package com.navisa.be.chat.dto.response;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerExpectedCompany;
-import com.navisa.be.foreigner.model.entity.ForeignerNationality;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -11,13 +10,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Schema(description = "특정 채팅방 참여자 정보 조회 응답 DTO")
-public record GetChatRoomParticipantsInfoResponse(
+public record ChatRoomParticipantsInfoResponse(
         AgentInfo agentInfo,
         ForeignerInfo foreignerInfo,
         Boolean proposalEndRequired
 ) {
 
-    public static GetChatRoomParticipantsInfoResponse entityToDto(
+    public static ChatRoomParticipantsInfoResponse entityToDto(
             AgentProfile agentProfile,
             List<Long> top2BadgeIds,
             ForeignerProfile foreignerProfile,
@@ -27,7 +26,7 @@ public record GetChatRoomParticipantsInfoResponse(
             UUID applicationFormId,
             Boolean proposalEndRequired
     ) {
-        return new GetChatRoomParticipantsInfoResponse(
+        return new ChatRoomParticipantsInfoResponse(
                 new AgentInfo(
                         agentProfile.getId(),
                         top2BadgeIds,

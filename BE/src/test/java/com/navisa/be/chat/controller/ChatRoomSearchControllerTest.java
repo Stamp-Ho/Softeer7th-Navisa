@@ -6,10 +6,10 @@ import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.auth.service.AuthService;
 import com.navisa.be.chat.dto.response.ChatMessageCountResponse;
 import com.navisa.be.chat.dto.response.ChatRoomCardResponse;
-import com.navisa.be.chat.dto.response.GetChatRoomParticipantsInfoResponse;
-import com.navisa.be.chat.service.ChatMessageServiceFacade;
-import com.navisa.be.chat.service.ChatRoomQueryService;
-import com.navisa.be.chat.service.ChatRoomServiceFacade;
+import com.navisa.be.chat.dto.response.ChatRoomParticipantsInfoResponse;
+import com.navisa.be.chat.service.ChatMessageFlowService;
+import com.navisa.be.chat.service.ChatRoomSearchService;
+import com.navisa.be.chat.service.ChatRoomInteractService;
 import com.navisa.be.global.web.request.SliceRequest;
 import com.navisa.be.global.web.resolver.LoginUserResolver;
 import com.navisa.be.global.web.resolver.SliceInfoArgumentResolver;
@@ -35,21 +35,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ChatRoomQueryController.class)
+@WebMvcTest(ChatRoomSearchController.class)
 @Import({UserTypeCheckInterceptor.class, SliceInfoArgumentResolver.class, LoginUserResolver.class})
-class ChatRoomQueryControllerTest {
+class ChatRoomSearchControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private ChatRoomServiceFacade chatRoomServiceFacade;
+    private ChatRoomInteractService chatRoomInteractService;
 
     @MockitoBean
-    private ChatMessageServiceFacade chatMessageServiceFacade;
+    private ChatMessageFlowService chatMessageFlowService;
 
     @MockitoBean
-    private ChatRoomQueryService chatRoomQueryService;
+    private ChatRoomSearchService chatRoomSearchService;
 
     @MockitoBean
     private AuthService authService;
@@ -73,7 +73,7 @@ class ChatRoomQueryControllerTest {
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
         given(authService.checkUserType(anyString(), any())).willReturn(true);
-        given(chatRoomServiceFacade.findAllChatRoomsByNoOffset(eq(mockEmail), any(), any(SliceRequest.class)))
+        given(chatRoomInteractService.findAllChatRoomsByNoOffset(eq(mockEmail), any(), any(SliceRequest.class)))
                 .willReturn(response);
 
         // when & then
@@ -97,7 +97,7 @@ class ChatRoomQueryControllerTest {
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
         given(authService.checkUserType(anyString(), any())).willReturn(true);
-        given(chatMessageServiceFacade.findNonReadCountByUserEmail(mockEmail))
+        given(chatMessageFlowService.findNonReadCountByUserEmail(mockEmail))
                 .willReturn(response);
 
         // when & then
@@ -121,7 +121,7 @@ class ChatRoomQueryControllerTest {
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
         given(authService.checkUserType(anyString(), any())).willReturn(true);
-        given(chatMessageServiceFacade.findMatchedNonReadCountByUserEmail(mockEmail))
+        given(chatMessageFlowService.findMatchedNonReadCountByUserEmail(mockEmail))
                 .willReturn(response);
 
         // when & then
@@ -142,16 +142,16 @@ class ChatRoomQueryControllerTest {
         String mockEmail = "test@navisa.com";
         Long chatRoomId = 1L;
         UUID agentId = UUID.randomUUID();
-        GetChatRoomParticipantsInfoResponse response = new GetChatRoomParticipantsInfoResponse(
-                new GetChatRoomParticipantsInfoResponse.AgentInfo(agentId, List.of(1L, 2L), "행정사", null),
-                new GetChatRoomParticipantsInfoResponse.ForeignerInfo(UUID.randomUUID(), "외국인", "특정직무", LocalDate.now(), List.of(1L, 2L), false),
+        ChatRoomParticipantsInfoResponse response = new ChatRoomParticipantsInfoResponse(
+                new ChatRoomParticipantsInfoResponse.AgentInfo(agentId, List.of(1L, 2L), "행정사", null),
+                new ChatRoomParticipantsInfoResponse.ForeignerInfo(UUID.randomUUID(), "외국인", "특정직무", LocalDate.now(), List.of(1L, 2L), false),
                 false
         );
 
         given(authInterceptor.preHandle(any(), any(), any())).willReturn(true);
         given(jwtProvider.getEmail(anyString())).willReturn(mockEmail);
         given(authService.checkUserType(anyString(), any())).willReturn(true);
-        given(chatRoomQueryService.findParticipantsInfoById(chatRoomId, mockEmail))
+        given(chatRoomSearchService.findParticipantsInfoById(chatRoomId, mockEmail))
                 .willReturn(response);
 
         // when & then

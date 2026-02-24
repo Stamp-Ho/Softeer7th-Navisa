@@ -23,13 +23,13 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ChatMessageServiceFacade {
+public class ChatMessageFlowService {
 
     private final UserCrudService userCrudService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileCrudService agentProfileQueryService;
-    private final ChatMessageQueryService chatMessageQueryService;
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatMessageSearchService chatMessageSearchService;
+    private final ChatRoomSearchService chatRoomSearchService;
 
     @Transactional(readOnly = true)
     public ChatMessageCountResponse findNonReadCountByUserEmail(String email) {
@@ -41,7 +41,7 @@ public class ChatMessageServiceFacade {
                 foreignerProfileCrudService.findByUserId(findUser.getId()).getId() :
                 agentProfileQueryService.findByUserId(findUser.getId()).getId();
 
-        Long count = chatMessageQueryService.findNonReadCountByProfileId(profileId, isForeigner);
+        Long count = chatMessageSearchService.findNonReadCountByProfileId(profileId, isForeigner);
 
         return new ChatMessageCountResponse(count);
     }
@@ -52,7 +52,7 @@ public class ChatMessageServiceFacade {
 
         UUID agentId = agentProfileQueryService.findByUserId(findUser.getId()).getId();
 
-        Long count = chatMessageQueryService.findMatchedNonReadCountByAgentId(agentId);
+        Long count = chatMessageSearchService.findMatchedNonReadCountByAgentId(agentId);
 
         return new ChatMessageCountResponse(count);
     }
@@ -65,7 +65,7 @@ public class ChatMessageServiceFacade {
 
         UUID profileId = findProfileId(findUser, roomId);
 
-        List<ChatMessage> chatMessageList = chatMessageQueryService.findChatMessagesByChatRoomIdAndNoOffset(roomId, slice);
+        List<ChatMessage> chatMessageList = chatMessageSearchService.findChatMessagesByChatRoomIdAndNoOffset(roomId, slice);
 
         boolean existsNext = chatMessageList.size() > slice.size();
 
@@ -86,14 +86,14 @@ public class ChatMessageServiceFacade {
     private UUID findProfileId(User findUser, Long roomId) {
         if (findUser.getUserType().equals(UserType.FILLED_FOREIGNER)) {
             ForeignerProfile foreignerProfile = foreignerProfileCrudService.findByUserId(findUser.getId());
-            if (!chatRoomQueryService.isOwnedByProfileIdAndChatRoomId(roomId, foreignerProfile)) {
+            if (!chatRoomSearchService.isOwnedByProfileIdAndChatRoomId(roomId, foreignerProfile)) {
                 throw new ChatMessageException(ResponseStatus.NOT_ALLOWED_TO_GET_CHAT_MESSAGE);
             }
             return foreignerProfile.getId();
         }
 
         AgentProfile agentProfile = agentProfileQueryService.findByUserId(findUser.getId());
-        if (!chatRoomQueryService.isOwnedByProfileIdAndChatRoomId(roomId, agentProfile)) {
+        if (!chatRoomSearchService.isOwnedByProfileIdAndChatRoomId(roomId, agentProfile)) {
             throw new ChatMessageException(ResponseStatus.NOT_ALLOWED_TO_GET_CHAT_MESSAGE);
         }
         return agentProfile.getId();

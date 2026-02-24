@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Schema(description = "채팅방 요청 DTO")
-public record CreateChatRoomRequest(
+public record ChatRoomCreateRequest(
         @Schema(description = "상대방 프로필 id")
         @NotNull(message = "상대방 id는 null일 수 없습니다")
         UUID opponentProfileId,

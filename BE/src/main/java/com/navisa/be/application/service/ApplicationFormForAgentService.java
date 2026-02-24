@@ -13,7 +13,7 @@ import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.MessageType;
 import com.navisa.be.chat.model.enums.ProposalStatus;
 import com.navisa.be.chat.service.ChatRoomCrudService;
-import com.navisa.be.chat.service.ChatServiceFacade;
+import com.navisa.be.chat.service.ChatIntegrationService;
 import com.navisa.be.chat.service.ProposalCrudService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
@@ -35,7 +35,7 @@ public class ApplicationFormForAgentService {
     private final ApplicationFormRepository applicationFormRepository;
     private final ProposalCrudService proposalCrudService;
     private final ChatRoomCrudService chatRoomCrudService;
-    private final ChatServiceFacade chatServiceFacade;
+    private final ChatIntegrationService chatIntegrationService;
 
     @Transactional
     public ApplicationFormIdResponse updateApplicationStatus(String email, UUID formId, Boolean isDone) {
@@ -51,7 +51,7 @@ public class ApplicationFormForAgentService {
             applicationFormRepository.saveAndFlush(form);
             ChatRoom chatRoom = chatRoomCrudService.findByAgentIdAndForeignerId(form.getAgentProfile().getId(), form.getForeignerProfile().getId());
             ChatMessageResponse response = ChatMessageResponse.createReviewRequiredEventMessage(form.getForeignerProfile().getUserId(), chatRoom.getId());
-            chatServiceFacade.publishEventMessage(form.getForeignerProfile().getUserId(), response);
+            chatIntegrationService.publishEventMessage(form.getForeignerProfile().getUserId(), response);
         }
         else{
             form.updateStatus(isDone);
@@ -93,7 +93,7 @@ public class ApplicationFormForAgentService {
                 "수임이 종료되었습니다. 해당 수임 계약에 대한 피드백 작성 부탁드립니다.",
                 MessageType.FEEDBACK_REQUIRED
         );
-        chatServiceFacade.saveAndPublishChatMessage(currentForm.getAgentProfile().getUserId(), chatRequest, chatRoom);
+        chatIntegrationService.saveAndPublishChatMessage(currentForm.getAgentProfile().getUserId(), chatRequest, chatRoom);
 
         return new ApplicationFormFinishedStatusResponse(
                 currentForm.getId(),

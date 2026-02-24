@@ -2,7 +2,7 @@ package com.navisa.be.chat.controller;
 
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.exception.WebSocketConnectionException;
-import com.navisa.be.chat.service.ChatServiceFacade;
+import com.navisa.be.chat.service.ChatIntegrationService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MessageHandlingController {
 
-    private final ChatServiceFacade chatServiceFacade;
+    private final ChatIntegrationService chatIntegrationService;
 
     @MessageMapping("/chat/message") // 클라이언트가 /pub/chat/message로 보낼 때 매칭
     public void handleChatMessage(@Payload ChatMessageRequest request, StompHeaderAccessor headerAccessor) {
@@ -39,7 +39,7 @@ public class MessageHandlingController {
 
         log.debug("request {}", request);
 
-        chatServiceFacade.saveAndPublishChatMessage(senderId, request, null);
+        chatIntegrationService.saveAndPublishChatMessage(senderId, request, null);
 
         log.info("SEND /pub/chat/message 처리 완료");
     }
@@ -61,7 +61,7 @@ public class MessageHandlingController {
             throw new WebSocketConnectionException(ResponseStatus.INVALID_CHATTING_SESSION);
         }
 
-        chatServiceFacade.saveAndPublishReadEventMessage(senderId, request);
+        chatIntegrationService.saveAndPublishReadEventMessage(senderId, request);
 
         log.info("SEND /pub/room/message/read 처리 완료");
     }

@@ -33,8 +33,8 @@ public class ProposalService {
     private final UserCrudService userCrudService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final AgentProfileCrudService agentProfileQueryService;
-    private final ChatRoomQueryService chatRoomQueryService;
-    private final ChatServiceFacade chatServiceFacade;
+    private final ChatRoomSearchService chatRoomSearchService;
+    private final ChatIntegrationService chatIntegrationService;
     private final ApplicationFormCrudService applicationFormCrudService;
 
     @Transactional(readOnly = true)
@@ -48,11 +48,11 @@ public class ProposalService {
 
         User user = userCrudService.findByEmail(email);
         UUID profileId = getProfileId(user);
-        ChatRoom room = chatRoomQueryService.findByIdWithProfiles(roomId);
+        ChatRoom room = chatRoomSearchService.findByIdWithProfiles(roomId);
 
         validateChatRoomOwnership(profileId, user.getUserType(), room);
         createWithValidation(profileId, room);
-        chatServiceFacade.saveAndPublishChatMessage(user.getId(), request, room);
+        chatIntegrationService.saveAndPublishChatMessage(user.getId(), request, room);
     }
 
     @Transactional
@@ -87,18 +87,18 @@ public class ProposalService {
                                          BiFunction<ChatRoom, ChatMessageRequest, ChatMessageRequest> dbAction) {
         User user = userCrudService.findByEmail(email);
         UUID profileId = getProfileId(user);
-        ChatRoom room = chatRoomQueryService.findByIdWithProfiles(roomId);
+        ChatRoom room = chatRoomSearchService.findByIdWithProfiles(roomId);
 
         validateChatRoomOwnership(profileId, user.getUserType(), room);
 
         ChatMessageRequest finalMessageRequest = dbAction.apply(room, request);
 
-        chatServiceFacade.saveAndPublishChatMessage(user.getId(), finalMessageRequest, room);
+        chatIntegrationService.saveAndPublishChatMessage(user.getId(), finalMessageRequest, room);
     }
 
     @Transactional
     public void createWithValidation(UUID senderId, ChatRoom room) {
-        chatRoomQueryService.findByIdWithLock(room.getId());
+        chatRoomSearchService.findByIdWithLock(room.getId());
         Proposal proposal = proposalRepository.findFirstByChatRoom_IdOrderByIdDesc(room.getId())
                 .orElse(null);
 
@@ -116,7 +116,7 @@ public class ProposalService {
     @Transactional
     public ChatMessageRequest updateStatusByChatRoom(ChatRoom chatRoom, ProposalStatus updatedStatus,
                                                      ChatMessageRequest request) {
-        chatRoomQueryService.findByIdWithLock(chatRoom.getId());
+        chatRoomSearchService.findByIdWithLock(chatRoom.getId());
         Proposal proposal = proposalRepository.findFirstByChatRoom_IdOrderByIdDesc(chatRoom.getId())
                 .orElseThrow(() -> new ProposalException(ResponseStatus.BAD_REQUEST, "현재 진행 중인 제안이 없습니다."));
 

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -102,18 +103,24 @@ public class AgentSpecializedJobService {
             return Collections.emptyMap();
         }
 
-        List<AgentSpecializedJobSummary> summaries = agentSpecializedJobSummaryRepository.findAllByAgentIdIn(agentIds);
+        // Redis 조회를 위한 데이터 로드
+        List<AgentSpecializedJobSummary> allSummaries = agentSpecializedJobSummaryRepository.findAllByAgentIdIn(agentIds);
+        Map<String, Double> redisZaWeightMap = fetchRedisZaWeightsBatch(allSummaries);
 
-        Map<String, Double> redisZaWeightMap = fetchRedisZaWeightsBatch(summaries);
+        // 파티셔닝 크기
+        int pageSize = 100;
 
-        return summaries.stream()
+        return IntStream.range(0, (agentIds.size() + pageSize - 1) / pageSize)
+                .mapToObj(i -> agentIds.subList(i * pageSize, Math.min(agentIds.size(), (i + 1) * pageSize)))
+                .flatMap(partition -> agentSpecializedJobSummaryRepository.findAllByAgentIdIn(partition).stream())
                 .collect(Collectors.toMap(
                         this::makeRedisKey,
                         summary -> {
                             String key = makeRedisKey(summary);
-
-                            return summary.getAccumulatedReviewReliability() + redisZaWeightMap.getOrDefault(key, 0.0);
-                        }
+                            return summary.getAccumulatedReviewReliability() +
+                                    redisZaWeightMap.getOrDefault(key, 0.0);
+                        },
+                        Double::sum
                 ));
     }
 

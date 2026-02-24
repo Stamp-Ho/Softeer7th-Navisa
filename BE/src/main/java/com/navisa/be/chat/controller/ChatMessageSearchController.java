@@ -1,7 +1,7 @@
 package com.navisa.be.chat.controller;
 
 import com.navisa.be.chat.dto.response.ChatMessageSimpleResponse;
-import com.navisa.be.chat.service.ChatMessageServiceFacade;
+import com.navisa.be.chat.service.ChatMessageFlowService;
 import com.navisa.be.global.web.annotation.HasUserType;
 import com.navisa.be.global.web.annotation.LoginUser;
 import com.navisa.be.global.web.annotation.SliceInfo;
@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/chatroom")
-public class ChatMessageQueryController {
+public class ChatMessageSearchController {
 
-    private final ChatMessageServiceFacade chatMessageServiceFacade;
+    private final ChatMessageFlowService chatMessageFlowService;
 
     @HasUserType({UserType.FILLED_FOREIGNER, UserType.VALID_AGENT})
     @GetMapping("/{chatRoomId}/messages")
@@ -41,6 +41,6 @@ public class ChatMessageQueryController {
             @ParameterObject @SliceInfo(size = 20, max = 20) SliceRequest<Long> slice,
             @PathVariable Long chatRoomId) {
 
-        return new BaseResponse<>(chatMessageServiceFacade.findChatMessagesByChatRoomIdAndNoOffset(email, chatRoomId, slice));
+        return new BaseResponse<>(chatMessageFlowService.findChatMessagesByChatRoomIdAndNoOffset(email, chatRoomId, slice));
     }
 }

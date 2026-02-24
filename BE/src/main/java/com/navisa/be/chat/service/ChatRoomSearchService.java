@@ -6,7 +6,7 @@ import com.navisa.be.chat.dto.projection.ChatRoomInfoProjection;
 import com.navisa.be.agent.service.AgentReviewCrudService;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.service.ApplicationFormCrudService;
-import com.navisa.be.chat.dto.response.GetChatRoomParticipantsInfoResponse;
+import com.navisa.be.chat.dto.response.ChatRoomParticipantsInfoResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.entity.Proposal;
@@ -32,7 +32,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ChatRoomQueryService {
+public class ChatRoomSearchService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final UserCrudService userCrudService;
@@ -80,7 +80,7 @@ public class ChatRoomQueryService {
     }
 
     @Transactional(readOnly = true)
-    public GetChatRoomParticipantsInfoResponse findParticipantsInfoById(Long roomId, String loginUserEmail) {
+    public ChatRoomParticipantsInfoResponse findParticipantsInfoById(Long roomId, String loginUserEmail) {
         User loginUser = userCrudService.findByEmail(loginUserEmail);
 
         ChatRoom chatRoom = chatRoomRepository.findByIdWithParticipantsInfo(roomId)
@@ -121,7 +121,7 @@ public class ChatRoomQueryService {
             }
         }
 
-        return GetChatRoomParticipantsInfoResponse.entityToDto(
+        return ChatRoomParticipantsInfoResponse.entityToDto(
                 agentProfile,
                 top2BadgeIds,
                 foreignerProfile,

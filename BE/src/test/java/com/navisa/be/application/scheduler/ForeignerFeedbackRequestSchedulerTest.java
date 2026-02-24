@@ -5,8 +5,8 @@ import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.model.entity.ChatRoom;
-import com.navisa.be.chat.service.ChatRoomQueryService;
-import com.navisa.be.chat.service.ChatServiceFacade;
+import com.navisa.be.chat.service.ChatRoomSearchService;
+import com.navisa.be.chat.service.ChatIntegrationService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,10 +41,10 @@ class ForeignerFeedbackRequestSchedulerTest {
     private ApplicationFormRepository applicationFormRepository;
 
     @Mock
-    private ChatRoomQueryService chatRoomQueryService;
+    private ChatRoomSearchService chatRoomSearchService;
 
     @Mock
-    private ChatServiceFacade chatServiceFacade;
+    private ChatIntegrationService chatIntegrationService;
 
     @InjectMocks
     private ForeignerFeedbackRequestScheduler scheduler;
@@ -78,7 +78,7 @@ class ForeignerFeedbackRequestSchedulerTest {
             return null;
         }).when(transactionTemplate).executeWithoutResult(any());
 
-        given(chatRoomQueryService.findByAgentProfileAndForeignerProfile(agentProfile, foreignerProfile))
+        given(chatRoomSearchService.findByAgentProfileAndForeignerProfile(agentProfile, foreignerProfile))
                 .willReturn(chatRoom);
 
         // when
@@ -86,8 +86,8 @@ class ForeignerFeedbackRequestSchedulerTest {
 
         // then
         verify(applicationFormRepository).findApplicationFormsRequiringFeedback(any(LocalDateTime.class), any(LocalDateTime.class));
-        verify(chatRoomQueryService).findByAgentProfileAndForeignerProfile(agentProfile, foreignerProfile);
-        verify(chatServiceFacade).saveAndPublishChatMessage(eq(agentUserId), any(ChatMessageRequest.class), eq(chatRoom));
+        verify(chatRoomSearchService).findByAgentProfileAndForeignerProfile(agentProfile, foreignerProfile);
+        verify(chatIntegrationService).saveAndPublishChatMessage(eq(agentUserId), any(ChatMessageRequest.class), eq(chatRoom));
     }
 
     @Test
@@ -102,7 +102,7 @@ class ForeignerFeedbackRequestSchedulerTest {
 
         // then
         verify(applicationFormRepository).findApplicationFormsRequiringFeedback(any(LocalDateTime.class), any(LocalDateTime.class));
-        verify(chatRoomQueryService, times(0)).findByAgentProfileAndForeignerProfile(any(), any());
-        verify(chatServiceFacade, times(0)).saveAndPublishChatMessage(any(), any(), any());
+        verify(chatRoomSearchService, times(0)).findByAgentProfileAndForeignerProfile(any(), any());
+        verify(chatIntegrationService, times(0)).saveAndPublishChatMessage(any(), any(), any());
     }
 }

@@ -21,18 +21,18 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ChatServiceFacade {
+public class ChatIntegrationService {
 
-    private final ChatMessageCommandService chatMessageCommandService;
+    private final ChatMessageRegistrationService chatMessageRegistrationService;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatRoomSearchService chatRoomSearchService;
 
     @Transactional
     public void saveAndPublishChatMessage(UUID senderId, ChatMessageRequest request, ChatRoom chatRoom) {
         final ChatRoom finalChatRoom = (chatRoom != null)
                 ? chatRoom
-                : chatRoomQueryService.findByIdWithProfiles(request.roomId());
-        ChatMessage chatMessage = chatMessageCommandService.createFirstTextMessage(
+                : chatRoomSearchService.findByIdWithProfiles(request.roomId());
+        ChatMessage chatMessage = chatMessageRegistrationService.createFirstTextMessage(
                 finalChatRoom, getSenderProfileId(finalChatRoom, senderId), request);
         finalChatRoom.updateLastChattedAt(chatMessage.getCreatedAt());
 
@@ -56,7 +56,7 @@ public class ChatServiceFacade {
 
     @Transactional
     public void saveAndPublishReadEventMessage(UUID senderId, ChatMessageRequest request) {
-        ChatRoom findChatRoom = chatRoomQueryService.findByIdWithProfiles(request.roomId());
+        ChatRoom findChatRoom = chatRoomSearchService.findByIdWithProfiles(request.roomId());
 
         if (request.content() == null || request.content().isBlank()) {
             throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
@@ -69,7 +69,7 @@ public class ChatServiceFacade {
             throw new WebSocketConnectionException(ResponseStatus.BAD_REQUEST);
         }
 
-        chatMessageCommandService.updateReadStatusBeforeChatMessageSentAt
+        chatMessageRegistrationService.updateReadStatusBeforeChatMessageSentAt
                 (lastReadMessageId, getSenderProfileId(findChatRoom, senderId), findChatRoom.getId());
 
         // 송신자의 채널에 에코

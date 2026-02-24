@@ -4,13 +4,8 @@ import com.navisa.be.application.dto.response.ApplicationFormFinishedStatusRespo
 import com.navisa.be.application.exception.ApplicationFormException;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.chat.dto.message.ChatMessageRequest;
-import com.navisa.be.chat.model.entity.ChatRoom;
-import com.navisa.be.chat.model.enums.MessageType;
 import com.navisa.be.chat.model.enums.ProposalStatus;
-import com.navisa.be.chat.service.ChatRoomCrudService;
-import com.navisa.be.chat.service.ChatRoomQueryService;
-import com.navisa.be.chat.service.ChatServiceFacade;
+import com.navisa.be.chat.service.ChatRoomSearchService;
 import com.navisa.be.chat.service.ProposalCrudService;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
@@ -29,7 +24,7 @@ public class ApplicationFormForForeignerService {
 
     private final UserCrudService userCrudService;
     private final ApplicationFormRepository applicationFormRepository;
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatRoomSearchService chatRoomSearchService;
     private final ProposalCrudService proposalCrudService;
 
     @Transactional
@@ -66,7 +61,7 @@ public class ApplicationFormForForeignerService {
 
     private void updateRelatedProposalToCompleted(ApplicationForm form) {
         if (form.getAgentProfile() != null && form.getForeignerProfile() != null) {
-            chatRoomQueryService.findByAgentIdAndForeignerId(
+            chatRoomSearchService.findByAgentIdAndForeignerId(
                     form.getAgentProfile().getId(),
                     form.getForeignerProfile().getId()).flatMap(proposalCrudService::findFirstByChatRoomOrderByIdDesc)
                     .ifPresent(proposal -> {

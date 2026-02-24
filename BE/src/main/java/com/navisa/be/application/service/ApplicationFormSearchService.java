@@ -9,7 +9,7 @@ import com.navisa.be.application.dto.response.RecentApplicationFormsResponse;
 import com.navisa.be.application.exception.ApplicationFormException;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
-import com.navisa.be.chat.service.ChatRoomQueryService;
+import com.navisa.be.chat.service.ChatRoomSearchService;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.common.model.enums.ImageSize;
@@ -37,7 +37,7 @@ public class ApplicationFormSearchService {
     private final UserCrudService userCrudService;
     private final AgentProfileCrudService agentProfileCrudService;
     private final StorageService storageService;
-    private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatRoomSearchService chatRoomSearchService;
 
     public List<RecentApplicationFormsResponse> getRecentApplicationForms(String email) {
         User user = userCrudService.findByEmail(email);
@@ -116,7 +116,7 @@ public class ApplicationFormSearchService {
                 ? storageService.getImgUrl(ImageSize.MEDIUM, key, true)
                 : null;
 
-        Long chatRoomId = chatRoomQueryService.getChatRoomIdByProfiles(form.getAgentProfile(), foreigner);
+        Long chatRoomId = chatRoomSearchService.getChatRoomIdByProfiles(form.getAgentProfile(), foreigner);
 
         return new ApplicationFormDetailResponse(
                 form.getId(),
@@ -145,7 +145,7 @@ public class ApplicationFormSearchService {
                 ? storageService.getImgUrl(ImageSize.MEDIUM, form.getProfileObjectKey(), true)
                 : null;
 
-        Long chatRoomId = chatRoomQueryService.getChatRoomIdByProfiles(agent, form.getForeignerProfile());
+        Long chatRoomId = chatRoomSearchService.getChatRoomIdByProfiles(agent, form.getForeignerProfile());
 
         return new ApplicationFormDetailResponse(
                 form.getId(),

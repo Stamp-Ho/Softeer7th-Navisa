@@ -7,7 +7,7 @@ import com.navisa.be.agent.repository.AgentBadgeSummaryRepository;
 import com.navisa.be.application.model.entity.ApplicationForm;
 import com.navisa.be.application.repository.ApplicationFormRepository;
 import com.navisa.be.application.service.ApplicationFormForAgentService;
-import com.navisa.be.chat.dto.response.GetChatRoomParticipantsInfoResponse;
+import com.navisa.be.chat.dto.response.ChatRoomParticipantsInfoResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
@@ -35,10 +35,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class ChatRoomQueryServiceTest extends IntegrationTestSupport {
+class ChatRoomSearchServiceTest extends IntegrationTestSupport {
 
     @Autowired
-    private ChatRoomQueryService chatRoomQueryService;
+    private ChatRoomSearchService chatRoomSearchService;
 
     @Autowired
     private UserTestFixture userTestFixture;
@@ -85,7 +85,7 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // when
-        GetChatRoomParticipantsInfoResponse response = chatRoomQueryService.findParticipantsInfoById(chatRoom.getId(),
+        ChatRoomParticipantsInfoResponse response = chatRoomSearchService.findParticipantsInfoById(chatRoom.getId(),
                 agentUser.getEmail());
 
         // then
@@ -128,7 +128,7 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         ApplicationForm applicationForm = visaApplicationFormTestFixture.createVisaApplicationForm(agentProfile, foreignerProfile, jobCode, false);
 
         // when
-        GetChatRoomParticipantsInfoResponse response = chatRoomQueryService.findParticipantsInfoById(chatRoom.getId(),
+        ChatRoomParticipantsInfoResponse response = chatRoomSearchService.findParticipantsInfoById(chatRoom.getId(),
                 agentUser.getEmail());
 
         // then
@@ -173,7 +173,7 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         applicationFormForAgentService.updateApplicationStatus(agentUser.getEmail(), applicationForm.getId(), true);
 
         // when
-        GetChatRoomParticipantsInfoResponse response = chatRoomQueryService.findParticipantsInfoById(chatRoom.getId(), foreignerUser.getEmail());
+        ChatRoomParticipantsInfoResponse response = chatRoomSearchService.findParticipantsInfoById(chatRoom.getId(), foreignerUser.getEmail());
 
 
         // then
@@ -194,7 +194,7 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         agentProfileTestFixture.createAgentProfile("Agent", "Addr", agentUser.getId());
 
         // when & then
-        assertThatThrownBy(() -> chatRoomQueryService.findParticipantsInfoById(1L, agentUser.getEmail()))
+        assertThatThrownBy(() -> chatRoomSearchService.findParticipantsInfoById(1L, agentUser.getEmail()))
                 .isInstanceOf(ChatRoomException.class)
                 .hasMessage(ResponseStatus.NOT_FOUND_CHATROOM.getMessage());
     }
@@ -215,7 +215,7 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         ChatRoom chatRoom = chatRoomTestFixture.createChatRoom(foreignerProfile, agentProfile, ChatRoomStatus.DEFAULT);
 
         // when & then
-        assertThatThrownBy(() -> chatRoomQueryService.findParticipantsInfoById(chatRoom.getId(), nonParticipant.getEmail()))
+        assertThatThrownBy(() -> chatRoomSearchService.findParticipantsInfoById(chatRoom.getId(), nonParticipant.getEmail()))
                 .isInstanceOf(ChatRoomException.class)
                 .hasMessage(ResponseStatus.NOT_ALLOWED_TO_ACCESS_CHATROOM.getMessage());
     }
@@ -244,7 +244,7 @@ class ChatRoomQueryServiceTest extends IntegrationTestSupport {
         applicationFormForAgentService.updateApplicationStatus(agentUser.getEmail(), applicationForm.getId(), true);
 
         // when
-        GetChatRoomParticipantsInfoResponse response = chatRoomQueryService.findParticipantsInfoById(chatRoom.getId(),
+        ChatRoomParticipantsInfoResponse response = chatRoomSearchService.findParticipantsInfoById(chatRoom.getId(),
                 foreignerUser.getEmail());
 
         // then

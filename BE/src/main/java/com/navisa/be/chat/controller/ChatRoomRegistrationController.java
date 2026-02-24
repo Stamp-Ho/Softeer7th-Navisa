@@ -1,10 +1,10 @@
 package com.navisa.be.chat.controller;
 
 import com.navisa.be.chat.dto.message.ChatMessageRequest;
-import com.navisa.be.chat.service.ChatRoomServiceFacade;
-import com.navisa.be.chat.dto.request.CreateChatRoomRequest;
-import com.navisa.be.chat.dto.response.CreateChatRoomResponse;
-import com.navisa.be.chat.service.ChatRoomCommandService;
+import com.navisa.be.chat.service.ChatRoomInteractService;
+import com.navisa.be.chat.dto.request.ChatRoomCreateRequest;
+import com.navisa.be.chat.dto.response.ChatRoomCreateResponse;
+import com.navisa.be.chat.service.ChatRoomRegistrationService;
 import com.navisa.be.global.web.annotation.HasUserType;
 import com.navisa.be.global.web.annotation.LoginUser;
 import com.navisa.be.global.web.response.BaseResponse;
@@ -27,10 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/chatroom")
 @RestController
-public class ChatRoomCommandController {
+public class ChatRoomRegistrationController {
 
-    private final ChatRoomServiceFacade chatRoomServiceFacade;
-    private final ChatRoomCommandService chatRoomCommandService;
+    private final ChatRoomInteractService chatRoomInteractService;
+    private final ChatRoomRegistrationService chatRoomRegistrationService;
 
     @Operation(
             summary = "채팅방 내에서 상대방 차단 API",
@@ -43,7 +43,7 @@ public class ChatRoomCommandController {
             @PathVariable(name = "roomId") Long chatRoomId,
             @Valid @RequestBody ChatMessageRequest request) {
 
-        chatRoomServiceFacade.updateBlockStatusToEntity(email, chatRoomId, request);
+        chatRoomInteractService.updateBlockStatusToEntity(email, chatRoomId, request);
         return new BaseResponse<>(null);
     }
 
@@ -53,10 +53,10 @@ public class ChatRoomCommandController {
     )
     @HasUserType({UserType.VALID_AGENT, UserType.FILLED_FOREIGNER})
     @PostMapping
-    public BaseResponse<CreateChatRoomResponse> createChatRoom(
-            @Valid @RequestBody CreateChatRoomRequest request,
+    public BaseResponse<ChatRoomCreateResponse> createChatRoom(
+            @Valid @RequestBody ChatRoomCreateRequest request,
             @Parameter(hidden = true) @LoginUser String loginUserEmail
     ) {
-        return new BaseResponse<>(chatRoomCommandService.create(request, loginUserEmail));
+        return new BaseResponse<>(chatRoomRegistrationService.create(request, loginUserEmail));
     }
 }

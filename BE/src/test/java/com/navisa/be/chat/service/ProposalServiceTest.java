@@ -58,7 +58,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
     private ChatRoomTestFixture chatRoomTestFixture;
 
     @MockitoBean
-    private ChatServiceFacade chatServiceFacade;
+    private ChatIntegrationService chatIntegrationService;
 
     @Autowired
     private ApplicationFormCrudService applicationFormCrudService;
@@ -93,7 +93,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
         assertThat(proposal.getStatus()).isEqualTo(ProposalStatus.PROPOSED);
         assertThat(proposal.getSenderId()).isEqualTo(agentProfile.getId());
 
-        verify(chatServiceFacade).saveAndPublishChatMessage(
+        verify(chatIntegrationService).saveAndPublishChatMessage(
                 eq(agentUser.getId()),
                 any(ChatMessageRequest.class),
                 any(ChatRoom.class));
@@ -126,7 +126,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
         assertThat(proposal.getStatus()).isEqualTo(ProposalStatus.PROPOSED);
         assertThat(proposal.getSenderId()).isEqualTo(foreignerProfile.getId());
 
-        verify(chatServiceFacade).saveAndPublishChatMessage(
+        verify(chatIntegrationService).saveAndPublishChatMessage(
                 eq(foreignerUser.getId()),
                 any(ChatMessageRequest.class),
                 any(ChatRoom.class));
@@ -166,7 +166,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
         assertThat(form.getAgentProfile()).isNotNull();
         assertThat(form.getAgentProfile().getId()).isEqualTo(agentProfile.getId());
 
-        verify(chatServiceFacade).saveAndPublishChatMessage(eq(foreignerUser.getId()),
+        verify(chatIntegrationService).saveAndPublishChatMessage(eq(foreignerUser.getId()),
                 any(ChatMessageRequest.class),
                 any(ChatRoom.class));
     }
@@ -198,7 +198,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
         Proposal proposal = proposalRepository.findFirstByChatRoomOrderByIdDesc(chatRoom).orElseThrow();
         assertThat(proposal.getStatus()).isEqualTo(ProposalStatus.REJECTED);
 
-        verify(chatServiceFacade).saveAndPublishChatMessage(
+        verify(chatIntegrationService).saveAndPublishChatMessage(
                 eq(foreignerUser.getId()),
                 any(ChatMessageRequest.class),
                 any(ChatRoom.class));
@@ -243,7 +243,7 @@ class ProposalServiceTest extends IntegrationTestSupport {
                 .orElseThrow();
         assertThat(updatedForm.getAgentProfile()).isNull();
 
-        verify(chatServiceFacade).saveAndPublishChatMessage(
+        verify(chatIntegrationService).saveAndPublishChatMessage(
                 eq(agentUser.getId()),
                 any(ChatMessageRequest.class),
                 any(ChatRoom.class));
