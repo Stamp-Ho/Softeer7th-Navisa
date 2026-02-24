@@ -158,7 +158,7 @@ class ApplicationFormRepositoryTest extends IntegrationTestSupport {
         createFormWithExportedAtAndFinished("finished@test.com", targetDate.atTime(12, 0), true, true);
 
         // when
-        List<ApplicationForm> result = applicationFormRepository.findAllRequiringEnd(targetDate);
+        List<ApplicationForm> result = applicationFormRepository.findApplicationFormsRequiringFeedback(targetDate.atStartOfDay(), targetDate.plusDays(1).atStartOfDay());
 
         // then
         assertThat(result).hasSize(2);

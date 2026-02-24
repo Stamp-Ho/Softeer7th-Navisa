@@ -36,6 +36,9 @@ public class GeminiTextEmbeddingClient implements TextEmbeddingClient {
                                      @Value("${google.gemini.api.base-url}") String baseUrl) {
         this.webClient = webClientBuilder
                 .baseUrl(baseUrl)
+                .codecs(configurer -> configurer
+                        .defaultCodecs()
+                        .maxInMemorySize(3 * 1024 * 1024)) // 버퍼를 3MB로 설정
                 .clientConnector(new ReactorClientHttpConnector(
                         HttpClient.create()
                                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000) // 해외 서버와 커넥션을 맺을 때는 3초가 적당

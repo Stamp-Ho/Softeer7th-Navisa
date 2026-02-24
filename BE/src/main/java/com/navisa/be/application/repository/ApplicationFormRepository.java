@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,13 +64,30 @@ public interface ApplicationFormRepository extends JpaRepository<ApplicationForm
 
     Optional<ApplicationForm> findFirstByForeignerProfile_IdOrderByCreatedAtDesc(UUID foreignerProfileId);
 
+    // Agent와 Foreigner 사이에 가장 최근 Proposal에 대한 AgentReview에 feedback이 달려있지 않은 신청서만 조회
     @Query(value = """
         SELECT f FROM ApplicationForm f
         JOIN FETCH f.foreignerProfile fp
         JOIN FETCH f.agentProfile ap
         WHERE f.isFinished = false
             AND f.isDone = true
-            AND CAST(f.exportedAt AS date) = :targetDate
+            AND f.exportedAt >= :startDateTime 
+            AND f.exportedAt < :endDateTime
+            AND NOT EXISTS (
+                SELECT ar FROM AgentReview ar
+                WHERE ar.agentProfileId = ap.id
+                AND ar.foreignerProfileId = fp.id
+                AND ar.proposalId = (
+                    SELECT MAX(p.id) FROM Proposal p
+                    JOIN p.chatRoom cr
+                    WHERE cr.agentProfile.id = ap.id
+                    AND cr.foreignerProfile.id = fp.id
+                )
+                AND ar.feedbackContent IS NOT NULL
+            )
     """)
-    List<ApplicationForm> findAllRequiringEnd(@Param("targetDate") LocalDate targetDate);
+    List<ApplicationForm> findApplicationFormsRequiringFeedback(
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime
+    );
 }

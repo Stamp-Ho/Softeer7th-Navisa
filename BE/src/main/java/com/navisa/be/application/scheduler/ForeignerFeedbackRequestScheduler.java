@@ -33,7 +33,9 @@ public class ForeignerFeedbackRequestScheduler {
     )
     public void publishRequestMessages() {
         log.info("내보내기 17일 후 피드백 요청 메시지 발행 스케줄러 시작");
-        List<ApplicationForm> allRequiringEnd = applicationFormRepository.findAllRequiringEnd(LocalDate.now().minusDays(17));
+
+        LocalDate targetDate = LocalDate.now().minusDays(17);
+        List<ApplicationForm> allRequiringEnd = applicationFormRepository.findApplicationFormsRequiringFeedback(targetDate.atStartOfDay(), targetDate.plusDays(1).atStartOfDay());
 
         log.info("{} 개 조회됨", allRequiringEnd.size());
 

@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -68,7 +68,7 @@ class ForeignerFeedbackRequestSchedulerTest {
         ChatRoom chatRoom = mock(ChatRoom.class);
         given(chatRoom.getId()).willReturn(chatRoomId);
 
-        given(applicationFormRepository.findAllRequiringEnd(any(LocalDate.class)))
+        given(applicationFormRepository.findApplicationFormsRequiringFeedback(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .willReturn(List.of(applicationForm));
 
         // executeWithoutResult 내부의 콜백을 즉시 실행하도록 설정
@@ -85,7 +85,7 @@ class ForeignerFeedbackRequestSchedulerTest {
         scheduler.publishRequestMessages();
 
         // then
-        verify(applicationFormRepository).findAllRequiringEnd(any(LocalDate.class));
+        verify(applicationFormRepository).findApplicationFormsRequiringFeedback(any(LocalDateTime.class), any(LocalDateTime.class));
         verify(chatRoomQueryService).findByAgentProfileAndForeignerProfile(agentProfile, foreignerProfile);
         verify(chatServiceFacade).saveAndPublishChatMessage(eq(agentUserId), any(ChatMessageRequest.class), eq(chatRoom));
     }
@@ -94,14 +94,14 @@ class ForeignerFeedbackRequestSchedulerTest {
     @DisplayName("대상 신청서가 없으면 아무 동작도 하지 않는다")
     void publishRequestMessages_noData() {
         // given
-        given(applicationFormRepository.findAllRequiringEnd(any(LocalDate.class)))
+        given(applicationFormRepository.findApplicationFormsRequiringFeedback(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .willReturn(Collections.emptyList());
 
         // when
         scheduler.publishRequestMessages();
 
         // then
-        verify(applicationFormRepository).findAllRequiringEnd(any(LocalDate.class));
+        verify(applicationFormRepository).findApplicationFormsRequiringFeedback(any(LocalDateTime.class), any(LocalDateTime.class));
         verify(chatRoomQueryService, times(0)).findByAgentProfileAndForeignerProfile(any(), any());
         verify(chatServiceFacade, times(0)).saveAndPublishChatMessage(any(), any(), any());
     }
