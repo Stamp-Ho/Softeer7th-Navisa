@@ -1,11 +1,11 @@
-import { set, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { IcDownload, IcFile2, IcMessage } from "../../../assets/icon/StratisUi";
 import Button from "../../../components/common/Button";
 import GoTopFloating from "../../../components/common/GoTopFloating";
 import ProgressStepWidget from "../../../components/form/widgetComponents/ProgressStepWidget";
 import type { FormSection } from "../../../types/formType";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import FloatingChatModal from "./FloatingChatModal";
 import { useGeneratePdf } from "../hooks/useGeneratePdf";
 import ConfirmToExportModal from "./ConfirmToExportModal";
