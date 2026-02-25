@@ -357,7 +357,7 @@ const ForeignerOnboard = () => {
         >
           <div className="flex flex-col pb-10 pt-14">
             <h2 className="headline-m-bold text-text-base mb-3">
-              {!!data ? "내 요건 수정하기" : t("onboard.foreignerTitle")}
+              {!!data ? t("onboard.editMyInfo") : t("onboard.foreignerTitle")}
             </h2>
             <a className="body-l-medium text-text-base">{t("onboard.description")}</a>
             <NavisaForm formData={formLayout} />

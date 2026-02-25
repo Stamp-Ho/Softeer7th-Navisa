@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import { useTranslation } from "react-i18next";
 
 export type MyForeignerCareerItem = {
@@ -9,7 +10,8 @@ export type MyForeignerCareerItem = {
 };
 
 const MyCareerFrame = ({ companyName, jobTitle, startDate, endDate, isWork }: MyForeignerCareerItem) => {
-  const period = `${startDate} ~ ${isWork ? "재직중" : endDate}`;
+  const { t } = useTranslation(["pages"]);
+  const period = `${startDate} ~ ${isWork ? t("profile.inWorking") : endDate}`;
   return (
     <>
       <div className="flex flex-col gap-3 w-56 pl-3 py-3">
@@ -33,7 +35,7 @@ const MyCareer = ({ foreignerCareerList }: { foreignerCareerList?: MyForeignerCa
       <ul className="flex flex-col gap-4 p-1">
         {foreignerCareerList.length === 0 && (
           <li className="body-l-medium text-gray-600 p-5 pb-20 bg-gray-0 border border-border-light rounded-[12px] shadow">
-            경력이 없습니다
+            {t("profile.noCareer")}
           </li>
         )}
         {foreignerCareerList.map((career, idx) => (
@@ -58,12 +60,13 @@ const MyCareer = ({ foreignerCareerList }: { foreignerCareerList?: MyForeignerCa
 export default MyCareer;
 
 const SkeletonMyCareer = () => {
+  const { t } = useTranslation(["pages"]);
   return (
     <div className="flex flex-col mx-3">
       <span className="headline-m-semibold text-gray-1000 mb-10">{`경력`}</span>
       <ul className="flex flex-col gap-4 p-1">
         <li className="body-l-medium text-gray-600 p-5 pb-20 bg-gray-0 border border-border-light rounded-[12px] shadow">
-          경력이 없습니다
+          {t("profile.noCareer")}
         </li>
       </ul>
     </div>

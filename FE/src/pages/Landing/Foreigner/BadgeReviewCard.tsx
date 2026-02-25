@@ -5,6 +5,8 @@ import Tag from "../../../components/common/Tag";
 import { useResizeImage } from "../../../hooks/useResizeImage";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContextProvider";
+import { alertT } from "../../../i18n/alerts";
 
 /*reivew = {
     reviewId: 0,
@@ -20,6 +22,9 @@ import { Link } from "react-router-dom";
 const BadgeReviewCard = ({ review }: { review?: AgentBadgeReviewResponse }) => {
   const { t } = useTranslation(["components"]);
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
+  const { userType } = useAuth();
+
+  const authed = userType === "VALID_AGENT" || userType === "FILLED_FOREIGNER";
   useEffect(() => {
     if (review?.agentProfileImgUrl) resizeImage(review.agentProfileImgUrl, 240, 192);
   }, [review]);
@@ -28,8 +33,9 @@ const BadgeReviewCard = ({ review }: { review?: AgentBadgeReviewResponse }) => {
     <Link
       className={`w-92 h-43 border border-violet-50 rounded-[10px] overflow-hidden cursor-pointer
       transition-all hover:scale-105 hover:mx-2 duration-150`}
-      to={`/profile/agent/${review.agentId}`}
+      to={authed ? `/profile/agent/${review.agentId}` : "#"}
       tabIndex={0}
+      onClick={() => authed || alertT("components.agentCard.loginRequired")}
     >
       <div className="flex flex-row items-center gap-3 px-4 py-2.5 bg-linear-to-r from-[#8D7EED]/10 to-[#54D7D5]/10">
         {review.badgeTop2.map((id) => (

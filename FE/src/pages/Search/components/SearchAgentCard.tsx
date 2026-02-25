@@ -3,11 +3,12 @@ import BadgeIcon, { badgeDescription } from "../../../assets/icon/BadgeIcon";
 import { IcGraduation, IcLocation } from "../../../assets/icon/StratisUi";
 import Tag from "../../../components/common/Tag";
 import type { SearchAgentCardType } from "../../../types/Cards";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../../../contexts/AuthContext";
+import { useEffect } from "react";
 import { useResizeImage } from "../../../hooks/useResizeImage";
 import { useTranslation } from "react-i18next";
 import { jobCodeList } from "../../../constants/job";
+import { useAuth } from "../../../contexts/AuthContextProvider";
+import { alertT } from "../../../i18n/alerts";
 
 /**
  * 
@@ -22,21 +23,19 @@ import { jobCodeList } from "../../../constants/job";
  * @returns 
  */
 const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
-  const context = useContext(AuthContext);
   const { t } = useTranslation(["components"]);
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
-  if (!context) return null;
-  const { userType } = context;
+  const { userType } = useAuth();
 
-  const authed = userType !== "NOT_AUTHED";
+  const authed = userType === "FILLED_FOREIGNER";
   useEffect(() => {
     if (agent?.profileImgUrl) resizeImage(agent.profileImgUrl, 140, 140);
   }, [agent]);
   if (!agent || loadingImage) return <SkeletonUI />;
   return (
-    <div>
+    <div onClick={() => authed || alertT("components.agentCard.loginRequired")}>
       <Link
-        to={`/profile/agent/${agent.agentId}`}
+        to={authed ? `/profile/agent/${agent.agentId}` : "#"}
         className="flex flex-row items-center  gap-8 pl-7 bg-gray-30 w-124 h-fit rounded-2xl "
       >
         <div className="flex w-35 h-35 my-10 rounded-full overflow-hidden items-center justify-center shrink-0">
@@ -48,7 +47,7 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
           <div className="flex flex-row gap-3">
             {agent.badgeTop2.length === 0 ? (
               <div className="flex flex-row gap-1 items-center caption-m-medium text-text-sub ">
-                등록된 리뷰가 없습니다
+                {t("agentCard.noReview")}
               </div>
             ) : (
               agent.badgeTop2.map((badgeId) => (
@@ -67,13 +66,10 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
           </span>
           <div className="flex-col flex gap-1.5">
             <span className="flex flex-row items-center gap-1.5 caption-m-medium">
-              <IcGraduation size={14} /> {t("agentCard.expertise")} {authed && (
-                <span className="text-primary body-s-bold">
-                  {agent.specialityJobCount}
-                </span>
-              )}
+              <IcGraduation size={14} /> {t("agentCard.expertise")}
+              {agent.specialityJobCount && <span className="text-primary body-s-bold">{agent.specialityJobCount}</span>}
             </span>
-            {authed ? (
+            {authed && agent.agentSpecialityTop2 ? (
               <ol className="flex flex-row flex-wrap gap-1">
                 {agent.agentSpecialityTop2.length === 0 && (
                   <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>

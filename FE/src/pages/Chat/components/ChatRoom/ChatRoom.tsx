@@ -31,13 +31,9 @@ const ChatRoom = ({
 }: ChatRoomParams) => {
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
-  const { data: participants, refetch: refetchParticipants } =
-    useChatParticipantsInfoQuery(chatRoomId);
-  const {
-    registerParticipantsInfoCallback,
-    unregisterParticipantsInfoCallback,
-  } = useWebSocket();
-  const [reviewModal, setReviewModal] = useState<number>(0);
+  const { data: participants, refetch: refetchParticipants } = useChatParticipantsInfoQuery(chatRoomId);
+  const { registerParticipantsInfoCallback, unregisterParticipantsInfoCallback } = useWebSocket();
+  const [reviewModal, setReviewModal] = useState<number>(0); // 0: none, 1: badge review 작성, 2: service review 작성, 3: 수임 종료 모달
   const [isReviewRequired, setIsReviewRequired] = useState<boolean>(false);
   const [isVisaModalShown, setIsVisaModalShown] = useState(false);
   const [isFeedbackRequired, setIsFeedbackRequired] = useState(false); // FEEDBACK_REQUIRED 메시지에서 호출되었는지 여부
@@ -66,23 +62,12 @@ const ChatRoom = ({
     return () => {
       unregisterParticipantsInfoCallback(chatRoomId);
     };
-  }, [
-    chatRoomId,
-    registerParticipantsInfoCallback,
-    unregisterParticipantsInfoCallback,
-    refetchParticipants,
-  ]);
+  }, [chatRoomId, registerParticipantsInfoCallback, unregisterParticipantsInfoCallback, refetchParticipants]);
 
   const proposalEndRequired = participants?.proposalEndRequired || false; // 수임종료 모달 띄울지 여부 (행정사 응답 필요 여부)
   // proposalEndRequired가 true이고 행정사인 경우 자동으로 VisaResponseModal 표시
   useEffect(() => {
-    if (
-      participants &&
-      isAgent &&
-      !isVisaModalShown &&
-      proposalEndRequired &&
-      chatRoomNumber === chatRoomId
-    ) {
+    if (participants && isAgent && !isVisaModalShown && proposalEndRequired && chatRoomNumber === chatRoomId) {
       setReviewModal(3);
       setIsVisaModalShown(true);
     }
@@ -93,11 +78,7 @@ const ChatRoom = ({
     : { type: "AGENT", data: participants?.agentInfo };
 
   return (
-    <ChatRoomProvider
-      chatRoomId={chatRoomId}
-      isActive={true}
-      initialRoomStatus={initialRoomStatus}
-    >
+    <ChatRoomProvider chatRoomId={chatRoomId} isActive={true} initialRoomStatus={initialRoomStatus}>
       <ChatRoomHeader
         reviewHandler={reviewHandler}
         pageType={pageType}
@@ -113,16 +94,8 @@ const ChatRoom = ({
         reviewHandler={reviewHandler}
         onModalAction={onModalAction}
         profileImg={profileImg}
-        opponentName={
-          isAgent
-            ? participants?.foreignerInfo?.nickname
-            : participants?.agentInfo?.name
-        }
-        myName={
-          isAgent
-            ? participants?.agentInfo?.name
-            : participants?.foreignerInfo?.nickname
-        }
+        opponentName={isAgent ? participants?.foreignerInfo?.nickname : participants?.agentInfo?.name}
+        myName={isAgent ? participants?.agentInfo?.name : participants?.foreignerInfo?.nickname}
         proposalEndRequired={proposalEndRequired}
         feedbackSubmitted={feedbackSubmitted}
         showReviewModal={(show: boolean, isFeedback: boolean = false) => {

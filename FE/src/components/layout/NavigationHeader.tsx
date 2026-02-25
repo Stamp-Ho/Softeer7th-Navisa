@@ -68,7 +68,7 @@ const NavigationHeader = () => {
       ) : (
         <></>
       )}
-      <div className="flex flex-row items-center gap-32">
+      <div className="flex flex-row items-center gap-32" inert={authMode !== 0}>
         <NavisaLogo whiteMode={isSpecialBackground} />
         <div className={`flex flex-row items-center title-s-bold gap-18`}>
           <Link
@@ -89,7 +89,7 @@ const NavigationHeader = () => {
         </div>
       </div>
 
-      <div className="flex flex-row gap-6 h-12">
+      <div className="flex flex-row gap-6 h-12" inert={authMode !== 0}>
         {userType && userType !== "NOT_AUTHED" ? (
           <div className="relative flex flex-row items-center">
             <Link

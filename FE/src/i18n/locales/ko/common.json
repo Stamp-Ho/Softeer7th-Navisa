@@ -59,7 +59,8 @@
   "timePicker": {
     "selectTime": "시간을 선택해주세요",
     "hour": "09",
-    "minute": "00"
+    "minute": "00",
+    "confirm": "확인"
   },
   "tag": {
     "close": "제거",

@@ -1,8 +1,5 @@
 import { useTranslation } from "react-i18next";
-import {
-  usePostProposalAccepted,
-  usePostProposalRejected,
-} from "../../../../api/mutations/useMatchingMutation";
+import { usePostProposalAccepted, usePostProposalRejected } from "../../../../api/mutations/useMatchingMutation";
 import Button from "../../../../components/common/Button";
 
 type ProposalParams = {
@@ -18,12 +15,8 @@ const ChatModalReply = ({ onAnswer, roomId }: ProposalParams) => {
   return (
     <div className="flex flex-col gap-8 items-center w-full">
       <div className="flex flex-col gap-2 items-center">
-        <div className="title-l-semibold text-text-base">
-          {t("chatModal.acceptProposalTitle")}
-        </div>
-        <div className="body-l-medium text-text-base">
-          {t("chatModal.acceptProposalDesc")}
-        </div>
+        <div className="title-l-semibold text-text-base">{t("chatModal.acceptProposalTitle")}</div>
+        <div className="body-l-medium text-text-base">{t("chatModal.acceptProposalDesc")}</div>
       </div>
       <div className="flex flex-row justify-between w-full gap-4">
         <Button
@@ -34,6 +27,7 @@ const ChatModalReply = ({ onAnswer, roomId }: ProposalParams) => {
             sendProposalRejected();
             onAnswer(0);
           }}
+          tabIndex={1}
         >
           {t("chatModal.reject")}
         </Button>
@@ -45,6 +39,7 @@ const ChatModalReply = ({ onAnswer, roomId }: ProposalParams) => {
             sendProposalAccepted();
             onAnswer(0);
           }}
+          tabIndex={1}
         >
           {t("chatModal.accept")}
         </Button>

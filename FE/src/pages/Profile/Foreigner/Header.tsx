@@ -8,9 +8,9 @@ const Header = ({ nationIdList, nickname }: { nationIdList?: number[]; nickname?
       <div className="flex flex-col gap-spacing-400">
         <ul className="flex flex-row gap-spacing-400">
           {nationIdList?.map((id) => (
-            <li key={id} className="flex flex-row gap-spacing-300">
-              <FlagIcon nationIndex={id} className="w-8 h-8" />
-              <span className="text-text-base title-l-medium">{nationList[id]}</span>
+            <li key={id - 1} className="flex flex-row gap-spacing-300">
+              <FlagIcon nationIndex={id - 1} className="w-8 h-8" />
+              <span className="text-text-base title-l-medium">{nationList[id - 1]}</span>
             </li>
           ))}
         </ul>

@@ -28,6 +28,7 @@ export interface RecentVisaFormsResponse {
   title: string;
   isDone: boolean;
   currentStep: number;
+  totalCount: number;
   foreignerProfileImgUrl: string | null;
   lastModifiedAt: string;
 }

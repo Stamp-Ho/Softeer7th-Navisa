@@ -14,12 +14,8 @@ const ChatModalBlock = ({ onAnswer, roomId }: ProposalParams) => {
   return (
     <div className="flex flex-col gap-8 items-center w-full">
       <div className="flex flex-col gap-2 items-center">
-        <div className="title-l-semibold text-text-base mb-1">
-          {t("chatModal.blockUserTitle")}
-        </div>
-        <div className="body-l-bold text-primary whitespace-pre-wrap">
-          {t("chatModal.blockUserDesc")}
-        </div>
+        <div className="title-l-semibold text-text-base mb-1">{t("chatModal.blockUserTitle")}</div>
+        <div className="body-l-bold text-primary whitespace-pre-wrap">{t("chatModal.blockUserDesc")}</div>
       </div>
       <Button
         variant="primary"
@@ -33,6 +29,7 @@ const ChatModalBlock = ({ onAnswer, roomId }: ProposalParams) => {
             },
           });
         }}
+        tabIndex={1}
       >
         {t("chatModal.blockButton")}
       </Button>

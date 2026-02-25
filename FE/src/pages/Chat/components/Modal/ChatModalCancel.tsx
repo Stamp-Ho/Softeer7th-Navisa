@@ -14,12 +14,8 @@ const ChatModalCancel = ({ onAnswer, roomId }: ProposalParams) => {
   return (
     <div className="flex flex-col gap-8 items-center w-full">
       <div className="flex flex-col gap-2 items-center">
-        <div className="title-l-semibold text-text-base">
-          {t("chatModal.cancelRetainerTitle")}
-        </div>
-        <div className="body-l-medium text-text-base">
-          {t("chatModal.cancelRetainerDesc")}
-        </div>
+        <div className="title-l-semibold text-text-base">{t("chatModal.cancelRetainerTitle")}</div>
+        <div className="body-l-medium text-text-base">{t("chatModal.cancelRetainerDesc")}</div>
       </div>
       <Button
         variant="primary"
@@ -29,6 +25,7 @@ const ChatModalCancel = ({ onAnswer, roomId }: ProposalParams) => {
           sendProposalCanceled();
           onAnswer(0);
         }}
+        tabIndex={1}
       >
         {t("chatModal.cancel")}
       </Button>

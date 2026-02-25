@@ -32,11 +32,12 @@ const Languages = ({ languageIds }: { languageIds?: number[] }) => {
 export default Languages;
 
 const SkeletonLanguages = () => {
+  const { t } = useTranslation(["pages"]);
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 items-center title-m-semibold text-text-base">
         <IcLanguage />
-        <span>사용 가능 언어</span>
+        <span>{t("profile.languages")}</span>
         <span className="title-m-semibold text-green-800 animate-pulse">0</span>
       </div>
       <ul className="flex flex-row flex-wrap gap-spacing-300">

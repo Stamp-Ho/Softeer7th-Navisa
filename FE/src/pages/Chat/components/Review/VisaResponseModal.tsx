@@ -14,17 +14,10 @@ type VisaResponseModalProps = {
   reviewProgress?: ForeignerProgressResponse; // 수임자의 진행 상황 (리뷰 작성 여부) - 정확한 타입이 필요할 수 있음
 };
 
-const VisaResponseModal = ({
-  reviewHandler,
-  formId,
-  isAgent,
-  reviewProgress,
-}: VisaResponseModalProps) => {
+const VisaResponseModal = ({ reviewHandler, formId, isAgent, reviewProgress }: VisaResponseModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const { mutate: agentFinishStatus, isPending: isAgentPending } =
-    useAgentStatusFinishedMutation(formId);
-  const { mutate: foreignerFinishStatus, isPending: isForeignerPending } =
-    useForeignerStatusFinishedMutation();
+  const { mutate: agentFinishStatus, isPending: isAgentPending } = useAgentStatusFinishedMutation(formId);
+  const { mutate: foreignerFinishStatus, isPending: isForeignerPending } = useForeignerStatusFinishedMutation();
 
   useEffect(() => {
     const modal = modalRef.current;
@@ -38,40 +31,11 @@ const VisaResponseModal = ({
     if (firstElement) {
       firstElement.focus();
     }
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
-
-      const focusableElements = modal.querySelectorAll(
-        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
-      );
-      const firstElement = focusableElements[0] as HTMLElement;
-      const lastElement = focusableElements[
-        focusableElements.length - 1
-      ] as HTMLElement;
-
-      if (e.shiftKey) {
-        if (document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement.focus();
-        }
-      } else {
-        if (document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement.focus();
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
   return (
     <Modal ref={modalRef} onClose={() => reviewHandler(0)}>
       <div className="flex flex-col gap-8 items-center w-full">
-        <div className="flex flex-col gap-2 items-center title-l-semibold text-text-base">
-          수임을 종료하시겠습니까?
-        </div>
+        <div className="flex flex-col gap-2 items-center title-l-semibold text-text-base">수임을 종료하시겠습니까?</div>
         <div className="flex flex-row justify-between w-full gap-4">
           <Button
             variant="gray"
@@ -80,6 +44,7 @@ const VisaResponseModal = ({
             onClick={() => {
               reviewHandler(0);
             }}
+            tabIndex={1}
           >
             아니오
           </Button>
@@ -88,6 +53,7 @@ const VisaResponseModal = ({
             size="large"
             className="w-full"
             disabled={isAgentPending || isForeignerPending}
+            tabIndex={1}
             onClick={() => {
               if (isAgent) {
                 agentFinishStatus(

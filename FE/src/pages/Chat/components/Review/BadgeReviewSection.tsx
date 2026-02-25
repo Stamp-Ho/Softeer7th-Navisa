@@ -7,12 +7,7 @@ type BadgeReviewSectionParams = {
   onToggleBadges: (id: number) => void;
 };
 
-const BadgeReviewSection = ({
-  title,
-  badgeArray,
-  selectedBadges,
-  onToggleBadges,
-}: BadgeReviewSectionParams) => {
+const BadgeReviewSection = ({ title, badgeArray, selectedBadges, onToggleBadges }: BadgeReviewSectionParams) => {
   return (
     <>
       <div className="mb-4 body-l-semibold text-text-base">{title}</div>
@@ -25,12 +20,9 @@ const BadgeReviewSection = ({
               key={num}
               onClick={() => onToggleBadges(num)}
               className={`flex flex-row gap-2 items-center p-3 rounded-[8px] body-m-medium cursor-pointer ${isActive ? "bg-violet-50 text-primary" : "bg-gray-50 text-text-base"}`}
+              tabIndex={1}
             >
-              <BadgeIcon
-                badgeIndex={num}
-                color={isActive ? "var(--primary)" : "var(--gray-800)"}
-                size={18}
-              />
+              <BadgeIcon badgeIndex={num} color={isActive ? "var(--primary)" : "var(--gray-800)"} size={18} />
               {badgeDescription[num]}
             </button>
           );

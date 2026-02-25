@@ -9,10 +9,7 @@ type ServiceReviewModalParams = {
   setFeedbackSubmitted: (value: boolean) => void;
 };
 
-const ServiceReviewModal = ({
-  reviewHandler,
-  setFeedbackSubmitted,
-}: ServiceReviewModalParams) => {
+const ServiceReviewModal = ({ reviewHandler, setFeedbackSubmitted }: ServiceReviewModalParams) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation(["components"]);
   const { mutate: submitFeedback } = useFeedbackReviewMutation(); // 리뷰 제출 API 훅
@@ -27,37 +24,10 @@ const ServiceReviewModal = ({
     const focusableElements = modal.querySelectorAll(
       'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
     );
-    const firstElement = focusableElements[0] as HTMLElement;
+    const firstElement = focusableElements[1] as HTMLElement;
     if (firstElement) {
       firstElement.focus();
     }
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
-
-      const focusableElements = modal.querySelectorAll(
-        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
-      );
-      const firstElement = focusableElements[0] as HTMLElement;
-      const lastElement = focusableElements[
-        focusableElements.length - 1
-      ] as HTMLElement;
-
-      if (e.shiftKey) {
-        if (document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement.focus();
-        }
-      } else {
-        if (document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement.focus();
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const handleSubmit = () => {
@@ -69,7 +39,7 @@ const ServiceReviewModal = ({
           reviewHandler(0);
         },
         onError: () => {
-          console.error("리뷰 제출 실패");
+          console.error(t("review.reviewFailed"));
         },
       },
     );
@@ -78,9 +48,7 @@ const ServiceReviewModal = ({
   return (
     <Modal ref={modalRef} onClose={() => reviewHandler(0)}>
       <div className="flex flex-col px-5 pt-4">
-        <div className="title-l-semibold text-text-base">
-          {t("review.serviceDescription")}
-        </div>
+        <div className="title-l-semibold text-text-base">{t("review.serviceDescription")}</div>
         <div className="mt-5 bg-gray-50 rounded-lg p-4 h-124.25 flex flex-col">
           <textarea
             className="w-full flex-1 resize-none outline-none placeholder:text-text-sub"
@@ -95,6 +63,7 @@ const ServiceReviewModal = ({
               }
             }}
             maxLength={MAX_LENGTH}
+            tabIndex={1}
           />
 
           {/* 글자 수 카운터 */}
@@ -108,6 +77,7 @@ const ServiceReviewModal = ({
           className="w-full mt-10 mb-9.75"
           disabled={false}
           onClick={() => handleSubmit()}
+          tabIndex={1}
         >
           {t("review.next")}
         </Button>

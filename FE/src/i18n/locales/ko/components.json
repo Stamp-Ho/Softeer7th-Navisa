@@ -4,7 +4,8 @@
     "expertise": "전문 분야",
     "office": "사무실 위치",
     "noExpertise": "전문분야를 선택치 않은 행정사입니다.",
-    "loginRequired": "로그인 후 확인 가능합니다."
+    "loginRequired": "요건 등록 후 확인 가능합니다.",
+    "noReview": "후기가 없습니다."
   },
   "documentCard": {
     "title": "문서",
@@ -79,9 +80,12 @@
     "retainerCanceled": "수임을 취소했어요.",
     "agentNoLongerCanWrite": "{{agentName}} 행정사님은 더 이상 의뢰인의 비자 신청서를 작성할 수 없어요.",
     "block": "차단",
+    "blocked": "차단되었습니다.",
     "systemNotice": "[시스템 알림]",
     "reviewPrompt": "비자 발급이 완료되었다면 경험을 후기로 남겨주세요.",
-    "attorneySuffix": " 행정사"
+    "attorneySuffix": " 행정사",
+    "feedbackRequired": "피드백을 작성해주세요.",
+    "writeFeedback": "피드백 작성하기"
   },
   "chatModal": {
     "proposeRetainerTitle": "수임을 제안하시겠습니까?",
@@ -111,7 +115,8 @@
     "visaRejected": "발급되지 않음",
     "serviceDescription": "비자 발급 과정에서 느낀 점을 남겨주세요.",
     "servicePlaceholder": "예) 설명이 이해하기 쉬웠어요. 진행 상황을 계속 안내해줘서 안심됐어요.",
-    "next": "다음"
+    "next": "리뷰 제출",
+    "reviewFailed": "리뷰 제출 실패"
   },
   "chip": {
     "retainerProposal": "수임 제안",

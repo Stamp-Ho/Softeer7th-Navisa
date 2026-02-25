@@ -91,14 +91,14 @@ const Search = () => {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className={`grid mt-9 p-4 -m-4 pb-10 gap-4 h-fit min-h-100 overflow-auto scrollbar-hide
+        className={`grid mt-9 p-4 -m-4 pb-10 mb-0 gap-4 h-fit min-h-100 overflow-auto scrollbar-hide
             ${isAgent ? "grid-cols-3" : "grid-cols-4"} ${searchResultStyle()}`}
-        style={{ maxHeight: "calc(100vh - 350px)" }}
+        style={{ maxHeight: "calc(100vh - 330px)" }}
       >
         {renderCards()}
 
         {/* 추가 데이터 로딩 표시 */}
-        {isFetchingNextPage && <div className="col-span-full text-center">추가 로딩 중...</div>}
+        {isFetchingNextPage && <div className="col-span-full text-center">loading...</div>}
       </div>
       {allItems.length > 12 && <GoTopFloating onClick={goTop} className="absolute -right-21 bottom-3" />}
     </>

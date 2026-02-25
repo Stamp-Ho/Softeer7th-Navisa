@@ -4,7 +4,8 @@
     "expertise": "Specialty",
     "office": "Office Location",
     "noExpertise": "Immigration attorney without selected specialty",
-    "loginRequired": "Available after login"
+    "loginRequired": "Available after registering requirements",
+    "noReview": "No reviews"
   },
   "documentCard": {
     "title": "Document",
@@ -79,9 +80,12 @@
     "retainerCanceled": "Retainer has been canceled.",
     "agentNoLongerCanWrite": "{{agentName}} can no longer prepare the client's visa application.",
     "block": "Block",
+    "blocked": "Blocked.",
     "systemNotice": "[System Notice]",
     "reviewPrompt": "If your visa has been issued, please leave a review of your experience.",
-    "attorneySuffix": " Attorney"
+    "attorneySuffix": " Attorney",
+    "feedbackRequired": "Please write feedback.",
+    "writeFeedback": "Write Feedback"
   },
   "chatModal": {
     "proposeRetainerTitle": "Would you like to propose a retainer?",
@@ -111,7 +115,8 @@
     "visaRejected": "Rejected",
     "serviceDescription": "Please share your thoughts on the visa issuance process.",
     "servicePlaceholder": "Example) The explanation was easy to understand. I was relieved to be kept updated on the progress.",
-    "next": "Next"
+    "next": "Submit Review",
+    "reviewFailed": "Failed to submit review."
   },
   "chip": {
     "retainerProposal": "Retainer Proposal",

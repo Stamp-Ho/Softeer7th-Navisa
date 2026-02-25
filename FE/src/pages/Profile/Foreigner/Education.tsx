@@ -21,7 +21,7 @@ const Education = ({ school, degreeLevel, major }: { school?: string; degreeLeve
         </Tag>
         <span className="title-l-medium text-text-base">{school}</span>
       </div>
-      <span className="title-l-medium text-text-base ml-auto -mt-4 mr-7">{major} 전공</span>
+      <span className="title-l-medium text-text-base ml-auto -mt-4 mr-7">{major}</span>
     </ProfileItemsFrame>
   );
 };

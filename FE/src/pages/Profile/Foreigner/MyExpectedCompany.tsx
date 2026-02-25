@@ -17,7 +17,7 @@ const MyExpectedCompany = ({
   startDate?: string;
   nickname?: string;
 }) => {
-  const { t } = useTranslation(["pages", "components"]);
+  const { t } = useTranslation(["pages"]);
   const { logOut } = useAuth();
   const navigate = useNavigate();
 
@@ -30,13 +30,13 @@ const MyExpectedCompany = ({
       <div>
         <div className="shadow flex flex-col w-92 px-5 py-8 border border-border-normal rounded-radius-400 bg-white">
           <div className="flex flex-col gap-6">
-            <span className="text-text-base title-l-medium">아직 등록한 요건이 없어요</span>
+            <span className="text-text-base title-l-medium">{t("profile.noRequirementsRegistered")}</span>
             <div className="py-px w-full bg-border-light" />
             <Button variant="primary" size="large" className="w-full" onClick={handleEditMyProfile}>
-              내 요건 등록하기
+              {t("profile.registerMyRequirements")}
             </Button>
             <Button variant="lightGray" size="large" className="w-full " onClick={logOut}>
-              로그아웃
+              {t("profile.logout")}
             </Button>
           </div>
         </div>
@@ -68,7 +68,7 @@ const MyExpectedCompany = ({
             </li>
             <li className="flex flex-row gap-4 items-center">
               <Tag variant="large_gray_off" className="w-22">
-                입사 날짜
+                {t("profile.joinDateLabel")}
               </Tag>
               <span className="text-text-base title-s-medium">{startDate}</span>
               <span className="body-l-medium text-text-sub">{calcDDay(startDate)}</span>
@@ -76,10 +76,10 @@ const MyExpectedCompany = ({
           </ul>
           <div className="flex flex-col items-end gap-6 mt-4.25">
             <Button variant="primary" size="large" className="w-full" onClick={handleEditMyProfile}>
-              내 프로필 수정하기
+              {t("profile.editMyProfile")}
             </Button>
             <Button variant="lightGray" size="large" className="w-full " onClick={logOut}>
-              로그아웃
+              {t("profile.logout")}
             </Button>
           </div>
         </div>

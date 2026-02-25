@@ -60,6 +60,7 @@ const AgentProfilePanel = ({
             setViewMessageModal(false);
           }}
           onSendSuccess={() => {
+            //location.reload();
             setShowToast(true);
           }}
           // chatRoomId={0}

@@ -37,10 +37,10 @@ const MyAgentProfilePanel = ({ agentInfo, officeName }: AgentProfilePanelProps) 
         <div className="title-s-medium text-text-base">{officeName}</div>
         <div className="flex flex-col items-end gap-6 mt-4.25">
           <Button variant="primary" className="w-full" size="large" onClick={() => navigate(`/update/profile`)}>
-            내 정보 수정하기
+            {t("agentProfile.editMyInfo")}
           </Button>
           <Button variant="lightGray" size="large" className="w-full " onClick={logOut}>
-            로그아웃
+            {t("agentProfile.logOut")}
           </Button>
         </div>
       </div>
@@ -51,12 +51,13 @@ const MyAgentProfilePanel = ({ agentInfo, officeName }: AgentProfilePanelProps) 
 export default MyAgentProfilePanel;
 
 const SkeletonUi = () => {
+  const { t } = useTranslation(["components"]);
   const navigate = useNavigate();
   const { logOut } = useAuth();
   return (
     <div className="flex flex-col items-center bg-white w-92 rounded-[20px] overflow-hidden shadow">
       <div className="flex flex-col pt-6 pb-5 px-4 w-full">
-        <div className="title-l-bold text-text-base mb-3">인증되지 않은 행정사입니다.</div>
+        <div className="title-l-bold text-text-base mb-3">{t("agentProfile.agentInvalid")}</div>
         <div className="py-px w-full bg-border-light" />
         <div className="flex flex-col items-end gap-6 mt-4.25">
           <Button
@@ -65,10 +66,10 @@ const SkeletonUi = () => {
             size="large"
             onClick={() => navigate(`/onboard/agent`, { replace: true })}
           >
-            내 정보 등록하기
+            {t("agentProfile.enterMyInfo")}
           </Button>
           <Button variant="lightGray" size="large" className="w-full " onClick={logOut}>
-            로그아웃
+            {t("agentProfile.logOut")}
           </Button>
         </div>
       </div>

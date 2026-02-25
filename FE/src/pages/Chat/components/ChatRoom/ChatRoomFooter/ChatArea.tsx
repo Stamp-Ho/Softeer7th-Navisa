@@ -12,14 +12,7 @@ interface ChatAreaProps {
   roomStatus: ChatRoomStatus;
 }
 
-const ChatArea = ({
-  className = "",
-  placeholder,
-  value,
-  setValue,
-  roomId,
-  roomStatus,
-}: ChatAreaProps) => {
+const ChatArea = ({ className = "", placeholder, value, setValue, roomId, roomStatus }: ChatAreaProps) => {
   const MAX_CHAT_LENGTH = 500;
   const { t } = useTranslation(["components"]);
   const chatAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -69,7 +62,7 @@ const ChatArea = ({
         pl-6 pr-12 py-3 w-208 bg-background-sub rounded-[24px] text-gray-300
           ${className}`}
       >
-        차단되었습니다.
+        {t("chatRoom.blocked")}
       </div>
     );
 

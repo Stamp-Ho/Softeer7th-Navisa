@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { IcGraduation, IcLocation } from "../../assets/icon/StratisUi";
 import Tag from "../common/Tag";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
+import { useEffect } from "react";
 import type { AgentCardResponse } from "../../api/types/agent";
 import { useResizeImage } from "../../hooks/useResizeImage";
 import { useTranslation } from "react-i18next";
 import BadgeIcon, { badgeDescription } from "../../assets/icon/BadgeIcon";
 import { jobCodeList } from "../../constants/job";
+import { useAuth } from "../../contexts/AuthContextProvider";
+import { alertT } from "../../i18n/alerts";
 
 const AgentCard = ({
   hasAnimation = true,
@@ -22,17 +23,17 @@ const AgentCard = ({
   tabIndex?: number;
   disabled?: boolean;
 }) => {
-  const context = useContext(AuthContext);
   const { t } = useTranslation(["components"]);
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
+  const { userType } = useAuth();
 
   const animationStyle = hasAnimation ? "transition-all duration-75 ease-out hover:scale-107 hover:m-2" : "";
 
+  const authed = userType === "FILLED_FOREIGNER";
   useEffect(() => {
     if (agent?.profileImgUrl) resizeImage(agent.profileImgUrl, 240, 192);
   }, [agent]);
-  if (!context || !agent || loadingImage) return <SkeletonUi />;
-  const { userType } = context;
+  if (!agent || loadingImage) return <SkeletonUi />;
   return (
     <li
       className={`${animationStyle} ${className}
@@ -40,8 +41,9 @@ const AgentCard = ({
         flex flex-col bg-white w-60 rounded-[10px] overflow-hidden shadow-[0px_0px_7px_0px_rgba(104,96,160,0.25)]`}
       tabIndex={-1}
       inert={disabled ? true : undefined}
+      onClick={() => authed || alertT("components.agentCard.loginRequired")}
     >
-      <Link to={`/profile/agent/${agent.agentId}`} tabIndex={tabIndex}>
+      <Link to={authed ? `/profile/agent/${agent.agentId}` : "#"} tabIndex={tabIndex}>
         <div className="flex w-60 h-48 overflow-hidden items-center justify-center">
           <div className="shrink-0">
             <img src={agent.profileImgUrl} width={imageSize.width} height={imageSize.height} />
@@ -51,7 +53,7 @@ const AgentCard = ({
           <div className="flex flex-row gap-3 mt-1">
             {agent.badgeTop2.length === 0 ? (
               <div className="flex flex-row gap-1 items-center caption-s-medium text-text-sub ">
-                등록된 리뷰가 없습니다
+                {t("agentCard.noReview")}
               </div>
             ) : (
               agent.badgeTop2.map((badgeId) => (
@@ -71,25 +73,18 @@ const AgentCard = ({
           <div className="flex-col flex gap-1 max-h-21 min-h-17">
             <h5 className="flex flex-row items-center gap-1.5 caption-m-medium mt-auto">
               <IcGraduation size={14} /> {t("agentCard.expertise")}
+              {agent.specialityJobCount && <span className="text-primary body-s-bold">{agent.specialityJobCount}</span>}
             </h5>
-            {userType !== "NOT_AUTHED" ? (
+            {authed ? (
               <ol className="flex flex-row gap-1 flex-wrap">
-                {(agent.agentSpecialityTop2?.length === 0 || !agent.agentSpecialityTop2) && (
-                  <Tag variant="small_fill_gray">{t("agentCard.noExpertise")}</Tag>
-                )}
                 {agent.agentSpecialityTop2?.slice(0, 2).map((jobId) => (
                   <Tag key={`agent_special_job_${jobId}`} variant={"small_fill_violet_max"}>
                     {jobCodeList[jobId - 1]}
                   </Tag>
                 ))}
-                {(agent.agentSpecialityTop2?.length ?? 0) > 2 && (
-                  <Tag variant="small_fill_gray">{(agent.agentSpecialityTop2?.length ?? 0) - 2}</Tag>
-                )}
               </ol>
             ) : (
-              <Tag variant={"small_fill_gray"} className="w-fit">
-                {t("agentCard.loginRequired")}
-              </Tag>
+              <Tag variant={"small_fill_gray"}>{t("agentCard.loginRequired")}</Tag>
             )}
             <div className="mb-auto" />
           </div>

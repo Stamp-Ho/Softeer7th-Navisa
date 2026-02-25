@@ -7,7 +7,7 @@ import { useAuth } from "../../contexts/AuthContextProvider";
 export const useRecommendedAgentQuery = () => {
   const { apiClient } = useApiClient();
   const { userType } = useAuth();
-  const isLoggedIn = userType && userType !== "NOT_AUTHED";
+  const isLoggedIn = userType && userType === "FILLED_FOREIGNER";
 
   return useQuery<AgentCardResponse[]>({
     queryKey: ["recommendedAgents", isLoggedIn],

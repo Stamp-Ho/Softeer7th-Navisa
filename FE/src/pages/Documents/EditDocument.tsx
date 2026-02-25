@@ -39,6 +39,7 @@ const EditDocument = () => {
 
   const { scrollRef, handleScroll, currentSectionIndex, goToSection, goTop, getMaskStyle } = useDocumentScroll();
 
+  const [loadedFromLocalStorage, setLoadedFromLocalStorage] = useState(false);
   const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const [imageUrl, setImageUrl] = useState("");
   const [formLayout, setFormLayout] = useState(editDocumentData);
@@ -61,9 +62,11 @@ const EditDocument = () => {
     const localRawData = window.localStorage.getItem(data.applicationFormId);
     if (!serverHasData) {
       //서버에 데이터가 없음
-      if (localRawData) {
+      if (localRawData && !readOnly) {
         try {
+          // localStorage에 데이터가 있으면 그걸로 초기화
           fresherData = JSON.parse(localRawData);
+          setLoadedFromLocalStorage(true);
         } catch {
           window.localStorage.removeItem(data.applicationFormId);
           setInitializing(false);
@@ -72,6 +75,7 @@ const EditDocument = () => {
       } else {
         //서버에도, 로컬에도 데이터가 없음 -> 최초 접속이거나 입력한 적이 없음
         setInitializing(false);
+        setLoadedFromLocalStorage(false);
         return;
       }
     } else {
@@ -83,10 +87,19 @@ const EditDocument = () => {
           const serverTime = new Date(data.updatedAt).getTime();
 
           //fresherData = localData.updatedAt > data?.updatedAt ? localData : data;
-          fresherData = localTime > serverTime ? localData : data;
+          if (localTime > serverTime) {
+            //로컬 데이터가 더 최신이면 로컬 데이터로 초기화
+            fresherData = localData;
+            setLoadedFromLocalStorage(true);
+          } else {
+            //서버 데이터가 더 최신이면 서버 데이터로 초기화
+            fresherData = data;
+            setLoadedFromLocalStorage(false);
+          }
         } catch {
           // localStorage 데이터 손상 시 서버 데이터 사용
           window.localStorage.removeItem(data.applicationFormId);
+          setLoadedFromLocalStorage(false);
         }
       }
     }
@@ -150,6 +163,10 @@ const EditDocument = () => {
     };
 
     postForm.mutate(params);
+    setLoadedFromLocalStorage(false);
+    setTimeout(() => {
+      window.localStorage.removeItem(data?.applicationFormId ?? documentId ?? "");
+    }, 100);
   };
   const onError = () => {
     alertT("pages.documents.requiredFieldsError");
@@ -186,6 +203,9 @@ const EditDocument = () => {
             <h2 className="headline-m-bold text-text-base mb-3">
               {t("documents.documentWrite")}
               {data.isDone ? t("documents.completedSuffix") : ""}
+              {loadedFromLocalStorage && (
+                <span className="ml-5 text-green-500 animate-pulse">{t("documents.temporarySave")}</span>
+              )}
             </h2>
             <a className="body-l-medium text-text-base mb-5">{t("documents.description")}</a>
             <ul className="flex flex-col bg-green-bright body-l-medium text-green-vivid gap-1.5 rounded-[20px] py-7 px-5.25">
@@ -220,6 +240,8 @@ const EditDocument = () => {
           documentId={data?.applicationFormId ?? documentId ?? ""}
           chatRoomId={data.chatRoomId}
           readOnly={readOnly}
+          loadedFromLocalStorage={loadedFromLocalStorage}
+          setLoadedFromLocalStorage={setLoadedFromLocalStorage}
         />
       </form>
     </FormProvider>

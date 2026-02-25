@@ -4,7 +4,8 @@
     "expertise": "専門分野",
     "office": "事務所の位置",
     "noExpertise": "専門分野が選択されていない行政書士",
-    "loginRequired": "ログイン後に確認できます"
+    "loginRequired": "要件登録後に確認可能です",
+    "noReview": "レビューがありません"
   },
   "documentCard": {
     "title": "ドキュメント",
@@ -79,9 +80,12 @@
     "retainerCanceled": "委任をキャンセルしました。",
     "agentNoLongerCanWrite": "{{agentName}}行政書士は依頼人のビザ申請書を作成できなくなりました。",
     "block": "ブロック",
+    "blocked": "ブロックされました。",
     "systemNotice": "[システムお知らせ]",
     "reviewPrompt": "ビザ発給が完了したら、体験をレビューでお聞かせください。",
-    "attorneySuffix": " 行政書士"
+    "attorneySuffix": " 行政書士",
+    "feedbackRequired": "フィードバックを記入してください。",
+    "writeFeedback": "フィードバックを書く"
   },
   "chatModal": {
     "proposeRetainerTitle": "委任を提案しますか？",
@@ -111,7 +115,8 @@
     "visaRejected": "却下",
     "serviceDescription": "ビザ発行プロセスについてのご意見をお聞かせください。",
     "servicePlaceholder": "例）説明がわかりやすかったです。進行状況を常に案内してくれて安心しました。",
-    "next": "次へ"
+    "next": "レビュー提出",
+    "reviewFailed": "レビューの提出に失敗しました。"
   },
   "chip": {
     "retainerProposal": "委任提案",

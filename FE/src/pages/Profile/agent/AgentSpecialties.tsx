@@ -28,16 +28,19 @@ const AgentSpecialties = ({ jobCodeIds }: { jobCodeIds?: number[] }) => {
 export default AgentSpecialties;
 
 const SkeletonUi = () => {
+  const { t } = useTranslation(["pages"]);
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 title-m-semibold text-text-base">
         <IcGraduation size={24} />
-        <span>{`전문 분야`}</span>
+        <span>{t("profile.specialty")}</span>
         <span className="text-violet-500">0</span>
       </div>
       <ul className="flex flex-row gap-2 flex-wrap">
         <li>
-          <Tag variant="large_violet_off" className="animate-pulse">{`전문 분야를 등록해주세요.`}</Tag>
+          <Tag variant="large_violet_off" className="animate-pulse">
+            {t("profile.specialtyPlaceholder")}
+          </Tag>
         </li>
       </ul>
     </ProfileItemsFrame>

@@ -8,7 +8,7 @@ const Footer = () => {
 
   return (
     <footer className="w-580 -ml-100 mt-25 bg-slate-800 text-slate-300 pt-12 pb-8 px-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-380 mx-auto">
         {/* 상단: 서비스 로고 및 국가 퀵 링크 */}
         <div className="flex flex-col lg:flex-row justify-between mb-6 border-b border-gray-800 pb-10 gap-10">
           <div className="max-w-sm">
@@ -20,7 +20,7 @@ const Footer = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm text-right">
             <div>
               <h4 className="text-white font-bold mb-4">{t("landing.service")}</h4>
               <ul className="space-y-2">

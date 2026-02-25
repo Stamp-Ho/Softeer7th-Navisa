@@ -116,7 +116,7 @@ const TimePicker = ({
             type="button"
             className="cursor-pointer w-full mt-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-black active:scale-95 transition"
           >
-            확인
+            {t("timePicker.confirm")}
           </button>
         </div>
       )}

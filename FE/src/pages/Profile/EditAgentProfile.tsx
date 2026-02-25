@@ -267,8 +267,8 @@ const EditAgentProfile = () => {
           onScroll={handleScroll}
         >
           <div className="flex flex-col pb-10 pt-14">
-            <h2 className="headline-m-bold text-text-base mb-3">내 정보 수정하기</h2>
-            <a className="body-l-medium text-text-base">수정된 정보에 따라 서비스 이용에 차이가 있을 수 있습니다.</a>
+            <h2 className="headline-m-bold text-text-base mb-3">{t("onboard.editMyInfo2")}</h2>
+            <a className="body-l-medium text-text-base">{t("onboard.editNotice")}</a>
             <NavisaForm
               formData={formLayout}
               startsWithImage={true}

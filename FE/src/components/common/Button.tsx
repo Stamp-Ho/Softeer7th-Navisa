@@ -8,6 +8,7 @@ interface ButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   type?: "button" | "submit" | "reset" | undefined;
+  tabIndex?: number;
 }
 
 const Button = ({
@@ -18,6 +19,7 @@ const Button = ({
   onClick,
   disabled = false,
   type = "button",
+  tabIndex = 0,
 }: ButtonProps) => {
   const getButtonStyle = () => {
     if (disabled) return "bg-gray-200 text-white cursor-not-allowed";
@@ -36,6 +38,7 @@ const Button = ({
         ${className}
       `}
       type={type}
+      tabIndex={tabIndex}
     >
       {children}
     </button>

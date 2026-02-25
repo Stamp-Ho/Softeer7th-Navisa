@@ -4,7 +4,8 @@
     "expertise": "专业领域",
     "office": "办公室位置",
     "noExpertise": "未选择专业领域的移民律师",
-    "loginRequired": "登录后可查看"
+    "loginRequired": "注册要求后可用",
+    "noReview": "没有评论"
   },
   "documentCard": {
     "title": "文件",
@@ -79,9 +80,12 @@
     "retainerCanceled": "委托已取消。",
     "agentNoLongerCanWrite": "{{agentName}} 律师无法再为客户填写签证申请表。",
     "block": "屏蔽",
+    "blocked": "已屏蔽。",
     "systemNotice": "[系统通知]",
     "reviewPrompt": "若签证已发放，请留下您的体验评价。",
-    "attorneySuffix": " 律师"
+    "attorneySuffix": " 律师",
+    "feedbackRequired": "请撰写反馈。",
+    "writeFeedback": "撰写反馈"
   },
   "chatModal": {
     "proposeRetainerTitle": "是否提议委托？",
@@ -111,7 +115,8 @@
     "visaRejected": "已拒绝",
     "serviceDescription": "请分享您对签证发放过程的看法。",
     "servicePlaceholder": "例如)解释易于理解。不断收到进度更新让我放心。",
-    "next": "下一步"
+    "next": "提交评价",
+    "reviewFailed": "提交评价失败。"
   },
   "chip": {
     "retainerProposal": "委托提案",

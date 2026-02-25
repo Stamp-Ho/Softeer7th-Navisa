@@ -43,6 +43,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           value={value}
           onChange={onChange ?? ((e) => setValue?.(e.target.value))}
           {...props}
+          tabIndex={1}
         />
       </div>
     );

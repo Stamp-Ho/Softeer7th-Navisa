@@ -47,9 +47,7 @@ const BadgeReviewModal = ({
         'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
       );
       const firstElement = focusableElements[0] as HTMLElement;
-      const lastElement = focusableElements[
-        focusableElements.length - 1
-      ] as HTMLElement;
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -104,12 +102,8 @@ const BadgeReviewModal = ({
   return (
     <Modal ref={modalRef} onClose={() => reviewHandler(0)}>
       <div className="px-5 pt-1">
-        <div className="mb-2 title-l-semibold text-text-base">
-          {t("review.badgeTitle")}
-        </div>
-        <div className="mb-8 body-s-medium text-text-base">
-          {t("review.badgeDescription")}
-        </div>
+        <div className="mb-2 title-l-semibold text-text-base">{t("review.badgeTitle")}</div>
+        <div className="mb-8 body-s-medium text-text-base">{t("review.badgeDescription")}</div>
         <div className="flex flex-col gap-7 mb-8">
           <section className="flex flex-col">
             <BadgeReviewSection
@@ -142,6 +136,7 @@ const BadgeReviewModal = ({
           className="w-full mb-[39px]"
           disabled={selectedBadges.length === 0}
           onClick={() => handleSubmit()}
+          tabIndex={1}
         >
           {t("review.next")}
         </Button>

@@ -59,7 +59,8 @@
   "timePicker": {
     "selectTime": "Please select a time",
     "hour": "09",
-    "minute": "00"
+    "minute": "00",
+    "confirm": "Confirm"
   },
   "tag": {
     "close": "Remove",

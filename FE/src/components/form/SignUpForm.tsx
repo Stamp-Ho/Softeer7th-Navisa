@@ -6,19 +6,6 @@ import CheckBox from "./formComponents/CheckBox";
 import CheckLine from "./formComponents/CheckLine";
 import { useForm } from "react-hook-form";
 
-const VALIDATOR = {
-  email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-  password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-};
-type SignUpFormData = {
-  email: string;
-  pw: string;
-  pwCheck: string;
-  option1: boolean;
-  option2: boolean;
-  option3: boolean;
-};
-
 const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
   const { t } = useTranslation(["pages", "common"]);
   const signupMutation = useSignUpMutation(() => {
@@ -67,6 +54,7 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
         placeholder="navisa@gmail.com"
         isInvalid={!!errors.email}
         invalidMsg={errors.email?.message}
+        tabIndex={1}
       />
       <label className="mr-auto mt-2">{t("auth.signup.password")}</label>
       <TextInput
@@ -81,6 +69,7 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
         placeholder={t("auth.signup.password")}
         isInvalid={!!errors.pw}
         invalidMsg={errors.pw?.message}
+        tabIndex={1}
       />
       <TextInput
         {...register("pwCheck", {
@@ -91,9 +80,10 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
         placeholder={t("auth.signup.confirmPassword")}
         isInvalid={!!errors.pwCheck}
         invalidMsg={errors.pwCheck?.message}
+        tabIndex={1}
       />
       <div className="mt-8 flex flex-col">
-        <CheckBox label={t("auth.signup.agreeAll")} value={opt1 && opt2 && opt3} setValue={onTotalClick} />
+        <CheckBox label={t("auth.signup.agreeAll")} value={opt1 && opt2 && opt3} setValue={onTotalClick} tabIndex={1} />
         <CheckLine label={t("auth.signup.termsAgreement")} value={opt1} setValue={() => setValue("option1", !opt1)} />
         <CheckLine label={t("auth.signup.privacyAgreement")} value={opt2} setValue={() => setValue("option2", !opt2)} />
         <CheckLine
@@ -109,6 +99,7 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
         variant="primary"
         disabled={!isValid || !(opt1 && opt2)} // 필수 동의 체크 여부 포함
         type="submit"
+        tabIndex={1}
       >
         {t("auth.signup.complete")}
       </Button>
@@ -116,3 +107,16 @@ const SignUpForm = ({ isAgent = false, onSubmit = () => {} }) => {
   );
 };
 export default SignUpForm;
+
+const VALIDATOR = {
+  email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+  password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+};
+type SignUpFormData = {
+  email: string;
+  pw: string;
+  pwCheck: string;
+  option1: boolean;
+  option2: boolean;
+  option3: boolean;
+};

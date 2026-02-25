@@ -24,41 +24,31 @@ const CareerFrame = ({ companyName, jobTitle, period, durationMonths }: Foreigne
   );
 };
 
-const Career = ({
-  foreignerCareerList = [
-    {
-      companyName: "땡땡회사",
-      jobTitle: "머시기 직무",
-      period: "2023. 11. 02 ~ 2024. 11. 02",
-      durationMonths: 18, // 서버 계산 (int)
-    },
-  ],
-}: {
-  foreignerCareerList?: ForeignerCareerItem[];
-}) => {
+const Career = ({ foreignerCareerList }: { foreignerCareerList?: ForeignerCareerItem[] }) => {
   const { t } = useTranslation(["pages"]);
   return (
     <div className="flex flex-col mx-3">
       <span className="headline-m-semibold text-gray-1000 mb-10">{t("profile.career")}</span>
       <ul className="flex flex-col gap-4 p-1">
-        {foreignerCareerList.length === 0 && (
+        {foreignerCareerList && foreignerCareerList.length === 0 && (
           <li className="body-l-medium text-gray-600 p-5 pb-20 bg-gray-0 border border-border-light rounded-[12px] shadow">
-            경력이 없습니다
+            {t("profile.noCareer")}
           </li>
         )}
-        {foreignerCareerList.map((career, idx) => (
-          <li
-            key={idx}
-            className="flex flex-row items-center p-5 bg-gray-0 border border-border-light rounded-[12px] drop-shadow-[0_3px_3px_#6860A040]"
-          >
-            <CareerFrame
-              companyName={career.companyName}
-              jobTitle={career.jobTitle}
-              period={career.period}
-              durationMonths={career.durationMonths}
-            />
-          </li>
-        ))}
+        {foreignerCareerList &&
+          foreignerCareerList.map((career, idx) => (
+            <li
+              key={idx}
+              className="flex flex-row items-center p-5 bg-gray-0 border border-border-light rounded-[12px] drop-shadow-[0_3px_3px_#6860A040]"
+            >
+              <CareerFrame
+                companyName={career.companyName}
+                jobTitle={career.jobTitle}
+                period={career.period}
+                durationMonths={career.durationMonths}
+              />
+            </li>
+          ))}
       </ul>
     </div>
   );

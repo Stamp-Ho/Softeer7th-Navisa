@@ -49,7 +49,10 @@ const Documents = () => {
       <div className="flex flex-col gap-8">
         <h2 className="headline-m-bold mt-9">{t("documents.title")}</h2>
         <div className="flex flex-row gap-3 w-full">{renderTabs()}</div>
-        <div className="w-full grid-cols-3 grid gap-3 p-4 -m-4 pb-4 mb-0 overflow-y-auto scrollbar-hide " style={{ maxHeight: "calc(100vh - 250px)" }}>
+        <div
+          className="w-full grid-cols-3 grid gap-3 p-4 -m-4 pb-4 mb-0 overflow-y-auto scrollbar-hide "
+          style={{ maxHeight: "calc(100vh - 250px)" }}
+        >
           {renderDocuments()}
         </div>
       </div>
