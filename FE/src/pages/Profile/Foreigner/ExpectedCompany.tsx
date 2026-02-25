@@ -29,7 +29,7 @@ const ExpectedCompany = ({
   chatRoomId?: number;
   opponentProfileId?: string;
 }) => {
-  const { t } = useTranslation(["pages", "components"]);
+  const { t } = useTranslation(["pages"]);
   const [viewMessageModal, setViewMessageModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const ExpectedCompany = ({
 
   return (
     <>
-      {showToast && <Toast message={t("agentProfile.consultMessageSent")} />}
+      {showToast && <Toast message={t("chat.consultMessageSent")} />}
       {viewMessageModal && (
         <ChatActivateModal
           onClose={() => setViewMessageModal(false)}
@@ -81,7 +81,7 @@ const ExpectedCompany = ({
             </li>
             <li className="flex flex-row gap-4 items-center">
               <Tag variant="large_gray_off" className="w-22">
-                입사 날짜
+                {t("profile.joinDateLabel")}
               </Tag>
               <span className="text-text-base title-s-medium">{startDate}</span>
               <span className="body-l-medium text-text-sub">{calcDDay(startDate)}</span>

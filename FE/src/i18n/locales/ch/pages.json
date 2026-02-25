@@ -62,7 +62,8 @@
       "all": "全部",
       "unread": "未读",
       "inContract": "受任中"
-    }
+    },
+    "consultMessageSent": "咨询消息已发送。"
   },
   "search": {
     "loading": "正在加载...",
@@ -226,7 +227,7 @@
     "cancel:": "取消",
     "errorOccurred": "发生错误",
     "previewPdf": "PDF预览",
-    "temporarySave": "正在临时保存（未反映在服务器上）",
+    "temporarySave": "正在临时保存",
     "temporarySaveInfo": "已在浏览器中临时保存。请点击[保存]以确保安全。",
     "save": "保存",
     "applicationForm": "申请书",

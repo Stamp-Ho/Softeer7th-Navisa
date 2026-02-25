@@ -19,11 +19,7 @@ export const useUploadFormImage = () => {
       return;
     }
 
-    const imgObjectKey = await uploadImage(
-      fileMimeType as AllowedMime,
-      "agent-profile",
-      imageFile,
-    );
+    const imgObjectKey = await uploadImage(fileMimeType as AllowedMime, "foreigner-identity", imageFile);
 
     if (!imgObjectKey) {
       alert("저장에 실패했습니다");

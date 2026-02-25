@@ -17,7 +17,7 @@ type AgentProfilePanelProps = {
 };
 
 const MyAgentProfilePanel = ({ agentInfo, officeName }: AgentProfilePanelProps) => {
-  const { t } = useTranslation(["components"]);
+  const { t } = useTranslation(["pages"]);
   const navigate = useNavigate();
 
   const { logOut } = useAuth();
@@ -28,19 +28,19 @@ const MyAgentProfilePanel = ({ agentInfo, officeName }: AgentProfilePanelProps) 
       <img
         className="w-187 h-113 object-cover"
         src={agentInfo.profileImageUrl || "https://placehold.co/748x462"}
-        alt={t("agentProfile.profileImageAlt", { name: agentInfo.name })}
+        alt={t("profile.profileImageAlt", { name: agentInfo.name })}
       />
       <div className="flex flex-col pt-6 pb-5 px-4 w-full">
         <div className="headline-l-bold text-text-base mb-3">
-          {agentInfo.name} {t("agentProfile.title")}
+          {agentInfo.name} {t("profile.title")}
         </div>
         <div className="title-s-medium text-text-base">{officeName}</div>
         <div className="flex flex-col items-end gap-6 mt-4.25">
           <Button variant="primary" className="w-full" size="large" onClick={() => navigate(`/update/profile`)}>
-            {t("agentProfile.editMyInfo")}
+            {t("profile.editMyInfo")}
           </Button>
           <Button variant="lightGray" size="large" className="w-full " onClick={logOut}>
-            {t("agentProfile.logOut")}
+            {t("profile.logOut")}
           </Button>
         </div>
       </div>
@@ -51,13 +51,13 @@ const MyAgentProfilePanel = ({ agentInfo, officeName }: AgentProfilePanelProps) 
 export default MyAgentProfilePanel;
 
 const SkeletonUi = () => {
-  const { t } = useTranslation(["components"]);
+  const { t } = useTranslation(["pages"]);
   const navigate = useNavigate();
   const { logOut } = useAuth();
   return (
     <div className="flex flex-col items-center bg-white w-92 rounded-[20px] overflow-hidden shadow">
       <div className="flex flex-col pt-6 pb-5 px-4 w-full">
-        <div className="title-l-bold text-text-base mb-3">{t("agentProfile.agentInvalid")}</div>
+        <div className="title-l-bold text-text-base mb-3">{t("profile.agentInvalid")}</div>
         <div className="py-px w-full bg-border-light" />
         <div className="flex flex-col items-end gap-6 mt-4.25">
           <Button
@@ -66,10 +66,10 @@ const SkeletonUi = () => {
             size="large"
             onClick={() => navigate(`/onboard/agent`, { replace: true })}
           >
-            {t("agentProfile.enterMyInfo")}
+            {t("profile.enterMyInfo")}
           </Button>
           <Button variant="lightGray" size="large" className="w-full " onClick={logOut}>
-            {t("agentProfile.logOut")}
+            {t("profile.logOut")}
           </Button>
         </div>
       </div>

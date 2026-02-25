@@ -62,7 +62,8 @@
       "all": "전체",
       "unread": "안읽음",
       "inContract": "수임중"
-    }
+    },
+    "consultMessageSent": "상담 메시지가 전송되었습니다."
   },
   "search": {
     "loading": "로딩 중...",
@@ -81,12 +82,13 @@
     "specialty": "전문 분야",
     "specialtyPlaceholder": "전문 분야를 등록해주세요.",
     "expectedJoinInfo": "입사 예정 정보",
+    "joinDateLabel": "입사 날짜",
     "education": "최종학력",
     "career": "경력",
     "languages": "사용 가능 언어",
     "noRequirementsRegistered": "아직 등록한 요건이 없어요",
     "registerMyRequirements": "내 요건 등록하기",
-    "joinDateLabel": "입사 날짜",
+    "title": "행정사",
     "editMyProfile": "내 프로필 수정하기",
     "chatModalWantToHelp": "의뢰인님, 도움을 드리고 싶어요!",
     "chatModalWantToConsult": "행정사님, 상담하고 싶어요!",
@@ -226,7 +228,7 @@
     "cancel": "취소",
     "errorOccurred": "오류가 발생했습니다",
     "previewPdf": "PDF 미리보기",
-    "temporarySave": "임시 저장 중 (서버 미반영)",
+    "temporarySave": "임시 저장 중",
     "temporarySaveInfo": "브라우저에 임시 저장됨. 안전한 보관을 위해 [저장] 버튼을 눌러주세요.",
     "save": "저장",
     "applicationForm": "신청서",

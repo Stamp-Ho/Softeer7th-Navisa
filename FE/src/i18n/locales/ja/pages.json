@@ -62,7 +62,8 @@
       "all": "すべて",
       "unread": "未読",
       "inContract": "受任中"
-    }
+    },
+    "consultMessageSent": "相談メッセージが送信されました。"
   },
   "search": {
     "loading": "読み込み中...",
@@ -226,7 +227,7 @@
     "cancel": "キャンセル",
     "errorOccurred": "エラーが発生しました",
     "previewPdf": "PDFプレビュー",
-    "temporarySave": "一時保存中（サーバー未反映）",
+    "temporarySave": "一時保存中",
     "temporarySaveInfo": "ブラウザに一時保存されました。安全に保管するために[保存]ボタンを押してください。",
     "save": "保存",
     "applicationForm": "申請書",

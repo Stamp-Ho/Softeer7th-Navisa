@@ -62,7 +62,8 @@
       "all": "All",
       "unread": "Unread",
       "inContract": "In Contract"
-    }
+    },
+    "consultMessageSent": "Consultation message has been sent."
   },
   "search": {
     "loading": "Loading...",
@@ -226,7 +227,7 @@
     "cancel": "Cancel",
     "errorOccurred": "An error occurred",
     "previewPdf": "Preview PDF",
-    "temporarySave": "Temporarily saving (not reflected on server)",
+    "temporarySave": "Temporarily saving",
     "temporarySaveInfo": "Temporarily saved in browser. Please click [Save] to keep it safe.",
     "save": "Save",
     "applicationForm": "Application Form",

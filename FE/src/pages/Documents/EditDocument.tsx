@@ -14,6 +14,7 @@ import { useUploadFormImage } from "../../api/fetchHooks/useUploadFormImage";
 import { useForeignerMyFormQuery } from "../../api/queries/useForeignerMyFormQuery";
 import { isUUID } from "../../utils/isUuid";
 import { alertT } from "../../i18n/alerts";
+import Tag from "../../components/common/Tag";
 
 const EditDocument = () => {
   const { t } = useTranslation(["pages"]);
@@ -200,11 +201,13 @@ const EditDocument = () => {
           style={{ height: "calc(100vh - 100px)" }}
         >
           <div className="flex flex-col pb-15 pt-12">
-            <h2 className="headline-m-bold text-text-base mb-3">
+            <h2 className="headline-m-bold text-text-base mb-3 flex flex-row items-center gap-5">
               {t("documents.documentWrite")}
               {data.isDone ? t("documents.completedSuffix") : ""}
               {loadedFromLocalStorage && (
-                <span className="ml-5 text-green-500 animate-pulse">{t("documents.temporarySave")}</span>
+                <Tag variant="large_violet_off" className="animate-pulse">
+                  {t("documents.temporarySave")}
+                </Tag>
               )}
             </h2>
             <a className="body-l-medium text-text-base mb-5">{t("documents.description")}</a>
