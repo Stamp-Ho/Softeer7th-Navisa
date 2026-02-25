@@ -65,7 +65,7 @@ const ChatRoomCard = ({
           </span>
         </div>
         <div className="flex flex-row items-center justify-between">
-          <div className="body-s-regular text-text-sub w-[390px] line-clamp-2">
+          <div className="body-s-regular text-text-sub w-[390px] line-clamp-2 h-[40px]">
             {lastMessage}
           </div>
           {noneRead > 0 && (

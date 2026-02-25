@@ -4,6 +4,7 @@ import CalcDateSystemMessage from "../../../../../utils/CalcDateSystemMessage";
 import { useAuth } from "../../../../../contexts/AuthContextProvider";
 import ChatMessageGroup from "./ChatMessageGroup"; // 분리된 컴포넌트
 import { useChatRoomContext } from "../../context/ChatRoomContext";
+import { useEffect, useRef, useState } from "react";
 
 type ChatBodyParams = {
   pageType: "CHAT" | "DOCUMENT";
@@ -41,6 +42,26 @@ const ChatBody = ({
     isFetchingNextPage,
   } = useChatRoomContext();
 
+  const innerContainer = useRef<HTMLDivElement>(null);
+
+  const [topPadding, setTopPadding] = useState(200); // 초기 패딩값
+  useEffect(() => {
+    const innerTarget = innerContainer.current;
+    if (!innerTarget) return;
+
+    const handleResize = () => {
+      const { clientHeight } = innerTarget;
+      if (clientHeight < 600) setTopPadding(600 - clientHeight);
+      else setTopPadding(60);
+    };
+
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(innerTarget);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [groupedChats]);
   if (isLoading) return <div className="p-6">{t("chatRoom.loadingChat")}</div>;
   if (isError)
     return (
@@ -58,47 +79,49 @@ const ChatBody = ({
         }}
         className="scrollbar-hide h-full"
       >
-        <div style={{ height: pageType === "DOCUMENT" ? 200 : 600 }}>
+        <div style={{ height: pageType === "DOCUMENT" ? 200 : topPadding }}>
           {isFetchingNextPage && t("chatRoom.previousMessagesLoading")}
         </div>
-        {groupedChats.map((group) => {
-          const firstMsg = group[0];
+        <div ref={innerContainer}>
+          {groupedChats.map((group) => {
+            const firstMsg = group[0];
 
-          // 날짜 구분선 (SYSTEM 메시지)
-          if (firstMsg.type === "SYSTEM") {
+            // 날짜 구분선 (SYSTEM 메시지)
+            if (firstMsg.type === "SYSTEM") {
+              return (
+                <div
+                  key={firstMsg.chatMessageId}
+                  className="flex flex-row justify-center items-center my-10 gap-3 mx-3"
+                >
+                  <div className="py-[1px] bg-gray-100 flex-1" />
+                  <Tag variant="small_fill_gray">
+                    {CalcDateSystemMessage(firstMsg.createdAt)}
+                  </Tag>
+                  <div className="py-[1px] bg-gray-100 flex-1" />
+                </div>
+              );
+            }
+
+            // 일반 메시지 그룹
             return (
-              <div
-                key={firstMsg.chatMessageId}
-                className="flex flex-row justify-center items-center my-10 gap-3 mx-3"
-              >
-                <div className="py-[1px] bg-gray-100 flex-1" />
-                <Tag variant="small_fill_gray">
-                  {CalcDateSystemMessage(firstMsg.createdAt)}
-                </Tag>
-                <div className="py-[1px] bg-gray-100 flex-1" />
-              </div>
+              <ChatMessageGroup
+                pageType={pageType}
+                key={`group-${firstMsg.chatMessageId}`}
+                group={group}
+                opponentName={opponentName}
+                myName={myName}
+                profileImg={profileImg}
+                isAgent={isAgent}
+                reviewHandler={reviewHandler}
+                onModalAction={onModalAction}
+                pendingProposalId={pendingProposalId}
+                proposalEndRequired={proposalEndRequired}
+                showReviewModal={showReviewModal}
+                feedbackSubmitted={feedbackSubmitted}
+              />
             );
-          }
-
-          // 일반 메시지 그룹
-          return (
-            <ChatMessageGroup
-              pageType={pageType}
-              key={`group-${firstMsg.chatMessageId}`}
-              group={group}
-              opponentName={opponentName}
-              myName={myName}
-              profileImg={profileImg}
-              isAgent={isAgent}
-              reviewHandler={reviewHandler}
-              onModalAction={onModalAction}
-              pendingProposalId={pendingProposalId}
-              proposalEndRequired={proposalEndRequired}
-              showReviewModal={showReviewModal}
-              feedbackSubmitted={feedbackSubmitted}
-            />
-          );
-        })}
+          })}
+        </div>
       </div>
     </>
   );

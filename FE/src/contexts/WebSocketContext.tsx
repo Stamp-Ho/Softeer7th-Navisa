@@ -101,6 +101,7 @@ export const WebSocketProvider = ({
             queryClient.refetchQueries({
               queryKey: ["chatMatchedUnreadCount"],
             });
+            queryClient.refetchQueries({ queryKey: ["chatRooms"] });
           }
 
           // ParticipantsInfo 동기화: 상태 업데이터 외부에서 콜백 실행

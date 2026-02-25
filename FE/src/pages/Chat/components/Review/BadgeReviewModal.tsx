@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Button from "../../../../components/common/Button";
 import Modal from "../../../../components/common/Modal";
 import { useTranslation } from "react-i18next";
@@ -21,10 +21,52 @@ const BadgeReviewModal = ({
   setIsReviewRequired,
   shouldGoToServiceReview = false,
 }: BadgeReviewModalParams) => {
+  const modalRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation(["components"]);
   const [selectedBadges, setSelectedBadges] = useState<number[]>([]);
   const { mutate: postBadgeReview } = useBadgeReviewMutation();
   const MAX_SELECT = 3;
+
+  useEffect(() => {
+    const modal = modalRef.current;
+    if (!modal) return;
+
+    // 모달이 마운트될 때 첫 번째 포커스 가능한 요소로 포커스 이동
+    const focusableElements = modal.querySelectorAll(
+      'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
+    );
+    const firstElement = focusableElements[0] as HTMLElement;
+    if (firstElement) {
+      firstElement.focus();
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      const focusableElements = modal.querySelectorAll(
+        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
+      );
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[
+        focusableElements.length - 1
+      ] as HTMLElement;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const toggleBadge = (id: number) => {
     setSelectedBadges((prev) => {
@@ -60,7 +102,7 @@ const BadgeReviewModal = ({
   };
 
   return (
-    <Modal onClose={() => reviewHandler(0)}>
+    <Modal ref={modalRef} onClose={() => reviewHandler(0)}>
       <div className="px-5 pt-1">
         <div className="mb-2 title-l-semibold text-text-base">
           {t("review.badgeTitle")}

@@ -3,7 +3,7 @@ import useApiClient from "../../hooks/useApiClient";
 import { chatService } from "../services/chat";
 import { useAuth } from "../../contexts/AuthContextProvider";
 
-export const useChatUnreadCount = () => {
+export const useChatUnreadCount = (options?: { enabled?: boolean }) => {
   const { apiClient } = useApiClient();
   const { accessToken } = useAuth();
 
@@ -13,7 +13,7 @@ export const useChatUnreadCount = () => {
       const res = await chatService.getUnreadCount(apiClient, accessToken);
       return res.result;
     },
-    enabled: !!accessToken,
+    enabled: (options?.enabled ?? true) && !!accessToken,
     retry: false, // 에러 시 재시도 금지
   });
 };

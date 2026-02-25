@@ -5,6 +5,7 @@ import {
 import type { ForeignerProgressResponse } from "../../../../api/types/foreigner";
 import Button from "../../../../components/common/Button";
 import Modal from "../../../../components/common/Modal";
+import { useRef, useEffect } from "react";
 
 type VisaResponseModalProps = {
   reviewHandler: (num: number) => void;
@@ -19,12 +20,54 @@ const VisaResponseModal = ({
   isAgent,
   reviewProgress,
 }: VisaResponseModalProps) => {
+  const modalRef = useRef<HTMLDivElement>(null);
   const { mutate: agentFinishStatus, isPending: isAgentPending } =
     useAgentStatusFinishedMutation(formId);
   const { mutate: foreignerFinishStatus, isPending: isForeignerPending } =
     useForeignerStatusFinishedMutation();
+
+  useEffect(() => {
+    const modal = modalRef.current;
+    if (!modal) return;
+
+    // 모달이 마운트될 때 첫 번째 포커스 가능한 요소로 포커스 이동
+    const focusableElements = modal.querySelectorAll(
+      'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
+    );
+    const firstElement = focusableElements[0] as HTMLElement;
+    if (firstElement) {
+      firstElement.focus();
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      const focusableElements = modal.querySelectorAll(
+        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
+      );
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[
+        focusableElements.length - 1
+      ] as HTMLElement;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
   return (
-    <Modal onClose={() => reviewHandler(0)}>
+    <Modal ref={modalRef} onClose={() => reviewHandler(0)}>
       <div className="flex flex-col gap-8 items-center w-full">
         <div className="flex flex-col gap-2 items-center title-l-semibold text-text-base">
           수임을 종료하시겠습니까?

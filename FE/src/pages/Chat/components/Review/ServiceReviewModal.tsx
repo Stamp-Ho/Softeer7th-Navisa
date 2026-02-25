@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Button from "../../../../components/common/Button";
 import Modal from "../../../../components/common/Modal";
 import { useTranslation } from "react-i18next";
@@ -13,10 +13,52 @@ const ServiceReviewModal = ({
   reviewHandler,
   setFeedbackSubmitted,
 }: ServiceReviewModalParams) => {
+  const modalRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation(["components"]);
   const { mutate: submitFeedback } = useFeedbackReviewMutation(); // 리뷰 제출 API 훅
   const [reviewText, setReviewText] = useState<string>("");
   const MAX_LENGTH = 1000;
+
+  useEffect(() => {
+    const modal = modalRef.current;
+    if (!modal) return;
+
+    // 모달이 마운트될 때 첫 번째 포커스 가능한 요소로 포커스 이동
+    const focusableElements = modal.querySelectorAll(
+      'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
+    );
+    const firstElement = focusableElements[0] as HTMLElement;
+    if (firstElement) {
+      firstElement.focus();
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      const focusableElements = modal.querySelectorAll(
+        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
+      );
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[
+        focusableElements.length - 1
+      ] as HTMLElement;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const handleSubmit = () => {
     submitFeedback(
@@ -34,7 +76,7 @@ const ServiceReviewModal = ({
   };
 
   return (
-    <Modal onClose={() => reviewHandler(0)}>
+    <Modal ref={modalRef} onClose={() => reviewHandler(0)}>
       <div className="flex flex-col px-5 pt-4">
         <div className="title-l-semibold text-text-base">
           {t("review.serviceDescription")}
