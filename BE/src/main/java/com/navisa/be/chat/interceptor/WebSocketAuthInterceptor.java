@@ -30,8 +30,6 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
-        log.info("[WS Auth] 진입");
-
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (accessor == null || accessor.getCommand() == null) { // Heartbeat 등 Command가 없는 내부 메시지들은 그대로 통과

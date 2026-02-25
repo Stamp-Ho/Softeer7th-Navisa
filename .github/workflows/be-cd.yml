@@ -62,15 +62,6 @@ jobs:
 
             # 1. 이전 배포에서 남은 찌꺼기들 제거 (공간 확보)
             docker system prune -af
-
-            # 2. 스왑 파일 생성 및 활성화 (메모리 부족 방지)
-            # 이미 존재한다면 끄고 새로 만들어 깨끗한 상태로 시작
-            sudo swapoff /swapfile 2>/dev/null || true
-            sudo fallocate -l 2G /swapfile
-            sudo chmod 600 /swapfile
-            sudo mkswap /swapfile
-            sudo swapon /swapfile
-            echo "Swap enabled (2GB)."
             
             # ==========================================
             # [Part 1] Blue/Green Info Setup
@@ -204,8 +195,5 @@ jobs:
             fi
 
             docker system prune -af
-            echo "Deactivating and removing swap to save disk space..."
-            sudo swapoff /swapfile
-            sudo rm /swapfile
             
             echo "🚀 Deployment Completed Successfully!"

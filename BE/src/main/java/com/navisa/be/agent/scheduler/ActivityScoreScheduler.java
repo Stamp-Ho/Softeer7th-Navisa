@@ -23,7 +23,7 @@ public class ActivityScoreScheduler {
     private final AgentProfileRepository agentProfileRepository;
     private final ActivityDecayCalculator activityDecayCalculator;
 
-    @Scheduled(cron = "0 0 4 * * *") // 매일 새벽 4시마다 실행
+    @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul") // 매일 새벽 4시마다 실행
     @SchedulerLock(name = "ActivityScoreScheduler_updateAgentActivityScores", lockAtMostFor = "10m", lockAtLeastFor = "2m")
     @Transactional
     public void updateAgentActivityScores() {

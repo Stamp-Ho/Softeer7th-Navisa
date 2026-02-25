@@ -95,55 +95,45 @@ public class AgentSpecializedJobService {
     }
 
     /**
-     * 모든 대상 행정사의 직무별 가중치(za)를 MGET으로 가져온 Redis 값에 DB에 누적된 값을 추가하여 반환
+     * Redis 실시간 가중치(za)와 DB 누적 신뢰도(accumulatedReviewReliability)를
+     * 모두 조회하여 합산된 가중치 Map을 반환
      */
     @Transactional(readOnly = true)
-    public Map<String, Double> getFinalZaMap(List<UUID> agentIds) {
-        if (agentIds.isEmpty()) {
-            return Collections.emptyMap();
+    public Map<String, Double> getCombinedWeightMap(List<UUID> agentIds, List<Long> targetJobIds) {
+        if (agentIds.isEmpty() || targetJobIds.isEmpty()) return Collections.emptyMap();
+
+        List<AgentSpecializedJobSummary> summaries = agentSpecializedJobSummaryRepository.findAllByAgentIdIn(agentIds);
+
+        List<String> keys = new ArrayList<>();
+        for (UUID agentId : agentIds) {
+            for (Long jobId : targetJobIds) {
+                keys.add(String.format("matching:sandbox:%s:%d", agentId, jobId));
+            }
         }
 
-        // Redis 조회를 위한 데이터 로드
-        List<AgentSpecializedJobSummary> allSummaries = agentSpecializedJobSummaryRepository.findAllByAgentIdIn(agentIds);
-        Map<String, Double> redisZaWeightMap = fetchRedisZaWeightsBatch(allSummaries);
-
-        // 파티셔닝 크기
-        int pageSize = 100;
-
-        return IntStream.range(0, (agentIds.size() + pageSize - 1) / pageSize)
-                .mapToObj(i -> agentIds.subList(i * pageSize, Math.min(agentIds.size(), (i + 1) * pageSize)))
-                .flatMap(partition -> agentSpecializedJobSummaryRepository.findAllByAgentIdIn(partition).stream())
-                .collect(Collectors.toMap(
-                        this::makeRedisKey,
-                        summary -> {
-                            String key = makeRedisKey(summary);
-                            return summary.getAccumulatedReviewReliability() +
-                                    redisZaWeightMap.getOrDefault(key, 0.0);
-                        },
-                        Double::sum
-                ));
-    }
-
-    /**
-     * 모든 대상 행정사의 직무별 가중치(za)를 Redis MGET 명령어로 일괄 조회
-     */
-    private Map<String, Double> fetchRedisZaWeightsBatch(List<AgentSpecializedJobSummary> summaries) {
-        List<String> keys = summaries.stream()
-                .map(this::makeRedisKey)
-                .toList();
-
         try {
-            List<Double> values = doubleRedisTemplate.opsForValue().multiGet(keys);
-            if (values == null) return Collections.emptyMap();
-
+            List<Double> redisValues = doubleRedisTemplate.opsForValue().multiGet(keys);
             Map<String, Double> resultMap = new HashMap<>();
-            for (int i = 0; i < keys.size(); i++) {
-                Double val = values.get(i);
-                if (val != null) resultMap.put(keys.get(i), val);
+
+            if (redisValues != null) {
+                for (int i = 0; i < keys.size(); i++) {
+                    Double val = redisValues.get(i);
+                    if (val != null) resultMap.put(keys.get(i), val);
+                }
             }
+
+            for (AgentSpecializedJobSummary s : summaries) {
+                String key = String.format("matching:sandbox:%s:%d", s.getAgentId(), s.getJobCode().getId());
+                double redisZa = resultMap.getOrDefault(key, 0.0);
+                double dbAcc = s.getAccumulatedReviewReliability();
+
+                // 실시간 가중치 + 누적 신뢰도 합산값 저장
+                resultMap.put(key, redisZa + dbAcc);
+            }
+
             return resultMap;
         } catch (Exception e) {
-            log.error("[Redis MultiGet Error] Redis 장애 발생, 기본값 사용", e);
+            log.error("[Weight Fetch Error] 가중치 조회 중 오류 발생", e);
             return Collections.emptyMap();
         }
     }

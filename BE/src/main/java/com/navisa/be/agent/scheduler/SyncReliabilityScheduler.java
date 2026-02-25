@@ -4,15 +4,14 @@ import com.navisa.be.agent.repository.AgentSpecializedJobSummaryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -21,51 +20,77 @@ public class SyncReliabilityScheduler {
 
     private final RedisTemplate<String, Double> doubleRedisTemplate;
     private final AgentSpecializedJobSummaryRepository summaryRepository;
-    private final TransactionTemplate transactionTemplate; // 트랜잭션 수동 제어를 위해 주입
 
-    private static final String GET_AND_DELETE_LUA =
-            "local val = redis.call('GET', KEYS[1]); " +
-                    "if val then redis.call('DEL', KEYS[1]); end; " +
-                    "return val";
+    private static final DefaultRedisScript<Double> GET_AND_DELETE_SCRIPT =
+            new DefaultRedisScript<>(
+                    "local val = redis.call('GET', KEYS[1]); " +
+                            "if val then redis.call('DEL', KEYS[1]); end; " +
+                            "return val",
+                    Double.class
+            );
 
-    @Scheduled(cron = "0 45 9 * * *")
+    @Scheduled(cron = "0 10 4 * * *", zone = "Asia/Seoul")
     @SchedulerLock(
             name = "syncRedisToDbLock",
-            lockAtMostFor = "PT5M",
+            lockAtMostFor = "PT10M",
             lockAtLeastFor = "PT30S"
     )
     public void syncRedisToDb() {
-        Set<String> keys = doubleRedisTemplate.keys("matching:sandbox:*");
-        if (keys == null || keys.isEmpty()) return;
+        ScanOptions options = ScanOptions.scanOptions()
+                .match("matching:sandbox:*")
+                .count(100) // 한 번에 100개씩 끊어서 조회
+                .build();
 
-        log.info("[Sync Start] ShedLock 점유 성공. 동기화 건수: {}", keys.size());
+        List<SyncData> syncList = new ArrayList<>();
 
-        for (String key : keys) {
-            try {
-                // 스크립트로 원자적 조회 (데이터 경합 방지)
+        try (Cursor<String> cursor = doubleRedisTemplate.scan(options)) {
+            while (cursor.hasNext()) {
+                String key = cursor.next();
+
                 Double weight = doubleRedisTemplate.execute(
-                        new DefaultRedisScript<>(GET_AND_DELETE_LUA, Double.class),
+                        GET_AND_DELETE_SCRIPT,
                         Collections.singletonList(key)
                 );
 
                 if (weight != null && weight > 0) {
-                    String[] parts = key.split(":");
-                    UUID agentId = UUID.fromString(parts[2]);
-                    Long jobCodeId = Long.parseLong(parts[3]);
-
-                    // 개별 키 단위로 트랜잭션 적용
-                    transactionTemplate.execute(status -> {
-                        summaryRepository.updateReliabilityInDb(agentId, jobCodeId, weight);
-                        return null;
-                    });
-
-                    log.debug("[Sync Success] Agent: {}, Job: {}, Weight: {}", agentId, jobCodeId, weight);
+                    SyncData data = parseKeyAndWeight(key, weight);
+                    if (data != null) {
+                        syncList.add(data);
+                    }
                 }
-            } catch (Exception e) {
-                // 예외 발생 시 해당 키만 실패로 기록하고 다음 키로 진행
-                log.error("[Sync Error] Key: {} - 실패 사유: {}", key, e.getMessage());
             }
+        } catch (Exception e) {
+            log.error("[Sync Error] Redis Scan 중 에러 발생", e);
         }
-        log.info("[Sync End] 가중치 동기화 프로세스 완료.");
+
+        if (syncList.isEmpty()) return;
+
+        log.info("[Sync Start] 동기화 대상 건수: {}", syncList.size());
+
+        // 루프 밖에서 한 번에 Batch Update
+        try {
+            processBatchUpdate(syncList);
+            log.info("[Sync End] 가중치 동기화 프로세스 완료.");
+        } catch (Exception e) {
+            log.error("[Sync Fatal Error] DB 업데이트 실패", e);
+        }
+    }
+
+    private void processBatchUpdate(List<SyncData> syncList) {
+        for (SyncData data : syncList) {
+            summaryRepository.updateReliabilityInDb(data.agentId, data.jobCodeId, data.weight);
+        }
+    }
+
+    private SyncData parseKeyAndWeight(String key, Double weight) {
+        String[] parts = key.split(":");
+        if (parts.length < 4) {
+            log.warn("[Sync Warning] 예상치 못한 키 형식: {}", key);
+            return null;
+        }
+        return new SyncData(UUID.fromString(parts[2]), Long.parseLong(parts[3]), weight);
+    }
+
+    private record SyncData(UUID agentId, Long jobCodeId, Double weight) {
     }
 }

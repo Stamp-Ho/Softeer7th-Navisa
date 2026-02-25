@@ -2,6 +2,7 @@ package com.navisa.be.agent.service;
 
 import com.navisa.be.agent.dto.response.AgentCardResponse;
 import com.navisa.be.agent.model.entity.AgentProfile;
+import com.navisa.be.agent.model.entity.AgentSpecializedJobSummary;
 import com.navisa.be.agent.repository.AgentProfileRepository;
 import com.navisa.be.foreigner.model.entity.ForeignerProfile;
 import com.navisa.be.foreigner.model.entity.ForeignerSimilarity;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,12 +41,20 @@ public class AgentRecommendationService {
         ForeignerSimilarity similarity = foreignerProfileCrudService.findSimilarityByForeignerId(profile.getId());
 
         List<AgentProfile> profiles = agentProfileRepository.findAllValidAgentProfiles();
-        List<UUID> profileIds = profiles.stream().map(AgentProfile::getId).toList();
+        List<UUID> agentIds = profiles.stream().map(AgentProfile::getId).toList();
+        List<Long> targetJobIds = Arrays.stream(similarity.getJobCodeIdList()).boxed().toList();
 
-        Map<String, Double> zaMap = agentSpecializedJobService.getFinalZaMap(profileIds);
+        Map<String, Double> combinedWeightMap = agentSpecializedJobService.getCombinedWeightMap(agentIds, targetJobIds);
 
-        List<AgentProfile> contentProfiles = profiles.stream()
-                .map(p -> Map.entry(p, calculateScoreWithPrefetchedData(p, similarity, zaMap)))
+        Map<UUID, List<Long>> agentJobIdsMap = profiles.stream()
+                .collect(Collectors.toMap(
+                        AgentProfile::getId,
+                        p -> p.getSpecializedJobs().stream().map(j -> j.getJobCode().getId()).toList()
+                ));
+
+        // 병렬 연산
+        List<AgentProfile> contentProfiles = profiles.parallelStream()
+                .map(p -> Map.entry(p, calculateScorePure(p, similarity, combinedWeightMap, agentJobIdsMap.get(p.getId()))))
                 .sorted(Map.Entry.<AgentProfile, Double>comparingByValue().reversed())
                 .limit(12)
                 .map(Map.Entry::getKey)
@@ -56,11 +66,7 @@ public class AgentRecommendationService {
 
         return contentProfiles.stream()
                 .map(agent -> {
-                    String profileUrl = storageService.getImgUrl(
-                            ImageSize.SMALL,
-                            agent.getProfileObjectKey(),
-                            false);
-
+                    String profileUrl = storageService.getImgUrl(ImageSize.SMALL, agent.getProfileObjectKey(), false);
                     return AgentCardResponse.of(
                             agent,
                             profileUrl,
@@ -107,5 +113,32 @@ public class AgentRecommendationService {
             }
         }
         return waMap;
+    }
+
+    /**
+     * DB 세션 없이 순수 객체 데이터로만 점수를 계산하는 메서드
+     */
+    private double calculateScorePure(AgentProfile profile, ForeignerSimilarity similarity,
+                                      Map<String, Double> weightMap, List<Long> jobIds) {
+
+        double yn = distributionCalculator.calculateDistribution(jobIds != null ? jobIds.size() : 0);
+        Map<Long, Double> waMap = buildWaMap(similarity);
+        Map<Long, Double> saMap = new HashMap<>();
+
+        if (jobIds != null) {
+            for (Long jobId : jobIds) {
+                String key = String.format("matching:sandbox:%s:%d", profile.getId(), jobId);
+
+                // 이미 합산된 가중치(Redis + DB 누적치)를 사용하여 연산
+                double combinedWeight = weightMap.getOrDefault(key, 0.0);
+
+                double gza = reviewBonusCalculator.calculateBonusFactor(combinedWeight);
+                double finalYn = reviewBonusCalculator.calculateFinalDistribution(yn, gza);
+                double sa = profile.getActiveScore() * finalYn;
+                saMap.put(jobId, sa);
+            }
+        }
+
+        return finalCalculator.calculateFinalGradeByLongId(saMap, waMap);
     }
 }

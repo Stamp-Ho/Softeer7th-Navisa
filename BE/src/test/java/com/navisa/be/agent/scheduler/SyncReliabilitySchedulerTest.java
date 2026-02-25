@@ -7,15 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.script.RedisScript;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -33,78 +30,80 @@ class SyncReliabilitySchedulerTest {
     @Mock
     private AgentSpecializedJobSummaryRepository summaryRepository;
 
-    @Mock
-    private TransactionTemplate transactionTemplate;
-
     @Test
-    @DisplayName("Redis의 가중치 데이터를 DB로 성공적으로 동기화한다")
-    void syncRedisToDb_Success() {
+    @DisplayName("SCAN을 통해 Redis 가중치 데이터를 안전하게 읽어와 DB로 일괄 동기화한다")
+    void syncRedisToDb_Success_WithScan() {
         // given
-        String key = "matching:sandbox:" + UUID.randomUUID() + ":1";
-        Set<String> keys = Collections.singleton(key);
+        UUID agentId = UUID.randomUUID();
+        String key = "matching:sandbox:" + agentId + ":1";
 
-        given(doubleRedisTemplate.keys("matching:sandbox:*")).willReturn(keys);
-        // Lua 스크립트 실행 결과로 가중치 10.5 반환
-        given(doubleRedisTemplate.execute(any(RedisScript.class), anyList())).willReturn(10.5);
+        @SuppressWarnings("unchecked")
+        Cursor<String> mockCursor = (Cursor<String>) mock(Cursor.class);
+        given(mockCursor.hasNext()).willReturn(true, false);
+        given(mockCursor.next()).willReturn(key);
 
-        // TransactionTemplate 실행 시 람다 내부 로직 강제 호출 설정
-        given(transactionTemplate.execute(any())).willAnswer(invocation -> {
-            TransactionCallback<?> callback = invocation.getArgument(0);
-            return callback.doInTransaction(mock(TransactionStatus.class));
-        });
+        given(doubleRedisTemplate.scan(any(ScanOptions.class))).willReturn(mockCursor);
 
-        // when
-        syncReliabilityScheduler.syncRedisToDb();
-
-        // then
-        verify(summaryRepository, times(1)).updateReliabilityInDb(any(UUID.class), anyLong(), eq(10.5));
-        verify(doubleRedisTemplate, never()).delete(anyString());
-        verify(doubleRedisTemplate, times(1)).execute(any(RedisScript.class), eq(Collections.singletonList(key)));
-    }
-
-    @Test
-    @DisplayName("동기화 과정 중 개별 키에서 예외가 발생해도 다음 키 처리를 계속한다")
-    void syncRedisToDb_HandleExceptionAndContinue() {
-        // given
-        String key1 = "matching:sandbox:" + UUID.randomUUID() + ":1";
-        String key2 = "matching:sandbox:" + UUID.randomUUID() + ":2";
-
-        // key1이 반드시 먼저 처리되도록 삽입 순서를 보장하는 LinkedHashSet 사용
-        Set<String> keys = new java.util.LinkedHashSet<>();
-        keys.add(key1); // 예외 발생 키
-        keys.add(key2); // 정상 반환 키
-
-        given(doubleRedisTemplate.keys("matching:sandbox:*")).willReturn(keys);
-
-        // 첫 번째 키는 예외 발생, 두 번째 키는 정상 반환하도록 설정
         given(doubleRedisTemplate.execute(any(RedisScript.class), anyList()))
-                .willThrow(new RuntimeException("Redis Error")) // key1
-                .willReturn(5.0); // key2
-
-        given(transactionTemplate.execute(any())).willAnswer(invocation -> {
-            TransactionCallback<?> callback = invocation.getArgument(0);
-            return callback.doInTransaction(mock(TransactionStatus.class));
-        });
+                .willReturn(10.5);
 
         // when
         syncReliabilityScheduler.syncRedisToDb();
 
         // then
-        // 예외가 발생해도 key2에 대한 DB 업데이트는 실행되어야 함 (총 1회 실행)
-        verify(summaryRepository, times(1)).updateReliabilityInDb(any(UUID.class), anyLong(), eq(5.0));
+        verify(doubleRedisTemplate, times(1)).scan(any(ScanOptions.class));
+        verify(summaryRepository, times(1)).updateReliabilityInDb(eq(agentId), eq(1L), eq(10.5));
     }
 
     @Test
-    @DisplayName("조회된 Redis 키가 없으면 로직을 즉시 종료한다")
-    void syncRedisToDb_NoKeys() {
+    @DisplayName("SCAN 도중 예외가 발생해도 안전하게 리소스를 닫고 종료한다")
+    void syncRedisToDb_HandleScanException() {
         // given
-        given(doubleRedisTemplate.keys("matching:sandbox:*")).willReturn(Collections.emptySet());
+        given(doubleRedisTemplate.scan(any(ScanOptions.class))).willThrow(new RuntimeException("Redis Scan Error"));
 
         // when
         syncReliabilityScheduler.syncRedisToDb();
 
         // then
-        verify(doubleRedisTemplate, never()).execute(any(RedisScript.class), anyList());
+        // 예외가 잡히고 DB 업데이트는 실행되지 않아야 함
+        verify(summaryRepository, never()).updateReliabilityInDb(any(), anyLong(), anyDouble());
+    }
+
+    @Test
+    @DisplayName("동기화할 데이터가 없으면 DB 업데이트를 수행하지 않는다")
+    void syncRedisToDb_NoData_SkipUpdate() {
+        // given
+        Cursor<String> emptyCursor = mock(Cursor.class);
+        given(emptyCursor.hasNext()).willReturn(false);
+        given(doubleRedisTemplate.scan(any(ScanOptions.class))).willReturn(emptyCursor);
+
+        // when
+        syncReliabilityScheduler.syncRedisToDb();
+
+        // then
+        verify(summaryRepository, never()).updateReliabilityInDb(any(), anyLong(), anyDouble());
+    }
+
+    @Test
+    @DisplayName("Lua 스크립트가 null을 반환하면 DB 업데이트를 수행하지 않는다")
+    void syncRedisToDb_NullWeight_SkipUpdate() {
+        // given
+        UUID agentId = UUID.randomUUID();
+        String key = "matching:sandbox:" + agentId + ":1";
+
+        @SuppressWarnings("unchecked")
+        Cursor<String> mockCursor = (Cursor<String>) mock(Cursor.class);
+        given(mockCursor.hasNext()).willReturn(true, false);
+        given(mockCursor.next()).willReturn(key);
+
+        given(doubleRedisTemplate.scan(any(ScanOptions.class))).willReturn(mockCursor);
+        given(doubleRedisTemplate.execute(any(RedisScript.class), anyList()))
+                .willReturn(null);
+
+        // when
+        syncReliabilityScheduler.syncRedisToDb();
+
+        // then
         verify(summaryRepository, never()).updateReliabilityInDb(any(), anyLong(), anyDouble());
     }
 }

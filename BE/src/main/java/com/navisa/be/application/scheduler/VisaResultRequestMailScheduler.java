@@ -28,7 +28,7 @@ public class VisaResultRequestMailScheduler {
     private final UserCrudService userCrudService;
     private final ChatRoomSearchService chatRoomSearchService;
 
-    @Scheduled(cron = "0 0 10 * * *") // 매일 오전 10시
+    @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul") // 매일 오전 10시
     @SchedulerLock(name = "VisaEmailScheduler_sendFollowUpEmails", lockAtMostFor = "10m", lockAtLeastFor = "2m")
     public void sendFollowUpEmails() {
         LocalDate targetDate = LocalDate.now().minusDays(14);

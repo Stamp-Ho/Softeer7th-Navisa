@@ -27,7 +27,7 @@ public class ForeignerFeedbackRequestScheduler {
     private final ChatRoomSearchService chatRoomSearchService;
     private final ChatIntegrationService chatIntegrationService;
 
-    @Scheduled(cron = "0 0 8 * * *")
+    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
     @SchedulerLock(
             name = "ForeignerFeedbackRequestScheduler_publishRequestMessages", lockAtMostFor = "10m", lockAtLeastFor = "2m"
     )

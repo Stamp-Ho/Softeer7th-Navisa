@@ -35,6 +35,7 @@ public class ReviewReliabilityService {
         // r_i,a = w_i,a / Σ(w_i,k) 계산
         List<Double> top3Similarities = allSimilarities.subList(0, topLimit);
         List<Double> relativeRatios = top3Similarities.stream()
+
                 .map(targetW -> reliabilityCalculator.calculateRelativeRatio(targetW, top3Similarities))
                 .collect(Collectors.toList());
 
