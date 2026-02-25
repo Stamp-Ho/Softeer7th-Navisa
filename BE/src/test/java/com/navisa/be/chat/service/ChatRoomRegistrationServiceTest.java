@@ -15,15 +15,23 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @Transactional
 class ChatRoomRegistrationServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private ChatRoomRegistrationService chatRoomRegistrationService;
+
+    @MockitoBean
+    private ChatIntegrationService chatIntegrationService;
 
     @Autowired
     private AgentProfileTestFixture agentProfileTestFixture;
@@ -59,6 +67,8 @@ class ChatRoomRegistrationServiceTest extends IntegrationTestSupport {
         // then
         boolean exists = chatRoomRepository.existsByAgentProfileIdAndForeignerProfileId(agentProfile.getId(), foreignerProfile.getId());
         assertThat(exists).isTrue();
+
+        verify(chatIntegrationService, times(1)).saveAndPublishChatMessage(eq(agentuser.getId()), any(), any());
     }
 
     @Test
@@ -101,5 +111,4 @@ class ChatRoomRegistrationServiceTest extends IntegrationTestSupport {
                 .isInstanceOf(ChatRoomException.class)
                 .hasMessage(ResponseStatus.CHATROOM_ALREADY_EXISTS.getMessage());
     }
-
 }

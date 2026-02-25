@@ -2,12 +2,13 @@ package com.navisa.be.chat.service;
 
 import com.navisa.be.agent.model.entity.AgentProfile;
 import com.navisa.be.agent.service.AgentProfileCrudService;
+import com.navisa.be.chat.dto.message.ChatMessageRequest;
 import com.navisa.be.chat.dto.request.ChatRoomCreateRequest;
 import com.navisa.be.chat.dto.response.ChatRoomCreateResponse;
 import com.navisa.be.chat.exception.ChatRoomException;
-import com.navisa.be.chat.model.entity.ChatMessage;
 import com.navisa.be.chat.model.entity.ChatRoom;
 import com.navisa.be.chat.model.enums.ChatRoomStatus;
+import com.navisa.be.chat.model.enums.MessageType;
 import com.navisa.be.chat.repository.ChatRoomRepository;
 import com.navisa.be.foreigner.service.ForeignerProfileCrudService;
 import com.navisa.be.global.web.response.ResponseStatus;
@@ -33,8 +34,8 @@ public class ChatRoomRegistrationService {
     private final AgentProfileCrudService agentProfileQueryService;
     private final ForeignerProfileCrudService foreignerProfileCrudService;
     private final UserCrudService userCrudService;
-    private final ChatMessageRegistrationService chatMessageRegistrationService;
     private final ChatRoomSearchService chatRoomSearchService;
+    private final ChatIntegrationService chatIntegrationService;
 
     public void updateStatus(ChatRoom chatRoom) {
         chatRoom.updateStatus(ChatRoomStatus.BLOCKED);
@@ -68,10 +69,9 @@ public class ChatRoomRegistrationService {
             throw new ChatRoomException(ResponseStatus.CHATROOM_ALREADY_EXISTS);
         }
 
-        // 메시지를 저장
-        UUID senderId = (loginUser.getUserType() == UserType.VALID_AGENT) ? agentProfile.getId() : foreignerProfile.getId();
-        ChatMessage message = chatMessageRegistrationService.createFirstTextMessage(chatRoom, senderId, request.content());
-        chatRoom.updateLastChattedAt(message.getCreatedAt());
+        // 메시지를 저장하고 발행
+        ChatMessageRequest chatMessageRequest = new ChatMessageRequest(chatRoom.getId(), null, request.content(), MessageType.TEXT);
+        chatIntegrationService.saveAndPublishChatMessage(loginUser.getId(), chatMessageRequest, chatRoom);
 
         return new ChatRoomCreateResponse(chatRoom.getId());
     }

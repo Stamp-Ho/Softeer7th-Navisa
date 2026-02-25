@@ -46,6 +46,7 @@ public class ChatRoomInteractService {
     private final ApplicationFormForAgentService applicationFormForAgentService;
     private final ChatIntegrationService chatIntegrationService;
 
+    @Transactional(readOnly = true)
     public SliceResponse<ChatRoomCardResponse, Long> findAllChatRoomsByNoOffset(String email, String filter, SliceRequest<Long> slice) {
         ChatRoomFilterType filterType = ChatRoomFilterType.from(filter);
 

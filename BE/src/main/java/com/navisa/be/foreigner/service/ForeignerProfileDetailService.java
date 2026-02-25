@@ -20,6 +20,7 @@ import com.navisa.be.foreigner.repository.ForeignerCareersRepository;
 import com.navisa.be.foreigner.repository.ForeignerEducationRepository;
 import com.navisa.be.foreigner.repository.ForeignerExpectedCompanyRepository;
 import com.navisa.be.foreigner.repository.ForeignerProfileRepository;
+import com.navisa.be.global.common.model.entity.Nationality;
 import com.navisa.be.global.web.response.ResponseStatus;
 import com.navisa.be.user.model.entity.User;
 import com.navisa.be.user.model.enums.UserType;
@@ -69,7 +70,7 @@ public class ForeignerProfileDetailService {
         ForeignerProfile foreignerProfile = foreignerProfileRepository.findById(request.foreignerId())
                 .orElseThrow(() -> new ForeignerException(ResponseStatus.INVALID_FOREIGNER));
 
-        List<Long> nationIds = foreignerProfile.getForeignerNationalities().stream().map(ForeignerNationality::getId).toList();
+        List<Long> nationIds = foreignerProfile.getForeignerNationalities().stream().map(ForeignerNationality::getNationality).map(Nationality::getId).toList();
 
         User agentUser = userCrudService.findByEmail(request.loginUserEmail());
 
