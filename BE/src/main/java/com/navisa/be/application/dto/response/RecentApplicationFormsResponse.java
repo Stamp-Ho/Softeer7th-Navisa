@@ -14,6 +14,8 @@ public record RecentApplicationFormsResponse(
 
         @Schema(description = "현재 진행 단계") Integer currentStep,
 
+        @Schema(description = "총 입력 필드 수") Integer totalCount,
+
         @Schema(description = "외국인 증명사진 URL") String foreignerProfileImgUrl,
 
         @Schema(description = "최종 수정 일시") LocalDateTime lastModifiedAt

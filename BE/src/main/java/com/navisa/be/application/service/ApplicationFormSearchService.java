@@ -63,6 +63,7 @@ public class ApplicationFormSearchService {
                             form.getForeignerProfile().getNickname(),
                             form.isDone(),
                             form.getCurrentStep(),
+                            form.getTotalCount(),
                             profileImgUrl,
                             form.getUpdatedAt());
                 })

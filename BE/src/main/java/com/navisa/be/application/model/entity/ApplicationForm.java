@@ -56,8 +56,8 @@ public class ApplicationForm extends BaseEntity {
     @Column(name = "mail_sent_at")
     private LocalDateTime mailSentAt;
 
-    @Column(name = "total_count")
-    private Integer totalCount = 0;
+    @Column(name = "total_count", nullable = false)
+    private Integer totalCount = 91;
 
     @Column(name = "current_step", nullable = false)
     private Integer currentStep = 0;

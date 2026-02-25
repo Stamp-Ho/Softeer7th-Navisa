@@ -25,7 +25,7 @@ public class VisaApplicationFormTestFixture {
                 foreignerProfile,
                 jobCode,
                 isDone,
-                150,
+                91,
                 10);
 
         Map<String, Object> mockData = Map.of("name", "John Doe", "birth", "1990-01-01");

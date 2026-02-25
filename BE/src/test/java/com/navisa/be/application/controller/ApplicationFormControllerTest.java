@@ -242,14 +242,61 @@ class ApplicationFormControllerTest {
         given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
 
         RecentApplicationFormsResponse summary = new RecentApplicationFormsResponse(
-                UUID.randomUUID(), "Nick Judy", false, 105, "img.png", LocalDateTime.now());
+                UUID.randomUUID(), "Nick Judy", false, 0, 91, "img.png", LocalDateTime.now());
         given(applicationFormSearchService.getRecentApplicationForms(email)).willReturn(List.of(summary));
 
         // when & then
         mockMvc.perform(get("/api/application-forms/recent-applications")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result[0].title").value("Nick Judy"));
+                .andExpect(jsonPath("$.result[0].title").value("Nick Judy"))
+                .andExpect(jsonPath("$.result[0].currentStep").value(0))
+                .andExpect(jsonPath("$.result[0].totalCount").value(91));
+    }
+
+    @Test
+    @DisplayName("로그인한 행정사가 처음 생성된 신청서를 조회하면 초기값(0, 91)을 반환한다.")
+    void getRecentVisaForms_InitialValues() throws Exception {
+        // given
+        String email = "agent@navisa.com";
+        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
+
+        RecentApplicationFormsResponse initialSummary = new RecentApplicationFormsResponse(
+                UUID.randomUUID(), "New Foreigner", false, 0, 91, "default.png", LocalDateTime.now());
+
+        given(applicationFormSearchService.getRecentApplicationForms(email))
+                .willReturn(List.of(initialSummary));
+
+        // when & then
+        mockMvc.perform(get("/api/application-forms/recent-applications")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result[0].currentStep").value(0))
+                .andExpect(jsonPath("$.result[0].totalCount").value(91));
+    }
+
+    @Test
+    @DisplayName("외국인이 본인의 신규 신청서를 조회하면 진행도 초기값(0, 91)이 포함되어야 한다.")
+    void getLatestVisaForm_InitialProgress() throws Exception {
+        // given
+        String email = "foreigner@navisa.com";
+        given(loginUserResolver.resolveArgument(any(), any(), any(), any())).willReturn(email);
+
+        ApplicationFormDetailResponse initialDetail = new ApplicationFormDetailResponse(
+                UUID.randomUUID(), "img.png", false, LocalDateTime.now(),
+                91, // totalCount
+                0,  // currentStep
+                List.of(Collections.emptyMap()), 1L);
+
+        given(applicationFormSearchService.getLatestApplicationFormForForeigner(email))
+                .willReturn(initialDetail);
+
+        // when & then
+        mockMvc.perform(get("/api/application-forms/foreigner")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.totalCount").value(91))
+                .andExpect(jsonPath("$.result.filledCount").value(0));
     }
 
     @Test
