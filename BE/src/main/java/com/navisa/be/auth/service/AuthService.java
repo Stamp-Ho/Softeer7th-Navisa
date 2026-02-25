@@ -161,7 +161,7 @@ public class AuthService {
 
         if (!savedToken.getToken().equals(refreshTokenValue)) {
             log.error("[reissue 에러] 토큰 불일치!");
-            throw new AuthException(ResponseStatus.INVALID_TOKEN);
+            throw new AuthException(ResponseStatus.REFRESH_TOKEN_CONFLICTED);
         }
 
         return userRepository.findByEmail(email)

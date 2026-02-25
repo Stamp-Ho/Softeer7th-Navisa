@@ -42,7 +42,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             String email = claims.getSubject();
             String userType = claims.get("userType", String.class);
 
-            // 리팩토링 내용 배포 전에 발행된 토큰에 대해서 토큰 재발급 유도를 하는 로직
+            // 배포 전에 발행된 토큰에 대해서 토큰 재발급 유도를 하는 로직
             if (userType == null) {
                 throw new AuthException(ResponseStatus.ACCESS_TOKEN_EXPIRED);
             }

@@ -1,4 +1,4 @@
-package com.navisa.be.chat.interceptor;
+package com.navisa.be.auth.interceptor;
 
 import com.navisa.be.auth.jwt.JwtProvider;
 import com.navisa.be.chat.exception.WebSocketConnectionException;

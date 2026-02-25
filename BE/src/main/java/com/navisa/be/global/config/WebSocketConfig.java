@@ -1,6 +1,6 @@
 package com.navisa.be.global.config;
 
-import com.navisa.be.chat.interceptor.WebSocketAuthInterceptor;
+import com.navisa.be.auth.interceptor.WebSocketAuthInterceptor;
 import com.navisa.be.global.web.error.WebSocketExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
