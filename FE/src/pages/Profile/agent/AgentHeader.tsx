@@ -18,8 +18,8 @@ const AgentHeader = ({
           if (!description) return null;
           return (
             <li key={idx} className="flex flex-row gap-1 items-center title-l-medium text-text-base">
-              <BadgeIcon badgeIndex={data} />
-              {t(`badges.${data}`)}
+              <BadgeIcon badgeIndex={data-1} />
+              {t(`badges.${data-1}`)}
             </li>
           );
         })}
