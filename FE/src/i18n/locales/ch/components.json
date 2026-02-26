@@ -85,7 +85,9 @@
     "reviewPrompt": "若签证已发放，请留下您的体验评价。",
     "attorneySuffix": " 律师",
     "feedbackRequired": "请撰写反馈。",
-    "writeFeedback": "撰写反馈"
+    "writeFeedback": "撰写反馈",
+    "finishRetainerQuestion": "是否要结束委托协议？",
+    "finishRetainerError": "处理结束委托协议失败"
   },
   "chatModal": {
     "proposeRetainerTitle": "是否提议委托？",
@@ -124,5 +126,21 @@
     "visaApplicationLink": "查看签证申请表",
     "writeReview": "撰写评论",
     "messageLink": "转到消息"
+  },
+  "searchForeignerCard": {
+    "plannedJob": "计划工作",
+    "finalEducation": "最终学历",
+    "language": "语言"
+  },
+  "filterWithDropdown": {
+    "selectText": "选择",
+    "job": "职业",
+    "region": "地区",
+    "language": "语言",
+    "nation": "国籍"
+  },
+  "button": {
+    "yes": "是",
+    "no": "否"
   }
 }

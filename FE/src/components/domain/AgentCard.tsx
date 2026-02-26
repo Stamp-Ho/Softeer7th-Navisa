@@ -5,8 +5,8 @@ import { useEffect } from "react";
 import type { AgentCardResponse } from "../../api/types/agent";
 import { useResizeImage } from "../../hooks/useResizeImage";
 import { useTranslation } from "react-i18next";
-import BadgeIcon, { badgeDescription } from "../../assets/icon/BadgeIcon";
-import { jobCodeList } from "../../constants/job";
+import BadgeIcon from "../../assets/icon/BadgeIcon";
+import { useBadgeLabels, useJobCodeLabels } from "../../hooks/useLocalizationLists";
 import { useAuth } from "../../contexts/AuthContextProvider";
 import { alertT } from "../../i18n/alerts";
 
@@ -24,6 +24,8 @@ const AgentCard = ({
   disabled?: boolean;
 }) => {
   const { t } = useTranslation(["components"]);
+  const badgeLabels = useBadgeLabels();
+  const jobCodeLabels = useJobCodeLabels();
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
   const { userType } = useAuth();
 
@@ -49,8 +51,8 @@ const AgentCard = ({
             <img src={agent.profileImgUrl} width={imageSize.width} height={imageSize.height} />
           </div>
         </div>
-        <div className="flex flex-col pb-4 pt-2 px-4 h-46.75">
-          <div className="flex flex-row gap-3 mt-1">
+        <div className="flex flex-col pb-4 pt-2 px-4 min-h-46.75">
+          <div className="flex flex-wrap gap-x-3 mt-1">
             {agent.badgeTop2.length === 0 ? (
               <div className="flex flex-row gap-1 items-center caption-s-medium text-text-sub ">
                 {t("agentCard.noReview")}
@@ -62,7 +64,7 @@ const AgentCard = ({
                   className="flex flex-row gap-1 items-center caption-s-medium text-primary "
                 >
                   <BadgeIcon badgeIndex={badgeId - 1} size={12} color="var(--primary)" />
-                  {badgeDescription[badgeId - 1]}
+                  {badgeLabels[badgeId - 1]}
                 </div>
               ))
             )}
@@ -73,13 +75,15 @@ const AgentCard = ({
           <div className="flex-col flex gap-1 max-h-21 min-h-17">
             <h5 className="flex flex-row items-center gap-1.5 caption-m-medium mt-auto">
               <IcGraduation size={14} /> {t("agentCard.expertise")}
-              {agent.specialityJobCount && <span className="text-primary body-s-bold">{agent.specialityJobCount}</span>}
+              {agent.specialityJobCount && (
+                <span className="text-primary body-s-bold -mt-0.5">{agent.specialityJobCount}</span>
+              )}
             </h5>
             {authed ? (
               <ol className="flex flex-row gap-1 flex-wrap">
                 {agent.agentSpecialityTop2?.slice(0, 2).map((jobId) => (
                   <Tag key={`agent_special_job_${jobId}`} variant={"small_fill_violet_max"}>
-                    {jobCodeList[jobId - 1]}
+                    {jobCodeLabels[jobId - 1]}
                   </Tag>
                 ))}
               </ol>

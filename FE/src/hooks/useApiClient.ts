@@ -119,6 +119,7 @@ const useApiClient = () => {
           window.localStorage.removeItem("userType");
           window.localStorage.removeItem("userId");
           navigate("/", { replace: false });
+          location.reload();
           throw new Error("refresh token 시간 만료");
         }
         if (res.status === 409) {
@@ -129,6 +130,7 @@ const useApiClient = () => {
           window.localStorage.removeItem("userType");
           window.localStorage.removeItem("userId");
           navigate("/", { replace: false });
+          location.reload();
           throw new Error("다른 기기에서 로그인 감지");
         }
       } finally {

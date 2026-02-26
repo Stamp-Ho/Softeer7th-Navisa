@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Header from "./Header";
 import Education from "./Education";
 import Languages from "./Languages";
@@ -9,9 +10,10 @@ import { useForeignerProfileDetailQuery } from "../../../api/queries/useForeigne
 
 function ProfileOfForeigner() {
   const { foreignerId } = useParams();
+  const { t } = useTranslation(["pages"]);
   const { data, isLoading, isError } = useForeignerProfileDetailQuery(foreignerId!);
-  if (!foreignerId) return <div>잘못된 접근입니다.</div>;
-  if (isLoading) return <div>로딩 중...</div>;
+  if (!foreignerId) return <div>{t("profile.invalidAccess")}</div>;
+  if (isLoading) return <div>{t("landing.loading")}</div>;
   const dataToRender = isError ? (
     <>
       <section className="flex flex-col overflow-auto scrollbar-hide h-full">

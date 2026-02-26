@@ -10,7 +10,7 @@ const AgentReviewSection = ({
   };
 }) => {
   const { t } = useTranslation(["pages"]);
-  if (!reviewSummary) return <SkeletonUi />;
+  if (!reviewSummary) return <SkeletonUi t={t} />;
   return (
     <>
       <div className="mb-13 headline-m-semibold text-gray-1000">
@@ -39,10 +39,10 @@ const AgentReviewSection = ({
 
 export default AgentReviewSection;
 
-const SkeletonUi = () => {
+const SkeletonUi = ({ t }: { t: (key: string) => string }) => {
   return (
     <>
-      <div className="mb-13 headline-m-semibold text-gray-1000">평가</div>
+      <div className="mb-13 headline-m-semibold text-gray-1000">{t("profile.reviewSection")}</div>
       <div className="grid grid-cols-2 grid-rows-3 gap-4">
         {Array.from({ length: 6 }).map((_, index) => (
           <div

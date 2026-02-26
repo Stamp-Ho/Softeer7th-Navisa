@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import BadgeIcon, { badgeDescription } from "../../../assets/icon/BadgeIcon";
+import BadgeIcon from "../../../assets/icon/BadgeIcon";
 import { IcGraduation, IcLocation } from "../../../assets/icon/StratisUi";
 import Tag from "../../../components/common/Tag";
 import type { SearchAgentCardType } from "../../../types/Cards";
 import { useEffect } from "react";
 import { useResizeImage } from "../../../hooks/useResizeImage";
 import { useTranslation } from "react-i18next";
-import { jobCodeList } from "../../../constants/job";
+import { useBadgeLabels, useJobCodeLabels } from "../../../hooks/useLocalizationLists";
 import { useAuth } from "../../../contexts/AuthContextProvider";
 import { alertT } from "../../../i18n/alerts";
 
@@ -24,14 +24,16 @@ import { alertT } from "../../../i18n/alerts";
  */
 const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
   const { t } = useTranslation(["components"]);
-  const { resizeImage, imageSize, loadingImage } = useResizeImage();
+  const badgeLabels = useBadgeLabels();
+  const jobCodeLabels = useJobCodeLabels();
+  const { resizeImage, imageSize } = useResizeImage();
   const { userType } = useAuth();
 
   const authed = userType === "FILLED_FOREIGNER";
   useEffect(() => {
     if (agent?.profileImgUrl) resizeImage(agent.profileImgUrl, 140, 140);
   }, [agent]);
-  if (!agent || loadingImage) return <SkeletonUI />;
+  if (!agent) return <SkeletonUI />;
   return (
     <div onClick={() => authed || alertT("components.agentCard.loginRequired")}>
       <Link
@@ -56,7 +58,7 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
                   className="flex flex-row gap-1 items-center caption-m-medium text-primary "
                 >
                   <BadgeIcon badgeIndex={badgeId - 1} size={12} color="var(--primary)" />
-                  {badgeDescription[badgeId - 1]}
+                  {badgeLabels[badgeId - 1]}
                 </div>
               ))
             )}
@@ -76,7 +78,7 @@ const SearchAgentCard = ({ agent }: { agent?: SearchAgentCardType }) => {
                 )}
                 {agent.agentSpecialityTop2.slice(0, 2).map((jobId) => (
                   <Tag key={`agent_special_job_${jobId - 1}`} variant={"small_fill_violet_max"}>
-                    {jobCodeList[(jobId - 1) % jobCodeList.length]}
+                    {jobCodeLabels[jobId - 1]}
                   </Tag>
                 ))}
               </ol>
@@ -100,7 +102,7 @@ export default SearchAgentCard;
 
 const SkeletonUI = () => {
   return (
-    <div className="flex flex-row items-center  gap-8 py-6 px-7 bg-gray-30 w-124 h-fit rounded-2xl ">
+    <div className="flex flex-row items-center  gap-8 py-6 px-7 bg-gray-30 w-124 h-55 rounded-2xl ">
       <div className="w-35 h-35 rounded-full bg-gray-100" />
       <div className="flex flex-col gap-3">
         <div className="flex flex-row gap-3">

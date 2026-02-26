@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useMyProfileQuery } from "../../api/queries/useMyProfileQuery";
 import BannerBackground from "../../components/layout/BannerBackground";
 import { useAuth } from "../../contexts/AuthContextProvider";
@@ -15,6 +16,7 @@ import AgentOffice from "./agent/AgentOffice";
 import MyAgentProfilePanel from "./agent/MyAgentProfilePanel";
 
 const MyProfile = () => {
+  const { t } = useTranslation(["pages"]);
   const { userType } = useAuth();
   const isAgent = userType.includes("AGENT");
 
@@ -31,12 +33,12 @@ const MyProfile = () => {
 
   const dataToRender = isAgent ? (
     !agentData?.agentInfo?.name || agentMyProfile.isLoading || agentMyProfile.isError ? (
-      SkeletonAgentProfile()
+      <SkeletonAgentProfile t={t} />
     ) : (
       <>
         <section className="flex flex-col">
           <h1 className="text-text-base font-pretendard text-[40px] font-semibold leading-[1.4] tracking-[-1.44px] mb-5">
-            내 프로필
+            {t("profile.myProfile")}
           </h1>
           <AgentHeader header={agentData?.header} />
 
@@ -46,7 +48,7 @@ const MyProfile = () => {
           </div>
 
           <div className="mt-15">
-            <div className="headline-m-semibold text-gray-1000 mb-10">추가 이력</div>
+            <div className="headline-m-semibold text-gray-1000 mb-10">{t("profile.additionalHistory")}</div>
             {agentData?.additionalHistory &&
               agentData?.additionalHistory.split("\n").length > 1 &&
               agentData.additionalHistory.split("\n").map((line, index) => (
@@ -75,12 +77,12 @@ const MyProfile = () => {
     )
   ) : !foreignerData?.name || foreignerMyProfile.isLoading || foreignerMyProfile.isError ? (
     // 외국인, 프로필 데이터 없거나 로딩중
-    SkeletonForeignerProfile()
+    <SkeletonForeignerProfile t={t} />
   ) : (
     <>
       <section className="flex flex-col overflow-auto scrollbar-hide h-full">
         <h1 className="text-text-base font-pretendard text-[40px] font-semibold leading-[1.4] tracking-[-1.44px] mb-5">
-          내 프로필
+          {t("profile.myProfile")}
         </h1>
         <Header nationIdList={foreignerData?.nationIdList} />
         <div className="flex flex-col gap-5 mt-15 overflow-visible">
@@ -113,12 +115,12 @@ const MyProfile = () => {
 
 export default MyProfile;
 
-const SkeletonForeignerProfile = () => {
+const SkeletonForeignerProfile = ({ t }: { t: (key: string) => string }) => {
   return (
     <>
       <section className="flex flex-col overflow-auto scrollbar-hide h-full">
         <h1 className="text-text-base font-pretendard text-[40px] font-semibold leading-[1.4] tracking-[-1.44px] mb-5">
-          내 프로필
+          {t("profile.myProfile")}
         </h1>
         <Header />
         <div className="flex flex-col gap-5 mt-15 overflow-visible">
@@ -134,20 +136,22 @@ const SkeletonForeignerProfile = () => {
   );
 };
 
-const SkeletonAgentProfile = () => {
+const SkeletonAgentProfile = ({ t }: { t: (key: string) => string }) => {
   return (
     <>
       <section className="flex flex-col">
         <h1 className="text-text-base font-pretendard text-[40px] font-semibold leading-[1.4] tracking-[-1.44px] mb-5">
-          내 프로필
+          {t("profile.myProfile")}
         </h1>
         <div className="flex flex-row gap-5 mt-15">
           <AgentSpecialties />
           <Languages />
         </div>
         <div className="mt-15">
-          <div className="headline-m-semibold text-gray-1000">추가 이력</div>
-          <div className="mt-13 whitespace-pre-line title-s-medium text-text-base">추가 이력</div>
+          <div className="headline-m-semibold text-gray-1000">{t("profile.additionalHistory")}</div>
+          <div className="mt-13 whitespace-pre-line title-s-medium text-text-base">
+            {t("profile.additionalHistory")}
+          </div>
         </div>
         <div className="mt-30">
           <AgentReviewSection />

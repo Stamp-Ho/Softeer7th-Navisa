@@ -68,7 +68,7 @@ const ServiceReviewModal = ({ reviewHandler, setFeedbackSubmitted }: ServiceRevi
 
           {/* 글자 수 카운터 */}
           <div className="text-right body-s-semibold text-text-sub mt-2">
-            {reviewText.length}/{MAX_LENGTH}자
+            {reviewText.length}/{MAX_LENGTH}
           </div>
         </div>
         <Button

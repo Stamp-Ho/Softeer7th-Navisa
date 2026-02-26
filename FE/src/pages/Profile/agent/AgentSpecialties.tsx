@@ -2,11 +2,12 @@ import { useTranslation } from "react-i18next";
 import { IcGraduation } from "../../../assets/icon/StratisUi";
 import Tag from "../../../components/common/Tag";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
-import { jobCodeList } from "../../../constants/job";
+import { useJobCodeLabels } from "../../../hooks/useLocalizationLists";
 
 const AgentSpecialties = ({ jobCodeIds }: { jobCodeIds?: number[] }) => {
   const { t } = useTranslation(["pages"]);
-  if (!jobCodeIds) return <SkeletonUi />;
+  const jobCodeLabels = useJobCodeLabels();
+  if (!jobCodeIds) return <SkeletonUi t={t} />;
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 title-m-semibold text-text-base">
@@ -17,7 +18,7 @@ const AgentSpecialties = ({ jobCodeIds }: { jobCodeIds?: number[] }) => {
       <ul className="flex flex-row gap-2 flex-wrap">
         {jobCodeIds.map((code, idx) => (
           <li key={idx}>
-            <Tag variant="large_violet_off">{jobCodeList[code - 1]}</Tag>
+            <Tag variant="large_violet_off">{jobCodeLabels[code - 1]}</Tag>
           </li>
         ))}
       </ul>
@@ -27,8 +28,7 @@ const AgentSpecialties = ({ jobCodeIds }: { jobCodeIds?: number[] }) => {
 
 export default AgentSpecialties;
 
-const SkeletonUi = () => {
-  const { t } = useTranslation(["pages"]);
+const SkeletonUi = ({ t }: { t: (key: string) => string }) => {
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 title-m-semibold text-text-base">

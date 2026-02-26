@@ -1,4 +1,5 @@
-import BadgeIcon, { badgeDescription } from "../../../../assets/icon/BadgeIcon";
+import BadgeIcon from "../../../../assets/icon/BadgeIcon";
+import { useBadgeLabels } from "../../../../hooks/useLocalizationLists";
 
 type BadgeReviewSectionParams = {
   title: string;
@@ -8,6 +9,7 @@ type BadgeReviewSectionParams = {
 };
 
 const BadgeReviewSection = ({ title, badgeArray, selectedBadges, onToggleBadges }: BadgeReviewSectionParams) => {
+  const badgeLabels = useBadgeLabels();
   return (
     <>
       <div className="mb-4 body-l-semibold text-text-base">{title}</div>
@@ -23,7 +25,7 @@ const BadgeReviewSection = ({ title, badgeArray, selectedBadges, onToggleBadges 
               tabIndex={1}
             >
               <BadgeIcon badgeIndex={num} color={isActive ? "var(--primary)" : "var(--gray-800)"} size={18} />
-              {badgeDescription[num]}
+              {badgeLabels[num]}
             </button>
           );
         })}

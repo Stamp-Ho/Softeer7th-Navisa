@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import BadgeIcon, { badgeDescription } from "../../../assets/icon/BadgeIcon";
+import BadgeIcon from "../../../assets/icon/BadgeIcon";
+import { useBadgeLabels } from "../../../hooks/useLocalizationLists";
 
 type ReviewType = {
   badgeId: number;
@@ -9,10 +10,11 @@ type ReviewType = {
 
 const ReviewBar = ({ badgeId, reviewCount, totalReviews }: ReviewType) => {
   const { t } = useTranslation(["components"]);
+  const badgeLabels = useBadgeLabels();
   const ratio = totalReviews > 0 ? reviewCount / totalReviews : 0;
   const percentage = Math.min(100, Math.max(0, ratio * 100));
-  const hasValidBadge = badgeId >= 0 && badgeId < badgeDescription.length;
-  const label = hasValidBadge ? badgeDescription[badgeId] : t("agentProfile.unknownBadge");
+  const hasValidBadge = badgeId >= 0 && badgeId < badgeLabels.length;
+  const label = hasValidBadge ? badgeLabels[badgeId] : t("agentProfile.unknownBadge");
   return (
     <div className="relative flex flex-row justify-between items-center w-124 h-15 overflow-hidden border border-violet-50 rounded-[12px] bg-background-default">
       <div
@@ -23,9 +25,7 @@ const ReviewBar = ({ badgeId, reviewCount, totalReviews }: ReviewType) => {
       ></div>
       <div className="flex flex-row gap-3 pl-6 z-10">
         {hasValidBadge && <BadgeIcon badgeIndex={badgeId} />}
-        <div className="body-l-semibold text-gray-700">
-          {label}
-        </div>
+        <div className="body-l-semibold text-gray-700">{label}</div>
       </div>
       <div className="pr-6 title-s-semibold text-violet-400">{reviewCount}</div>
     </div>

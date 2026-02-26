@@ -7,12 +7,12 @@ const ExploreJobs = ({ isAgent = false }) => {
   const jobLabels = useJobLabels();
   return (
     <div className="flex flex-col gap-5 mt-17">
-      <h2 className="headline-s-bold">{isAgent ? "직군별 의뢰인 탐색" : t("landing.exploreJobs")}</h2>
+      <h2 className="headline-s-bold">{t(isAgent ? "landing.exploreForeignersByJob" : "landing.exploreJobs")}</h2>
       <div className="grid grid-rows-2 grid-cols-8 px-5 pb-5 gap-4">
         {Array.from({ length: 16 }).map((_, i) => (
           <Link
             key={`job_${i}`}
-            className="flex flex-col items-center body-l-semibold cursor-pointer
+            className="flex flex-col items-center body-l-semibold cursor-pointer whitespace-nowrap
               transition-all duration-150 ease-out hover:scale-115"
             to={`/search/${isAgent ? "foreigner" : "agent"}${i === 15 ? "" : `?job=${i}`}`}
           >

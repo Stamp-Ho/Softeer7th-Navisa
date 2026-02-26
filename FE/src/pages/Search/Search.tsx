@@ -12,7 +12,7 @@ import type { SearchAgentCardType, SearchForeignerCardType } from "../../types/C
 import { useSearchInfiniteQuery } from "../../api/queries/useSearchInfiniteQuery";
 import { regionList } from "../../constants/regions";
 import { useAuth } from "../../contexts/AuthContextProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { jobList } from "../../constants/job";
 
 const Search = () => {
@@ -21,6 +21,7 @@ const Search = () => {
   const { userType } = useAuth();
   const { targetType } = useParams();
   const [searchParams] = useSearchParams();
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
   const isAgent = targetType === "agent";
   const params = isAgent
@@ -53,6 +54,13 @@ const Search = () => {
   } = //, hasNextPage
     useSearchInfiniteQuery(targetType || null, params);
 
+  useEffect(() => {
+    if (data && status === "success") {
+      //@ts-ignore
+      setSearchResults(data.pages.flatMap((page) => page.result.content) ?? []);
+    }
+  }, [data, status]);
+
   const { scrollRef, handleScroll, searchResultStyle, goTop } = useSearchScroll(() => fetchNextPage());
 
   useEffect(() => {
@@ -62,13 +70,10 @@ const Search = () => {
 
   const Filter = isAgent ? SearchAgentFilter : SearchforeignerFilter;
 
-  //@ts-ignore
-  const allItems = data?.pages.flatMap((page) => page.result.content) ?? [];
   const renderCards = () => {
-    if (status === "pending") return <div>{t("search.loading")}</div>;
-    if (allItems.length === 0) return <div>{t("search.noResults")}</div>;
+    if (data && status === "success" && searchResults.length === 0) return <div>{t("search.noResults")}</div>;
 
-    return allItems.map((item, index) => {
+    return searchResults.map((item, index) => {
       // 여기서 item의 타입을 구체화합니다.
       if (isAgent) {
         const agentItem = item as SearchAgentCardType;
@@ -100,7 +105,7 @@ const Search = () => {
         {/* 추가 데이터 로딩 표시 */}
         {isFetchingNextPage && <div className="col-span-full text-center">loading...</div>}
       </div>
-      {allItems.length > 12 && <GoTopFloating onClick={goTop} className="absolute -right-21 bottom-3" />}
+      {searchResults.length > 12 && <GoTopFloating onClick={goTop} className="absolute -right-21 bottom-3" />}
     </>
   );
 };

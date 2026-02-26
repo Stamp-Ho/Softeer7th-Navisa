@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import type { AgentRecentFeedbackResponse } from "../../../api/types/agent";
 import { IcQuotes } from "../../../assets/icon/StratisUi";
 import Tag from "../../../components/common/Tag";
@@ -14,6 +15,7 @@ export interface AgentRecentFeedbackResponse {
   foreignerName: string;
 } */
 const RecentFeedbackCard = ({ feedback }: { feedback?: AgentRecentFeedbackResponse }) => {
+  const { t } = useTranslation(["components"]);
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
 
   useEffect(() => {
@@ -23,7 +25,7 @@ const RecentFeedbackCard = ({ feedback }: { feedback?: AgentRecentFeedbackRespon
   return (
     <div className="flex flex-col w-124 h-69.5 px-6 pt-6 pb-8 rounded-2xl bg-gray-50">
       <div className=" flex flex-row justify-end items-center gap-2 body-s-medium text-text-sub">
-        {feedback.agentName} 행정사
+        {feedback.agentName} {t("agentProfile.title")}
         {imageSize.width && imageSize.height ? (
           <div className=" w-6.5 h-6.5 rounded-full overflow-hidden flex items-center justify-center">
             <img
@@ -41,7 +43,9 @@ const RecentFeedbackCard = ({ feedback }: { feedback?: AgentRecentFeedbackRespon
       <div className="flex flex-col gap-5">
         <IcQuotes />
         <div className="h-33 line-clamp-6 body-l-medium">{feedback.feedbackContent}</div>
-        <div className="caption-l-regular">{feedback.foreignerName.slice(0, 1)}****** 님의 후기</div>
+        <div className="caption-l-regular">
+          {t("agentProfile.reviewBy", { initial: feedback.foreignerName.slice(0, 1) })}
+        </div>
       </div>
     </div>
   );

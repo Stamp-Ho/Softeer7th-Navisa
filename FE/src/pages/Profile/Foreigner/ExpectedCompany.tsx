@@ -87,7 +87,7 @@ const ExpectedCompany = ({
               <span className="body-l-medium text-text-sub">{calcDDay(startDate)}</span>
             </li>
           </ul>
-          <div className="flex flex-col items-end mt-4.25">
+          <div className="flex flex-col items-end mt-3 gap-1.25">
             <ToolTipMessage message={CalcLastAccessDay(lastAccessDay)} />
             <Button
               variant="primary"

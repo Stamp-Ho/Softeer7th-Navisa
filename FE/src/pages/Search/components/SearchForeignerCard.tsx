@@ -1,10 +1,10 @@
 import FlagIcon from "../../../assets/FlagIcon";
 import { IcGraduation, IcLanguage, IcLuggage04 } from "../../../assets/icon/StratisUi";
 import Tag from "../../../components/common/Tag";
-import { languageList } from "../../../constants/language";
 import { Link } from "react-router-dom";
 import type { SearchForeignerCardType } from "../../../types/Cards";
-import { DegreeToKorean } from "../../../api/types/common";
+import { useTranslation } from "react-i18next";
+import { useLanguageLabels, useDegreeLabelMap } from "../../../hooks/useLocalizationLists";
 
 const SearchForeignerCard = ({
   foreigner,
@@ -13,6 +13,10 @@ const SearchForeignerCard = ({
   foreigner?: SearchForeignerCardType;
   withDetails?: boolean;
 }) => {
+  const { t } = useTranslation(["components"]);
+  const languageLabels = useLanguageLabels();
+  const degreeLabelMap = useDegreeLabelMap();
+
   if (!foreigner) return SkeletonUi(withDetails);
   return (
     <div
@@ -31,7 +35,7 @@ const SearchForeignerCard = ({
             <div className="flex flex-col gap-2">
               <div className="flex flex-row gap-1 items-center w-36 caption-m-medium text-text-base">
                 <IcLuggage04 size={14} />
-                입사 예정 직무
+                {t("searchForeignerCard.plannedJob")}
               </div>
               <Tag variant="small_fill_gray_2" className="rounded-sm w-fit">
                 {foreigner.jobTitle}
@@ -41,10 +45,10 @@ const SearchForeignerCard = ({
               <div className="flex flex-col w-36 gap-2">
                 <div className="flex flex-row gap-1 items-center caption-m-medium text-text-base">
                   <IcGraduation size={14} />
-                  최종 학력
+                  {t("searchForeignerCard.finalEducation")}
                 </div>
                 <Tag variant="small_fill_violet_max" className="w-fit">
-                  {DegreeToKorean[foreigner.degreeLevel]}
+                  {degreeLabelMap[foreigner.degreeLevel]}
                 </Tag>
               </div>
             )}
@@ -52,12 +56,12 @@ const SearchForeignerCard = ({
           <div className="flex flex-col w-36 gap-2">
             <div className="flex flex-row gap-1 items-center caption-m-medium text-text-base">
               <IcLanguage size={14} />
-              사용 언어
+              {t("searchForeignerCard.language")}
             </div>
             <div className="flex flex-row gap-1">
               {foreigner.languageIdList.slice(0, 2).map((lang, idx) => (
                 <Tag key={idx} variant="small_fill_green_max" className="w-fit">
-                  {languageList[lang - 1]}
+                  {languageLabels[lang - 1]}
                 </Tag>
               ))}
               {foreigner.languageIdList.length > 2 && (

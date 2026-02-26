@@ -33,6 +33,7 @@ const ChatRoom = ({
   const isAgent = userType === "VALID_AGENT";
   const { data: participants, refetch: refetchParticipants } = useChatParticipantsInfoQuery(chatRoomId);
   const { registerParticipantsInfoCallback, unregisterParticipantsInfoCallback } = useWebSocket();
+
   const [reviewModal, setReviewModal] = useState<number>(0); // 0: none, 1: badge review 작성, 2: service review 작성, 3: 수임 종료 모달
   const [isReviewRequired, setIsReviewRequired] = useState<boolean>(false);
   const [isVisaModalShown, setIsVisaModalShown] = useState(false);
@@ -40,6 +41,7 @@ const ChatRoom = ({
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false); // 피드백 제출 완료 여부
   const [searchParams] = useSearchParams();
   const chatRoomNumber = Number(searchParams.get("chatroom"));
+
   const reviewHandler = (num: number) => {
     setReviewModal(num);
     setIsVisaModalShown(num > 0);

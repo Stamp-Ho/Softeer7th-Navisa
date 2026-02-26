@@ -2,13 +2,17 @@ import { useTranslation } from "react-i18next";
 import { IcGraduation } from "../../../assets/icon/StratisUi";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
 import Tag from "../../../components/common/Tag";
-import { DegreeToKorean } from "../../../api/types/common";
+import { useDegreeLabelMap } from "../../../hooks/useLocalizationLists";
+import type { DegreeLevel } from "../../../api/types/common";
 
 const Education = ({ school, degreeLevel, major }: { school?: string; degreeLevel?: string; major?: string }) => {
   const { t } = useTranslation(["pages"]);
+  const degreeLabelMap = useDegreeLabelMap();
+
   if (!school || !degreeLevel || !major) {
-    return <SekeltonEducation />;
+    return <SkeletonEducation />;
   }
+
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 title-m-semibold text-text-base ">
@@ -16,8 +20,8 @@ const Education = ({ school, degreeLevel, major }: { school?: string; degreeLeve
         <span>{t("profile.education")}</span>
       </div>
       <div className="flex gap-3 items-center">
-        <Tag variant="large_violet_off" className="w-23">
-          {DegreeToKorean[degreeLevel as keyof typeof DegreeToKorean] || degreeLevel}
+        <Tag variant="large_violet_off" className="w-fit">
+          {degreeLabelMap[degreeLevel as DegreeLevel] || degreeLevel}
         </Tag>
         <span className="title-l-medium text-text-base">{school}</span>
       </div>
@@ -27,12 +31,13 @@ const Education = ({ school, degreeLevel, major }: { school?: string; degreeLeve
 };
 export default Education;
 
-const SekeltonEducation = () => {
+const SkeletonEducation = () => {
+  const { t } = useTranslation(["pages"]);
   return (
     <ProfileItemsFrame>
       <div className="flex flex-row gap-2 title-m-semibold text-text-base ">
         <IcGraduation size={24} />
-        <span>최종 학력</span>
+        <span>{t("profile.education")}</span>
       </div>
       <div className="flex gap-3 items-center">
         <Tag variant="large_violet_off" className="w-23 animate-pulse"></Tag>

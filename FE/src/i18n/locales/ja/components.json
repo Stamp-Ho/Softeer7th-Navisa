@@ -85,7 +85,9 @@
     "reviewPrompt": "ビザ発給が完了したら、体験をレビューでお聞かせください。",
     "attorneySuffix": " 行政書士",
     "feedbackRequired": "フィードバックを記入してください。",
-    "writeFeedback": "フィードバックを書く"
+    "writeFeedback": "フィードバックを書く",
+    "finishRetainerQuestion": "委任を終了しますか？",
+    "finishRetainerError": "委任終了処理に失敗しました"
   },
   "chatModal": {
     "proposeRetainerTitle": "委任を提案しますか？",
@@ -124,5 +126,21 @@
     "visaApplicationLink": "ビザ申請フォームへ移動",
     "writeReview": "レビューを書く",
     "messageLink": "メッセージへ移動"
+  },
+  "searchForeignerCard": {
+    "plannedJob": "計画的な仕事",
+    "finalEducation": "最終学歴",
+    "language": "言語"
+  },
+  "filterWithDropdown": {
+    "selectText": "選択",
+    "job": "職業",
+    "region": "地域",
+    "language": "言語",
+    "nation": "国籍"
+  },
+  "button": {
+    "yes": "はい",
+    "no": "いいえ"
   }
 }

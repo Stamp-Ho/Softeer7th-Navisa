@@ -6,6 +6,7 @@ import type { ForeignerProgressResponse } from "../../../../api/types/foreigner"
 import Button from "../../../../components/common/Button";
 import Modal from "../../../../components/common/Modal";
 import { useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 type VisaResponseModalProps = {
   reviewHandler: (num: number) => void;
@@ -15,6 +16,7 @@ type VisaResponseModalProps = {
 };
 
 const VisaResponseModal = ({ reviewHandler, formId, isAgent, reviewProgress }: VisaResponseModalProps) => {
+  const { t } = useTranslation(["components"]);
   const modalRef = useRef<HTMLDivElement>(null);
   const { mutate: agentFinishStatus, isPending: isAgentPending } = useAgentStatusFinishedMutation(formId);
   const { mutate: foreignerFinishStatus, isPending: isForeignerPending } = useForeignerStatusFinishedMutation();
@@ -35,7 +37,9 @@ const VisaResponseModal = ({ reviewHandler, formId, isAgent, reviewProgress }: V
   return (
     <Modal ref={modalRef} onClose={() => reviewHandler(0)}>
       <div className="flex flex-col gap-8 items-center w-full">
-        <div className="flex flex-col gap-2 items-center title-l-semibold text-text-base">수임을 종료하시겠습니까?</div>
+        <div className="flex flex-col gap-2 items-center title-l-semibold text-text-base">
+          {t("chatRoom.finishRetainerQuestion")}
+        </div>
         <div className="flex flex-row justify-between w-full gap-4">
           <Button
             variant="gray"
@@ -46,7 +50,7 @@ const VisaResponseModal = ({ reviewHandler, formId, isAgent, reviewProgress }: V
             }}
             tabIndex={1}
           >
-            아니오
+            {t("button.no")}
           </Button>
           <Button
             variant="primary"
@@ -61,7 +65,7 @@ const VisaResponseModal = ({ reviewHandler, formId, isAgent, reviewProgress }: V
                   {
                     onSuccess: () => reviewHandler(0),
                     onError: () => {
-                      console.error("수임 종료 처리 실패");
+                      console.error(t("chatRoom.finishRetainerError"));
                     },
                   },
                 );
@@ -72,13 +76,13 @@ const VisaResponseModal = ({ reviewHandler, formId, isAgent, reviewProgress }: V
                     else reviewHandler(2);
                   },
                   onError: () => {
-                    console.error("수임 종료 처리 실패");
+                    console.error(t("chatRoom.finishRetainerError"));
                   },
                 });
               }
             }}
           >
-            네
+            {t("button.yes")}
           </Button>
         </div>
       </div>

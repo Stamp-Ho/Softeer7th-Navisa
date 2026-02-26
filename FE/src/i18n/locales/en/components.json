@@ -85,7 +85,9 @@
     "reviewPrompt": "If your visa has been issued, please leave a review of your experience.",
     "attorneySuffix": " Attorney",
     "feedbackRequired": "Please write feedback.",
-    "writeFeedback": "Write Feedback"
+    "writeFeedback": "Write Feedback",
+    "finishRetainerQuestion": "Do you want to end the retainer agreement?",
+    "finishRetainerError": "Failed to process ending the retainer agreement"
   },
   "chatModal": {
     "proposeRetainerTitle": "Would you like to propose a retainer?",
@@ -124,5 +126,21 @@
     "visaApplicationLink": "Go to Visa Application",
     "writeReview": "Write Review",
     "messageLink": "Go to Message"
+  },
+  "searchForeignerCard": {
+    "plannedJob": "Planned Job",
+    "finalEducation": "Final Education",
+    "language": "Languages"
+  },
+  "filterWithDropdown": {
+    "selectText": "Select",
+    "job": "Job",
+    "region": "Region",
+    "language": "Language",
+    "nation": "Nationality"
+  },
+  "button": {
+    "yes": "Yes",
+    "no": "No"
   }
 }

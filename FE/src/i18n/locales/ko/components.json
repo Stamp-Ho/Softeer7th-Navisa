@@ -85,7 +85,9 @@
     "reviewPrompt": "비자 발급이 완료되었다면 경험을 후기로 남겨주세요.",
     "attorneySuffix": " 행정사",
     "feedbackRequired": "피드백을 작성해주세요.",
-    "writeFeedback": "피드백 작성하기"
+    "writeFeedback": "피드백 작성하기",
+    "finishRetainerQuestion": "수임을 종료하시겠습니까?",
+    "finishRetainerError": "수임 종료 처리 실패"
   },
   "chatModal": {
     "proposeRetainerTitle": "수임을 제안하시겠습니까?",
@@ -124,5 +126,21 @@
     "visaApplicationLink": "비자 신청서 바로가기",
     "writeReview": "리뷰 작성하기",
     "messageLink": "메시지창 바로가기"
+  },
+  "searchForeignerCard": {
+    "plannedJob": "입사 예정 직무",
+    "finalEducation": "최종 학력",
+    "language": "사용 언어"
+  },
+  "filterWithDropdown": {
+    "selectText": "선택",
+    "job": "직군",
+    "region": "지역",
+    "language": "언어",
+    "nation": "국적"
+  },
+  "button": {
+    "yes": "네",
+    "no": "아니오"
   }
 }

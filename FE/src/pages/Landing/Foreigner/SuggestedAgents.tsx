@@ -96,8 +96,7 @@ const SuggestedAgents = () => {
     };
 
     const finishLoading = async () => {
-      const delay = (ms: number) =>
-        new Promise((resolve) => setTimeout(resolve, ms));
+      const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
       // 1. 로딩 바 숨기기
       setShowLoadingBar(false);
 
@@ -153,7 +152,7 @@ const SuggestedAgents = () => {
         <ol
           className={`${loading ? "pl-500" : ""}
             transition-all duration-1000
-            flex flex-row gap-5 w-fit items-center justify-start h-104`}
+            flex flex-row gap-5 w-fit items-center justify-start min-h-110 py-3`}
         >
           {dataToRender}
           {/* 4. 마지막 감지용 빈 div */}

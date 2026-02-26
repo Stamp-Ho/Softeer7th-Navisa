@@ -2,13 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import FilterWithDropdown from "../../../components/common/FilterWithDropdown";
 import { IcRotate } from "../../../assets/icon/StratisUi";
-import { nationByCategory } from "../../../constants/nations";
+import { useNationByCategory } from "../../../hooks/useLocalizationLists";
 import React, { useState } from "react";
 
 const SearchforeignerFilter = () => {
   const { t } = useTranslation(["pages"]);
   const navigate = useNavigate();
   const [openedFilter, setOpenedFilter] = useState(-1);
+  const localizedNationByCategory = useNationByCategory();
+
   const initFilter = () => {
     navigate("/search/foreigner", { replace: true });
   };
@@ -33,14 +35,17 @@ const SearchforeignerFilter = () => {
               cols={pk.cols}
               className={pk.style}
               searchAgent={false}
-              category={pk.paramKey === "nation" ? nationByCategory : null}
+              category={pk.paramKey === "nation" ? localizedNationByCategory : null}
               isOpen={openedFilter === index}
               onClick={() => setOpenedFilter(index)}
               onClose={() => setOpenedFilter(-1)}
             />
           </React.Fragment>
         ))}
-        <div className="flex-1 flex-row flex gap-2 items-center justify-center body-l-semibold text-text-base cursor-pointer" onClick={initFilter}>
+        <div
+          className="flex-1 flex-row flex gap-2 items-center justify-center body-l-semibold text-text-base cursor-pointer"
+          onClick={initFilter}
+        >
           <IcRotate /> {t("search.reset")}
         </div>
       </div>

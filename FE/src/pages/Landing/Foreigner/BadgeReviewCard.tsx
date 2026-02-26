@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { AgentBadgeReviewResponse } from "../../../api/types/agent";
-import BadgeIcon, { badgeDescription } from "../../../assets/icon/BadgeIcon";
+import BadgeIcon from "../../../assets/icon/BadgeIcon";
 import Tag from "../../../components/common/Tag";
 import { useResizeImage } from "../../../hooks/useResizeImage";
 import { useEffect } from "react";
@@ -20,7 +20,8 @@ import { alertT } from "../../../i18n/alerts";
   },
 */
 const BadgeReviewCard = ({ review }: { review?: AgentBadgeReviewResponse }) => {
-  const { t } = useTranslation(["components"]);
+  const { t: tComponents } = useTranslation(["components"]);
+  const { t: tCommon } = useTranslation(["common"]);
   const { resizeImage, imageSize, loadingImage } = useResizeImage();
   const { userType } = useAuth();
 
@@ -41,7 +42,7 @@ const BadgeReviewCard = ({ review }: { review?: AgentBadgeReviewResponse }) => {
         {review.badgeTop2.map((id) => (
           <div key={id} className="flex flex-row items-center gap-1 caption-m-medium text-violet-500">
             <BadgeIcon badgeIndex={id - 1} color="var(--primary)" size={12} />
-            {badgeDescription[id - 1]}
+            <h5 className="mt-px">{tCommon(`badges.${id - 1}`)}</h5>
           </div>
         ))}
       </div>
@@ -52,7 +53,7 @@ const BadgeReviewCard = ({ review }: { review?: AgentBadgeReviewResponse }) => {
             <div>
               <img
                 src={review.agentProfileImgUrl}
-                alt={t("chatRoom.attorneyProfileImage")}
+                alt={tCommon("chatRoom.attorneyProfileImage")}
                 width={imageSize.width}
                 height={imageSize.height}
               />
@@ -63,11 +64,11 @@ const BadgeReviewCard = ({ review }: { review?: AgentBadgeReviewResponse }) => {
         )}
         <div className="flex flex-col w-56">
           <div className="body-l-bold">
-            {review.agentName} {t("agentProfile.title")}
+            {review.agentName} {tComponents("agentProfile.title")}
           </div>
           <div className="w-56 pt-px my-2 bg-border-normal"></div>
           <div className="caption-l-regular">
-            {t("agentProfile.reviewBy", { initial: review.reviewerInitial.slice(0, 1) })}
+            {tComponents("agentProfile.reviewBy", { initial: review.reviewerInitial.slice(0, 1) })}
           </div>
           <div className="mt-2 body-s-medium line-clamp-2">{review.reviewContent}</div>
         </div>

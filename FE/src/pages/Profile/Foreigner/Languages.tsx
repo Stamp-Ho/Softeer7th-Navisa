@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next";
 import FlagIcon from "../../../assets/FlagIcon";
 import { IcLanguage } from "../../../assets/icon/StratisUi";
-import { languageIconIdxList, languageList } from "../../../constants/language";
+import { languageIconIdxList } from "../../../constants/language";
 import ProfileItemsFrame from "../../../components/common/ProfileItemsFrame";
+import { useLanguageLabels } from "../../../hooks/useLocalizationLists";
 
 const Languages = ({ languageIds }: { languageIds?: number[] }) => {
   const { t } = useTranslation(["pages"]);
+  const languageLabels = useLanguageLabels();
   if (!languageIds || languageIds.length === 0) return <SkeletonLanguages />;
   return (
     <ProfileItemsFrame>
@@ -21,7 +23,7 @@ const Languages = ({ languageIds }: { languageIds?: number[] }) => {
             className="flex flex-row items-center gap-spacing-300 py-spacing-300 pl-2.25 pr-spacing-500 bg-green-50 text-green-800 rounded-full body-l-semibold"
           >
             <FlagIcon nationIndex={languageIconIdxList[id - 1]} className="w-8 h-8" />
-            <span>{languageList[id - 1]}</span>
+            <span>{languageLabels[id - 1]}</span>
           </li>
         ))}
       </ul>

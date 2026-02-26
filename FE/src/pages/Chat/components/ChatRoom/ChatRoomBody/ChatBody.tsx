@@ -5,6 +5,7 @@ import { useAuth } from "../../../../../contexts/AuthContextProvider";
 import ChatMessageGroup from "./ChatMessageGroup"; // 분리된 컴포넌트
 import { useChatRoomContext } from "../../context/ChatRoomContext";
 import { useEffect, useRef, useState } from "react";
+import Envelope from "../../../../../assets/Envelope";
 
 type ChatBodyParams = {
   pageType: "CHAT" | "DOCUMENT";
@@ -32,15 +33,8 @@ const ChatBody = ({
   const { t } = useTranslation(["components"]);
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
-  const {
-    groupedChats,
-    isLoading,
-    isError,
-    scrollRef,
-    pendingProposalId,
-    handleScroll,
-    isFetchingNextPage,
-  } = useChatRoomContext();
+  const { groupedChats, isLoading, isError, scrollRef, pendingProposalId, handleScroll, isFetchingNextPage } =
+    useChatRoomContext();
 
   const innerContainer = useRef<HTMLDivElement>(null);
 
@@ -62,10 +56,37 @@ const ChatBody = ({
       resizeObserver.disconnect();
     };
   }, [groupedChats]);
-  if (isLoading) return <div className="p-6">{t("chatRoom.loadingChat")}</div>;
+
+  const [showLoading, setShowLoading] = useState(false);
+
+  useEffect(() => {
+    if (isLoading) {
+      // 500ms 이상 로딩이 지속되면 로딩 표시
+      const timeoutId = setTimeout(() => {
+        setShowLoading(true);
+      }, 200);
+
+      return () => {
+        clearTimeout(timeoutId);
+        setShowLoading(false);
+      };
+    } else {
+      setShowLoading(false);
+    }
+  }, [isLoading]);
+  if (showLoading)
+    return (
+      <div className="p-6 body-l-bold text-green-500 flex flex-col items-center justify-center w-full animate-pulse">
+        <Envelope />
+        {t("chatRoom.loadingChat")}
+      </div>
+    );
   if (isError)
     return (
-      <div className="p-6 text-red-500">{t("chatRoom.loadChatFailed")}</div>
+      <div className="p-6 body-l-bold text-red-500 flex flex-col items-center justify-center w-full">
+        <Envelope />
+        {t("chatRoom.loadChatFailed")}
+      </div>
     );
 
   return (
@@ -94,9 +115,7 @@ const ChatBody = ({
                   className="flex flex-row justify-center items-center my-10 gap-3 mx-3"
                 >
                   <div className="py-[1px] bg-gray-100 flex-1" />
-                  <Tag variant="small_fill_gray">
-                    {CalcDateSystemMessage(firstMsg.createdAt)}
-                  </Tag>
+                  <Tag variant="small_fill_gray">{CalcDateSystemMessage(firstMsg.createdAt)}</Tag>
                   <div className="py-[1px] bg-gray-100 flex-1" />
                 </div>
               );
