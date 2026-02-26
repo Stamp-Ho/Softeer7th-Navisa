@@ -4,6 +4,7 @@ import CalcLastChattedAt from "../../../../utils/CalcLastChattedAt";
 import { useAuth } from "../../../../contexts/AuthContextProvider";
 import { IcPin } from "../../../../assets/icon/StratisUi";
 import { useTranslation } from "react-i18next";
+import { isUUID } from "../../../../utils/isUuid";
 
 type ChatRoomCardParams = {
   profileImgUrl: string;
@@ -66,7 +67,7 @@ const ChatRoomCard = ({
         </div>
         <div className="flex flex-row items-center justify-between">
           <div className="body-s-regular text-text-sub w-[390px] line-clamp-2 h-[40px]">
-            {lastMessage}
+            {isUUID(lastMessage) ? "MATCHED" : lastMessage}
           </div>
           {noneRead > 0 && (
             <AlarmBadge isActive={true}>

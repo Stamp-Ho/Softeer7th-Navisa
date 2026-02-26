@@ -5,12 +5,20 @@ import DropDown from "./Dropdown";
 
 import { useJobListLabels } from "../../assets/JobIcon";
 import { regionList } from "../../constants/regions";
-import { languageList } from "../../constants/language";
-import { useRegionLabels, useNationLabels, useLanguageLabels } from "../../hooks/useLocalizationLists";
-import { IcArrows, IcJob, IcLanguage, IcLocation, IcNationality } from "../../assets/icon/StratisUi";
+import {
+  useRegionLabels,
+  useNationLabels,
+  useLanguageLabels,
+} from "../../hooks/useLocalizationLists";
+import {
+  IcArrows,
+  IcJob,
+  IcLanguage,
+  IcLocation,
+  IcNationality,
+} from "../../assets/icon/StratisUi";
 
 import type { FilterWithDropdownProps } from "../../types/filterWithDropdownProps";
-import { nationList } from "../../constants/nations";
 
 const FilterWithDropdown = ({
   className,
@@ -55,8 +63,12 @@ const FilterWithDropdown = ({
   // regionList의 경우 텍스트 값으로 비교, 나머지는 인덱스로 비교
   const selectedIds =
     paramKey === "region"
-      ? thisParams.map((val) => regionList.indexOf(val)).filter((idx) => idx !== -1)
-      : thisParams.map(Number).filter((id) => !isNaN(id) && id >= 0 && id < filterLabels.length);
+      ? thisParams
+          .map((val) => regionList.indexOf(val))
+          .filter((idx) => idx !== -1)
+      : thisParams
+          .map(Number)
+          .filter((id) => !isNaN(id) && id >= 0 && id < filterLabels.length);
 
   const isActive = selectedIds.length > 0;
 
@@ -96,11 +108,6 @@ const FilterWithDropdown = ({
 
 export default FilterWithDropdown;
 
-const FILTER_LIST = {
-  region: regionList,
-  language: languageList,
-  nation: nationList,
-};
 const FILTER_ICONS = {
   job: IcJob,
   region: IcLocation,

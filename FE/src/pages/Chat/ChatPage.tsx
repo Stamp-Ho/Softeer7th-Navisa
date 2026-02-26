@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useSearchParams } from "react-router-dom";
 import ChatRoomList from "./components/ChatList/ChatRoomList";
@@ -8,7 +8,10 @@ import ChatRoomModal from "./components/Modal/ChatRoomModal";
 import NoChatView from "./components/ChatRoom/NoChatView";
 import type { ChatRoomFilter } from "../../api/types/chat";
 import ChatRoomTabButton from "./components/ChatRoom/ChatRoomTabButton";
-import { useChatMatchedUnreadCount, useChatUnreadCount } from "../../api/queries/useChatUnreadCountQuery";
+import {
+  useChatMatchedUnreadCount,
+  useChatUnreadCount,
+} from "../../api/queries/useChatUnreadCountQuery";
 import { useChatRoomsQuery } from "../../api/queries/useChatRoomsQuery";
 import { useAuth } from "../../contexts/AuthContextProvider";
 import { useWebSocket } from "../../contexts/WebSocketContext";
@@ -20,7 +23,9 @@ const ChatPage = () => {
 
   const { t } = useTranslation(["pages"]);
   const location = useLocation();
-  const [selectedChatRoomId, setSelectedChatRoomId] = useState<number>(chatRoomNumber || -1);
+  const [selectedChatRoomId, setSelectedChatRoomId] = useState<number>(
+    chatRoomNumber || -1,
+  );
   const [selectedTab, setSelectedTab] = useState<ChatRoomFilter>("all");
   const [viewMessageModal, setViewMessageModal] = useState<number>(0);
   const [opponentImg, setOpponentImg] = useState<string | null>(null);
@@ -30,7 +35,8 @@ const ChatPage = () => {
 
   // ======== Auth ========
   const isAgent = userType === "VALID_AGENT";
-  const isFileReady = userType === "VALID_AGENT" || userType === "FILLED_FOREIGNER";
+  const isFileReady =
+    userType === "VALID_AGENT" || userType === "FILLED_FOREIGNER";
 
   // ======== API ========
   const { data: unreadCountData } = useChatUnreadCount();
@@ -98,21 +104,30 @@ const ChatPage = () => {
     setOpponentImg(null);
   };
 
-  if (!isFileReady || (!isChatRoomsLoading && !isChatExist && selectedTab === "all"))
+  if (
+    !isFileReady ||
+    (!isChatRoomsLoading && !isChatExist && selectedTab === "all")
+  )
     return <NoChatView isFileReady={isFileReady} />;
 
   return (
     <>
       <div className="fixed inset-0 bg-background-sub -z-10"></div>
       {viewMessageModal > 0 && (
-        <ChatRoomModal onModalAction={onModalAction} modalView={viewMessageModal} roomId={selectedChatRoomId} />
+        <ChatRoomModal
+          onModalAction={onModalAction}
+          modalView={viewMessageModal}
+          roomId={selectedChatRoomId}
+        />
       )}
 
       {/* ================= 메인 레이아웃 ================= */}
       <div className="relative flex flex-row justify-between mt-12 h-[824px]">
         {/* ===== 왼쪽: 탭 + 목록 ===== */}
         <div className="flex flex-col">
-          <div className="headline-m-bold text-gray-1000 mb-13">{t("chat.title")}</div>
+          <div className="headline-m-bold text-gray-1000 mb-13">
+            {t("chat.title")}
+          </div>
 
           <div className="flex flex-row gap-3 px-3 mb-10">
             <ChatRoomTabButton
@@ -152,7 +167,9 @@ const ChatPage = () => {
           </div>
 
           {/* ===== 전체 페이지 로딩 ===== */}
-          {isChatRoomsLoading && <div className="px-3 text-gray-500">{t("search.loading")}</div>}
+          {isChatRoomsLoading && (
+            <div className="px-3 text-gray-500">{t("search.loading")}</div>
+          )}
 
           {/* ===== 목록 (에러면 chatRooms 안 넘김 = 더미 사용) ===== */}
           {!isChatRoomsLoading && (
@@ -181,7 +198,9 @@ const ChatPage = () => {
             {selectedChatRoomId === -1 && (
               <div className="flex flex-col items-center my-auto">
                 <Envelope />
-                <div className="mt-7 headline-s-medium text-gray-500">{t("chat.selectMessage")}</div>
+                <div className="mt-7 headline-s-medium text-gray-500">
+                  {t("chat.selectMessage")}
+                </div>
               </div>
             )}
 
@@ -192,7 +211,11 @@ const ChatPage = () => {
                   onClose={onCloseChat}
                   onModalAction={onModalAction}
                   profileImg={opponentImg}
-                  initialRoomStatus={syncedChatRooms.find((r) => r.chatRoomId === selectedChatRoomId)?.roomStatus}
+                  initialRoomStatus={
+                    syncedChatRooms.find(
+                      (r) => r.chatRoomId === selectedChatRoomId,
+                    )?.roomStatus
+                  }
                 />
               </div>
             )}
