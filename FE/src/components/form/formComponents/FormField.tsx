@@ -91,6 +91,7 @@ const FormField = ({
                   setValue={field.onChange} // 클릭 시 실행
                   options={[false, true]}
                   className=" mt-3 w-56.5"
+                  readOnly={readOnly}
                 />
               )}
             />
@@ -106,6 +107,7 @@ const FormField = ({
                   value={field.value} // 불리언 값
                   setValue={field.onChange} // 클릭 시 실행
                   label={inputField.disableToggleDescription}
+                  disabled={readOnly}
                 />
               )}
             />

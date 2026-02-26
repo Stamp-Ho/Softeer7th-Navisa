@@ -75,7 +75,6 @@ const EditDocumentWidget = ({
   const onConfirm = () => {
     downloadPdf(filledFormData, imageUrl);
     patchStatus.mutate({ formId: documentId, isDone: true });
-    navigate(-1);
   };
   const elementAfterSteps = (
     <>

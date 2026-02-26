@@ -167,6 +167,7 @@ const EditDocument = () => {
     setLoadedFromLocalStorage(false);
     setTimeout(() => {
       window.localStorage.removeItem(data?.applicationFormId ?? documentId ?? "");
+      location.reload();
     }, 100);
   };
   const onError = () => {
