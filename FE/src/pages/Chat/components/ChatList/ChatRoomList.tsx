@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import ChatRoomCard from "./ChatRoomCard";
 import type { ChatRoomResponse } from "../../../../api/types/chat";
 import { ChatRoomProvider } from "../context/ChatRoomContext";
+import { useAuth } from "../../../../contexts/AuthContextProvider";
 
 type ChatRoomListProps = {
   chatRooms: ChatRoomResponse[];
@@ -27,6 +28,7 @@ const ChatRoomList = ({
 
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
+  const { userType } = useAuth();
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -65,7 +67,8 @@ const ChatRoomList = ({
     );
   };
 
-  const sortedChatRoom = sortChatRoom(chatRooms);
+  const sortedChatRoom =
+    userType === "VALID_AGENT" ? chatRooms : sortChatRoom(chatRooms);
 
   return (
     <div

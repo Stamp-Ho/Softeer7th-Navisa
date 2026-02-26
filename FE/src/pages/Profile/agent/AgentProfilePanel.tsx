@@ -50,6 +50,7 @@ const AgentProfilePanel = ({
 
   const { userType } = useAuth();
   const isAgent = userType === "VALID_AGENT";
+  const isInvalidAgent = userType === "INVALID_AGENT";
 
   return (
     <>
@@ -82,16 +83,29 @@ const AgentProfilePanel = ({
             {agentInfo.name} {t("agentProfile.title")}
           </div>
           <div className="title-s-medium text-text-base">{officeName}</div>
-          <div className="flex flex-row justify-end mb-4">
-            <ToolTipMessage message={CalcLastAccessDay(agentInfo.lastLoginAt)} />
-          </div>
-          <Button
-            variant="primary"
-            className="w-full"
-            onClick={() => (agentInfo.hasChatRoom ? navigate(`/chat`) : setViewMessageModal(true))}
-          >
-            {agentInfo.hasChatRoom ? t("agentProfile.continueConsult") : t("agentProfile.consult")}
-          </Button>
+          {!isAgent && !isInvalidAgent && (
+            <>
+              <div className="flex flex-row justify-end mb-4">
+                <ToolTipMessage
+                  message={CalcLastAccessDay(agentInfo.lastLoginAt)}
+                />
+              </div>
+
+              <Button
+                variant="primary"
+                className="w-full"
+                onClick={() =>
+                  agentInfo.hasChatRoom
+                    ? navigate(`/chat`)
+                    : setViewMessageModal(true)
+                }
+              >
+                {agentInfo.hasChatRoom
+                  ? t("agentProfile.continueConsult")
+                  : t("agentProfile.consult")}
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </>
