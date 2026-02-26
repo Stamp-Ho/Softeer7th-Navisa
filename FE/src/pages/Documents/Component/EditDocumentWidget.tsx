@@ -10,7 +10,6 @@ import FloatingChatModal from "./FloatingChatModal";
 import { useGeneratePdf } from "../hooks/useGeneratePdf";
 import ConfirmToExportModal from "./ConfirmToExportModal";
 import { usePatchFormStatusMutation } from "../../../api/mutations/usePatchFormStatusMutation";
-import { useNavigate } from "react-router-dom";
 import GeneratingModal from "./GeneratingModal";
 import { useAuth } from "../../../contexts/AuthContextProvider";
 
@@ -30,7 +29,6 @@ const EditDocumentWidget = ({
 }: EditDocumentWidgetProps) => {
   const { t } = useTranslation(["pages"]);
   const filledFormData = useWatch();
-  const navigate = useNavigate();
   const { userType } = useAuth();
   const { previewPdf, downloadPdf, generating } = useGeneratePdf();
   const [confirmModalOn, setConfirmModalOn] = useState(false);
