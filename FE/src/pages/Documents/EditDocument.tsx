@@ -15,6 +15,7 @@ import { useForeignerMyFormQuery } from "../../api/queries/useForeignerMyFormQue
 import { isUUID } from "../../utils/isUuid";
 import { alertT } from "../../i18n/alerts";
 import Tag from "../../components/common/Tag";
+import SaveModal from "./Component/SaveModal";
 
 const EditDocument = () => {
   const { t } = useTranslation(["pages"]);
@@ -33,9 +34,7 @@ const EditDocument = () => {
 
   const readOnly = !isAgent && data?.chatRoomId !== null;
 
-  const postForm = useApplicationFormMutation(data?.applicationFormId ?? documentId ?? "", () => {
-    alertT("components.form.savingSuccess");
-  });
+  const postForm = useApplicationFormMutation(data?.applicationFormId ?? documentId ?? "", () => {});
   const methods = useForm();
 
   const { scrollRef, handleScroll, currentSectionIndex, goToSection, goTop, getMaskStyle } = useDocumentScroll();
@@ -45,6 +44,7 @@ const EditDocument = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [formLayout, setFormLayout] = useState(editDocumentData);
   const [initializing, setInitializing] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   if (documentId && !isUUID(documentId)) {
     goBack();
@@ -140,15 +140,16 @@ const EditDocument = () => {
   }, [isLoading]);
 
   // 폼 입력 값 저장 함수
-  const onSubmit = (formData: Record<number, any>) => {
+  const onSubmit = async (formData: Record<number, any>) => {
     if (readOnly) {
       alertT("documents.noEditPermission");
       return;
     }
+    setSaving(true);
     const { totalCount, filledCount } = calculateOnlyInputs(formData);
 
     if (imageFile !== undefined && data?.applicationFormId) {
-      uploadFormImage(data?.applicationFormId ?? documentId, imageFile);
+      await uploadFormImage(data?.applicationFormId ?? documentId, imageFile);
     }
     const formValues = Object.values(formData).slice(0, 9);
     const params = {
@@ -167,8 +168,10 @@ const EditDocument = () => {
     setLoadedFromLocalStorage(false);
     setTimeout(() => {
       window.localStorage.removeItem(data?.applicationFormId ?? documentId ?? "");
+      alertT("components.form.savingSuccess");
+      setSaving(false);
       location.reload();
-    }, 100);
+    }, 3000);
   };
   const onError = () => {
     alertT("pages.documents.requiredFieldsError");
@@ -194,6 +197,7 @@ const EditDocument = () => {
   ];
   return (
     <FormProvider {...methods}>
+      {saving && <SaveModal />}
       <form className="flex flex-row overflow-y-auto w-fit" onSubmit={methods.handleSubmit(onSubmit, onError)}>
         <div
           ref={scrollRef}
